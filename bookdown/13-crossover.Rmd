@@ -1,0 +1,666 @@
+# Crossover trials 
+
+Up to now, we have considered parallel group design. The contrary of that is a *crossover trial*. Such a trial compares the outcome of a patient when given treatment A to the outcome from the *same patient* when given treatment B, so participants act as their own controls.
+This will hopefully lead to larger precision of the treatment effect. Crossover trials are possible if the aim of therapy is *not* to cure a condition. A typical application of the crossover design is to compare different pain-relieving drugs. The simplest crossover trial design is the **AB/BA design**.
+
+
+## The AB/BA design
+
+The AB/BA design is illustrated in Table \@ref(tab:ABBA). There are two treatment periods. Patients are randomized into two sequence groups where
+
+
+-  patients in group AB receive the treatments in the order A-B, 
+-  patients in group BA receive the treatments in the order B-A.
+
+This design ensures that *period effects* can be separated from
+*treatment effects*, which would not be the case if all patients
+would have been allocated to group AB. For example, to study the
+effect of pain-relieving drugs for headaches, a possible period effect
+may be due to changes in weather conditions in the two periods.  If
+all patients would be treated in the order A-B, then any difference in
+the outcome between A and B may be due to the period effect alone, or
+a combination of the period and treatment effect. Only the crossover
+design ensures that we can disentangle the treatment effect from the
+period effect.
+
+
+
+```{r abba-table, echo=FALSE}
+library(knitr)
+
+# Creating the data frame for the table
+abba_data <- data.frame(
+  Group = c("AB", "BA"),
+  `Period 1` = c("A", "B"),
+  `Period 2` = c("B", "A")
+)
+
+# Printing the table using kable
+kable(abba_data, caption = "AB/BA design.", booktabs = TRUE, label = "ABBA")
+```
+
+
+Analysis methods for crossover trials with an AB/BA design are explained in the next sections, first for continuous outcomes and then for binary outcomes.
+
+
+## Continuous outcomes
+
+The following illustrating example will be used throughout this section.
+
+```{r echo=F}
+enuresis <- read.table("data/enuresis.csv", header=TRUE)
+enuresis$diff <- enuresis$outcome1 - enuresis$outcome2
+enuresis$group <- ifelse(enuresis$group==1, "AB", "BA")
+enuresis$treatment <- ifelse(enuresis$group=="AB", enuresis$outcome1,  enuresis$outcome2)
+enuresis$placebo <- ifelse(enuresis$group=="AB", enuresis$outcome2, enuresis$outcome1)
+n <- nrow(enuresis)
+n1 <- sum(enuresis$group=="AB")
+n2 <- sum(enuresis$group=="BA")
+``` 
+
+:::{.example #enuresisex}
+The Enuresis Trial is a placebo-controlled trial on $n=`r n`$ children suffering from enuresis (bed wetting). In group AB ($n_{AB}=`r n1`$), the drug is given for 14 days and the outcome (number of dry nights) is recorded. Then, a placebo is administered for a fortnight and the same outcome variable is recorded. In group BA ($n_{BA}=`r n2`$), first placebo and then the drug is given. The outcome is treated as a continuous variable, although strictly speaking it is a count variable with values between 0 and 14.
+:::
+
+```{r echo=TRUE}
+head(enuresis, n=3)
+``` 
+
+Patient-level data for group AB and group BA comparing the outcomes under treatment and under placebo for each patient are shown in Figure \@ref(fig:enuresis) together with the corresponding means.
+
+
+```{r enuresis, fig.cap = "Patient-level data from the Enuresis Trial.", echo=F}
+means <- lapply(split(enuresis, enuresis$group), 
+       function(x) c(Mean = colMeans(x[,3:4])))
+
+par(mfrow=c(1,2))
+v3 <- enuresis$outcome1[enuresis$group=="AB"]
+v4 <- enuresis$outcome2[enuresis$group=="AB"]
+plot(0, 0, type = 'n', xlim = c(0.5, 2.5), ylim = c(0, 14), xaxt = 'n', xlab = "", ylab = "Number of dry nights", las = 1)
+axis(1, at = c(1, 2), labels = c("Treatment", "Placebo"))
+points(rep(1, length(v3)), v3, col = 2, pch = 16)
+points(rep(2, length(v4)), v4, col = 2, pch = 16)
+segments(rep(1, length(v3)), v3, rep(2, length(v4)), v4, col = 2, lwd = 2)
+eps <- 0.15
+segments(x0=1-eps, x1=1+eps, y0=means$A[1], y1=means$A[1], col=4, lwd=3)
+segments(x0=2-eps, x1=2+eps, y0=means$A[2], y1=means$A[2], col=4, lwd=3)
+text(1-eps, means$A[1], as.character(round(means$A[1],1)), col=4, pos=2)
+text(2+eps, means$A[2], as.character(round(means$A[2],1)), col=4, pos=4)
+title("Group AB")
+
+v3 <- enuresis$outcome1[enuresis$group=="BA"]
+v4 <- enuresis$outcome2[enuresis$group=="BA"]
+plot(0, 0, type = 'n', xlim = c(0.5, 2.5), ylim = c(0, 14), xaxt = 'n', xlab = "", ylab = "Number of dry nights", las = 1)
+axis(1, at = c(1, 2), labels = c("Placebo", "Treatment"))
+points(rep(1, length(v3)), v3, col = 2, pch = 16)
+points(rep(2, length(v4)), v4, col = 2, pch = 16)
+segments(rep(1, length(v3)), v3, rep(2, length(v4)), v4, col = 2, lwd = 2)
+segments(x0=1-eps, x1=1+eps, y0=means$B[1], y1=means$B[1], col=4, lwd=3)
+segments(x0=2-eps, x1=2+eps, y0=means$B[2], y1=means$B[2], col=4, lwd=3)
+text(1-eps, means$B[1], as.character(round(means$B[1],1)), col=4, pos=2)
+text(2+eps, means$B[2], as.character(round(means$B[2],1)), col=4, pos=4)
+title("Group BA")
+legend("bottomright", col=4, lty=1,  legend="means", lwd=3, bty="n")
+``` 
+
+
+### Simple analysis{#sec:simple}
+
+First, we set the notation as follows:
+
+-  $x_{ij}$ is the (continuous) outcome of patient $i$ in period $j$, for $i=1,\ldots, n$,
+-  $\alpha$ is the mean outcome in period 1 under placebo (treatment B),
+-  $\Delta$ is the treatment effect of the drug relative to placebo, 
+-  $\beta$ is the period effect of period 2 relative to period 1. 
+
+The mean outcomes are therefore modelled as:
+
+```{r, echo = FALSE}
+# Creating the data frame for the table
+period_data <- data.frame(
+  Period = c(1, 2),
+  `Group AB` = c("$\\E(x_{i1}) = \\alpha + \\Delta$", "$\\E(x_{i2}) = \\alpha + \\beta$"),
+  `Group BA` = c("$\\E(x_{i1}) = \\alpha$", "$\\E(x_{i2}) = \\alpha + \\Delta + \\beta$")
+)
+
+# Printing the table using kable
+kable(period_data, escape = FALSE, booktabs = TRUE, caption = "Period effects in AB/BA design.")
+```
+
+
+Now consider the *within-patient differences* $d_i = x_{i1} - x_{i2}$ and let $\bar d_{AB}$ and $\bar d_{BA}$ denote the mean difference in group AB and group BA, respectively. Then:
+
+\begin{eqnarray*}
+\E(\bar d_{AB}) & = & \, \, \, \, \Delta - \beta \mbox{ in group AB}\\
+\mbox{ and } \E(\bar d_{BA}) & = & - \Delta - \beta \mbox{ in group BA},  \\
+\mbox{ so } \E(\bar d_{AB} -\bar d_{BA} )& = & 2 \Delta \, . 
+\end{eqnarray*}
+
+The null hypothesis of no treatment difference, $\Delta=0$, can hence be investigated with a two-sample $t$-test applied to the two sets of within-patient differences. The treatment effect $\Delta$ is finally estimated as half of the differences in means: $\hat \Delta = (\bar d_{AB} -\bar d_{BA})/2$.
+
+:::{.example}
+Results of the simple analysis in the Enuresis Trial (Example \@ref(exm:enuresisex)):
+:::
+
+
+```{r echo=TRUE}
+(simpleAnalysis <- t.test(diff ~ group, data = enuresis, var.equal=TRUE))
+## treatment effect: divide by 2
+(Delta <- mean(simpleAnalysis$conf.int)/2)  
+## confidence interval for treatment effect: divide by 2
+(DeltaConfInt <- simpleAnalysis$conf.int/2)
+```
+
+
+Just for illustration, butnot recommended: A simpler analysis of the AB/BA design would be to compare differences $d_i$ of treatment to placebo measurements with a paired $t$-test, ignoring group membership:
+    \[
+    d_i = \left\{ \begin{array}{rl}
+      x_{i1} - x_{i2} & \mbox{ in group AB} \\
+      x_{i2} - x_{i1} & \mbox{ in group BA} \\
+      \end{array}\right.
+      \]
+The mean $\bar d$ then has expectation
+\begin{eqnarray*}
+  \E(\bar d) &=& \frac{1}{n_{AB}+n_{BA}} \left\{n_{AB} (\Delta - \beta) + n_{BA} (\Delta + \beta) \right\}
+  \\ & = & \Delta - \beta \, \frac{n_{AB}-n_{BA}}{n_{AB}+n_{BA}}  
+\end{eqnarray*}
+
+The estimate from the t-test is confounded by the period effect $\beta$.
+Bias occurs whenever group sizes are unequal ($n_{AB} \neq n_{BA}$) and there is 
+a period effect ($\beta \neq 0$).
+
+:::{.example}
+Results of a paired $t$-test in the Enuresis Trial (Example \@ref(exm:enuresisex)):
+:::
+
+```{r echo=TRUE}
+(naiveAnalysis <- t.test(enuresis$treatment, enuresis$placebo, paired=TRUE))
+(Delta.conf.int <- naiveAnalysis$conf.int)
+```
+
+The paired $t$-test gives different results and is **not recommended**.
+
+
+#### Between-patient variation
+
+The previously described (recommended) analysis also holds if we allow for *patient-specific effects* $\xi_i$:
+
+```{r, echo = FALSE}
+# Creating the data frame for the table
+period_data <- data.frame(
+  Period = c(1, 2),
+  `Group AB` = c("$\\E(x_{i1})  =  \\alpha + \\Delta + {\\color{red}\\xi_i}$", 
+                 "$\\E(x_{i2})  =  \\alpha + \\beta + {\\color{red}\\xi_i}$"),
+  `Group BA` = c("$\\E(x_{i1})  =  \\alpha + {\\color{red}\\xi_i}$", 
+                 "$\\E(x_{i2})  =  \\alpha + \\Delta + \\beta + {\\color{red}\\xi_i}$")
+)
+
+# Printing the table using kable
+kable(period_data, escape = FALSE, booktabs = TRUE, caption = "Period effects in AB/BA design.")
+```
+
+
+since the $\xi_i$'s cancel when we calculate patient-specific differences 
+$d_{i} = x_{i1} - x_{i2}$. This illustrates that between-patient variation is eliminated in the standard analysis of crossover trials.
+
+### Analysis using mixed models
+
+It is also possible to perform an analysis of the original outcomes $x_{ij}$ using a *mixed model* with *patient-specific random effects* $\xi_i$. This will give the same treatment effect (with confidence interval and $p$-value) as the simple analysis based on the $t$-test, but also provides an estimate of the period effect and estimates of within- and between-patient variances. 
+
+
+:::{.example}
+Results in the Enuresis Trial (Example \@ref(exm:enuresisex)):
+:::
+
+```{r echo=TRUE, warning=FALSE}
+# restructuring the data
+outcome <- c(enuresis$outcome1, enuresis$outcome2)
+n <- nrow(enuresis)
+period <- as.factor(c(rep(1, n), rep(2, n)))
+id <- c(enuresis$id,enuresis$id)
+treatment <- as.numeric(c((enuresis$group=="AB"),
+                          (enuresis$group=="BA")))
+
+## fit mixed model in R
+library(lme4)
+mixed1 <- lmer(outcome ~ period + treatment + (1|id))
+print(coef(summary(mixed1)))
+
+## comparison to standard analysis
+print(mean(simpleAnalysis$conf.int/2))
+print(simpleAnalysis$stderr/2)
+``` 
+
+The mixed model gives the same estimate of the treatment effect as the simple analysis based on the comparison of patient-specific differences with a  $t$-test, but
+also provides an estimate of the period effect ($\hat \beta = `r coef(summary(mixed1))[2,1]`$).
+
+The approach also gives estimates of the variance (respectively standard deviation) components: 
+```{r echo=TRUE}
+summary(mixed1)$varcor
+``` 
+
+The estimated between-patient standard deviation $\sigma_b = `r round(sqrt(summary(mixed1)$varcor[[1]]),2)`$ is denoted by \code{id} and the estimated
+within-patient standard deviation $\sigma_w = `r round((summary(mixed1)$sigma),2)`$ is denoted by Residual.
+
+
+## The issue of carryover
+
+
+The above analysis assumes that there is no *carryover effect*, \ie effects of the treatment given in period 1 do not persist during period 2. We now describe two statistical approaches to test for carryover in a AB/BA crossover trial with continuous outcome. We emphasize that this is generally not recommended due to lack of power and other problems. The recommended approach is not to use a crossover design when there is a possibility of a carryover effect. You should try to use non-statistical arguments, perhaps based on the half-lives of drugs, etc., to decide how long treatment effects are likely to persist and apply appropriate washout periods between the two treatment periods. 
+
+
+
+### Analysis of carryover
+
+Suppose now we have an additional carryover effect $\gamma$ in period 2 for patients in group AB, but not in group BA:
+
+```{r, echo = FALSE}
+# Creating the data frame for the table
+period_data <- data.frame(
+  Period = c(1, 2),
+  `Group AB` = c("$\\E(x_{i1})  =  \\alpha + \\Delta$", 
+                 "$\\E(x_{i2})  =  \\alpha + \\beta {\\color{red} \\,+\\, \\gamma}$"),
+  `Group BA` = c("$\\E(x_{i1})  =  \\alpha$", 
+                 "$\\E(x_{i2})  =  \\alpha + \\Delta + \\beta$")
+)
+
+# Printing the table using kable
+kable(period_data, escape = FALSE, booktabs = TRUE, caption = "Period effects in AB/BA design.") %>%
+  kable_styling(latex_options = c("hold_position", "striped"))
+```
+
+Then:
+
+\begin{eqnarray*}
+\E(\bar d_{AB}) & = & \, \, \, \, \Delta - \beta {\color{red} \, - \, \gamma} \mbox{ in group AB},\\
+\E(\bar d_{BA}) & = & - \Delta - \beta \mbox{ in group BA},  \\
+\mbox{ so } \E(\bar d_{AB} -\bar d_{BA} )& = & 2 \Delta {\color{red} \, - \, \gamma} \, .
+\end{eqnarray*}
+
+So, for $\gamma \neq 0$, the traditional estimate of $\Delta$ will be biased.
+
+
+### Test for carryover
+
+A test for $H_0$: $\gamma = 0$ can be performed using a standard $t$-test comparing the sums $s_i=x_{i1} + x_{i2}$ across groups:
+
+\begin{eqnarray*}
+\E(\bar s_{AB}) & = & 2 \alpha + \Delta + \beta + \gamma \mbox{ in group AB},\\
+\E(\bar s_{BA}) & = & 2 \alpha + \Delta + \beta \mbox{ in group BA},  \\
+\mbox{ so } \E(\bar s_{AB} - \bar s_{BA} )& = & \gamma 
+\end{eqnarray*}
+
+An alternative approach is to use a mixed model with a carryover effect (treatment $\times$ period interaction). However, both methods are heavily affected by between-patient variation (additional $\xi_i$'s would not cancel in the sum $s_i$), so lack power.
+
+As already mentioned, this procedure is **not recommended**. Instead, non-statistical arguments should be used to decide how long treatment effects are likely to persist.
+
+:::{.example}
+Standard test for carryover in the Enuresis Trial (Example \@ref(exm:enuresisex)):
+:::
+
+ 
+```{r echo=TRUE}
+enuresis$sum <- enuresis$outcome1 + enuresis$outcome2
+(res <- t.test(sum ~ group, data = enuresis, var.equal=TRUE))
+(gamma <- mean(res$conf.int))
+(gamma.conf.int <- res$conf.int)
+``` 
+
+Analysis using mixed models gives identical estimates of the carryover effect and the same value for the $t$-statistic:
+
+```{r echo=TRUE}
+carryover <- ifelse((period==2) & (treatment==0), 1, 0)
+res3 <- lmer(outcome ~ period + treatment + carryover + (1|id))
+print(coef(summary(res3)))
+``` 
+
+
+```{r echo=FALSE}
+c <- coef(summary(res3))[,1]
+``` 
+
+This is as so-called *saturated model*, as it fits the four
+parameters $\alpha$ (\code{Intercept}), $\beta$ (\code{period}), $\Delta$ (\code{treatment}), and
+$\gamma$ (\code{carryover}) to the
+four data entries (the means in each cell).  The fitted values
+in the four cells are therefore equal to the means shown in Figure \@ref(fig:enuresis) (up to rounding errors):
+
+
+```{r}
+# Creating the data frame for the table
+period_data <- data.frame(
+  Period = c(1, 2),
+  `Group AB` = c(
+    sprintf("$\\E(x_{i1})  =  %.3f = %.3f + %.3f$", round(means$A[1], 3), round(c[1], 3), round(c[3], 3)),
+    sprintf("$\\E(x_{i2})  =  %.3f = %.3f + %.3f + %.3f$", round(means$A[2], 3), round(c[1], 3), round(c[2], 3), round(c[4], 3))
+  ),
+  `Group BA` = c(
+    sprintf("$\\E(x_{i1})  =  %.3f$", round(means$B[1], 3)),
+    sprintf("$\\E(x_{i2})  =  %.3f = %.3f + %.3f + %.3f$", round(means$B[2], 3), round(c[1], 3), round(c[3], 3), round(c[2], 3))
+  )
+)
+
+# Printing the table using kable
+kable(period_data, escape = FALSE, booktabs = TRUE, caption = "Period effects in AB/BA design.") %>%
+  kable_styling(latex_options = c("hold_position", "striped"))
+```
+
+
+Interpretation of the coefficients of a model with carry-over effect is difficult. The treatment effect is now assumed to interact with period, so is no longer constant across the two periods. 
+The negative sign of the carryover effect is a consequence of a systematic difference in the outcome means between the AB and the BA group. For a perfectly randomised trial we would expect the sum of the two outcomes across the two treatment to be the same, but in the enuresis trial they are
+`r round(2*mean(means$A),1)` dry days in the AB group and `r round(2*mean(means$B),1)` days in the BA group, and the difference of the two is the carryover effect of 
+`r round(2*mean(means$A)-2*mean(means$B),1)` days. 
+
+
+
+
+## Sample size for AB/BA design
+
+We now discuss sample size calculation for a AB/BA crossover design
+with continuous outcome. Consider the model with patient-specific
+random-effects $\xi_i$:
+  \[
+    x_{ij} = \mbox{ fixed effects } + \xi_i + \epsilon_{ij}
+  \]
+We distinguish
+
+-  the **between-patient** variance $\sigma_b^2 = \Var(\xi_i)$ and
+-  the **within-patient** variance $\sigma_w^2 = \Var(\epsilon_{ij})$. 
+
+
+The variance of the within-patient differences $d_i = x_{i1} - x_{i2}$ is $\sigma_d^2=2\sigma_w^2$ and we want to detect $\Delta_d = 2 \Delta$ with a standard hypothesis test. The total variance is $\sigma_{tot}^2 = \sigma_b^2 + \sigma_w^2 = \sigma_w^2 /(1-\rho)$ with intraclass correlation coefficient 
+$\rho=\sigma_b^2/(\sigma_b^2 + \sigma_w^2)$. The sample size per group for a crossover trial is hence
+    \[
+    n_{\tiny{\mbox CO}} = \frac{2 \sigma_d^2 (u + v)^2}{\Delta_d^2} = \frac{\sigma_w^2 (u + v)^2}{ \Delta^2}. 
+    \]
+
+#### Comparison with parallel group design
+ 
+The **total variance** of $x_{ij}$ is
+  \[
+   \sigma^2 = \Var(x_{ij}) = \sigma_b^2 + \sigma_w^2 = \sigma_w^2 /(1-\rho)
+  \]
+with intraclass correlation coefficient 
+$\rho=\sigma_b^2/(\sigma_b^2 + \sigma_w^2)$.
+The standard parallel group design thus requires
+  \[
+    n_{\tiny{\mbox PG}} = \frac{2 \sigma^2 (u + v)^2}{ \Delta^2} = \frac{2 \sigma_w^2 (u + v)^2}{(1-\rho) \Delta^2}
+    \]
+patients per group. Less patients are needed in a crossover trial, 
+
+$$n_{\tiny{\mbox CO}}/n_{\tiny{\mbox PG}} = (1-\rho)/2,$$
+
+but note that *two measurements* per patient are required in the crossover trial compared to only one in the parallel group design.
+
+
+## Binary outcomes
+
+Consider the following illustrating example that will be used throughout this section.
+
+:::{.example #cerebro}
+In a $2 \times 2$ crossover trial on cerebrovascular deficiency with 67 patients, an active treatment is compared to placebo. The outcome is whether an electrocardiogram was judged normal or abnormal. 
+:::
+
+```{r echo=FALSE}
+## install.packages("teachingUZH_1.0-5.tar.gz", repos = NULL)
+library(teachingUZH)
+data(cerebrovascular)
+## for didactical reasons
+## change response for ID=22 to avoid zero counts
+cerebrovascular[43,]$y <- 0
+
+cerebrovascular$treatment <- factor(cerebrovascular$treatment, levels = 0:1, labels = c("Placebo", "Active"))
+cerebrovascular$y.f         <- factor(cerebrovascular$y, levels = 0:1, labels = c("Abnormal", "Normal"))
+
+``` 
+
+```{r echo=TRUE}
+head(cerebrovascular)
+tail(cerebrovascular)
+``` 
+
+
+For illustration purposes we start with a separate analysis by period. In period 1, each patient receives either the active treatment or the placebo and the same holds for period 2. So, by considering the two periods separately, all observations are independent as we are used to from a parallel group design. 
+
+```{r echo = F}
+library(xtable)
+
+tab1 <- table("treatment"=cerebrovascular$treatment[cerebrovascular$time==0], "Period 1"=cerebrovascular$y.f[cerebrovascular$time==0])
+tab2 <- table(cerebrovascular$treatment[cerebrovascular$time==1], cerebrovascular$y.f[cerebrovascular$time==1])
+
+
+pair <- group <- character()
+cere <- cerebrovascular
+
+for(i in 1:max(cere$ID)){
+    y1 <- cere$y.f[i*2-1]
+    y2 <- cere$y.f[i*2]
+    if((y1=="Normal")&(y2=="Normal")) pair[i] <- "No-No"
+    if((y1=="Normal")&(y2=="Abnormal")) pair[i] <- "No-Ab"
+    if((y1=="Abnormal")&(y2=="Normal")) pair[i] <- "Ab-No"
+    if((y1=="Abnormal")&(y2=="Abnormal")) pair[i] <- "Ab-Ab"
+    group[i] <- ifelse(cere$treatment[i*2-1]=="Active", "AB", "BA")
+    }
+fullTable <- table(group, pair)[,c(4:1)]
+
+est <- fisher.test(tab1)$estimate
+se <- sqrt(sum(1 / tab1))
+
+est2 <- fisher.test(tab2)$estimate
+se2 <- sqrt(sum(1 / tab2))
+``` 
+
+```{r echo=F}
+library(biostatUZH)
+library(Epi)
+```
+
+Period 1:
+
+```{r period1, results='asis', echo=FALSE}
+library(xtable)
+
+kable(tab1, booktabs = TRUE, caption = "Period 1", align = "c") %>%
+  kable_styling(latex_options = c("striped", "hold_position"), full_width = FALSE)
+
+```
+
+\begin{eqnarray*}
+    \text{OR}_1 &=& \frac{`r tab1[1, 1]` \cdot `r tab1[2, 2]`}{`r tab1[1, 2]` \cdot `r tab1[2, 1]`} \ = \ `r round(est, 2)`\\
+    \text{se(log(OR$_1$))} &=& \sqrt{\tfrac{1}{`r tab1[1, 1]`} + \tfrac{1}{`r tab1[1, 2]`} + \tfrac{1}{`r tab1[2, 1]`} + \tfrac{1}{`r tab1[2, 2]`}} = `r round(se, 2)`\\
+    \text{95% CI} &=& `r paste("[",  round(exp(log(est) - qnorm(0.975) * se), 2), ", ",  round(exp(log(est) + qnorm(0.975) * se), 2), "]", sep = "")`
+\end{eqnarray*}
+
+Period 2:
+
+```{r}
+# Print the contingency table using xtable
+kable(tab2, booktabs = TRUE, caption = "Period 2", align = "c") %>%
+  kable_styling(latex_options = c("striped", "hold_position"), full_width = FALSE)
+
+```
+
+\begin{eqnarray*}
+    \text{OR}_2 &=& \frac{`r tab2[1, 1]` \cdot `r tab2[2, 2]`}{`r tab2[1, 2]` \cdot `r tab2[2, 1]`} \ = \ `r round(est2, 2)` \\
+    \text{se(log(OR$_2$))} &=& \sqrt{\tfrac{1}{`r tab2[1, 1]`} + \tfrac{1}{`r tab2[1, 2]`} + \tfrac{1}{`r tab2[2, 1]`} + \tfrac{1}{`r tab2[2, 2]`}} = `r round(se2, 2)`\\
+    \text{95% CI} &=& `r paste("[", round(exp(log(est2) - qnorm(0.975) * se2), 2), ", ", round(exp(log(est2) + qnorm(0.975) * se2), 2), "]", sep = "")`
+\end{eqnarray*}
+
+
+
+The confidence intervals for the odds ratios in the two analyses are rather 
+wide, providing no evidence for a treatment effect in the two periods. 
+A *combined analysis* has to take into account that responses from the 
+same patient are correlated.
+The results of a crossover trial with binary outcome can be summarized as in the following table.
+
+```{r }
+sel1 <- which((cerebrovascular$treatment=="Active" & cerebrovascular$time==0) | (cerebrovascular$treatment=="Placebo" & cerebrovascular$time==1))
+sel2 <- which((cerebrovascular$treatment=="Placebo" & cerebrovascular$time==0) | (cerebrovascular$treatment=="Active" & cerebrovascular$time==1))
+
+group1 <- cerebrovascular[sel1,]
+group2 <- cerebrovascular[sel2,]
+
+tab1 <- table("period"=group1$time, "response"=group1$y.f)
+tab2 <- table("period"=group2$time, "response"=group2$y.f)
+``` 
+
+```{r}
+# Data preparation (replace with your actual data)
+
+
+# Print table using kable
+knitr::kable(fullTable, booktabs = TRUE) %>%
+  kableExtra::kable_styling(latex_options = c("striped", "hold_position"))
+```
+
+
+
+Only discordant pairs (in red) contribute to estimates of the
+treatment effect. Group imbalance occurs if $a + b \neq c + d$.
+
+A combined analysis can be done using Mainland-Gart test 
+or a generalized linear mixed model.
+
+
+### Naive analysis using Mc Nemar's test
+
+A naive way to analyse such data would be to compare the treatment 
+groups using Mc Neymar's test for binary paired data, ignoring the 
+group membership. This approach assumes that there is 
+no period effect nor group imbalance.\todo{CM: in slides: balance?}
+The estimate of the odds ratio OR (Active vs. Placebo) 
+is based on the number of discordant pairs in the expected 
+vs. unexpected direction 
+
+\begin{eqnarray*} 
+
+\widehat{\OR} = \frac{\mbox{\scriptsize \# pairs: normal for Active, abnormal for Placebo}}{\mbox{\scriptsize \# pairs: abnormal for Active, normal for Placebo}} = \frac{a + d}{b + c}
+
+\end{eqnarray*}
+
+with standard error
+
+\begin{eqnarray*}
+\SE(\log \widehat{\OR}) = \sqrt{\frac{1}{a+d} + \frac{1}{b+c}}
+\end{eqnarray*}
+
+```{r echo=FALSE}
+subTable <- fullTable[,c("No-Ab", "Ab-No")]
+a <- subTable[1,1]
+b <- subTable[1,2]
+c <- subTable[2,1]
+d <- subTable[2,2]
+``` 
+
+```{r echo=TRUE}
+
+or <- (a+d)/(b+c)
+se.log.or <- sqrt(1/(a+d) + 1/(b+c))
+printWaldCI(log(or), se.log.or, FUN=exp, digits=2)
+
+``` 
+
+It is also possible to perform Mc Neymar test using the R function 
+mcnemar.test(): 
+```{r echo=FALSE}
+
+x <- as.table(matrix(c(39, 10, 3, 15), ncol=2, byrow=TRUE), dnn=)
+rownames(x) <- colnames(x) <- c("Normal", "Abnormal") 
+
+``` 
+
+
+
+```{r echo=TRUE}
+
+print(x)
+mcnemar.test(x)
+mcnemar.test(x, correct=FALSE)
+
+``` 
+
+However, no effect estimate is given, and the test is based on a
+slighlty different test statistic (with or without continuity correction).
+
+
+### Recommended analysis using Mainland-Gart test
+
+To incorporate a possible period effect, 
+we compare discordant pairs in each sequence group: 
+
+\begin{eqnarray*} 
+
+\widehat{\OR} = \left({\frac{\OR \mbox{ in group Active-Placebo}}{\OR \mbox{ in group Placebo-Active}}}\right)^{1/2} = \left({\frac{a/b}{c/d}}\right)^{1/2}
+
+\end{eqnarray*} 
+
+
+with standard error
+
+$$\SE( \log \widehat{\OR}) = \frac{1}{2} \sqrt{\frac{1}{a} + \frac{1}{b} + \frac{1}{c} + \frac{1}{d}}.$$
+
+Note the additional factor $1/2$ in both $\widehat{\OR}$ and $\SE(\hat \beta)$, as in the analysis of a continuous outcome. 
+
+
+```{r echo=TRUE}
+or <- sqrt((a/b)/(c/d))
+se.log.or <- 1/2 * sqrt(1/a + 1/b + 1/c + 1/d)
+printWaldCI(log(or), se.log.or, FUN=exp, digits=2)
+
+``` 
+  
+```{r echo=FALSE, eval = TRUE}
+# print(fullTable)
+# print(subTable <- fullTable[,c(2,3)])
+
+a <- subTable[1,1]
+b <- subTable[1,2]
+c <- subTable[2,1]
+d <- subTable[2,2]
+
+log.or <- log(a*d/(b*c))/2
+se.log.or <- sqrt(1/a+1/b+1/c+1/d)/2
+# printWaldCI(log.or, se.log.or, FUN=exp, digits=3)
+``` 
+
+
+
+### Analysis with generalized linear mixed models
+We may also use a generalized linear mixed model (but results may depend on the choice of the integration parameter \code{nAGQ}).
+
+:::{.example}
+Results in the cerebrovascular deficiency trial (Example \@ref(exm:cerebro)):
+:::
+
+```{r echo=TRUE}
+resCerebro <- glmer(y ~ treatment + time + (1|ID), 
+                     family=binomial, data=cerebrovascular, nAGQ=10)
+
+(glmmTable <- coef(summary(resCerebro)))
+
+printWaldCI(glmmTable[2,1], glmmTable[2,2], FUN=exp, digits=2)
+``` 
+
+```{r echo = TRUE}
+
+resCerebro <- glmer(y ~ treatment + time + (1|ID), 
+                     family=binomial, data=cerebrovascular, nAGQ=5)
+
+(glmmTable <- coef(summary(resCerebro)))
+
+printWaldCI(glmmTable[2,1], glmmTable[2,2], FUN=exp, digits=2)
+
+```
+
+
+## Additional references
+
+You can find more about crossover trials in @bland  (Ch. 2.7) and in @matthews 
+(Ch. 11).
+Practical examples of crossover trials discussed in the lab are 
+@frank2008 and @allan2001. More details on crossover trials are given in 
+@Senn as well as in @Senn2 (Chapter 17). 
+
+
+

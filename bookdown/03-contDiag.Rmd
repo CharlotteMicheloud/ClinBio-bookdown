@@ -1,0 +1,355 @@
+# Continuous diagnostic tests 
+
+We now consider diagnostic tests that report a continuous test result.
+
+## Diagnostic accuracy measures
+
+### ROC curve
+A threshold ("cut-off") $c$ can be used to dichotomize a continuous test result $Y$ into positive if $Y \geq c$ or negative if $Y < c$. Sensitivity and specificity now depend on the threshold $c$: 
+\begin{eqnarray*}
+\mbox{Sens}(c) & = & \Pr(Y \geq c \given D=1) \\
+\mbox{Spec}(c) & = & \Pr(Y < c \given D=0) %\\
+\end{eqnarray*}
+
+:::{.definition}
+The *receiver operating characteristic curve* (ROC curve) is a plot of $\mbox{Sens}(c)$ versus $1-\mbox{Spec}(c)$ for all possible thresholds $c$. 
+:::
+
+
+A useful test has ROC curve above the diagonal,
+\ie $\mbox{Sens}(c) + \mbox{Spec}(c) > 1$ for all thresholds $c$. 
+
+
+Suppose we have data from $n$ controls and $m$ cases. Properties of the ROC curve are:
+
+-  If there are *no ties* (no observations having the same
+  value), the ROC curve is an *increasing step function*  with vertical jumps of size $1/m$ and horizontal jumps of
+  size $1/n$.
+-  If a case and a control have the same value then the ROC curve 
+  has  a *diagonal* line segment. 
+-  The ROC curve depends only on the *ranks* of the data.
+  Therefore, it is *scale-invariant*. 
+  
+  
+:::{.example}
+Gene expression data from $n=23$ controls and $m=30$ cases are shown in Figure \@ref(fig:genexpress).
+:::
+
+
+```{r echo=FALSE}
+library(ROCR, warn.conflicts = FALSE, quietly = TRUE)
+library(biostatUZH)
+
+rocdata <- read.table("data/rocdata.txt", header=TRUE)
+cases <- rocdata[rocdata$case==1,]$expr
+controls <- rocdata[rocdata$case==0,]$expr
+``` 
+
+```{r echo=TRUE}
+head(rocdata, 3)
+```
+
+
+```{r genexpress, echo = FALSE, fig.cap = "Continuous diagnostic test for gene expression."}
+par(mfrow=c(1,2),pty="s")
+boxplot(controls, cases, names=rev(c("Cases", "Controls")), 
+        ylab="Gene expression", col = c(2,3), ylim=c(0.4,2.25), las = 1)
+title("Boxplot")
+library(beeswarm)
+beeswarm(expr ~ case, data = rocdata, method = "swarm", 
+         ylab="Gene expression", xlab="", pch=16, cex=0.9, 
+         ylim = c(0.4,2.25), xaxt = "n", las = 1, 
+         main = "Beeswarm Plot", col = c(2,3))
+axis(1, c(1, 2), rev(c("Cases", "Controls")), padj = 0.5)
+```
+
+
+Table \@ref(tab:genes) gives sensitivity and specificity for selected cut-offs in this example.
+
+```{r genes, results="asis"}
+pred <- prediction(rocdata$expr, rocdata$case)
+perf <- performance(pred,"tpr","fpr")
+
+fpf <- perf@"x.values"
+tpf <- perf@"y.values"
+cutpoint <- perf@"alpha.values"
+mytable <- as.data.frame(cbind(cutpoint[[1]], tpf[[1]] * 100, (1 - fpf[[1]]) * 100))
+names(mytable) <- c("Cut-off", "Sensitivity (in %)", "Specificity (in %)")
+
+selected_rows <- mytable[c(1, 2, 3, 10, 20, 30, 40, 44, 45, 46),]
+knitr::kable(selected_rows, digits = c(2, 2, 0, 0), 
+      caption = "Sensitivity and specificity for selected cut-offs.")
+
+```
+
+Figure \@ref(fig:ROC-col) then shows the standard ROC curve. 
+The right plot gives a colorized version that indicates the corresponding cut-off value as indicated in the color scale on the right. 
+
+\code{R}-code for Figure \@ref(fig:ROC-col):
+```{r echo=TRUE, results='hide', fig.show='hide'}
+library(ROCR)
+pred <- prediction(predictions = rocdata$expr, 
+                   labels = rocdata$case)
+perf <- performance(pred, "tpr", "fpr")
+
+par(mfrow = c(1, 2), pty = "s", las = 1)
+plot(perf, xlab = "1-Specificity", ylab = "Sensitivity")
+abline(0, 1, lty = 2)
+plot(perf, colorize = TRUE, xlab = "1-Specificity", ylab = "Sensitivity")
+abline(0, 1, lty = 2)
+```
+
+
+```{r ROC-col, fig.cap = "Empirical ROC curve, uncolorized (left) and colorized (right).", echo = FALSE }
+library(ROCR)
+pred <- prediction(predictions = rocdata$expr, 
+                   labels = rocdata$case)
+perf <- performance(pred, "tpr", "fpr")
+
+par(mfrow = c(1, 2), pty = "s", las = 1)
+plot(perf, xlab = "1-Specificity", ylab = "Sensitivity")
+points(perf@x.values[[1]], perf@y.values[[1]], pch=19, cex=0.3)
+abline(0, 1, lty = 2)
+plot(perf, colorize = TRUE, xlab = "1-Specificity", ylab = "Sensitivity")
+abline(0, 1, lty = 2)
+```
+
+
+
+
+### Area under the curve (AUC)
+The most widely used summary measure is the area under the ROC curve.
+
+:::{.definition}
+The *area under the curve* (AUC) is defined as
+
+\begin{equation*}
+\mbox{AUC} = \int_0^1 \mbox{ROC}(t)dt.
+\end{equation*}
+:::
+
+The AUC is interpreted as the probability that the test result $Y_D$ from 
+a randomly selected case is larger than the test result $Y_{\bar D}$ from 
+a randomly selected control:
+
+\[
+\mbox{AUC} = \Pr(Y_D > Y_{\bar D}).
+\]
+
+A proof of this result can be found in Appendix \@ref(app:AUC). 
+Most tests have values between 0.5 (useless test) and 1.0 (perfect test).
+
+
+
+$\mbox{AUC}$ can be conveniently computed based on the normalized *Mann-Whitney U-Statistic*:
+
+
+```{r echo=T, warning=FALSE}
+cases <- rocdata[rocdata$case==1,]$expr
+controls <- rocdata[rocdata$case==0,]$expr
+ncases <- length(cases)
+ncontrols <- length(controls)
+n.pairs <- ncases*ncontrols
+(auc <- wilcox.test(x=cases, y=controls)$statistic/n.pairs)
+```
+
+```{r echo=F}
+names(auc) <- ""
+``` 
+
+
+
+The *standard error* $\SE({\mbox{AUC}})$ of ${\mbox{AUC}}$ is difficult to compute and requires execution of a computer program. 
+It is used to compute the limits of a Wald confidence interval for ${\mbox{AUC}}$:
+  \begin{equation*}
+  \mbox{AUC} - z \cdot \SE({\mbox{AUC}}) \mbox{ and } 
+  \mbox{AUC} + z \cdot \SE({\mbox{AUC}})
+  \end{equation*}
+For 95\% confidence intervals we use $z=1.96$.
+
+
+
+Improved confidence intervals for $\mbox{AUC}$ can be obtained with the logit transformation.
+To *avoid overshoot* for diagnostic tests with high accuracy, we can use a Wald confidence interval for
+\begin{eqnarray*}
+  \logit {\mbox{AUC}} &=& \log \frac{{\mbox{AUC}}}{{1-\mbox{AUC}}}. %%, \mbox{ with } \\[.3cm]
+ \end{eqnarray*}
+The standard error of $\logit {\mbox{AUC}}$ can be calculated with the Delta method. 
+The limits of the CI for $\logit {\mbox{AUC}}$ 
+are back-transformed with
+the inverse $\logit$ function ("expit").
+A *bootstrap confidence interval* could also be used.
+
+
+Computation in \code{R}:
+
+```{r echo=T, include=FALSE}
+library(pROC)
+library(biostatUZH)
+```
+
+```{r echo=T}
+library(biostatUZH)
+(confIntAUC(cases=cases, controls=controls))
+
+# bootstrap CI
+library(pROC)
+(ci.auc(response=rocdata$case, 
+        predictor=rocdata$expr, method="bootstrap"))
+```
+
+:::{.example}
+Overshoot illustrated in a simulated example, see Figure \@ref(fig:sim).
+:::
+
+```{r echo=T}
+set.seed(12345)
+groupsize <- 25
+cases <- rnorm(n=groupsize, mean=3)
+controls <- rnorm(n=groupsize, mean=0)
+x <- c(cases, controls)
+y <- c(rep("case", groupsize), rep("control", groupsize))
+```
+
+```{r sim, fig.cap = "Beeswarm plot (left) and ROC curve (right) of simulated example to illustrate overshoot of confidence intervals.", echo=F}
+par(mfrow = c(1, 2), pty = "s", las = 1)
+y <- factor(y, levels=c("control", "case"))
+
+library(beeswarm)
+beeswarm(x ~ y, method = "swarm", ylab="Sample", xlab="", pch=16, cex=1.0, 
+         xaxt = "n", las = 1, col = c(2,3), main = "Beeswarm Plot")
+axis(1, c(1, 2), rev(c("Cases", "Controls")), padj = 0.5)
+
+pred <- prediction(x, y, label.ordering=rev(c("case", "control")))
+perf2 <- performance(pred,"tpr","fpr")
+
+plot(perf2,colorize=FALSE, xlab="1-Specificity", ylab="Sensitivity", 
+     main = "ROC Curve")
+points(perf2@x.values[[1]], perf2@y.values[[1]], pch=19, cex=0.3)
+```
+
+In this case, the Wald CI overshoots whereas logit Wald and bootstrap CIs do not:
+
+```{r echo=TRUE}
+# function in library(biostatUZH)
+(confIntAUC(cases=cases, controls=controls))
+
+# bootstrap CI in library(pROC)
+(ci.auc(response=y, predictor=x, method="bootstrap"))
+
+```
+
+
+
+### Optimal cut-off
+
+A simple method to derive an optimal cut-off is to maximize Youden's
+index \@ref(eq:Youden).  This corresponds to the point of the ROC
+curve that has maximal distance to the diagonal line. However, this
+approach assumes that sensitivity and specificity are equally
+important and disease prevalence is also not taken into account.
+
+
+
+Consideration has to be given to the *cost ratio* of a false positive to a false negative diagnosis. Also the prevalence (\mbox{Pre}) of the disease in the population to be tested is important.
+
+:::{.definition}
+  The *optimal cut-off* minimizes the overall cost and this is where
+  a straight line with slope 
+:::
+
+\begin{equation}
+b = \frac{1-\mbox{Pre}}{\mbox{Pre}} \times {\mbox{cost ratio}}
+\end{equation}
+
+just touches the ROC curve. 
+
+
+How do we find the optimal cut-off?
+We move a straight line with slope $b$ towards the ROC curve (from the top left corner where sens = spec = 1); the optimal point is where the line first touches the ROC curve.
+
+For example, if $\mbox{Pre}=10\%$ and $\mbox{Cost(fp)}/\mbox{Cost(fn)}=1/10$, then $b=9/10$ and the optimal cut-off is 0.8 as shown in Figure \@ref(fig:cutpoint). This is also the optimal cut-off based on a Youden's Index of $0.70 + 0.87 - 1 = 0.57$.
+
+
+
+```{r cutpoint, fig.cap = "Identification of optimal cut-off in the ROC curve for 10% and Cost(fp)/Cost(fn)=1/10.", echo=F, results='hide'}
+par(pty="s", las=1)
+plot(perf,colorize=FALSE, xlab="1-Specificity", ylab="Sensitivity")
+
+mygrey <- "gray25"
+for(a in seq(0.59,0.59,0.02))
+    abline(a=a, b=9/10, col=mygrey, lty=2)
+text(0.7, 0.8, "slope=9/10", col=mygrey)
+arrows(0.45, 0.8, 0.325, 0.85, col=mygrey, cex=0.8, length=0.05)
+
+
+
+value <- mytable[23,]
+points(1-value[3]/100, value[2]/100,col=2, pch=19, cex=0.5)
+text(0.2, 0.4, "Sensitivity=70%", col=2, pos=4)
+text(0.2, 0.5, "Specificity=87%", col=2, pos =4)
+text(0.2, 0.6, "Cut-off=0.8", col=2, pos=4)
+```
+
+
+
+## Comparing two diagnostic tests
+
+Suppose ${\mbox{AUC}}(A)$ and ${\mbox{AUC}}(B)$ are available
+for two diagnostic tests $A$ and $B$. Often the interest is in the *difference in AUC*: 
+$$\Delta{\mbox{AUC}}={\mbox{AUC}}(A)-{\mbox{AUC}}(B).$$
+To compute a CI for $\Delta{\mbox{AUC}}$ we need the corresponding standard error: 
+
+-  For *unpaired samples* we can apply the formula %%``rule of Pythagoras'':
+\begin{eqnarray*}
+{\SE}(\Delta {\mbox{AUC}}) &=& 
+\sqrt{{\SE}({\mbox{AUC}}(A))^2 +  {\SE}({\mbox{AUC}}(B))^2}
+\end{eqnarray*}
+
+ -  biostatUZH::confIntIndependentAUCDiff()
+-  For *paired samples* we have to use a different formula %% based on the {differences of placement values}. 
+ -  biostatUZH::confIntPairedAUCDiff()
+ 
+ 
+ 
+:::{.example}
+Two biomarkers for pancreatic cancer are shown in Figure \@ref(fig:twoROCs).
+:::
+
+Paired study design:
+
+```{r echo=TRUE}
+data(wiedat2b)
+nrow(wiedat2b)
+head(wiedat2b)
+```
+
+```{r twoROCs, fig.cap = "ROC curves of the two biomarkers.", echo=FALSE}
+data(wiedat2b)
+
+pred1 <- prediction(wiedat2b$y1, wiedat2b$d)
+pred2 <- prediction(wiedat2b$y2, wiedat2b$d)
+perf1 <- performance(pred1,"tpr","fpr")
+perf2 <- performance(pred2,"tpr","fpr")
+par(pty="s", mfrow=c(1,1), las=1, cex.axis=0.7, cex.lab=0.9, mar=c(5, 4, 4, 2) + 0.1)
+plot(perf1, colorize=FALSE, xlab="1-Specificity", ylab="Sensitivity", axes=FALSE, col=1, lwd=2, cex.axis=0.7)
+plot(perf2, colorize=FALSE, xlab="1-Specificity", ylab="Sensitivity", add=TRUE, axes=FALSE, col=2, lwd=2, cex.axis=0.7)
+legend("bottomright", col=c(1,2), lty=1, lwd=2, legend=c("Biomarker 1", "Biomarker 2"), cex=0.7)
+``` 
+
+
+AUC and $\Delta{\mbox{AUC}}$ with 95\% confidence intervals:
+
+```{r echo=TRUE}
+case <- wiedat2b[,"d"]
+y.cases <- wiedat2b[(case==1), c("y1","y2")]
+y.controls <- wiedat2b[(case==0), c("y1","y2")]
+(confIntPairedAUCDiff(y.cases, y.controls))
+``` 
+
+The confidence interval for the AUC difference does not include zero so
+there is evidence that Biomarker 1 classifies better than Biomarker 2.
+
+
+## Additional references
+@bland gives a gentle introduction to ROC curves  in Chapter 20.6, see also the Statistics Note by @SN_ROC. A comprehensive account of statistical aspects of ROC curves can be found in @pepe (Chapter 4 and 5). The methods from this chapter are used in practice, for example, in the following studies: @turck, @cockayne, @brown, and @ikeda.

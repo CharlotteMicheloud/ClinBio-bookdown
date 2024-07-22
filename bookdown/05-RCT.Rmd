@@ -1,0 +1,431 @@
+# Randomized controlled trials
+
+
+## Study design
+
+A *randomized controlled trial* (RCT)
+is an experiment performed on human
+subjects (usually patients) in order to assess the efficacy of a 
+*treatment* (or *intervention*) for some condition.
+It has two key features:
+
+-  The new treatment is given to a group of patients, the \emph{treated
+  group}, and another treatment (standard or placebo treatment) is given to
+  another group of patients, the *control group*, at the same time.
+-  Patients are allocated to one group or another by *randomization*.
+
+A more accurate name is randomized *concurrently* controlled
+*clinical* trial, because patients in the intervention and in the control group obtain 
+treatment at the same time. 
+
+There are often more than two treatments being compared in a single trial,
+for example a treatment in different doses. However, the essential ideas of RCTs 
+become transparent already for the case of two groups.
+Moreover, the treatment is not necessarily a drug, but may also be a new 
+surgical procedure, a certain therapy (e.g. acupuncture, psychotherapy), etc.
+Participants of an RCT may not get the "optimal" treatment, so there are 
+important ethical aspects when conducting an RCT.
+
+### Historical context
+
+Ronald Aylmer Fisher (1890-1962) and Austin 
+Bradford Hill (1897–1991) were pioneers of randomization.
+
+In the 1920s, R.A. Fisher presented randomization as a crucial 
+element of the design and analysis of experiment [@Fisher1925].
+
+He also said about the importance of design:
+
+
+"To consult the statistician after an experiment is finished is often merely to ask him to conduct a post mortem examination. He can perhaps say what the experiment died of"
+
+(Presidential Address to the First Indian Statistical Congress, 1938).
+
+A.B.Hill also advocated for randomization [@Hill1937]
+and was the trial statistician in one of the very first RCTs among humans: 
+the MRC Strepromycin trial. 
+
+
+### The MRC Streptomycin Trial
+
+The Streptomycin trial conducted by the Medical Research Council (MRC) in the U.K
+in 1946-7 and the results were published in 1948 [@Strepto1948].
+It is considered the first RCT, double-blind and placebo-controlled.
+The participants were randomly assigned to Streptomycin and bed-rest, 
+or bed-rest alone. The randomization series were not known to the 
+investigator and the patient did not know whether they were in the 
+treatment or control group. 
+
+Results showed efficacy of the bactericidal antibiotic drug Streptomycin 
+against tuberculosis, albeit with
+minor toxicity and acquired bacterial resistance to the drug.
+Today, Streptomycin, in combination with penicillin, is used in a standard antibiotic
+cocktail to prevent bacterial infection in cell culture.
+
+However, this trial is not the first study using randomization and 
+double blinding. 
+
+
+### The Nuremberg salt test of 1835
+More than 100 years before the MRC Streptomycin Trial,
+the `Nuremberg salt test' was performed, using randomization and double blinding to evaluated the efficacy of homeopathy. \citet{Stolberg2006} summarized and commented on 
+the study.
+
+### The Salk Polio Vaccine Trial
+Polio was a major public health problem worldwide
+in the late 19th and early 20th centuries. 
+Over 500,000 cases of polio were reported every year by the mid-20th century
+(source: (https://www.who.int/news-room/spotlight/history-of-vaccination/history-of-polio-vaccination)).
+
+By 1953, several potential vaccines had been developed. One of the more promising
+was an inactivated virus vaccine developed by Jonas Salk at the University of 
+Pittsburgh.
+Approximately 750'000 children were selected to participate in the study, 
+about 340'000 declined to participate and another 8500 dropped out in the 
+middle of the experiment [@Francis1955].
+The remaining children were randomized into a 
+treatment and a control group with approximately 200'000 children in each 
+group, as summarized in Table \@ref(tab:polio).
+
+
+```{r polio, echo=FALSE, message=FALSE}
+library(knitr)
+library(kableExtra)
+
+# Create the data frame
+data <- data.frame(
+  Vaccine = c("Yes", "No"),
+  Polio_Yes = c(82, 162),
+  Polio_No = c(200663, 201067)
+)
+
+# Create the table using kable
+kable(data, 
+      col.names = c("Vaccine", "Yes", "No"), 
+      caption = "Vaccine effectiveness in the Salk Polio Vaccine Trial.", 
+      booktabs = TRUE) %>%
+  kable_styling(position = "center")
+```
+
+
+The difference in the number of polio cases between groups was
+significant and could rightfully be interpreted as a clear indication
+that the vaccine was indeed effective.
+
+### Ethical issues of RCTs
+
+There are important ethical aspects of RCTs. 
+First, a patient must never be given a treatment that is known to be
+inferior. Moreover, patients must be fully informed about
+possible adverse reactions, side-effects etc. They must give 
+their consent, preferably in writing. Additionally, patients who have 
+entered a trial may withdraw at any time and
+they must receive the most appropriate treatment available outside the trial.
+
+For these reasons, large trials usually have
+a *data and safety monitoring committee*, which periodically
+reviews the evidence currently available from the trial and gives
+recommendations whether the trial should continue or terminate. 
+
+### Structure of RCTs {#sec:structure}
+
+RCTs have five key characteristics:
+
+1.  A *population* of *eligible patients*
+2.  A *group of patients* recruited from this population
+3.   Existence of (at least) *two treatment groups*
+4.  Allocation to treatment by *randomization*
+5.  Outcome measures in the treatment groups are 
+    compared *at the end* of the trial. 
+
+
+### Eligibility criteria
+A strict set of *eligibility criteria* allows to generalize the
+results of the trial to the population of *eligible patients*.
+We can distinguish inclusion and exclusion criteria.
+
+Specification of eligibility criteria is particularly important for 
+trials with *long enrollment period* (months, years) and
+*multicenter* trials.
+Otherwise the type of patient recruited may change over the duration of the
+trial or may vary from center to center.
+
+
+
+
+
+
+
+### The need for a control group
+
+At first sight it seems odd to include a control group 
+(larger sample size, additional costs, possibly inferior treatment given 
+to control group). But there is always *patient variability* in response to 
+treatment, so without a control group we do not know to what extent patient 
+response is due to treatment. For example, without a control group, 
+*regression to the mean* may indicate an apparent, non-existing treatment effect.
+
+### Regression to the mean
+
+:::{.example}
+  Regression to the mean in the absence of a control group is
+  illustrated with example from @senn2011. 
+  Imagine a single-arm trial where all patients receive treatment. 
+  Suppose that the mean diastolic blood pressure (DBP) is the same at baseline (before
+  treatment is given) and at follow-up (``at outcome''). So, there is
+  no treatment effect, as illustrated in Figure \@ref(fig:senn) (left
+  plot).  The inclusion criteria of a hypothetical trial are
+  hypertension at baseline, which is defined as DBP $>$ 95 mmHg. The
+  resulting distribution is shown in Figure \@ref(fig:senn) (right
+  plot). In this hypothetical trial, 
+  mean DBP at follow-up is more than 2 mmHg
+  lower than at baseline. This suggests a treatment effect which is
+  not present. The apparent Placebo effect may be just regression to the mean.
+:::
+
+
+```{r senn, fig.cap="Regression to the mean in an example from @senn2011. The left plot shows the joint distribution of diastolic blood pressure measurements at Baseline and at Outcome. The mean of both measurements is 90 mmHg. The right plot shows the truncated distribution of the patients that have been included in the hypothetical trial. The mean DBP at outcome is now more than 2 mmHg lower than at baseline.", echo=FALSE, fig.show="hold", out.width="50%"}
+library(knitr)
+include_graphics(c("figures/sign509-fig-0002-m.jpg", "figures/sign509-fig-0003-m.jpg"))
+```
+
+### Historical controls
+
+Historical controls are an alternative to concurrent controls 
+in situation where randomizing patients to a control treatment 
+or placebo is not feasible, for practical or ethical reasons.
+
+
+The main issue with historical controls is that there may be systematic 
+differences between patients in the historical control group and 
+patients in the treatment group, which might cause biased results.
+There might for example be some heterogneteity in the selection 
+of patients and possible time trends such as a change in disease severity 
+over time (e.g. different variants of COVID-19). In addition, 
+there might be difference in the conduct and analysis of 
+the historical and the new trial [@Marion2023].
+
+:::{.example}
+Coehlo conducted an open-label, single-group, phase 3 
+trial to evaluate the use of transthyretin gene silencing as 
+a treatment for hereditary transthyretin (ATTRv) amyloidosis.
+ATTRv amyloidosis is a life threatening genetic disorder
+for which several medications have been approved by the FDA.
+In order to not "unnecessarily expose participants to sequelae
+from a rapidly progressive and potentially fatal neurologic
+disease", a historical placebo 
+from a previous trial was chosen. In this example, 
+the historical trial was double-blinded... while open label in other.
+:::
+
+### Allocation at random
+*Allocation at random* aims to ensure that all *prognostic factors* 
+(both known and unknown) are similarly represented in the two groups. 
+That means that there is *no systematic difference* between the groups
+which may have caused treatment difference.
+
+
+### The importance of randomization
+:::{.example}
+Table \@ref(tab:kidney) summarizes the results from an observational study from @charig about two different treatments of kidney stones. This is a non-randomized study, as can be seen from the different distribution of the two therapies among patients with small resp. large kidney stones ($87:270$ vs. $263:80$). 
+:::
+
+
+```{r kidney, echo=FALSE, message=FALSE}
+library(knitr)
+library(kableExtra)
+
+# Create the data frame
+data <- data.frame(
+  Therapy = c("Therapy A", "Therapy B"),
+  Success_yes = c("273 (78%)", "289 (83%)"),
+  Success_no = c(77, 61),
+  Total = c(350, 350)
+)
+
+# Create the table using kable
+kable(data, 
+      col.names = c("", "Success (yes)", "Success (no)", "Total"), 
+      caption = "Results from an observational study about two different treatments of kidney stones [@charig], overall and in two sub-groups.",
+      booktabs = TRUE) %>%
+  kable_styling(position = "center", full_width = FALSE)
+```
+
+
+The overall odds ratio is
+
+\[\mbox{OR} = \frac{273 \cdot 61}{77 \cdot 289} = 0.75,\]
+
+meaning that Therapy B is apparently more successful than Therapy A. However, 
+the odds ratios in the subgroups of patients with small and large kidney stones are
+
+\[ \quad \quad  \quad \mbox{OR} = \frac{81 \cdot 36}{6 \cdot 234} = {2.10} \quad \quad \text{and} \quad \quad
+\mbox{OR} = \frac{192 \cdot 25}{71 \cdot 55} = {1.23}.\]
+
+This sub-group analysis reveals that Therapy A is more successful than Therapy B 
+*in both sub-groups*! This is an example of *Simpson's paradox*.
+The success rate was on average higher for small kidney stones 
+(seem to be easier to cure) and because patients receiving therapy B included 
+a much larger proportion of patients with small kidney stones, this therapy 
+seemed better when the size of kidney stones was ignored. If the size of kidney 
+stones is adjusted for, we can see that A is better for both sizes, but because
+A was given mostly to patients with large kidney stones, with lower average 
+success rate, we could not see this before.
+
+
+
+### Allocation concealment
+Allocation concealment means that treatment allocation is revealed only *after* 
+patients have been allocated to treatment groups, 
+*concealing the allocation sequence* from those selecting participants into 
+the study and assigning participants to intervention groups. 
+Without allocation concealment it may be possible to subvert the recruitment 
+of participants into the study and their allocation to treatment.
+
+
+## Bias in RCTs
+ 
+@matthews lists the following five types of biases that may occur in RCTs.
+
+### Selection bias
+*Selection bias* refers to the difficulty to select a representative sample from the population of interest. 
+Two types of sampling methods can be distinguished. 
+
+-  *random sampling* (also called ``probability
+sampling''): All population members have an equal probability of being selected into the study.
+-  *non-random sampling* (``non-probability sampling''). 
+
+Selection bias will occur, if the study sample is systematically different
+from the population it was intended to represent. For example, 
+*convenience sampling* involves selecting patients because
+  it is convenient and they are easily accessible. Convenience
+  sampling constitutes non-random sampling and is prone to selection bias. 
+  
+  
+### Allocation bias {#sec:allocationbias}
+
+Randomization ensures - in principle - that the 
+groups to be compared are balanced with respect to
+all relevant prognostic factors. 
+*Allocation bias* occurs if there is a systematic
+difference between participants in how they were allocated to
+treatment groups. We do not expect this to happen if randomization is properly
+done. However, it is sometimes forgotten that proper randomization rests on 
+adequate *allocation concealment* (see Section \@ref(sec:structure)). 
+Without it, even properly developed random allocation sequences can be subverted.
+Trials with small sample size may also result in
+imbalance with respect to prognostic factors, simply due to
+the stochastic process of allocation.
+There are methods to address the latter problem in the design
+phase, e.g. *stratification*.
+
+### Assessment bias
+
+At the end of the trial, and during its course, observations
+are made on a variety of outcome variables. 
+Some of these variables may have a subjective component, depending
+on the observer (e.g. blood pressure). 
+If the observer knows the treatment being given to the patient, then
+the value of an observation might be influenced by the knowledge of the
+treatment. This will lead to *assessment bias*.
+This problem can be addressed by *blinded outcome assessment*.
+
+### Stopping bias
+
+It is tempting to assess the outcomes of a trial repeatedly and to
+stop the trial, once a promising result has been obtained. This can be
+done as part of a prespecified method for assessing the data,
+so-called *group sequential methods* (see 
+Section \@ref(sec:groupsequential)). However, naive repeated
+checking of ``significance'' will introduce *stopping bias*, as
+illustrated in Figure \@ref(fig:stoppingbias). 
+
+Let's have a look 
+at an example: Data with 250 patients
+per group are generated without any difference in the underlying
+means. A $t$-test is performed every 10 patients (5 per group). The
+particular trajectory shown in Figure \@ref(fig:stoppingbias) flags a
+significant difference early in the trial on the basis of 60-90
+patients at the standard 5\% significance level (1.96 threshold for
+the absolute value of test statistic). However, at the end of the
+trial no significant difference can be observed. An extensive
+simulation reveals that such a significant difference will occur at
+some point in time in 36\% of the cases.  If we would only assess
+significance at the end of the trial based on 500 patients, then this
+proportion would be equal to the nominal significance level of 5\%.
+
+
+
+```{r echo=FALSE, cache=TRUE}
+set.seed(17092013)
+nsim <- 10000
+n <- 50
+m <- 5
+time <- seq(1, n, 1)
+statistic <- rep(NA, n)
+sig <- numeric()
+for(j in 1:nsim){
+    x1 <- numeric()
+    x2 <- numeric()
+    for(i in 1:n){
+        x1 <- c(x1, rnorm(m))
+        x2 <- c(x2, rnorm(m))
+        res <- t.test(x1, x2, var.equal=TRUE)
+        statistic[i] <- res$statistic
+    }
+    sig[j] <- max(abs(statistic)>1.96)
+}
+
+TypeIerror <- mean(sig)
+``` 
+
+
+```{r stoppingbias, fig.cap = "Stopping bias illustrated in accumulated data generated without any treatment effect.", echo=FALSE, fig.width = 6, fig.height=4, cache=TRUE}
+
+set.seed(17092013)
+x1 <- numeric()
+x2 <- numeric()
+for(i in 1:n){
+  x1 <- c(x1, rnorm(m))
+  x2 <- c(x2, rnorm(m))
+  res <- t.test(x1, x2, var.equal=TRUE)
+  statistic[i] <- res$statistic
+}
+par(las=1)
+plot(time*m*2, statistic, ylim=c(-3, 3), type="b", ylab="test statistic", xlab="Number of patients", col=c(rep(1, 6), 2, rep("darkgrey", 43)), pch=19, cex=0.8)
+abline(1.96, 0, lty=2, col=2)
+abline(-1.96, 0, lty=2, col=2)
+#legend("topright", col=2, lty=2, legend="standard significance levels", cex=0.8, bty="n")
+text(90, -0.5, "Stop for significance!")
+arrows(80, 0, 70, 1.9, length=0.1)
+## text(20*m*2, -1, paste(as.character(round(100*TypeIerror)), "% false positive!"))
+``` 
+
+
+### Publication bias
+
+Successful publication of the results of a clinical trial will depend
+on referees and editors of suitable journals.  Papers reporting
+positive (typically ``significant'') findings are more likely to be
+published than those that do not.  This will lead to *publication bias*.
+Also, papers are more likely to be written and submitted by the
+investigators of the outcome of the trial was positive.
+
+Some attempts have been made to address this problem,
+e.g. *mandatory registration* of clinical trials before the study
+is conducted: (http://clinicaltrials.gov/). Today, trial results
+are required to be published on this website within 1 year after the trial
+has finished.
+
+
+## Target trials (RWE)
+
+```{}
+TODO: add text of RWE and target trials 
+```
+
+
+## Additional references
+
+An introduction to randomized controlled clinical trials is given in @matthews. The design of experiments is discussed in \citet[Chapter 2]{bland}. Regression to the mean is discussed in the Statistics Notes @SN_regrtothemean,SN_exregrtothemean. A practical example for allocation concealment is @adamsen, and @hijazi for convenience sampling.
+

@@ -1,0 +1,113 @@
+--- 
+title: "Clinical Biostatistics"
+author: "Leonhard Held, Charlotte Micheloud"
+date: "`r Sys.Date()`"
+site: bookdown::bookdown_site
+output: bookdown::gitbook
+documentclass: book
+bibliography: bib.bib  
+biblio-style: apalike
+link-citations: yes
+github-repo: rstudio/bookdown-demo
+description: "Adapted from the lecture notes from STA404: Clinical Biostatistics."
+---
+
+\newcommand{\eg}{\abk{\latin{e.\,g}}} 
+\usepackage[textsize=scriptsize]{todonotes}
+\usepackage{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\newcommand{\given}{\,\vert\,} 
+\def\SE{\mbox{se}}
+\def\EF{\mbox{EF}}
+\newcommand{\LOA}{\mbox{LoA}}
+\newcommand{\LOAlow}{\mbox{LoA}_{\tiny \mbox{low}}}
+\newcommand{\LOAup}{\mbox{LoA}_{\tiny \mbox{up}}}
+\def\pobs{p_\mathrm{obs}}
+\def\pexp{p_\mathrm{exp}}
+\DeclareMathOperator{\Nor}{N} % Normal
+\newcommand{\abs}[1]{\left\lvert#1\right\rvert} % Absolutbetrag
+
+% Operatoren
+\renewcommand{\P}{\operatorname{\mathsf{Pr}}} % probability (P was already def.)
+\DeclareMathOperator{\E}{\mathsf{E}} % expectation
+\DeclareMathOperator{\Var}{Var} % variance
+\DeclareMathOperator{\se}{se} % standard error
+\DeclareMathOperator{\Cov}{Cov} % covariance
+\DeclareMathOperator{\Cor}{Cor} % correlation
+\DeclareMathOperator{\sign}{sign} % signum
+\DeclareMathOperator{\logit}{logit} % logit fct.
+\DeclareMathOperator{\expit}{expit} % expit fct.
+\DeclareMathOperator{\Mod}{Mod} % mode
+\DeclareMathOperator{\Med}{Med} % median
+\DeclareMathOperator{\diag}{diag} % diagonal matrix
+\DeclareMathOperator{\trace}{tr} % trace
+\DeclareMathOperator{\Bin}{Bin} % Binomial
+
+\def\PE{\mbox{PE}}
+\def\OR{\mbox{OR}}
+\def\HR{\mbox{HR}}
+\def\RR{\mbox{RR}}
+\def\EF{\mbox{EF}}
+\def\RV{\mbox{RV}}
+\def\RD{\mbox{RD}}
+\def\ARR{\mbox{ARR}}
+\def\RRR{\mbox{RRR}}
+\def\NNT{\mbox{NNT}}
+{\widehat{#2}_{\scriptscriptstyle{ML}}}
+\newcommand{\Deff}{D$_{\small{eff}}$ % Varianz
+\newcommand{\sima}{\mathrel{\overset{a}{\thicksim}}} % approx. Vtlg.
+
+# Preface {-}
+
+<div style="text-align: right;">
+"Medicine is a science of uncertainty and an art of probability." <br>
+William Osler (1849-1919).
+</div>
+
+Biostatistics is the science of managing medical uncertainty. Biostatistical methods play a key role in the scientific assessment of the three main areas of medical practice:
+- Diagnosis
+- Treatment
+- Prognosis
+
+<div style="text-align: right;">
+  Leonhard Held
+  
+  `r Sys.Date()`
+</div>
+
+
+
+
+
+
+
+
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE,
+                      cache = FALSE, 
+                      fig.align = 'center')
+
+knitr::opts_chunk$set(
+  todo = function(text) {
+    if (knitr::is_html_output()) {
+      sprintf('<div class="todo">%s</div>', text)
+    } else if (knitr::is_latex_output()) {
+      sprintf('\\todo{%s}', text)
+    } else {
+      text
+    }
+  }
+)
+```
+
+
+```{r include=FALSE}
+# automatically create a bib database for R packages
+knitr::write_bib(c(
+  .packages(), 'bookdown', 'knitr', 'rmarkdown'
+), 'packages.bib')
+```

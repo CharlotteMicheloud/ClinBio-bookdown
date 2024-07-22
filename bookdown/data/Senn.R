@@ -1,0 +1,11 @@
+
+
+## Data from Table 3.1 in Senn "Cross-Over Trials in Clinical Research"
+
+ForSal <- c(40,50,70,20,40,30,-35)
+SalFor <- c(-15,-90,-30,-30,-80,-130)
+
+res <- t.test(ForSal, SalFor)
+(estimate <- (res$estimate[1]-res$estimate[2])/2)
+
+round(res$conf.int/2)

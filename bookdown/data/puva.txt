@@ -1,0 +1,6 @@
+treatment plaqueSize cleared total
+TL-01 Small 23 29
+TL-01 Large 9 22
+PUVA Small 25 28
+PUVA Large 16 21
+
