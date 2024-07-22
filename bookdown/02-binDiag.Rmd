@@ -593,7 +593,8 @@ title("Contour plot of DOR")
  -  proportions (e.g.~sensitivity, specificity)
  -  ratios of proportions (e.g.~likelihood ratios)
 
- Details how to construct confidence intervals  can be found in Appendix \@ref(app:CI).
+Details how to construct confidence intervals  can be found in Appendix \@ref(app:CI).
+ 
 ### Proportions
 
 :::{.example}
@@ -606,7 +607,7 @@ knitr::include_graphics("figures/Arroll_etal2003_Tables.png")
 
 
 
-:::{.example covid}
+:::{.example #covid}
  Accuracy of Covid-19 Home-Testing Kits [@Schuit2022], see Figure~\@ref(fig:schuit).
 :::
 

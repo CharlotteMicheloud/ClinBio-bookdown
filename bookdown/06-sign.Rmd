@@ -952,36 +952,43 @@ kable(df, format = "html", caption = "Required sample size depending on type I a
 
 
 :::{.example}
-A study is to be carried out in a rural area of Africa to ascertain whether
-giving food supplementation during pregnancy increases birth 
-weight @KirkwoodSterne (p.418).
-A clinically relevant effect of $\Delta = 0.25$kg was selected and a standard
-deviation of $\sigma = 0.4$kg was assumed. 
-A Type-I error rate of $\alpha = 0.01$ and a power of 
-$1 - \beta = 0.95$ were agreed on.
+A randomized controlled trial is conducted to assess the clinical and 
+cost effectiveness of conservative management compared with 
+laparoscopic cholecystectomy for the prevention of symptoms and complications 
+in adults with uncomplicated symptomatic gallstone disease. 
+[put citation here]. 
+
+A clinically relevant effect of $\Delta = 0.33$ standard deviations
+was selected, what about sd?
+A Type-I error rate of $\alpha = 0.05$ and a power of 
+$1 - \beta = 0.90$ were agreed on.
 :::
 
 
 ```{r echo=TRUE}
 library(biostatUZH)
-power.z.test(delta=0.25, sd=0.4, sig.level=0.01, power=.95)
+power.z.test(delta = 0.33, sd = 1, sig.level = 0.05, power=.90)
 ```
 
 ```{r echo=FALSE}
-n <- power.z.test(delta=0.25, sd=0.4, sig.level=0.01, power=.95)$n
+n <- power.z.test(delta = 0.33, sd = 1, sig.level = 0.05, power=.90)$n
 ``` 
-We need $n = `r ceiling(n)`$ women in each group.
 
-Exact calculations based on the t-test give a slightly larger value for $n$:
+$n = `r ceiling(n)`$ patients are needed in each group.
+
+Exact calculations based on the t-test give a slightly larger value for $n$, 
+which corresponds to the value given in [cite]:
 
 ```{r echo=TRUE}
-power.t.test(delta=0.25, sd = 0.4, sig.level=0.01, power=0.95)
+power.t.test(delta = 0.33, sd = 1, sig.level = 0.05, power=.90)$n
 ``` 
 
-A possible statement in trial protocol could be:
-``A two-sample t-test with two-sided significance level 0.01 will have
-95 \% power to detect a mean difference of 0.25kg, given a common 
-standard deviation of 0.4kg, when the sample size in each group is 93.''
+The exact statement in the paper reads: 
+"A  sample  size  of  194  in  each  group  was  needed  to  
+detect  a  mean  difference  in  area  under  the  curve  of  
+0.33 standard deviations derived from the SF-36 bodily 
+pain domain with 90% power and a 5% (two sided $\alpha$) 
+significance level."
  
 
 #### Minimum detectable difference
@@ -1076,11 +1083,16 @@ $\Delta = h(\pi_1) - h(\pi_0)$ and standard deviation $\sigma = 1/2$.
 
 
 :::{.example}
-An RCT was conducted to compare surgical biliary bypass and 
-endoscopic insertion of a stent for the management of malignant low bile duct 
-obstruction [@Smith1994]. The primary outcome was 30 days mortality, and
-a mortality drop of $\Delta = 20\% - 5\%  = 15\%$ was considered clinically 
-relevant. A power of 95\% and Type-I error rate of 5\% were agreed on. 
+Here put the example of Futier [and cite]. 
+
+
+An RCT was conducted to investigate the effectiveness 
+of oral antimicrobial prophylaxis on surgical site infection after elective 
+colorectal surgery. [cite]
+The primary outcome was the proportion of patients with surgical 
+site infection within 30 days after surgery, and
+a difference in proportion of $\Delta = 15\% - 9\%  = 6\%$ was considered clinically 
+relevant. A power of 80\% and Type-I error rate of 5\% were agreed on. 
 :::
 
 
@@ -1098,21 +1110,27 @@ num <- (u*sqrt(p1*(1-p1)+p0*(1-p0))+v*sqrt(2*pbar*(1-pbar)))^2
 den <- (p0-p1)^2
 n <- num/den
 ``` 
-%
+
 The required sample size can be calculated using \code{R}:
 ```{r echo=TRUE}
-power.prop.test(p1=0.2, p2=0.05, sig.level=0.05, power=0.95)
+power.prop.test(p1=0.15, p2=0.09, sig.level=0.05, power=0.9)
 ``` 
-A possible statement in trial protocol could be:
-"A sample size of `r round(n)` patients in each group will have 95\% power 
-to detect a difference in event rate between the two groups with two-sided 
-significance level 0.05 when the proportion of patients experiencing the event 
-of interest is 0.2 in Group 1 and 0.05 in Group 2."
+The statement in the paper is: 
+"Assuming a 15% rate of surgical site infections 
+with  placebo,5  6  13  we  estimated  that  enrolling  920  
+patients  would  provide  80%  power  to  detect  a  40%
+R E S E A R C H 
+4 doi: 10.1136/bmj-2022-071476 | BMJ 2022;379:e071476 | the bmj
+relative  between  group  difference  in  the  incidence  of  
+the  primary  outcome  (ie,  15%  in  the  placebo  group  
+and  9%  in  the  oral  ornidazole  group),13  with  a  5%  
+two  sided  type  I  error.  "
 
-The alternative approach based on the variance-stabilizing transformation gives a somewhat smaller sample size: 
+The alternative approach based on the variance-stabilizing transformation 
+gives a somewhat smaller sample size: 
 ```{r echo=TRUE}
 h <- function(p) asin(sqrt(p))
-power.z.test(delta=h(0.2)-h(0.05), sd=0.5, power=.95)
+power.z.test(delta=h(0.15)-h(0.09), sd=0.5, power=.8)
 ``` 
 
 
