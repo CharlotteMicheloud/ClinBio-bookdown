@@ -118,24 +118,18 @@ text(26.5, 73, labels=paste("max power = ", as.character(round(max(power*100))),
 The problem of unbalanced group sizes can be solved by using a form of restricted randomization with so-called *random permuted blocks* (RPBs). For example, with blocks of length 4, there are the following six different sequences of length 4 that comprise two As and two Bs:
 
 ```{r, results='asis', echo=FALSE}
+
 library(knitr)
 library(kableExtra)
+data <- data.frame(
+  row_num = c(1, 2, 3, 4, 5, 6), 
+  col1 = c("A", "A", "A", "B", "B", "B"),
+  col2 = c("A", "B", "B", "B", "A", "A"),
+  col3 = c("B", "B", "A", "A", "A", "B"),
+  col4 = c("B", "A", "B", "A", "B", "A"))
 
-# Define the table data
-df <- data.frame(
-  row1 = c("$N_A$", "$0$", "$1$", "$\\dots$", "$n - 1$", "$n$", "$n + 1$", "$\\dots$", "$2n - 1$", "$2n$"),
-  row2 = c("$N_B$", "$2n$", "$2n - 1$", "$\\dots$", "$n + 1$", "$n$", "$n - 1$", "$\\dots$", "$1$", "$0$"),
-  row3 = c("$N_{\\max}$", "$2n$", "$2n - 1$", "$\\dots$", "$n + 1$", "$n$", "$n + 1$", "$\\dots$", "$2n - 1$", "$2n$")
-)
-
-# Transpose the data frame to match the table layout
-df <- as.data.frame(t(df))
-
-# Print the table using kable
-kable(df, format = "html", escape = FALSE, col.names = c("", "", "", "", "", "", "", "", "", "")) %>%
-  kable_styling(full_width = FALSE, position = "center") %>%
-  column_spec(1, width = "1cm") %>%
-  column_spec(2:10, width = "1cm")
+kable(data, format = "html", escape = FALSE, col.names = NULL) %>%
+  kable_styling(full_width = FALSE, position = "center")
 ```
 
 In this case, the randomization selects randomly a block for every group of four patients. Block randomization using RPBs of length 4 ensures that group sizes never differ by more than 2. After every fourth patient, the two treatment groups must have the same size.
@@ -157,7 +151,7 @@ df <- data.frame(
 )
 
 # Print the table using kable
-kable(df, format = "html", escape = FALSE, col.names = c("", "1", "2", "3", "4", "5", "6")) %>%
+kable(df, format = "html", escape = FALSE, col.names = NULL) %>%
   kable_styling(full_width = FALSE, position = "center")
 ```
 
@@ -173,9 +167,24 @@ obj4 <- pbrPar(bc=4)
 getAllSeq(obj4)
 ```
 
+:::{.example #ulcers}
+Am RCT was conducted to examine the use of cold atmosperic plasma 
+as a method to treat diabetic foot ulcers [@Mirpour2020]. Statement from the 
+Methods section: 
+"Patients were randomly, double-blinded, assigned to an SC groupe or SC + CAP
+using bloc randomization with mixing block sizes of $4$. The size of blocks
+was not disclosed for minimizing the chance of cracking the code. 
+An investigator with no clinical involvement in the trial prepared a
+computer random number list for block randomization. A trained physician and 
+nurse who were blinded to the randomization method and treatment assignment 
+collected the data. The data also were analyzed by a blinded
+investigator to the study groups."
+:::
 
-
-In some instances, knowledge of the block length and of previous treatments allows the next treatment to be predicted. This may cause {selection bias}. RPBs with *random block length* have been suggested to avoid the potential for selection bias.
+In some instances, knowledge of the block length and of previous treatments
+allows the next treatment to be predicted. This may cause *selection bias*.
+RPBs with *random block length* have been suggested to avoid the potential for
+selection bias.
 
 ```{example}
 R code for RBPs with random block length 2 and 4:

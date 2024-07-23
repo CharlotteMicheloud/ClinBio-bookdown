@@ -590,8 +590,8 @@ title("Contour plot of DOR")
 
  There are different methods to compute a CI for
 
- -  proportions (e.g.~sensitivity, specificity)
- -  ratios of proportions (e.g.~likelihood ratios)
+ -  proportions (e.g. sensitivity, specificity)
+ -  ratios of proportions (e.g. likelihood ratios)
 
 Details how to construct confidence intervals  can be found in Appendix \@ref(app:CI).
  
@@ -608,7 +608,7 @@ knitr::include_graphics("figures/Arroll_etal2003_Tables.png")
 
 
 :::{.example #covid}
- Accuracy of Covid-19 Home-Testing Kits [@Schuit2022], see Figure~\@ref(fig:schuit).
+ Accuracy of Covid-19 Home-Testing Kits [@Schuit2022], see Figure \@ref(fig:schuit).
 :::
 
 ```{r schuit, fig.cap = "Sensitivities with 95% confidence intervals for the Flexflow rapid antigen test."}
@@ -747,7 +747,7 @@ prop.test(x=629, n=726, correct=FALSE)$conf.int
 
 
   The exact procedure how to calculate a 95\% confidence interval for a
-  likelihood ratio is as follows, compare Table~\@ref(tab:notation) for notation:
+  likelihood ratio is as follows, compare Table \@ref(tab:notation) for notation:
 
   1.  Calculate standard error on log scale:
   \begin{eqnarray*}
@@ -780,7 +780,7 @@ prop.test(x=629, n=726, correct=FALSE)$conf.int
 ### Diagnostic odds ratio
 
   The confidence interval for the diagnostic odds ratio is also of
-  "multiply/divide" type, again compare Table~\@ref(tab:notation) for
+  "multiply/divide" type, again compare Table \@ref(tab:notation) for
   notation.
 
   -  Calculate standard error on log scale:
@@ -820,11 +820,11 @@ The apparent prevalence is $\Pr(Y=1)$, the true prevalence is $\Pr(D=1)$
 If the study follows a cohort design, then confidence intervals can be computed for PPV, NPV and disease prevalence directly from the data.  This is what the function `epi.tests()` always computes. The function `confIntDiagnostic()` also computes CIs for PPV and NPV for a pre-specified prevalence {\tt pr}. This approach is based on
 
   -  The limits of a confidence interval for $\mbox{{LR}}^+$
-     (resp.~$\mbox{{LR}}^-$) are computed as described in Section
+     (resp. $\mbox{{LR}}^-$) are computed as described in Section
       \@ref(sec:CIforLR).
   -  Multiplication with ${\mbox{Prev}}/({1-\mbox{Prev}})$ gives the limits of
-      a confidence interval for ${\mbox{PPV}/(1-\mbox{PPV})}$ resp.~${(1-\mbox{NPV})/\mbox{NPV}}$ according to  equation \eqref{eq:PPVBayes} resp.~\eqref{eq:NPVBayes}.
-    -  Confidence intervals for $\mbox{PPV}$ resp.~$\mbox{NPV}$ can be obtained by the usual transformation of the limits obtained in 2.~to the  probability scale.
+      a confidence interval for ${\mbox{PPV}/(1-\mbox{PPV})}$ resp. ${(1-\mbox{NPV})/\mbox{NPV}}$ according to  equation \eqref{eq:PPVBayes} resp. \eqref{eq:NPVBayes}.
+    -  Confidence intervals for $\mbox{PPV}$ resp. $\mbox{NPV}$ can be obtained by the usual transformation of the limits obtained in 2. to the  probability scale.
 
 
 

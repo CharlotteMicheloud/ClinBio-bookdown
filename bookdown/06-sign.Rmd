@@ -951,12 +951,11 @@ kable(df, format = "html", caption = "Required sample size depending on type I a
 ```
 
 
-:::{.example}
+:::{.example #laparo}
 A randomized controlled trial is conducted to assess the clinical and 
 cost effectiveness of conservative management compared with 
 laparoscopic cholecystectomy for the prevention of symptoms and complications 
-in adults with uncomplicated symptomatic gallstone disease. 
-[put citation here]. 
+in adults with uncomplicated symptomatic gallstone disease [@Ahmed2023].
 
 A clinically relevant effect of $\Delta = 0.33$ standard deviations
 was selected, what about sd?
@@ -977,7 +976,7 @@ n <- power.z.test(delta = 0.33, sd = 1, sig.level = 0.05, power=.90)$n
 $n = `r ceiling(n)`$ patients are needed in each group.
 
 Exact calculations based on the t-test give a slightly larger value for $n$, 
-which corresponds to the value given in [cite]:
+which corresponds to the value given in @Ahmed2023:
 
 ```{r echo=TRUE}
 power.t.test(delta = 0.33, sd = 1, sig.level = 0.05, power=.90)$n
@@ -1082,13 +1081,10 @@ This corresponds to the traditional formula for continuous outcomes with clinica
 $\Delta = h(\pi_1) - h(\pi_0)$ and standard deviation $\sigma = 1/2$.
 
 
-:::{.example}
-Here put the example of Futier [and cite]. 
-
-
+:::{.example #prophy}
 An RCT was conducted to investigate the effectiveness 
 of oral antimicrobial prophylaxis on surgical site infection after elective 
-colorectal surgery. [cite]
+colorectal surgery [@Futier2022].
 The primary outcome was the proportion of patients with surgical 
 site infection within 30 days after surgery, and
 a difference in proportion of $\Delta = 15\% - 9\%  = 6\%$ was considered clinically 
@@ -1136,11 +1132,21 @@ power.z.test(delta=h(0.15)-h(0.09), sd=0.5, power=.8)
 
 ### Adjusting for loss to follow-up
 
-In practice, the calculated sample size $n$ should be increased to allow for possible non-response or loss to follow-up. If a drop-out rate of $x$ \% can be anticipated, then we obtain the *adjusted sample size*
+In practice, the calculated sample size $n$ should be increased to
+allow for possible non-response or loss to follow-up.
+If a drop-out rate of $x$ \% can be anticipated, then we obtain
+the *adjusted sample size*
 \[
   n^\star = \underbrace{\frac{100}{100-x}}_{\tiny \mbox{adjustment factor}} \cdot \,\, n
 \]
-For example, to incorporate a drop-out rate of 20\%, we need to use an adjustment factor of $100/80 = 1.25$.
+For example, to incorporate a drop-out rate of 20\%,
+we need to use an adjustment factor of $100/80 = 1.25$.
+
+In the study presented in Example \@ref(exm:laparo), a drop-out rate of 10\%
+was expected, so 430 patients were required. In the Example \@ref(exm:prophy), 
+the sample size was inflated to 960 patients to account for a 5\% loss to
+follow-up. 
+
 
 ### Study designs with unequal group sizes
 
