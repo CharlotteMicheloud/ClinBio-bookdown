@@ -1,0 +1,6 @@
+# To discuss: 
+
+- I have started to replace old examples with newer ones. Some come from the 
+Lab papers, others I found. 
+
+- Is it okay to have screenshot of tables/figures from a published paper? 
