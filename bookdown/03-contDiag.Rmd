@@ -249,9 +249,16 @@ curve that has maximal distance to the diagonal line. However, this
 approach assumes that sensitivity and specificity are equally
 important and disease prevalence is also not taken into account.
 
+:::{.example #PSA}
+@Jen2020 conducted a study to assess the diagnostic performance of 
+prostate-specific antigen (PSA) corrected for sojourn time. 
+In order to maximize Youden's index, a cut-off value of 2.5 ng/ml
+was chosen, for which the sensitivity was 75.3\% and 
+the specificity 85.2\%. 
+:::
 
-
-Consideration has to be given to the *cost ratio* of a false positive to a false negative diagnosis. Also the prevalence (\mbox{Pre}) of the disease in the population to be tested is important.
+Consideration has to be given to the *cost ratio* of a false positive to a false negative diagnosis. 
+Also the prevalence (Pre) of the disease in the population to be tested is important.
 
 :::{.definition}
   The *optimal cut-off* minimizes the overall cost and this is where

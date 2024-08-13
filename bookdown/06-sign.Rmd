@@ -232,7 +232,7 @@ axis(1, c(1, 2), c("Drug 1", "Drug 2"), padj = 0.5)
 ```
 
 ```{r echo=T}
-res <- t.test(extra ~ group, data = sleep, paired=TRUE)
+res <- t.test(extra ~ group, data = sleep)
 # extra: extra hours of sleep 
 # group: drug 
 print(res)
