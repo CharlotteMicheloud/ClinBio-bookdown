@@ -10,6 +10,7 @@ biblio-style: apalike
 link-citations: yes
 github-repo: rstudio/bookdown-demo
 description: "Adapted from the lecture notes from STA404: Clinical Biostatistics."
+always_allow_html: yes
 ---
 
 \newcommand{\eg}{\abk{\latin{e.\,g}}} 
