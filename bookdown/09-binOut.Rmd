@@ -105,9 +105,9 @@ points(p2*100, 1.3, col=2, pch=19)
 
 
 ### Statistical tests
-Commonly used tests to compare two proportions are the \emph{$\chi^2$-test} and *Fisher's "exact" test*, explained in Appendix \@ref(app:pvalues). The null hypothesis in these tests is that there is no difference between groups. Both methods give a $P$-value, but no effect measure. There is a second version of the $\chi^2$-test with *continuity correction*. There are at least *three* different versions to calculate the *two-sided* $P$-value for Fisher's ``exact'' test (see the \code{R} package \code{exact2x2} for details). Fisher's exact test should be used for small samples.
+Commonly used tests to compare two proportions are the \emph{$\chi^2$-test} and *Fisher's "exact" test*, explained in Appendix \@ref(Pvalues). The null hypothesis in these tests is that there is no difference between groups. Both methods give a $P$-value, but no effect measure. There is a second version of the $\chi^2$-test with *continuity correction*. There are at least *three* different versions to calculate the *two-sided* $P$-value for Fisher's ``exact'' test (see the \code{R} package \code{exact2x2} for details). Fisher's exact test should be used for small samples.
 
-:::{.example}
+:::{.example #apsactest}
 R code for statistical tests comparing two proportions in the APSAC Study:
 :::
 

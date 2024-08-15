@@ -325,7 +325,7 @@ aspect can be neglected.
 Figure \@ref(fig:preeclampsiaMA) shows also the results of a random 
 effects analysis, together with the estimated Higgins' $I^2$ and 
 heterogeneity variance $\tau^2$, in the preeclampsia 
-Example \@ref(ex:preeclampsia).
+Example \@ref(exm:preeclampsia).
 
 
 
@@ -343,12 +343,12 @@ nature and direction. Sources of reporting bias are:
 Consequently, there is danger of false conclusions and patient harm.
 
 ### Funnel plot
-A funnel plot is a scatter plot of a measure of study size, usually the (reversed) standard error, against the estimated treatment effects from individual studies. See the funnel plot for the preeclampsia data as an example in Figure\@ref(fig:preeclampsiaFunnel). The smaller the study size, the wider the spread of the treatment effects and vice versa. If there is no bias, the point cloud has the form of a funnel (symmetrical). If there is bias, it is asymmetrical. However, it is an explorative tool and there is no quantitative information on the amount or the source of the bias.
+A funnel plot is a scatter plot of a measure of study size, usually the (reversed) standard error, against the estimated treatment effects from individual studies. See the funnel plot for the preeclampsia data as an example in Figure \@ref(fig:preeclampsiaFunnel). The smaller the study size, the wider the spread of the treatment effects and vice versa. If there is no bias, the point cloud has the form of a funnel (symmetrical). If there is bias, it is asymmetrical. However, it is an explorative tool and there is no quantitative information on the amount or the source of the bias.
 Funnel plots and tools for meta-analysis in R are provided by packages meta and rmeta.
 
 
 
-```{r preeclampsiaFunnel, fig.cap = "Funnel plot for preeclampsia data from Example~\\@ref(ex:preeclampsia)", echo=FALSE}
+```{r preeclampsiaFunnel, fig.cap = "Funnel plot for preeclampsia data from Example \\@ref(exm:preeclampsia)", echo=FALSE}
 par(las = 1)
 funnel(meta1)
 ``` 
@@ -391,12 +391,12 @@ the idea of the trim-and-fill method is to:
 
 
 :::{.example #stroke}
-Figure~\@ref(fig:trimfillStroke) illustrates the trim-and-fill method for 
+Figure \@ref(fig:trimfillStroke) illustrates the trim-and-fill method for 
 11 studies of the effect of using gangliosides in reducing case fatality and disability in acute ischaemic stroke.
 :::
 
 
-```{r trimfillStroke, echo=FALSE, fig.cap="Trim-and-fill method in Example~\\@ref(ex:stroke). The black circles represent the 11 observed studies whereas the red studies on the left are imputed, based on symmetrically 'mirroring' the trimmed studies on the right."}
+```{r trimfillStroke, echo=FALSE, fig.cap="Trim-and-fill method in Example \\@ref(exm:stroke). The black circles represent the 11 observed studies whereas the red studies on the left are imputed, based on symmetrically 'mirroring' the trimmed studies on the right."}
 knitr::include_graphics("figures/fig-trimfill05.pdf")
 ```
 
@@ -487,9 +487,9 @@ plotCI(sum_trim_d$random$TE, -0.5, ui=sum_trim_d$random$upper, li=sum_trim_d$ran
     ylab="", sfrac=0.03, gap=0.8, add=TRUE, pt.bg=2, col=2) 
 ```
 
-:::{.example}
-Data from the passive smoking example is illustrated in Figure~\@ref(fig:smoking_funnel2).
-Results from the trim-and-fill method are shown in Figure~\@ref(fig:trimfill_smoking). The summary effect with (in red) and without (in black) the results from the imputed studies is shown at the bottom.
+:::{.example #smoking}
+Data from the passive smoking example is illustrated in Figure \@ref(fig:smokingFunnel2).
+Results from the trim-and-fill method are shown in Figure \@ref(fig:trimfillSmoking). The summary effect with (in red) and without (in black) the results from the imputed studies is shown at the bottom.
 :::
 
 
@@ -526,7 +526,7 @@ kable(
 ```
 
 
-```{r trimfillSmoking, echo=FALSE, fig.cap="Trim-and-fill method in the passive smoking Example~\\@ref(ex:smoking).", fig.align='center'}
+```{r trimfillSmoking, echo=FALSE, fig.cap="Trim-and-fill method in the passive smoking Example \\@ref(exm:smoking).", fig.align='center'}
 knitr::include_graphics("figures/fig-trimfill07.pdf")
 ```
 

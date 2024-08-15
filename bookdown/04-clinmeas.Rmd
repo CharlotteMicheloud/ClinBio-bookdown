@@ -529,7 +529,9 @@ we have to proceed as follows:
 ## Agreement of two methods with binary variables
 
 :::{.example}
-179 patients completed a *Symptom Interpretation Questionnaire* on two occasions three years apart. Then they were classified how they were able to cope with symptoms @KirkwoodSterne (p.~434, Ex.36.3).
+179 patients completed a *Symptom Interpretation Questionnaire* 
+on two occasions three years apart. Then they were classified how they were 
+able to cope with symptoms @KirkwoodSterne (p. 434, Ex.36.3).
 :::
 
 
@@ -576,7 +578,7 @@ d2 <- mat.exp[2, 2]
 n2 <- mat.exp[3, 3]
 ```
 
-```{r, echo = FALSE, message = FALSE}
+```{r exbinary, echo = FALSE, message = FALSE}
 library(dplyr)
 # Create the data frame
 data <- data.frame(
@@ -617,7 +619,7 @@ pexp <- (a2 + d2) / n2
 kappa <- (pobs - pexp) / (1 - pexp)
 ```
 
-```{r}
+```{r expected}
 # Create the data frame
 data <- data.frame(
   "First classification" = c("normalizer", "non-normalizer", "Total"),

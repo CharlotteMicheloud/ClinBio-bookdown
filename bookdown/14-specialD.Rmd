@@ -233,7 +233,7 @@ To assess equivalence, we compute a confidence interval at level $\gamma$ for th
 
 $$\alpha \approx (1-\gamma)/2,$$
 
-as shown in Appendix \@ref(app:equivalenceT1E).
+as shown in Appendix \@ref(equiv).
 
 For $\gamma=90\%$, we have $\alpha\approx 0.05$ and for $\gamma=95\%$, we have  $\alpha\approx 0.025$.
 
@@ -433,7 +433,10 @@ knitr::include_graphics("figures/Holland_etal2016BackgroundMethods.pdf")
 
 
 
-Consider the hypotheses $H_0: \abs{\Delta} > \delta$ and $H_1: \abs{\Delta} \leq \delta$. The type I error rate is calculated for $\Delta = \delta$. The power $1-\beta$ is computed at the center $\Delta=0$ of $H_1$. Appendix \@ref(app:equivalenceSS) shows that the required sample size in each group then is:
+Consider the hypotheses $H_0: \abs{\Delta} > \delta$ and 
+$H_1: \abs{\Delta} \leq \delta$. The type I error rate is calculated for $\Delta = \delta$. 
+The power $1-\beta$ is computed at the center $\Delta=0$ of $H_1$.
+Appendix \@ref(equiv) shows that the required sample size in each group then is:
 
 \begin{eqnarray*}
 n &=& \frac{2 \sigma^2(z_{\alert{(1+\gamma)/2}}+z_{\alert{1-{\beta/2}}})^2}{\delta^2} \\

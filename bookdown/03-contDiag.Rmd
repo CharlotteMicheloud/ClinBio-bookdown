@@ -136,7 +136,7 @@ a randomly selected control:
 \mbox{AUC} = \Pr(Y_D > Y_{\bar D}).
 \]
 
-A proof of this result can be found in Appendix \@ref(app:AUC). 
+A proof of this result can be found in Appendix \@ref(ROC). 
 Most tests have values between 0.5 (useless test) and 1.0 (perfect test).
 
 

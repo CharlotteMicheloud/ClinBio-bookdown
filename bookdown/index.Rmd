@@ -18,6 +18,9 @@ always_allow_html: yes
 \usepackage{geometry}
 \usepackage{amsmath}
 \usepackage{amssymb}
+\usepackage{xifthen}
+\usepackage{ifthen}
+\usepackage{dsfont} % for the indicator function
 \newcommand{\given}{\,\vert\,} 
 \def\SE{\mbox{se}}
 \def\EF{\mbox{EF}}
@@ -28,6 +31,7 @@ always_allow_html: yes
 \def\pexp{p_\mathrm{exp}}
 \DeclareMathOperator{\Nor}{N} % Normal
 \newcommand{\abs}[1]{\left\lvert#1\right\rvert} % Absolutbetrag
+\newcommand{\Ind}{\mathsf{I}} % Indikatorfunktion
 
 % Operatoren
 \renewcommand{\P}{\operatorname{\mathsf{Pr}}} % probability (P was already def.)
@@ -44,6 +48,12 @@ always_allow_html: yes
 \DeclareMathOperator{\diag}{diag} % diagonal matrix
 \DeclareMathOperator{\trace}{tr} % trace
 \DeclareMathOperator{\Bin}{Bin} % Binomial
+
+\newcommand{\partials}[3][]{
+  \ifthenelse{\isempty{#1}}
+  {\frac{d\,#2}{d\,#3}}
+  {\frac{d^{#1} #2}{d\,#3^{#1}}}
+} 
 
 \def\PE{\mbox{PE}}
 \def\OR{\mbox{OR}}

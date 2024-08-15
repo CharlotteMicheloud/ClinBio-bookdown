@@ -460,8 +460,10 @@ If the reference value lies just on the boundary of the CI,
 then the $P$-value is $1-\gamma$. 
 
 
-It is useful to compare hypothesis tests to diagnostic tests as discussed in Chapter \@ref(chap:slides1).
-If we consider a significant test result as a positive test and equate the null hypothesis of no effect
+It is useful to compare hypothesis tests to diagnostic tests as discussed in 
+Chapter \@ref(binDiag).
+If we consider a significant test result as a positive test and equate the 
+null hypothesis of no effect
 with a non-diseased person then we see the following equivalences: 
 
 | Hypothesis test                  | Diagnostic test                          |
@@ -859,8 +861,8 @@ We need:
 
 
 The classification of Cohen's $d$ and the corresponding 
-AUC can be found in Table~\@ref(tab:cohenTBL) and are illustrated in 
-Figure~\@ref(fig:cohen).
+AUC can be found in Table \@ref(tab:cohenTBL) and are illustrated in 
+Figure \@ref(fig:cohen).
 
 
 
@@ -912,7 +914,11 @@ plotd(d = 0.8)
 
 
 Suppose $d=1$, so the clinically relevant difference $\Delta$ equals the 
-standard deviation $\sigma$ of the measurements. Table~\@ref(tab:samplesize_cont) gives for this case the required sample size $n=2(u+v)^2$ in each group. The numbers have to be adjusted for different values of $d$. For example, if $d = 1/2$ then the numbers have to be multiplied with 4.
+standard deviation $\sigma$ of the measurements.
+Table \@ref(tab:samplesizecont) gives for this case the required
+sample size $n=2(u+v)^2$ in each group. The numbers have to be adjusted 
+for different values of $d$. For example, if $d = 1/2$ then the numbers 
+have to be multiplied with 4.
 
 ```{r echo=FALSE}
 u1 <- qnorm(0.975)
@@ -1071,8 +1077,9 @@ n = \left(\frac{v\sqrt{\hat\pi_1 (1 - \hat\pi_1) + \hat\pi_0(1 - \hat\pi_0)} +
   u\sqrt{2\bar\pi(1 - \bar\pi)}}{\Delta}\right)^2
 \end{eqnarray}
 
-An alternative approach based on the *arcsine square root transformation* (also variance-stabilizing transformation) $h(\pi) = \arcsin(\sqrt{\pi})$ is described in @matthews (Sec.~3.4) where
-%
+An alternative approach based on the *arcsine square root transformation* 
+(also variance-stabilizing transformation) $h(\pi) = \arcsin(\sqrt{\pi})$ is described in @matthews (Sec. 3.4) where
+
 \[
 n = \frac{(u+v)^2}{2\{h(\pi_1) - h(\pi_0)\}^2}.
 \]
@@ -1177,7 +1184,7 @@ n_0 & = & n_1/c
 
 where $n$ is the required sample size for equal-sized groups. 
 The total sample size $n_0+n_1$ increases with increasing ratio $c$, 
-as illustrated in Figure~\@ref(fig:uneqgroupsize). 
+as illustrated in Figure \@ref(fig:uneqgroupsize). 
 This indicates that the greater the imbalance, the larger the total sample size 
 needs to be.
 

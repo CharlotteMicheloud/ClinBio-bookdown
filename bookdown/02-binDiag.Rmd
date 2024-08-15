@@ -1,4 +1,4 @@
-# Binary diagnostic tests 
+# Binary diagnostic tests {#binDiag}
 
 
 ## Diagnostic accuracy studies
@@ -595,7 +595,8 @@ title("Contour plot of DOR")
  -  proportions (e.g. sensitivity, specificity)
  -  ratios of proportions (e.g. likelihood ratios)
 
-Details how to construct confidence intervals  can be found in Appendix \@ref(app:CI).
+Details how to construct confidence intervals  can be found in Appendix
+\@ref(confint).
  
 ### Proportions
 

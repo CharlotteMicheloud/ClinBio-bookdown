@@ -172,7 +172,7 @@ We can compare the follow-up measurements in two groups
 -  with a $t$-test in case of *equal variances*,
 -  with Welch's-test or Behrens test in case of *unequal variances*.
 
-The $t$-test is explained in Appendix \@ref(app:pvalues) (and also the $z$-test). 
+The $t$-test is explained in Appendix \@ref(Pvalues) (and also the $z$-test). 
 Alternative methods that adjust for baseline values are discussed in 
 Section \@ref(sec:baseline).
 
@@ -360,7 +360,8 @@ print(res3 <- t.test(change.score ~ treatment, var.equal=TRUE))
 (DifferenceInMeans <- mean(res3$conf.int))  
 ```
 
-This result can also be found in an extract of the reported results in Figure~\@ref(fig:didgeridootab2).
+This result can also be found in an extract of the reported results in 
+Figure \@ref(fig:didgeridootab2).
 
 ```{r didgeridootab2, fig.cap="Reported results of the Didgeridoo Study.", out.width="90%", fig.align='center', echo = FALSE}
 knitr::include_graphics("figures/TBL22.pdf")
