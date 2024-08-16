@@ -130,9 +130,9 @@ Continuous diagnostic tests (such as the actual PSA measurement) are often
       }
 ```
 
-::: {.example}
+::: {.example #mws}
 The *Million Women Study* (MW Study) is a cohort study of women’s health
-analysing data from more than one million women aged 50 and over.
+analysing data from more than one million women aged 50 and over [@MWS].
 `r format.bigmark(sum(c(tp, fp, fn, tn)))` `r const` women between 50 and
 64 years underwent a mammography and have been followed-up for a year to
 determine whether or not they have been diagnosed with breast cancer,
@@ -319,8 +319,8 @@ In general, any disease prevalence can be specified. Then,
 
 as the transition from *pre-test probability* of disease (the prevalence) to *post-test probabilities* of disease ($\mbox{PPV}$ and $\mbox{NPV}$) after observing a positive respectively negative test result.
 
-:::{.example}
-Application in the Million Women Study. Cancer Research UK\footnote{(https://www.cancerresearchuk.org)} report a breast cancer prevalence of 4.5\% for 59-year old British women. The corresponding predictive values are shown in the third row of Table \@ref(tab:MWS-predvalues). The positive predictive value is only 56\% whereas the negative predictive value is 99\%.
+:::{.example #mws name="continued"}
+Cancer Research UK\footnote{(https://www.cancerresearchuk.org)} report a breast cancer prevalence of 4.5\% for 59-year old British women. The corresponding predictive values are shown in the third row of Table \@ref(tab:MWS-predvalues). The positive predictive value is only 56\% whereas the negative predictive value is 99\%.
 :::
 
 
@@ -837,8 +837,8 @@ If the study follows a cohort design, then confidence intervals can be computed 
 
 
 
-:::{.example}
-Million Women Study continued: predictive values for prevalence $4.5\%$.
+:::{.example #mws name="continued"}
+The predictive values for prevalence $4.5\%$ are:
 :::
 
 ```{r}
