@@ -601,17 +601,18 @@ Details how to construct confidence intervals  can be found in Appendix
 ### Proportions
 
 :::{.example}
-Accuracy of emergency department clinical findings for diagnosis of 
-coronavirus disease 2019 [@Peyrony2020], see Figure \@ref(fig:peyrony)
+
+
+[@Kaur2020] performed a systematic review to assess the diagnostic 
+accuracy of screening test for early detection of type 2 diabetes and 
+prediabetes in previously undiagnosed adults. 
+Figure \@ref(fig:diabetes) shows the numbers of true 
+positives, false positives, false negatives, true 
+negatives, sensisitivy and specificity (with 95\% CI) of 17 studies using HBA1c 6.5\% for detecting diabetes (refer to figure).
 :::
-
-
-```{r}
-knitr::include_graphics("figures/Peyrony_Table2.png")
-```
            
-```{r peyrony, fig.cap = "Reporting of diagnostic accuracy measures with confidence intervals in @Peyrony2020", echo = FALSE}
-knitr::include_graphics("figures/Peyrony_Table4.png")
+```{r #diabetes, fig.cap = "Forest plot of HbA1c 6.5\\% for detecting diabetes in @Kaur2020", echo = FALSE}
+knitr::include_graphics("figures/diabetes-meta.png")
 ```
 
 
@@ -669,6 +670,20 @@ library(biostatUZH)
 The \code{R} function \code{prop.test()} without continuity correction also produces a Wilson CI:
 ```{r echo=TRUE}
 prop.test(x=629, n=726, correct=FALSE)$conf.int
+```
+
+
+In example \@ref(exm:diabetes) for the first study (Arenata 2010), we obtain
+```{r}
+wald(x = 58, n = 58 + 87)
+wilson(x = 58, n = 58 + 87)
+
+```
+
+In example \@ref(exm:covid) for the viral load cut-off, we get:
+
+```{r}
+# to do 
 ```
 
 
