@@ -20,7 +20,8 @@ A useful test has ROC curve above the diagonal,
 \ie $\mbox{Sens}(c) + \mbox{Spec}(c) > 1$ for all thresholds $c$. 
 
 
-Suppose we have data from $n$ controls and $m$ cases. Properties of the ROC curve are:
+Suppose we have data from $n$ controls and $m$ cases. The ROC curve has 
+the following properties:
 
 -  If there are *no ties* (no observations having the same
   value), the ROC curve is an *increasing step function*  with vertical jumps of size $1/m$ and horizontal jumps of
@@ -322,6 +323,10 @@ To compute a CI for $\Delta{\mbox{AUC}}$ we need the corresponding standard erro
 :::{.example}
 Two biomarkers for pancreatic cancer are shown in Figure \@ref(fig:twoROCs).
 :::
+
+```{r}
+# QU. to Leo: where does this data come from?
+```
 
 Paired study design:
 
