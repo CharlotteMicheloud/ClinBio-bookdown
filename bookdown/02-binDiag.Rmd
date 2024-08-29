@@ -3,50 +3,39 @@
 
 ## Diagnostic accuracy studies
 
-   A binary *diagnostic test* classifies individuals
-in diseased or non-diseased. Examples include:
-
--  Diagnosis of breast cancer using mammography
--  Diagnosis of cervical cancer using pap smear screening
--  Diagnosis of prostate cancer using prostate-specific antigen (PSA) screening
-
+A binary *diagnostic test* categorizes individuals
+as either diseased or non-diseased. Examples of diagnostic 
+tests include mammography for the diagnosis of breast cancer, 
+pap smear screening for the diagnosis of cervical cancer, and 
+prostate-specific antigen (PSA) screening for prostate cancer. 
 Continuous diagnostic tests (such as the actual PSA measurement) are often 
-  dichotomized  to a binary test using a suitable threshold.
-
+dichotomized  to a binary test using a suitable threshold.
 
 ### Study designs
-  
-  The study design determines the selection of study subjects from a population:
 
+The study design determines the selection of study subjects from a population.
+In a *case-control design*, a diagnostic test is applied to a sample of diseased
+and non-diseased individuals, with a fixed sample size for both groups. 
+In a *cohort design*, a diagnostic test is applied to a sample of subjects 
+from the population of interest, and the true disease status
+is also ascertained using a reference test, the *gold standard*. 
 
-  -  *Case-control design*: A diagnostic test is applied to
-    a sample of diseased and
-    non-diseased individuals with *fixed sample size* for both groups.
-  -  *Cohort design*: A diagnostic test is applied to a sample of
-    subjects from the population of interest; the true disease status
-    (*gold standard*) is also ascertained
-    (*verification*).
-
-  We also consider the design of studies comparing two diagnostic tests:
-
-
-  -  *Unpaired design*: Every study subject is
-    tested with only one test.
-  -  *Paired design*: Every study subject is
-    tested with both tests.
+We also consider the design of studies comparing two diagnostic tests. In an
+*unpaired design*, each study subject is tested with only one of the two tests. 
+In a *paired design*, each study subject is tested with both tests.
 
 ### Test integrity
-  Knowledge of the true disease status of the individual must not influence the assessment of the diagnostic test. For example, a radiologist might view a mammogram from a woman with known breast cancer with more suspicion for its showing cancer. This is a risk of *bias*. *Blinding* helps to alleviate this problem, meaning:
-  
 
-  -  The person who applies the diagnostic test must not know
-    the true disease status.
-  -  The person who determines the true disease status must not
- know the test result.
-  
+Knowledge of the true disease status of the individual must not 
+influence the assessment of the diagnostic test. For example, if a radiologist 
+is aware that a woman has breast cancer, 
+they may scrutinize her mammogram more closely for signs of cancer, 
+introducing a potential *bias*. In order to address this issue, *blinding*
+can be used. This means that the person who applies the diagnostic test 
+must not know the true disease status, and the person who determines 
+the true disease status (using a gold standard test)
+must not know the test result. 
 
-
-  
   
 ```{r prepdata-mammo, echo = FALSE, message = FALSE}
   library(biostatUZH)
@@ -142,6 +131,7 @@ confirmed via histology. The results are summarized in Table \@ref(tab:MWS-2x2).
 
 ```{r MWS-2x2, echo = FALSE}
 library(knitr)
+library(kableExtra)
 # Example data for mat
 rownames(mat) <- c("negative", "positive", "Total")
 colnames(mat) <- c("no", "yes", "Total")
@@ -157,8 +147,13 @@ table_data <- data.frame(
   Total = c(format.bigmark(mat[1,3]), format.bigmark(mat[2,3]), format.bigmark(mat[3,3]))
 )
 
+
 # Use kable to create the table
-kable(table_data, caption = "2 × 2 table for the Million Women Study.", col.names = c("Test result", "no", "yes", "Total"))
+# kable(table_data, caption = "2 × 2 table for the Million Women Study.", col.names = c("Test result", "no", "yes", "Total"))
+
+kable(table_data, caption = "2 × 2 table for the Million Women Study.", col.names = c("Mammography", "no", "yes", "Total")) %>%
+  kable_styling() %>%
+  add_header_above(c("Breast Cancer" = 4))
 ```
 
 
@@ -179,7 +174,7 @@ We use the following notation for binary diagnostic  tests:
 \end{eqnarray*}
 
 Table \@ref(tab:notation) introduces our notation for the counts from a
-simple diagnostic accuracy study with sample size $n$.
+simple diagnostic accuracy study with total sample size $n$.
 
     
 ```{r notation, echo = FALSE}
@@ -221,7 +216,8 @@ The *specificity* of a binary test is defined as
 
 
 
-In the MW Study, the following estimates are obtained from Table \@ref(tab:MWS-2x2):
+In the MW Study (Example \@ref(exm:mws)), the following estimates are obtained 
+from Table \@ref(tab:MWS-2x2):
 
 \begin{eqnarray}
 \mbox{Sens} &=& \displaystyle\frac{{tp}}{{tp}+{fn}} = \displaystyle\frac{`r tp`}{`r format.bigmark(tp+fn)`} = `r sens.ci[[1]]`\%\\
@@ -241,7 +237,7 @@ J = \mbox{Sens} + \mbox{Spec} - 1
 
 :::
 
-In the MW study, we obtain $J=`r round(sens.ci[[1]]/100, 3)` +
+In the MW study (Example \@ref(exm:mws)), we obtain $J=`r round(sens.ci[[1]]/100, 3)` +
 `r round(spec.ci[[1]]/100, 3)` - 1
 = `r round(sens.ci[[1]]/100+spec.ci[[1]]/100-1, 2)`$. A categorization of
 *test quality* based on Youden's index is shown in Table \@ref(tab:quality):
@@ -262,21 +258,22 @@ kable(table_data,
 ```
 
 
-
-
--  A perfect test ($J=1$) must have both Sens $=$ 1 and Spec  $=$ 1.
--  A useless test ($J=0$) has Sens  = 1 - Spec, so the probability of a positive test is the same for  diseased and  non-diseased individuals:
+A perfect test ($J=1$) must have both Sens $=$ 1 and Spec  $=$ 1.
+A useless test ($J=0$) has Sens  = 1 - Spec, 
+so the probability of a positive test is the same for  diseased and 
+non-diseased individuals:
 \begin{eqnarray*}
 \mbox{Sens} & = & \Pr(Y=1 \given D=1) \\
 & = & 1 - \mbox{Spec} \\
 & = & 1 - \Pr(Y=0 \given D=0) \\
 & = & \Pr(Y=1 \given D=0).
 \end{eqnarray*}
--  A harmful test can be made useful by *relabelling*
+
+A harmful test can be made useful by *relabelling*
 test results $Y=1$ to $Y=0$ and vice versa.
 
 ### Predictive values
-Test accuracy can also be described with *predictive values*.
+The accuracy of a diagnostic test can also be described with *predictive values*.
 
 :::{.definition}
 The *positive predictive value* is defined as
@@ -293,7 +290,8 @@ The *negative predictive value* is defined as
 
 :::
 
-Predictive values can be directly estimated in a cohort design, such as the MW study shown in Table \@ref(tab:MWS-2x2):
+Predictive values can be directly estimated in a cohort design, such as the
+MW study shown in Example \@ref(exm:mws):
 
 \begin{eqnarray*}
   \mbox{PPV} &=& \displaystyle\frac{{tp}}{{tp}+{fp}} = 629/`r format.bigmark(4514)` = `r round(629/4514*100, 1)`\% \\
@@ -317,14 +315,22 @@ In general, any disease prevalence can be specified. Then,
 \mbox{NPV} & = & \frac{\mbox{Spec} \cdot (1-\mbox{Prev})}{\mbox{Spec} \cdot (1-\mbox{Prev}) + (1-\mbox{Sens}) \cdot \mbox{Prev}}
 \end{eqnarray*}
 
-as the transition from *pre-test probability* of disease (the prevalence) to *post-test probabilities* of disease ($\mbox{PPV}$ and $\mbox{NPV}$) after observing a positive respectively negative test result.
+as the transition from *pre-test probability* of disease (the prevalence) 
+to *post-test probabilities* of disease ($\mbox{PPV}$ and $\mbox{NPV}$) 
+after observing a positive, respectively negative, test result.
+Table  \@ref(tab:MWS-predvalues) gives predictive values in the MW study
+also for other values of the prevalence. 
+As the prevalence increases, 
+the PPV increases, while the NPV decreases.
 
 :::{.example #mws name="continued"}
-Cancer Research UK\footnote{(https://www.cancerresearchuk.org)} report a breast cancer prevalence of 4.5\% for 59-year old British women. The corresponding predictive values are shown in the third row of Table \@ref(tab:MWS-predvalues). The positive predictive value is only 56\% whereas the negative predictive value is 99\%.
+Cancer Research UK\footnote{(https://www.cancerresearchuk.org)}
+report a breast cancer prevalence of 4.5\% for 59-year old British women. 
+The corresponding predictive values are shown in the third row of Table 
+\@ref(tab:MWS-predvalues): the positive predictive value is only 56\% whereas 
+the negative predictive value is 99\%.
 :::
 
-
-Table  \@ref(tab:MWS-predvalues) gives predictive values also for other values of the prevalence. PPV increases with increasing prevalence and NPV decreases with increasing prevalence.
 
 
 
@@ -384,7 +390,8 @@ The *negative likelihood ratio* is defined as
 
 Likelihood ratios summarise how many times more (or less) likely
 patients with the disease are to have a particular test result ($\mbox{LR}^+$ for a positive result, $\mbox{LR}^-$ for a negative result) than
-patients without the disease.  They do not depend on disease
+patients without the disease.
+In contrast to predictive values, they do not depend on disease
 prevalence.  Likelihood ratios are ratios of probabilities.
 
 Useful tests have $\mbox{LR}^+ > 1$ and
@@ -394,7 +401,7 @@ provide strong evidence to rule in or rule out
 diagnoses respectively [@SN_LR].
 
 
-In the MW study we obtain:
+In the MW study (Example \@ref(exm:mws)) we obtain:
 \begin{align*}
 \mbox{LR}^+ =
 \frac{`r as.numeric(sens.ci[[1]])`\%}{`r 100-as.numeric(spec.ci[[1]])`\%}
@@ -418,7 +425,7 @@ positive or negative test result:
 
 The odds on the left-hand side can be easily back-transformed to probabilities as
 \[
- \mbox{Odds } \omega = \frac{\pi}{1-\pi} \qquad \mbox{ Probability } \pi=\frac{\omega}{1+\omega}
+ \mbox{Odds } \omega = \frac{\pi}{1-\pi} \qquad \mbox{ Probability } \pi=\frac{\omega}{1+\omega} .
 \]
 
 
@@ -443,7 +450,7 @@ postOddsn <- LRn * prev / (1 - prev)
 ```
 
 
-Figure \@ref(fig:updating) is an example of Bayesian updating with likelihood ratios. The prior odds of 1 to 21 correspond to a prevalence of 4.5\%.
+Figure \@ref(fig:updating) gives an example of Bayesian updating with likelihood ratios. The prior odds of 1 to 21 correspond to a prevalence of 4.5\%.
 A positive test results in posterior odds
 \[
   \frac{1}{21} \cdot  \frac{27}{1} =   \frac{27}{21} .
@@ -511,6 +518,15 @@ The *diagnostic odds ratio*
 \end{equation*}
 
 is a single indicator of test performance.
+It is defined as the ratio of the odds of a positive test result in 
+individuals with the disease to the odds of a positive test result in
+individuals without the disease. A higher DOR indicates better diagnostic
+accuracy, with the test more effectively distinguishing between those with 
+and without the disease. 
+```{r}
+# check definition
+```
+
 :::
 
 
@@ -518,7 +534,8 @@ It can be calculated as
 \[
 \mbox{DOR}  =  \frac{\mbox{LR}^+}{\mbox{LR}^-} = \frac{tp \cdot tn}{fp \cdot fn}
 \]
-In the MW study we obtain
+
+In the MW study (Example \@ref(exm:mws)) we obtain
 \[
  \mbox{DOR}  =  \frac{`r round(LRpos[[1]], digits = 1)`}
       {`r round(LRneg[[1]], digits = 2)`} \, = \,
@@ -581,20 +598,18 @@ title("Contour plot of DOR")
  w1 <- wilson(x,n)
 ```
 
+So far, we have estimated population parameters using corresponding
+sample quantities. For instance, *sample proportions* (p) are used to estimate *probabilities*
+($\pi$).
+These estimates should be reported with a confidence interval 
+(CI) to account for the sample size of the study. 
+*Confidence intervals* provide a plausible range for the true population values 
+and indicate the impact of sampling variation.
+However, they do not account for non-sampling errors, such as biases arising
+from study design, conduct, or analysis.
 
- Up to now we have estimated population parameters with the corresponding sample quantites. For example, *proportions* $p$ are estimates of
- *probabilities* $\pi$.
- Such estimates should be reported together with a *confidence interval* (CI), to reflect the sample size of the study.
- *Confidence intervals* give a plausible range for the underlying
-   population values and convey the effects of sampling variation.
- *Non-sampling errors*, such as *biases* in study design,
-     conduct, or analysis, are not controlled for.
-
- There are different methods to compute a CI for
-
- -  proportions (e.g. sensitivity, specificity)
- -  ratios of proportions (e.g. likelihood ratios)
-
+There are different methods to compute a CI for proportions 
+(e.g. sensitivity, specificity) and ratios (e.g. likelihood ratios)
 Details how to construct confidence intervals  can be found in Appendix
 \@ref(confint).
  
@@ -602,26 +617,17 @@ Details how to construct confidence intervals  can be found in Appendix
 
 :::{.example #diabetes}
 
-[@Kaur2020] performed a systematic review to assess the diagnostic 
+@Kaur2020 performed a systematic review to assess the diagnostic 
 accuracy of screening test for early detection of type 2 diabetes and 
 prediabetes in previously undiagnosed adults. 
 Figure \@ref(fig:diabetes) shows the numbers of true 
 positives, false positives, false negatives, true 
-negatives, sensisitivy and specificity (with 95\% CI) of 17 studies using HBA1c 6.5\% for detecting diabetes.
+negatives, sensitivity and specificity (with 95\% CI) of 17 studies 
+using HBA1c 6.5\% for detecting diabetes.
 :::
            
-```{r diabetes, fig.cap = "Forest plot of HbA1c 6.5\\% for detecting diabetes [@Kaur2020_fig]", echo = FALSE}
+```{r diabetes, fig.cap = "Forest plot of HbA1c 6.5\\% for detecting diabetes [@Kaur2020_fig].", echo = FALSE}
 knitr::include_graphics("figures/diabetes-meta.png")
-```
-
-
-
-:::{.example #covid}
-[@Schuit2022] conducted a study to assess the performance of Covid-19 Home-Testing Kits [@Schuit2022], see Figure \@ref(fig:schuit).
-:::
-
-```{r schuit, fig.cap = "Sensitivities with 95% confidence intervals for the Flexflow rapid antigen test."}
-knitr::include_graphics("figures/Schuit_etal2022Fig4.jpg")
 ```
 
 
@@ -631,56 +637,37 @@ The *standard error* of a proportion $p=x/n$ is
     \[
     \SE(p) = \sqrt{\frac{p \, (1-p)}{n}}.
     \]
-This defines the 95\% *error term* $\mbox{ET}_{95}= 1.96 \cdot \SE(p)$.
+    
+The 95\% *error term* is defined as $\mbox{ET}_{95}= 1.96 \cdot \SE(p)$.
 The *(additive) Wald confidence interval*
-at level 95\%    has limits
+at level 95\%  then  has limits
     \[
     p - \mbox{ET}_{95} \mbox{ and } p + \mbox{ET}_{95}.
     \]
+    
 This confidence interval
 follows the "add/subtract" construction, because the error term is
-added to respectively subtracted from the estimate $p$.
+added to, respectively subtracted from, the estimate $p$.
 The factor 1.96 has to be replaced by
-    the appropriate standard normal quantile for other confidence levels:
+the appropriate standard normal quantile for other confidence levels. 
+This can be done using the following code: 
 
 ```{r echo=TRUE}
-gamma <- c(0.9, 0.95, 0.99)
-print(qnorm((1+gamma)/2))
+gamma <- c(0.9, 0.95, 0.99) # confidence levels
+print(qnorm((1+gamma)/2)) # factor
 ```
 
 
 #### Wilson confidence interval
-It is usually better to use the *Wilson* confidence interval, in particular if $n$ is small or $p$ is close to 0 or 1.
-  
-Advantages are:
-
--  Wilson has better *empirical coverage* than Wald, see Figure \@ref(fig:coverage).
--  No *overshoot*: The limits of Wilson CIs are never outside the unit interval, no need to truncate.
-
-
-
-In the MW study (Example \@ref(exm:mws) we obtain for sensitivity:
-```{r wald, echo=T}
-library(biostatUZH)
-(wald(x=629, n=726))
-(wilson(x=629, n=726))
-```
-
-The \code{R} function \code{prop.test()} without continuity correction also produces a Wilson CI:
-```{r echo=TRUE}
-prop.test(x=629, n=726, correct=FALSE)$conf.int
-```
+It is usually better to use the *Wilson* confidence interval, in particular 
+if $n$ is small or $p$ is close to 0 or 1.
+The Wilson interval has better *empirical coverage* than the Wald interval,
+as shown in Figure \@ref(fig:coverage). 
+Additionally, the Wilson confidence interval does not have overshoot issues:
+its limits are always within the unit interval, eliminating the need for truncation.
 
 
-In example \@ref(exm:diabetes) for the first study (Arenata 2010), we obtain for the specificity
-```{r}
-wald(x = 763, n = 763 + 25)
-wilson(x = 763, n = 763 + 25)
-```
-
-
-
-```{r coverage, echo = FALSE, fig.cap = "Empirical coverage of Wald and Wilson confidence intervals with confidence level $95%$ and sample size $n=50$.", echo = FALSE, message = FALSE }
+```{r coverage, echo = FALSE, fig.cap = "Empirical coverage of Wald and Wilson confidence intervals with confidence level $95\\%$ and sample size $n=50$.", echo = FALSE, message = FALSE }
  source("code/settings.R")
 
  par(mfrow=c(1,2), las=1, pty="s")
@@ -721,13 +708,41 @@ wilson(x = 763, n = 763 + 25)
 ```
 
 
+In the MW study (Example \@ref(exm:mws)) the Wald and Wilson 95\% confidence intervals 
+are obtained using: 
+
+```{r wald, echo=T}
+library(biostatUZH)
+
+(wald(x=629, n=726, conf.level = 0.95))
+(wilson(x=629, n=726, conf.level = 0.95))
+```
+
+The \code{R} function \code{prop.test()} without continuity correction also 
+produces a Wilson CI:
+```{r echo=TRUE}
+
+prop.test(x=629, n=726, correct=FALSE, conf.level = 0.95)$conf.int
+```
+
+
+In Example \@ref(exm:diabetes) for the first study (Arenata 2010), 
+we obtain the following confidence interval for the specificity: 
+```{r, echo = TRUE}
+wald(x = 763, n = 763 + 25, conf.level = 0.95)
+wilson(x = 763, n = 763 + 25, conf.level = 0.95)
+```
+
+
 
 #### Other confidence intervals
- Here is an artificial example for $x=1$ successes out of $n=10$ trials.
+Other types of confidence intervals can be calculated, for example Agresti, 
+Jeffreys or Clopper-Pearson. 
+Here is an artificial example for $x=1$ successes out of $n=10$ trials.
 ```{r echo=TRUE}
  (res <- confIntProportion(x=1, n=10))
 ```
- Note: Lower limit of Wald interval is truncated to 0.
+Note: Lower limit of Wald interval is truncated to 0.
 
 
 ### Likelihood ratios{#sec:CIforLR}
@@ -740,7 +755,7 @@ wilson(x = 763, n = 763 + 25)
   \[
   \SE(\log {\mbox{LR}}^+) - 1.96 \cdot \SE(\log {\mbox{LR}}^+) \mbox{ and } \SE(\log {\mbox{LR}}^+) + 1.96 \cdot \SE(\log {\mbox{LR}}^+).
   \]
-  Note that log always refers to the natural logarithm in this lecture.
+  Note that log always refers to the natural logarithm in this document.
   Back-transformation to the original scale gives a 95\% (multiplicative)
   Wald confidence
   interval for the positive likelihood ratio ${\mbox{LR}}^+$ with limits:
@@ -748,23 +763,23 @@ wilson(x = 763, n = 763 + 25)
     {\mbox{LR}}^+/\EF_{.95} \mbox{ and } {\mbox{LR}}^+ \cdot \EF_{.95}
   \]
   where
+  
   $$\EF_{.95} =\exp\left\{1.96 \cdot \SE(\log {\mbox{LR}}^+)\right\}$$
   is called the 95\% *error factor* (EF). This confidence interval
-  follows the "multiply/divide" construction, because the estimate is
-  multiplied respectively divided by the error factor. There are many
+  follows the "multiply/divide" construction, as the estimate is
+  multiplied, respectively divided, by the error factor. There are many
   other confidence intervals in biostatistics that are of the
-  "multiply/divide" type, for example confidence intervals for risk ratios, odds ratios and
-  hazard ratios. The original Wald interval follows a ``plus/minus''
-  construction, because a certain factor is added respectively
-  subtracted from the estimate to obtain the confidence interval limits.
+  "multiply/divide" type, for example confidence intervals for risk ratios,
+  odds ratios and
+  hazard ratios.
 
 
 
 
   The exact procedure how to calculate a 95\% confidence interval for a
-  likelihood ratio is as follows, compare Table \@ref(tab:notation) for notation:
+  likelihood ratio is as follows, see Table \@ref(tab:notation) for notation:
 
-  1.  Calculate standard error on log scale:
+  1.  Calculate standard error on the log scale:
   \begin{eqnarray*}
   \SE(\log {\mbox{LR}}^+) & = & \sqrt{\frac{1}{{fp}}-\frac{1}{n_0} +\frac{1}{{tp}}-\frac{1}{n_1}} \\
   \SE(\log {\mbox{LR}}^-) & = & \sqrt{\frac{1}{{tn}}-\frac{1}{n_0} +\frac{1}{{fn}}-\frac{1}{n_1}} \\
@@ -797,10 +812,10 @@ wilson(x = 763, n = 763 + 25)
 ### Diagnostic odds ratio
 
   The confidence interval for the diagnostic odds ratio is also of
-  "multiply/divide" type, again compare Table \@ref(tab:notation) for
+  "multiply/divide" type, again see Table \@ref(tab:notation) for
   notation.
 
-  1. Calculate standard error on log scale:
+  1. Calculate standard error on the log scale:
 
   \begin{eqnarray*}
   \SE(\log {\mbox{DOR}}) & = & \sqrt{\frac{1}{{tp}}+\frac{1}{fp}+\frac{1}{{tn}}+\frac{1}{fn}} \\
@@ -813,45 +828,51 @@ wilson(x = 763, n = 763 + 25)
   $${\mbox{DOR}}/\EF_{.95} \mbox{ and } {\mbox{DOR}} \cdot \EF_{.95}$$
 
 
-  R-code:
-
+The function `biostatUZH::confIntDiagnostic()` computes the estimate and 
+confidence interval of several indicators of test performance. 
+For example, for the MW study (Example \@ref(exm:mws)): 
 ```{r echo=T}
-  library(biostatUZH)
-  res <- confIntDiagnostic(tp=629, fp=3885, tn=117744, fn=97, cohort=TRUE)
+library(biostatUZH)
+res <- confIntDiagnostic(tp=629, fp=3885, tn=117744, fn=97, cohort=TRUE)
 print(format(res, scientific=FALSE))
 ```
 
-  Alternative Computation with library(epiR):
+Alternatively. the computation can be performed with `epiR::epi.tests()`:
 ```{r, echo = FALSE, message = FALSE}
-  dat <- as.table(matrix(c(629,3885,97,117744), nrow = 2, byrow = TRUE))
-  colnames(dat) <- c("Dis+","Dis-")
-  rownames(dat) <- c("Test+","Test-")
+  dat <- as.table(matrix(c(629, 3885, 97, 117744), nrow = 2, byrow = TRUE))
+  colnames(dat) <- c("Dis+", "Dis-")
+  rownames(dat) <- c("Test+", "Test-")
 ```
 
 ```{r echo=TRUE, message = FALSE}
   library(epiR)
   epi.tests(dat)
 ```
-The apparent prevalence is $\Pr(Y=1)$, the true prevalence is $\Pr(D=1)$
+The apparent prevalence corresponds to $\Pr(Y=1)$, 
+and the true prevalence to $\Pr(D=1)$.
 
 ### Predictive values
  
-If the study follows a cohort design, then confidence intervals can be computed for PPV, NPV and disease prevalence directly from the data.  This is what the function `epi.tests()` always computes. The function `confIntDiagnostic()` also computes CIs for PPV and NPV for a pre-specified prevalence. This approach is based on
+If the study follows a cohort design, confidence intervals can be
+computed for PPV, NPV and disease prevalence directly from the data.  
+This is what the function `epi::epi.tests()` always computes. 
+The function `biostatUZH::confIntDiagnostic()` also computes CIs for PPV and NPV for 
+a pre-specified prevalence. This approach is based on the following steps:
 
--  The limits of a confidence interval for $\mbox{LR}^+$
+1.  The limits of a confidence interval for $\mbox{LR}^+$
      (resp. $\mbox{LR}^-$) are computed as described in Section
       \@ref(sec:CIforLR).
--  Multiplication with ${\mbox{Prev}}/({1-\mbox{Prev}})$ gives the limits of
+2.  Multiplication with ${\mbox{Prev}}/({1-\mbox{Prev}})$ gives the limits of
       a confidence interval for ${\mbox{PPV}/(1-\mbox{PPV})}$ resp. ${(1-\mbox{NPV})/\mbox{NPV}}$ according to  equation \@ref(eq:PPVBayes), resp. \@ref(eq:NPVBayes)
--  Confidence intervals for $\mbox{PPV}$ resp. $\mbox{NPV}$ can be obtained by the usual transformation of the limits obtained in 2. to the  probability scale.
+      
+3.  Confidence intervals for $\mbox{PPV}$ resp. $\mbox{NPV}$ can be obtained by the usual transformation of the limits obtained in 2. to the  probability scale.
 
 
 
-:::{.example #mws name="continued"}
-The predictive values for prevalence $4.5\%$ are:
-:::
+In the MW study (Example \@ref(exm:mws)), the predictive values for prevalence 
+of $4.5\%$ are:
 
-```{r}
+```{r, echo = TRUE}
 confIntDiagnostic(tp=629, fp=3885, tn=117744, fn=97, pr=.045)
 ```
 
@@ -859,7 +880,8 @@ confIntDiagnostic(tp=629, fp=3885, tn=117744, fn=97, pr=.045)
 
 ## Comparing two diagnostic tests
 
-The accuracy of two tests $A$ and $B$ can be compared with ratios of probabilities or ratios of likelihood ratios. These ratios are equal to 1 (the *reference value*), if there is no difference.
+The accuracy of two diagnostic tests $A$ and $B$ can be compared with ratios of probabilities or ratios of likelihood ratios. These ratios are equal to 1 (the *reference value*), if there is no difference 
+in accuracy between the two tests. 
 
 :::{.definition}
   The *relative sensitivity* of test $A$ vs. test $B$ is
@@ -872,36 +894,56 @@ The accuracy of two tests $A$ and $B$ can be compared with ratios of probabiliti
   $$\mbox{rLR}^- = \mbox{LR}^-_A / \mbox{LR}^-_B.$$
 :::
 
-Standard errors and confidence intervals are also available, but the study design (unpaired or paired) has to be taken into account.
+Standard errors and confidence intervals can also be computed,
+but the study design (unpaired or paired) has to be taken into account
+in the calculations.
  
 
 :::{.example #CVS}
-  Data from a (hypothetical) randomized unpaired study of chorionic villus sampling (CVS) versus early amniocentesis (EA) for fetal abnormality.
+Data from a (hypothetical) randomized unpaired study of chorionic 
+villus sampling (CVS) versus early amniocentesis (EA) for the diagnosis 
+of fetal abnormality is shown in Table \@ref(tab:twotests).
 :::
-
+  
   
 ```{r, twotests, echo = FALSE}
-knitr::kable(
-  cbind(
-    c(" ", "Y=0", "Y=1", "Total"),
-    c("D=1", 6, 116, 122),
-    c("D=0", 4844, 34, 4878),
-    c(" ", 4765, 111, 4876)
-  ),
-  align = c("l", "r", "r", "r"),
-  caption = "Contingency table for two diagnostic tests in an unpaired study design."
+library(knitr)
+library(kableExtra)
+
+# Create the data frame for the combined table
+combined_data <- data.frame(
+  Test = c("EA", "CVS"),
+  Y0_D1 = c(6, 13),
+  Y1_D1 = c(116, 111),
+  Total_D1 = c(122, 124),
+  Y0_D0 = c(4844, 4765),
+  Y1_D0 = c(34, 111),
+  Total_D0 = c(4878, 4876)
 )
+
+
+
+# Create a side-by-side table with vertical lines using kable
+kable(combined_data,
+      caption = "Contingency table for two diagnostic tests in an unpaired study design.", 
+      align = 'c', col.names = c("Test", "$Y=0$", "$Y=1$", "Total", "$Y=0$", "$Y=1$", "Total")) %>%
+  kable_styling(full_width = FALSE) %>%
+  add_header_above(c(" " = 1, "D = 1" = 3, "D = 0" = 3)) %>%
+  column_spec(1, border_right = TRUE) %>%  # Vertical line after "Test" column
+  column_spec(3, border_right = TRUE) %>%  # Vertical line after "$Y=1$ (D=1)" column
+  column_spec(4, border_right = TRUE) %>%  # Vertical line after "Total (D=1)" column
+  column_spec(7, border_right = TRUE) 
+# %>%  # Final vertical line after "Total (D=0)" column
+  # kable_styling(latex_options = c("hold_position"))
+
+
 ```
-  
 
-  From the data shown in Table \@ref(tab:twotests) we can read off
 
- - $\mbox{Sens}=116/122=`r round(116/(116+6)*100,1)`$\%
-  and $\mbox{Spec}=4844/4878=`r round(4844/(4844+34)*100,1)`$\% for EA and
- -
-  $\mbox{Sens}=111/124=`r round(111/(111+13)*100,1)`$\%
-  and $\mbox{Spec}=4765/4876=`r round(4765/(4765+111)*100,1)`$\% for CVS
-
+ The sensitivity and specificity are $\mbox{Sens}=116/122=`r round(116/(116+6)*100,1)`$\%
+  and $\mbox{Spec}=4844/4878=`r round(4844/(4844+34)*100,1)`$\% for EA and  
+  $\mbox{Sens}=111/124=`r round(111/(111+13)*100,1)`$\% and 
+  $\mbox{Spec}=4765/4876=`r round(4765/(4765+111)*100,1)`$\% for CVS. 
 Hence
   \begin{eqnarray*}
   \mbox{rSens} & = & `r round(116/(116+6)*100,1)`\%/`r round(111/(111+13)*100,1)`\%
@@ -909,9 +951,6 @@ Hence
   \mbox{rSpec}  & = & `r round(4844/(4844+34)*100,1)`\%/`r round(4765/(4765+111)*100,1)`\%
   = `r round(4844/(4844+34)/(4765/(4765+111)),2)`
   \end{eqnarray*}
-  <!-- %% We can easily obtain a joint 95\%-confidence region for (rTPF, -->
-  <!-- %% rFPF):  (0.98, 1.15) $\times$ (0.20, 0.47) based on the -->
-  <!-- %% univariate 97.5\%-confidence intervals. -->
 
 ```{r echo=F}
   sens.ea <- 116/(116+6)
@@ -929,7 +968,9 @@ Hence
   rlr.m <- lr.m.ea/lr.m.cvs
 ```
 
-
+The relative sensitivity, specificity, LR^${+}$ and LR^${-}, together 
+with the corresponding confidence intervals, can be computer using the function 
+`biostatUZH::confIntIndependentDiagnostic()`: 
 ```{r echo=T}
 fetAb.tp <- c(116, 111)
 fetAb.fp <- c(34, 111)
@@ -937,11 +978,13 @@ fetAb.tn <- c(4844, 4765)
 fetAb.fn <- c(6, 13)
 
 print(confIntIndependentDiagnostic(tp=fetAb.tp, fp=fetAb.fp,
-                                   tn=fetAb.tn, fn=fetAb.fn))
+                                   tn=fetAb.tn, fn=fetAb.fn, 
+                                   conf.level = 0.95))
 ```
 
-There is some evidence for differences between the two diagnostic
-tests in Specificity and LR$^+$, since the corresponding confidence intervals do not include the reference value 1.
+There is some evidence that CVS has a better specificity and LR$^+$ than EA,
+since the corresponding confidence intervals
+do not include the reference value of 1.
 
 
 
@@ -949,10 +992,9 @@ tests in Specificity and LR$^+$, since the corresponding confidence intervals do
 
 @RoldaNofuentes2012 show the data of a clinical trial carried out at the 
 University Clinic Hospital in Granada, Spain. In this study, two 
-diagnostic tests have been applied to 548 males to detect coronary 
-heart disease. The data is paired, as each subjects performs 
-both tests.Paired data is best described with separate tables for diseased 
-(Dis) and non-diseased (nonDis) patients.
+diagnostic tests (T1 and T2) have been applied to 548 males to detect coronary 
+heart disease. The data is paired, that is, each subjects performs 
+both tests.
 :::
 
 ```{r echo=FALSE}
@@ -961,21 +1003,22 @@ nonDis <- as.table(matrix(c(290, 11, 10, 25), ncol=2, byrow=T))
 colnames(Dis) <- colnames(nonDis) <- c("T2-", "T2+")
 rownames(Dis) <- rownames(nonDis) <- c("T1-", "T1+")
 ```
-
+The results for the diseased (`Dis`) and non-diseased (`nonDis`) males 
+are as follows: 
 ```{r echo=TRUE}
-print(Dis)
-print(nonDis)
+print(Dis); print(nonDis)
 ```
 
 
-
+The function `biostatUZH::confIntPairedDiagnostic()`can be used in this case: 
 ```{r echo=T}
-# Estimates for CPH vs. EST
-print(confIntPairedDiagnostic(diseased=Dis, nonDiseased=nonDis))
+# Estimates for T1 vs T2
+print(confIntPairedDiagnostic(diseased=Dis, nonDiseased=nonDis, conf.level = 0.95))
 ```
-There is some evidence for differences between the two diagnostic tests in 
-Sensitivity and LR$^{-}$,
-since the corresponding confidence intervals do not include the reference value 1.
+
+There is some evidence that T2 performs better than T1 in terms of 
+sensitivity and LR$^{-}$, since the corresponding confidence intervals 
+do not include the reference value of 1.
 
 ## References
 
