@@ -906,7 +906,7 @@ of fetal abnormality is shown in Table \@ref(tab:twotests).
 :::
   
   
-```{r, twotests, echo = FALSE}
+```{r twotests, echo = FALSE}
 library(knitr)
 library(kableExtra)
 

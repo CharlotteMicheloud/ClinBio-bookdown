@@ -1,14 +1,23 @@
 # Clinical measurement and agreement
 
-This chapter discusses bias and precision of clinical
-measurements. It treats both repeated measurements taken by the same
-observer and repeated measurements taken by different observers and
-introduces important concepts such as reliability, repeatability and
-agreement.
+This chapter explores the potential bias and
+precision of clinical measurements, 
+addressing both repeated measurements 
+taken by the same observer and those taken by
+different observers. It introduces key concepts such as reliability, 
+repeatability, and agreement.
 
 ## Precision of clinical measurements
-
-The *precision* with which measurements are being reported depends on the number of *significant figures*. Significant figures are not the same as *decimal places*. The difference is illustrated in Table \@ref(tab:signfigures). The number of significant figures depends on the use to which the number is to be put and on how accurate it is. Round observations to a few significant figures only for *reporting*, after you have done all calculations.
+*Significant figures* inform about the precision 
+ with which measurements are being reported.
+They consist of all non-zero digits, zeros between 
+non-zero digits, and zeros following the last non-zero after the decimal point.
+Significant figures are not the same as *decimal places*,
+which are all the digits after the decimal point.
+The difference is illustrated in Table \@ref(tab:signfigures). 
+Observations should be rounded to a few significant figures
+only for  *reporting*, after all the calculations 
+have been done. 
 
 ```{r signfigures, echo = FALSE}
 # Create the data frame with the desired values
@@ -21,19 +30,27 @@ df <- data.frame(
 
 
 # Print the table using kable
-kable(df, caption = "Precision of reported measurements depends on the number of significant figures.")
+kable(df, caption = "Precision of reported measurements depends on the number of significant figures.", 
+      align = "c")
 ```
 
 
 ### Measurement error
-Several measurements of the same quantity on the same subject will not in general be the same. The standard deviation of repeated measurements on the same subject represents the size of *measurement error*. To estimate the size of measurement error, we need a set of *replicate readings*, obtained by measuring each member of a sample of subjects more than once. The *within-subject standard deviation* $s_w$ can then be found by one-way *analysis of variance* (ANOVA).
+
+Multiple measurements of the same quantity on the same subject will typically 
+differ due to *measurement error*. 
+To estimate the size of measurement error, the within-subject standard deviation,
+$s_w$, can be calculated. 
+To do so, a set of replicate readings is needed, where each subject in the sample is 
+measured more than once. The *within-subject standard deviation*,
+$s_w$, can then be calculated using one-way *analysis of variance* (ANOVA).
 
 :::{.example}
-The Peak Expiratory Flow Rate (PEFR) data from @{bland} (Chapter 20.2) 
-are 17 pairs of readings made by the same observer with a Wright Peak Flow 
-Meter (in litres/min) on 17 healthy volunteers, see Figure \@ref(fig:PEFR). 
 A peak flow meter is a device to measure the maximal expiration speed of a 
-person (faster = "better"), see Figure \@ref(fig:PEFRdevice).
+person (faster = "better").
+The Peak Expiratory Flow Rate (PEFR) data from @{bland} (Chapter 20.2) 
+contains 17 pairs of readings made by the same observer with a Wright Peak Flow 
+Meter (in litres/min) on 17 healthy volunteers, see Figure \@ref(fig:PEFR). 
 :::
 
 
@@ -75,12 +92,7 @@ cc <- confIntCorrelation(First, Second, method = "pearson", type = "z")
 ```
 
 
-
-```{r PEFRdevice, fig.cap="Peak expiratory flow meter.", echo = FALSE}
-knitr::include_graphics("figures/peak_flow_meter.jpg")
-```
-
-One-way ANOVA for PEFR data:
+The one-way ANOVA for the PEFR is computed:
   
 ```{r, echo=T}
 measurement <- c(First, Second)
@@ -96,7 +108,7 @@ sigmaw <- sqrt(summary(my.aov)[[1]][2,3])
 ``` 
 
 
-The entry \texttt{Residuals Mean Sq} gives the within-subject variance 
+The entry `Residuals Mean Sq` gives the within-subject variance 
 $s_w^2 = `r round(sigmaw^2)`$, so the within-subject standard deviation is
 $s_w = \sqrt{`r round(sigmaw^2,0)`} = {`r round(sigmaw,1)`}$ litres/min.
 
@@ -119,7 +131,7 @@ round(confintSD(sd=sigmaw, dof=17), 1)
 
 A simpler way to compute $s^2_w$ (which gives approximately the same result)
 is based on the variance $s_d^2$ of the 
-differences \texttt{Diff}:
+differences  `Diff`:
 
 ```{r echo=TRUE}
 ## compute the differences
@@ -134,22 +146,23 @@ sw <- sqrt(varWithin)
 print(round(sw, 1))
 ```
 
-However, this approach does not 
-work if there are more than two measurements for some subjects.
+However, this approach cannot be used
+if there are more than two measurements for some subjects.
 
 
 ### Measurement error related to size
 
-Sometimes *measurement error* is related to the *size* of the measurement. 
-If the standard deviation is proportional to the measurement, 
-then a *logarithmic transformation* of the measurements may be helpful. 
-If we have two measurements per subject, the (rank) correlation between
-
-1. the absolute
-  value of the difference between two measurements 
-2. and the mean of the two measurements
-
+Sometimes *measurement error*
+is proportional to the *size* of the measurement. 
+If this is the case, a *logarithmic transformation* of the 
+measurements may be helpful. 
+If there are two measurements per subject, the (rank) correlation between
+the absolute value of the difference between two measurements
+and the mean of the two measurements
 can be used to check whether such a transformation is needed. 
+
+I AM HERE, FIND ANOTHER EXAMPLE
+dataset bloddpressure in package mecor
 See Figure \@ref(fig:logtransform) and the lab ``Measurement error proportional to the mean''.
 
 
