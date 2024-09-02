@@ -7,9 +7,10 @@ A binary *diagnostic test* categorizes individuals
 as either diseased or non-diseased. Examples of diagnostic 
 tests include mammography for the diagnosis of breast cancer, 
 pap smear screening for the diagnosis of cervical cancer, and 
-prostate-specific antigen (PSA) screening for prostate cancer. 
-Continuous diagnostic tests (such as the actual PSA measurement) are often 
-dichotomized  to a binary test using a suitable threshold.
+prostate-specific antigen (PSA) screening for the diagnosis of prostate cancer. 
+*Continuous diagnostic tests* (such as the actual PSA measurements) are often 
+dichotomized to binary tests using a suitable threshold, see 
+Chapter \@ref(contDiag).
 
 ### Study designs
 
@@ -20,9 +21,9 @@ In a *cohort design*, a diagnostic test is applied to a sample of subjects
 from the population of interest, and the true disease status
 is also ascertained using a reference test, the *gold standard*. 
 
-We also consider the design of studies comparing two diagnostic tests. In an
+The design of studies comparing two diagnostic tests is also considered. In an
 *unpaired design*, each study subject is tested with only one of the two tests. 
-In a *paired design*, each study subject is tested with both tests.
+In contrat, each study subject is tested with both tests in a *paired design*.
 
 ### Test integrity
 
@@ -31,9 +32,9 @@ influence the assessment of the diagnostic test. For example, if a radiologist
 is aware that a woman has breast cancer, 
 they may scrutinize her mammogram more closely for signs of cancer, 
 introducing a potential *bias*. In order to address this issue, *blinding*
-can be used. This means that the person who applies the diagnostic test 
+should be used. This means that the person who applies the diagnostic test 
 must not know the true disease status, and the person who determines 
-the true disease status (using a gold standard test)
+the true disease status (using a reference/gold standard test)
 must not know the test result. 
 
   
@@ -125,7 +126,7 @@ analysing data from more than one million women aged 50 and over [@MWS].
 `r format.bigmark(sum(c(tp, fp, fn, tn)))` `r const` women between 50 and
 64 years underwent a mammography and have been followed-up for a year to
 determine whether or not they have been diagnosed with breast cancer,
-confirmed via histology. The results are summarized in Table \@ref(tab:MWS-2x2).
+confirmed via histology (the gold standard). The results are summarized in Table \@ref(tab:MWS-2x2).
 :::
 
 
@@ -151,7 +152,7 @@ table_data <- data.frame(
 # Use kable to create the table
 # kable(table_data, caption = "2 × 2 table for the Million Women Study.", col.names = c("Test result", "no", "yes", "Total"))
 
-kable(table_data, caption = "2 × 2 table for the Million Women Study.", col.names = c("Mammography", "no", "yes", "Total")) %>%
+kable(table_data, label = NA, caption = "2 × 2 table for the Million Women Study.", col.names = c("Mammography", "no", "yes", "Total")) %>%
   kable_styling() %>%
   add_header_above(c("Breast Cancer" = 4))
 ```
@@ -161,7 +162,7 @@ kable(table_data, caption = "2 × 2 table for the Million Women Study.", col.nam
 
 ## Measures of diagnostic accuracy
 
-We use the following notation for binary diagnostic  tests:
+The following notation is used for binary diagnostic tests:
 
 \begin{eqnarray*}
     D & = & \left\{ \begin{array}{ll} 1 & \mbox{diseased} \\ 0 &
@@ -202,26 +203,33 @@ kable(table_data,
 The *sensitivity* of a binary test is defined as
 
 \begin{equation}
- \text{Sens} = \Pr(Y=1 \given D=1).
+ \text{Sens} = \Pr(Y=1 \given D=1), 
 \end{equation}
+
+that is, the probability of correctly identifying study subjects 
+*with* a specific disease. 
 
 The *specificity* of a binary test is defined as
 
 \begin{equation*}
-  \text{Spec} = \Pr(Y=0 \given D=0).
+  \text{Spec} = \Pr(Y=0 \given D=0),
 \end{equation*}
+
+that is, the probability of correctly identifying study subjects 
+*without* a specific disease. 
 
 :::
 
 
 
 
-In the MW Study (Example \@ref(exm:mws)), the following estimates are obtained 
+In the MW Study (Example \@ref(exm:mws)), the following estimates
+for the sensitivity and specificity are obtained 
 from Table \@ref(tab:MWS-2x2):
 
 \begin{eqnarray}
-\mbox{Sens} &=& \displaystyle\frac{{tp}}{{tp}+{fn}} = \displaystyle\frac{`r tp`}{`r format.bigmark(tp+fn)`} = `r sens.ci[[1]]`\%\\
-\mbox{Spec} &=& \displaystyle\frac{{tn}}{{tn}+{fp}} = \displaystyle\frac{`r format.bigmark(tn)`}{`r format.bigmark(tn+fp)`} = `r spec.ci[[1]]`\%
+\mbox{Sens} &=& \displaystyle\frac{{tp}}{{tp}+{fn}} = \displaystyle\frac{`r tp`}{`r format.bigmark(tp+fn)`} = `r sens.ci[[1]]`\% \mbox{ and} \\
+\mbox{Spec} &=& \displaystyle\frac{{tn}}{{tn}+{fp}} = \displaystyle\frac{`r format.bigmark(tn)`}{`r format.bigmark(tn+fp)`} = `r spec.ci[[1]]`\% .
 \end{eqnarray}
 
   
@@ -231,7 +239,7 @@ from Table \@ref(tab:MWS-2x2):
 *Youden's index* is defined as
 
 \begin{equation}
-J = \mbox{Sens} + \mbox{Spec} - 1
+J = \mbox{Sens} + \mbox{Spec} - 1 . 
 (\#eq:Youden)
 \end{equation}
 
@@ -279,23 +287,28 @@ The accuracy of a diagnostic test can also be described with *predictive values*
 The *positive predictive value* is defined as
 
 \begin{equation*}
-\mbox{PPV} = \Pr(D=1 \given Y=1).
+\mbox{PPV} = \Pr(D=1 \given Y=1), 
 \end{equation*}
+
+that is, the probability that a study subject with a positive test 
+result actually has the disease. 
 
 The *negative predictive value* is defined as
 
 \begin{equation*}
-\mbox{NPV} = \Pr(D=0 \given Y=0).
+\mbox{NPV} = \Pr(D=0 \given Y=0), 
 \end{equation*}
 
+that is, the probability that a study subject with a positive test 
+result actually does not have the disease. 
 :::
 
 Predictive values can be directly estimated in a cohort design, such as the
 MW study shown in Example \@ref(exm:mws):
 
 \begin{eqnarray*}
-  \mbox{PPV} &=& \displaystyle\frac{{tp}}{{tp}+{fp}} = 629/`r format.bigmark(4514)` = `r round(629/4514*100, 1)`\% \\
-  \mbox{NPV} &=& \displaystyle\frac{{tn}}{{tn}+{fn}} = `r format.bigmark(117744)`/`r format.bigmark(117841)` = `r round(117744/117841*100, 1)`\%
+  \mbox{PPV} &=& \displaystyle\frac{{tp}}{{tp}+{fp}} = 629/`r format.bigmark(4514)` = `r round(629/4514*100, 1)`\% \mbox{ and} \\
+  \mbox{NPV} &=& \displaystyle\frac{{tn}}{{tn}+{fn}} = `r format.bigmark(117744)`/`r format.bigmark(117841)` = `r round(117744/117841*100, 1)`\%.
 \end{eqnarray*}
 
 This assumes that the observed *disease prevalence*
@@ -311,7 +324,7 @@ Predictive values can also be calculated for other values of the prevalence.
 In general, any disease prevalence can be specified. Then,
 
 \begin{eqnarray*}
-\mbox{PPV} & = & \frac{\mbox{Sens} \cdot \mbox{Prev}}{\mbox{Sens} \cdot \mbox{Prev} + (1-\mbox{Spec}) \cdot (1-\mbox{Prev})} \\
+\mbox{PPV} & = & \frac{\mbox{Sens} \cdot \mbox{Prev}}{\mbox{Sens} \cdot \mbox{Prev} + (1-\mbox{Spec}) \cdot (1-\mbox{Prev})} \mbox{ and} \\
 \mbox{NPV} & = & \frac{\mbox{Spec} \cdot (1-\mbox{Prev})}{\mbox{Spec} \cdot (1-\mbox{Prev}) + (1-\mbox{Sens}) \cdot \mbox{Prev}}
 \end{eqnarray*}
 
@@ -376,11 +389,11 @@ Likelihood ratios are an alternative way for summarizing the accuracy of diagnos
 The *positive likelihood ratio* is defined as
 
 \begin{equation*}
-\mbox{LR}^+ = \frac{\mbox{Sens}}{1-\mbox{Spec}}.
+\mbox{LR}^+ = \frac{\mbox{Sens}}{1-\mbox{Spec}} \mbox{ and}
 
 \end{equation*}
 
-The *negative likelihood ratio* is defined as
+the *negative likelihood ratio* as
 
 \begin{equation*}
 \mbox{LR}^- = \frac{1-\mbox{Sens}}{\mbox{Spec}}.
@@ -389,8 +402,9 @@ The *negative likelihood ratio* is defined as
 
 
 Likelihood ratios summarise how many times more (or less) likely
-patients with the disease are to have a particular test result ($\mbox{LR}^+$ for a positive result, $\mbox{LR}^-$ for a negative result) than
-patients without the disease.
+study subjects with the disease are to have a particular test result 
+($\mbox{LR}^+$ for a positive result, $\mbox{LR}^-$ for a negative result) than
+study subjects without the disease.
 In contrast to predictive values, they do not depend on disease
 prevalence.  Likelihood ratios are ratios of probabilities.
 
@@ -417,10 +431,10 @@ positive or negative test result:
 
 \begin{eqnarray}
 (\#eq:PPVBayes)
-\frac{\mbox{PPV}}{1-\mbox{PPV}} & = & \mbox{LR}^+  \, \cdot \, \frac{\mbox{Prev}}{1-\mbox{Prev}} \\[.3cm]
+\frac{\mbox{PPV}}{1-\mbox{PPV}} & = & \mbox{LR}^+  \, \cdot \, \frac{\mbox{Prev}}{1-\mbox{Prev}} \mbox{ and} \\[.3cm]
 (\#eq:NPVBayes)
 \frac{1-\mbox{NPV}}{\mbox{NPV}} & = & \mbox{LR}^- \,  \cdot \, \frac{\mbox{Prev}}{1-\mbox{Prev}} \\[.3cm]
-\mbox{ Posterior odds}  & = & \mbox{ Likelihood ratio} \, \cdot \, \mbox{Prior odds} \nonumber
+\mbox{ Posterior odds}  & = & \mbox{ Likelihood ratio} \, \cdot \, \mbox{Prior odds}. \nonumber
 \end{eqnarray}
 
 The odds on the left-hand side can be easily back-transformed to probabilities as
@@ -461,7 +475,7 @@ This corresponds to a predictive value of
 \]
 
 
-```{r updating, fig.cap = "Bayesian updating with likelihood ratios", echo = FALSE}
+```{r updating, fig.cap = "Bayesian updating with likelihood ratios.", echo = FALSE}
 formatLR <- function(x, y)
     return(paste(x, " to ", y, sep=""))
 LRp <- 27
@@ -532,7 +546,7 @@ and without the disease.
 
 It can be calculated as
 \[
-\mbox{DOR}  =  \frac{\mbox{LR}^+}{\mbox{LR}^-} = \frac{tp \cdot tn}{fp \cdot fn}
+\mbox{DOR}  =  \frac{\mbox{LR}^+}{\mbox{LR}^-} = \frac{tp \cdot tn}{fp \cdot fn}.
 \]
 
 In the MW study (Example \@ref(exm:mws)) we obtain
@@ -618,7 +632,7 @@ Details how to construct confidence intervals  can be found in Appendix
 :::{.example #diabetes}
 
 @Kaur2020 performed a systematic review to assess the diagnostic 
-accuracy of screening test for early detection of type 2 diabetes and 
+accuracy of screening tests for early detection of type 2 diabetes and 
 prediabetes in previously undiagnosed adults. 
 Figure \@ref(fig:diabetes) shows the numbers of true 
 positives, false positives, false negatives, true 
@@ -718,7 +732,7 @@ library(biostatUZH)
 (wilson(x=629, n=726, conf.level = 0.95))
 ```
 
-The \code{R} function \code{prop.test()} without continuity correction also 
+The `R` function `prop.test()` without continuity correction also 
 produces a Wilson CI:
 ```{r echo=TRUE}
 
@@ -740,7 +754,7 @@ Other types of confidence intervals can be calculated, for example Agresti,
 Jeffreys or Clopper-Pearson. 
 Here is an artificial example for $x=1$ successes out of $n=10$ trials.
 ```{r echo=TRUE}
- (res <- confIntProportion(x=1, n=10))
+ (res <- confIntProportion(x=1, n=10, conf.level = 0.95))
 ```
 Note: Lower limit of Wald interval is truncated to 0.
 
@@ -749,9 +763,8 @@ Note: Lower limit of Wald interval is truncated to 0.
                                   
   Likelihood ratios are by definition positive quantities. To avoid
   overshoot, confidence intervals are therefore constructed on the
-  log-scale. The 95\%-Wald confidence interval for the log positive
-  likelihood ratio $\SE(\log {\mbox{LR}}^+)$, for example, takes the
-  form
+  log-scale. The limits of the 95\%-Wald confidence interval for the log positive
+  likelihood ratio $\SE(\log {\mbox{LR}}^+)$, for example, are
   \[
   \SE(\log {\mbox{LR}}^+) - 1.96 \cdot \SE(\log {\mbox{LR}}^+) \mbox{ and } \SE(\log {\mbox{LR}}^+) + 1.96 \cdot \SE(\log {\mbox{LR}}^+).
   \]
@@ -760,7 +773,8 @@ Note: Lower limit of Wald interval is truncated to 0.
   Wald confidence
   interval for the positive likelihood ratio ${\mbox{LR}}^+$ with limits:
   \[
-    {\mbox{LR}}^+/\EF_{.95} \mbox{ and } {\mbox{LR}}^+ \cdot \EF_{.95}
+    {\mbox{LR}}^+/\EF_{.95} \mbox{ and } {\mbox{LR}}^+ \cdot \EF_{.95},
+    
   \]
   where
   
@@ -776,7 +790,7 @@ Note: Lower limit of Wald interval is truncated to 0.
 
 
 
-  The exact procedure how to calculate a 95\% confidence interval for a
+  The exact procedure to calculate a 95\% confidence interval for a
   likelihood ratio is as follows, see Table \@ref(tab:notation) for notation:
 
   1.  Calculate standard error on the log scale:
@@ -811,17 +825,17 @@ Note: Lower limit of Wald interval is truncated to 0.
 
 ### Diagnostic odds ratio
 
-  The confidence interval for the diagnostic odds ratio is also of
+  The confidence interval for the diagnostic odds ratio is also of the
   "multiply/divide" type, again see Table \@ref(tab:notation) for
-  notation.
+  notation. The steps are: 
 
-  1. Calculate standard error on the log scale:
+  1. Calculate the standard error on the log scale:
 
   \begin{eqnarray*}
   \SE(\log {\mbox{DOR}}) & = & \sqrt{\frac{1}{{tp}}+\frac{1}{fp}+\frac{1}{{tn}}+\frac{1}{fn}} \\
   \end{eqnarray*}
   
-  2.  Compute 95\% *error factor* (EF):
+  2.  Compute the 95\% *error factor* (EF):
   $$\EF_{.95} =\exp\left\{1.96 \cdot \SE(\log {\mbox{DOR}})\right\}$$
   
   3.  The 95\% confidence interval for ${\mbox{DOR}}$ then has limits
@@ -837,7 +851,7 @@ res <- confIntDiagnostic(tp=629, fp=3885, tn=117744, fn=97, cohort=TRUE)
 print(format(res, scientific=FALSE))
 ```
 
-Alternatively. the computation can be performed with `epiR::epi.tests()`:
+Alternatively, the computation can be performed with `epiR::epi.tests()`:
 ```{r, echo = FALSE, message = FALSE}
   dat <- as.table(matrix(c(629, 3885, 97, 117744), nrow = 2, byrow = TRUE))
   colnames(dat) <- c("Dis+", "Dis-")
@@ -855,8 +869,7 @@ and the true prevalence to $\Pr(D=1)$.
  
 If the study follows a cohort design, confidence intervals can be
 computed for PPV, NPV and disease prevalence directly from the data.  
-This is what the function `epi::epi.tests()` always computes. 
-The function `biostatUZH::confIntDiagnostic()` also computes CIs for PPV and NPV for 
+This is what the function `epi::epi.tests()` always computes.  The function `biostatUZH::confIntDiagnostic()` also computes CIs for PPV and NPV for 
 a pre-specified prevalence. This approach is based on the following steps:
 
 1.  The limits of a confidence interval for $\mbox{LR}^+$
@@ -880,7 +893,10 @@ confIntDiagnostic(tp=629, fp=3885, tn=117744, fn=97, pr=.045)
 
 ## Comparing two diagnostic tests
 
-The accuracy of two diagnostic tests $A$ and $B$ can be compared with ratios of probabilities or ratios of likelihood ratios. These ratios are equal to 1 (the *reference value*), if there is no difference 
+The accuracy of two tests $A$ and $B$
+for the diagnosis of the same disease 
+can be compared with ratios of probabilities or ratios of likelihood ratios.
+These ratios are equal to 1 (the *reference value*), if there is no difference 
 in accuracy between the two tests. 
 
 :::{.definition}
@@ -924,7 +940,7 @@ combined_data <- data.frame(
 
 
 # Create a side-by-side table with vertical lines using kable
-kable(combined_data,
+kable(combined_data, label = NA,
       caption = "Contingency table for two diagnostic tests in an unpaired study design.", 
       align = 'c', col.names = c("Test", "$Y=0$", "$Y=1$", "Total", "$Y=0$", "$Y=1$", "Total")) %>%
   kable_styling(full_width = FALSE) %>%
@@ -945,11 +961,12 @@ kable(combined_data,
   $\mbox{Sens}=111/124=`r round(111/(111+13)*100,1)`$\% and 
   $\mbox{Spec}=4765/4876=`r round(4765/(4765+111)*100,1)`$\% for CVS. 
 Hence
+
   \begin{eqnarray*}
   \mbox{rSens} & = & `r round(116/(116+6)*100,1)`\%/`r round(111/(111+13)*100,1)`\%
-  = `r round(116/(116+6)/(111/(111+13)),2)`\\
+  = `r round(116/(116+6)/(111/(111+13)),2)` \mbox{ and}\\
   \mbox{rSpec}  & = & `r round(4844/(4844+34)*100,1)`\%/`r round(4765/(4765+111)*100,1)`\%
-  = `r round(4844/(4844+34)/(4765/(4765+111)),2)`
+  = `r round(4844/(4844+34)/(4765/(4765+111)),2)`.
   \end{eqnarray*}
 
 ```{r echo=F}
@@ -968,7 +985,7 @@ Hence
   rlr.m <- lr.m.ea/lr.m.cvs
 ```
 
-The relative sensitivity, specificity, LR^${+}$ and LR^${-}, together 
+The relative sensitivity, specificity, LR$^{+}$ and LR$^{-}$, together 
 with the corresponding confidence intervals, can be computer using the function 
 `biostatUZH::confIntIndependentDiagnostic()`: 
 ```{r echo=T}

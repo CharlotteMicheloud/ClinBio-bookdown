@@ -1,4 +1,4 @@
-# Continuous diagnostic tests 
+# Continuous diagnostic tests {#contDiag}
 
 We now consider diagnostic tests that report a continuous test result.
 
