@@ -6,29 +6,29 @@ We now consider diagnostic tests that report a continuous test result.
 
 ### ROC curve
 A threshold ("cut-off") $c$ can be used to dichotomize a continuous test result
-$Y$ into positive if $Y \geq c$ or negative if $Y < c$. 
-Sensitivity and specificity now depend on the threshold $c$: 
+$Y$ into positive (if $Y \geq c$) or negative (if $Y < c$). 
+The sensitivity and specificity of continuous diagnostic tests
+depend on the threshold $c$: 
 \begin{eqnarray*}
 \mbox{Sens}(c) & = & \Pr(Y \geq c \given D=1) \\
-\mbox{Spec}(c) & = & \Pr(Y < c \given D=0) %\\
+\mbox{Spec}(c) & = & \Pr(Y < c \given D=0). \\
 \end{eqnarray*}
 
 :::{.definition}
 The *receiver operating characteristic curve* (ROC curve) is a plot 
 of $\mbox{Sens}(c)$ versus $1-\mbox{Spec}(c)$ for all possible thresholds $c$. 
+A useful test has a ROC curve above the diagonal, that is,
+$\mbox{Sens}(c) + \mbox{Spec}(c) > 1$ for all thresholds $c$. 
 :::
 
 
-A useful test has a ROC curve above the diagonal, that is,
-$\mbox{Sens}(c) + \mbox{Spec}(c) > 1$ for all thresholds $c$. 
-
 
 Suppose we have data from a diagnostic test performed on $n$ controls (that is, 
-individual without the disease in question) and $m$ 
-cases (individual with the disease). 
+individuals without the disease in question) and $m$ 
+cases (individuals with the disease). 
 If there are  *no ties*, meaning that each observation has a unique value
-with no two observations being equal, the ROC curve is an *increasing step function*  
-with vertical jumps of size $1/m$ and horizontal jumps of 
+with no two observations being equal, the ROC curve is an 
+*step function* with vertical jumps of size $1/m$ and horizontal jumps of 
 size $1/n$. If several controls or cases have the same value, then the corresponding
 step size increases accordingly. If a case and a control have the same value 
 then the ROC curve has  a *diagonal* line segment. 
@@ -43,6 +43,7 @@ will not affect the ROC curve, making it *scale-invariant*.
 :::{.example #genexpr}
 The gene expression data from a hypothetical study with $n=23$ controls and $m=30$ 
 cases are shown in Figure \@ref(fig:genexpress).
+Table \@ref(tab:genes) gives sensitivity and specificity for selected cut-offs.
 :::
 
 
@@ -76,8 +77,6 @@ axis(1, c(1, 2), rev(c("Cases", "Controls")), padj = 0.5)
 ```
 
 
-Table \@ref(tab:genes) gives sensitivity and specificity for selected cut-offs in this example.
-
 ```{r genes, results="asis"}
 library(kableExtra)
 pred <- prediction(rocdata$expr, rocdata$case)
@@ -90,7 +89,7 @@ mytable <- as.data.frame(cbind(cutpoint[[1]], tpf[[1]] * 100, (1 - fpf[[1]]) * 1
 names(mytable) <- c("Cut-off", "Sensitivity (in %)", "Specificity (in %)")
 
 selected_rows <- mytable[c(1, 2, 3, 10, 20, 30, 40, 44, 45, 46),]
-knitr::kable(selected_rows, digits = c(2, 1, 1, 1), 
+knitr::kable(selected_rows, digits = c(2, 1, 1, 1), label = NA,
       caption = "Sensitivity and specificity for selected cut-offs.", 
       align = "c", row.names = FALSE) %>%
   kable_styling(latex_options = "hold_position", position = "center")
@@ -182,7 +181,7 @@ to compute and requires the execution of a computer program.
 The limits of a Wald confidence interval for ${\mbox{AUC}}$ are:
   \begin{equation*}
   \mbox{AUC} - z \cdot \SE({\mbox{AUC}}) \mbox{ and } 
-  \mbox{AUC} + z \cdot \SE({\mbox{AUC}})
+  \mbox{AUC} + z \cdot \SE({\mbox{AUC}}).
   \end{equation*}
 For 95\% confidence intervals we use $z=1.96$.
 
@@ -198,8 +197,6 @@ The limits of the CI for $\logit {\mbox{AUC}}$
 are back-transformed with
 the inverse $\logit$ function ("expit").
 A *bootstrap confidence interval* could also be used.
-
-
 The Wald and logit Wald confidence intervals 
 can be computed using the function `biostatUZH::confIntAUC()`
 and the boostrap confidence interval using `pROC::ci.auc()`.
@@ -301,13 +298,13 @@ and specificity are both equal to 1.
 The optimal cut-off is identified as the point where this line first
 intersects the ROC curve
 
-:::{.example #genexpr, name="continued"}
+:::{.example #genexpr name="continued"}
 For example, if $\mbox{Pre}=10\%$ and $\mbox{Cost(fp)}/\mbox{Cost(fn)}=1/10$ 
 in the gene expression data example,
 then $b=9/10$ and the optimal cut-off is 0.8 as shown in Figure 
 \@ref(fig:cutpoint). This cut-off is also the optimal cut-off based 
 on Youden's Index,  $J = 0.70 + 0.87 - 1 = 0.57$.
-
+:::
 
 
 ```{r cutpoint, fig.cap = "Identification of optimal cut-off in the ROC curve for 10% and Cost(fp)/Cost(fn)=1/10.", echo=F, results='hide'}
@@ -345,7 +342,7 @@ The standard error of $\Delta{\mbox{AUC}}$ can be calculated using the formula
 \end{eqnarray*}
 
 for *unpaired samples*. 
-For *paired samples*, a difference formula based on 
+For *paired samples*, a different formula based on 
 differences of placement values should be used.
 The confidence interval for unpaired, respectively paired, samples
 can be calculated using `biostatUZH::confIntIndependentAUCDiff()`, 
@@ -355,11 +352,9 @@ respectively `confIntIndependentAUCDiff()`.
  
 :::{.example}
 Figure \@ref(fig:twoROCs) shows the ROC curve of two biomarkers for the 
-diagnosis of pancreatic cancer. A paired study design was used.
+diagnosis of pancreatic cancer [@Wieand1989]. A paired study design was used.
 :::
 
-
-Paired study design:
 
 ```{r echo=TRUE}
 data(wiedat2b)
@@ -396,4 +391,8 @@ than Biomarker 2.
 
 
 ## Additional references
-@bland gives a gentle introduction to ROC curves  in Chapter 20.6, see also the Statistics Note by @SN_ROC. A comprehensive account of statistical aspects of ROC curves can be found in @pepe (Chapter 4 and 5). The methods from this chapter are used in practice, for example, in the following studies: @turck, @cockayne, @brown, and @ikeda.
+@bland gives a gentle introduction to ROC curves in Chapter 20.6, see also 
+the Statistics Note by @SN_ROC. A comprehensive account of statistical aspects 
+of ROC curves can be found in @pepe (Chapter 4 and 5). 
+The methods from this chapter are used in practice, for example, in the
+following studies: @turck, @cockayne, @brown, and @ikeda.

@@ -1037,7 +1037,7 @@ There is some evidence that T2 performs better than T1 in terms of
 sensitivity and LR$^{-}$, since the corresponding confidence intervals 
 do not include the reference value of 1.
 
-## References
+## Additional references
 
 @bland discusses sensitivity
 and specificity in Chapter 20.6 and standard errors and confidence
