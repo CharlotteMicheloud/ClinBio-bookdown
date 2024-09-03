@@ -14,7 +14,8 @@ They consist of all non-zero digits, zeros between
 non-zero digits, and zeros following the last non-zero after the decimal point.
 Significant figures are not the same as *decimal places*,
 which are all the digits after the decimal point.
-The difference is illustrated in Table \@ref(tab:signfigures). 
+The difference between the two concepts
+is illustrated in Table \@ref(tab:signfigures). 
 Observations should be rounded to a few significant figures
 only for  *reporting*, after all the calculations 
 have been done. 
@@ -45,13 +46,14 @@ To do so, a set of replicate readings is needed, where each subject in the sampl
 measured more than once. The *within-subject standard deviation*,
 $s_w$, can then be calculated using one-way *analysis of variance* (ANOVA).
 
-:::{.example}
+:::{.example #pefr}
 A peak flow meter is a device to measure the maximal expiration speed of a 
 person (faster = "better").
-The Peak Expiratory Flow Rate (PEFR) data from @{bland} (Chapter 20.2) 
+The Peak Expiratory Flow Rate (PEFR) data from @bland (Chapter 20.2) 
 contains 17 pairs of readings made by the same observer with a Wright Peak Flow 
 Meter (in litres/min) on 17 healthy volunteers, see Figure \@ref(fig:PEFR). 
 :::
+
 
 
 
@@ -82,7 +84,7 @@ subject <- as.factor(rep(1:n,2))
 
 
 
-```{r PEFR, fig.cap = "Repeated measurements of peak expiratory flow rate Bland", echo = F, fig.width=4.0}
+```{r PEFR, fig.cap = "Repeated measurements of peak expiratory flow rate [@bland]", echo = F, fig.width=4.0}
 my.range <- range(c(First,Second))
 par(pty="s", las=1)
 plot(First, Second, xlab = "First", ylab = "Second", pty = "s", pch = 19, col = 2, ylim=my.range, xlim=my.range, cex=0.7)
@@ -92,7 +94,34 @@ cc <- confIntCorrelation(First, Second, method = "pearson", type = "z")
 ```
 
 
-The one-way ANOVA for the PEFR is computed:
+:::{.example #sodium}
+The TONE study is a randomized controlled trial aimed at determining 
+whether a reduction in sodium intake can effectively control blood pressure
+[@Appel1995]. @Nab2021 simulated a dataset based on the TONE study, 
+containing for each participant: the sodium intake in mg measured by a 24h recall, 
+a binary variable indicating whether the participant was assigned to a usual 
+or sodium-lowering diet, and two measurements of sodium intake in mg
+measured in urine. 
+We focus here on the participants for which the two urinary measurements 
+are available. The two sodium intake measurements are displayed in Figure 
+\@ref(fig:sodium).
+:::
+
+```{r sodium, fig.cap="Repeated measurements of urinary sodium intake [@Nab2021]."}
+library(mecor)
+data(sodium)
+sodium_f <- sodium[!is.na(sodium$urinary1) & !is.na(sodium$urinary2), ]
+par(pty="s", las=1)
+plot(sodium_f$urinary1, sodium_f$urinary2, 
+     xlab = "First", ylab = "Second", pty = "s", pch = 19, 
+     col = 2, cex = 0.7, 
+     xlim = c(2.5, 6), ylim = c(2.5, 6))
+
+abline(a = 0, b = 1, lty = 2, col = 4)
+```
+
+
+The one-way ANOVA for the PEFR date (Example \@ref(exm:pefr)) is computed:
   
 ```{r, echo=T}
 measurement <- c(First, Second)
@@ -112,7 +141,23 @@ The entry `Residuals Mean Sq` gives the within-subject variance
 $s_w^2 = `r round(sigmaw^2)`$, so the within-subject standard deviation is
 $s_w = \sqrt{`r round(sigmaw^2,0)`} = {`r round(sigmaw,1)`}$ litres/min.
 
-It is also possible to calculate a confidence interval for $s_w$:
+For the sodium data (Example \@ref(exm:sodium)), 
+the within-subject standard deviation is calculated with 
+the following `R`code: 
+
+```{r, echo = TRUE}
+
+measurement_sod <- c(sodium_f$urinary1, sodium_f$urinary2)
+subject_sod <- rep(1:nrow(sodium_f), times = 2)
+
+aov_sod <- aov(measurement_sod ~ subject_sod)
+(sigmaw_sod <- sqrt(summary(aov_sod)[[1]][2,3]))
+```
+and is $s_w = `r round(sigmaw_sod,1)`$ mg.
+
+It is also possible to calculate a confidence interval for the within-subject
+standard deviation $s_w$ using the following `R` function:
+
 
 ```{r echo=TRUE}
 
@@ -125,13 +170,16 @@ confintSD <- function(sd, dof, level = 0.95){
     upper = sqrt(dof / qchisq(p_lower, df = dof)) * sd)
 }
 
-round(confintSD(sd=sigmaw, dof=17), 1)
+round(confintSD(sd = sigmaw, dof = 17), 1) # for PEFR
+round(confintSD(sd = sigmaw_sod, dof = nrow(sodium_f)), 2) # for sodium
+
 
 ```
 
 A simpler way to compute $s^2_w$ (which gives approximately the same result)
 is based on the variance $s_d^2$ of the 
-differences  `Diff`:
+differences  `Diff`. For the PEFR data (Example \@ref{exm:pefr}), this 
+gives
 
 ```{r echo=TRUE}
 ## compute the differences
@@ -159,88 +207,90 @@ measurements may be helpful.
 If there are two measurements per subject, the (rank) correlation between
 the absolute value of the difference between two measurements
 and the mean of the two measurements
-can be used to check whether such a transformation is needed. 
+can be used to check whether such a transformation is needed,
+Figure \@ref(fig:PEFR-corr) for the PEFR and the sodium data (Examples
+\@ref(exm:pefr) and \@ref(exm:sodium), respectively.)
 
-I AM HERE, FIND ANOTHER EXAMPLE
-dataset bloddpressure in package mecor
-See Figure \@ref(fig:logtransform) and the lab ``Measurement error proportional to the mean''.
+```{r}
+x_pefr <- (First+Second)/2
+y_pefr <- abs(First-Second)
 
-
-```{r size="scriptsize", echo = FALSE}
-
-SC <- read.table("data/SalivaryCotinine.txt", header = TRUE)
-
+x_sod <- (sodium_f$urinary1 + sodium_f$urinary2)/2
+y_sod <- abs(sodium_f$urinary1 - sodium_f$urinary2)
 ```
 
 
-```{r logtransform, fig.cap = "Logarithmic transformation to remove patterns in measurement error.", echo = FALSE}
+```{r PEFR-corr, fig.cap = "Absolute difference against mean of the two measurements.", width = 15, heigt = 4.5, echo = FALSE}
+par(las = 1, 
+    mfrow = c(1, 2))
 
-par(las = 1, pty = "s", mfrow = c(1,2))
-
-plot(SC$Measurement1, SC$Measurement2, pch = 19, xlab = "Measurement 1",
-     ylab = "Measurement 2", cex = 0.8)
-abline(0, 1, lty = 2)
-title("Original scale")
-
-plot(log10(SC$Measurement1), log10(SC$Measurement2),
-     pch = 19, xlab = "Log measurement 1", 
-     ylab = "Log measurement 2", cex = 0.8, cex.axis = 0.9)
-abline(0, 1, lty = 2)
-title("Logarithmic scale (base 10)")
-
-``` 
-
-
-:::{.example}
-PEFR data continued
-:::
-
-
-```{r echo=FALSE}
-y <- abs(First-Second)
-x <- (First+Second)/2
-``` 
-
-```{r PEFR-corr, fig.cap = "Absolute difference against mean of the two PEFR measurements.", echo = FALSE}
-par(las=1)
-plot(x, y, xlab = "mean of measurements", 
-     ylab = "absolute difference of measurements", 
+plot(x_pefr, y_pefr, xlab = "Mean of measurements", 
+     ylab = "Absolute difference of measurements", 
      pty = "s", 
      pch = 19, 
      col = 2, 
+     cex = 0.9, 
+     main = "PEFR")
+
+abline(coef(lm(y_pefr ~ x_pefr)), lty=2, col=1)
+text(400, 25, 
+     paste("Spearman correlation =", format(cor(x_pefr, y_pefr, method = "spearman"), 
+                                            digits = 2, nsmall = 2)), 
      cex = 0.9)
 
-abline(coef(lm(y ~ x)), lty=2, col=1)
-text(300, 20, 
-     paste("Spearman correlation =", format(cor(x, y, method = "spearman"), 
-                                            digits = 2, nsmall = 2)))
+
+
+plot(x_sod, y_sod, xlab = "Mean of measurements", 
+     ylab = "Absolute difference of measurements", 
+     pty = "s", 
+     pch = 19, 
+     col = 2, 
+     cex = 0.9, 
+     main = "Sodium")
+
+abline(coef(lm(y_sod ~ x_sod)), lty=2, col=1)
+text(4.5, 1.8, 
+     paste("Spearman correlation =", format(cor(x_sod, y_sod, method = "spearman"), 
+                                            digits = 2, nsmall = 2)), 
+     cex = 0.9)
+
+
 ```
 
-```{r echo=T, warning=FALSE}
-(ctest <- cor.test(x, y, method="spearman"))
+
+```{r echo=TRUE, warning=FALSE}
+(ctest_pefr <- cor.test(x_pefr, y_pefr, method="spearman"))
+(ctest_sod <- cor.test(x_sod, y_sod, method="spearman"))
 ``` 
 
-Spearman's rank correlation coefficient ($\rho_S = `r round(ctest$estimate, 2)`$)
-is slightly larger than Pearson's ($\rho = `r format(cor(x, y), nsmall=2, digits=2)`$) but
-the large $P$-value $p=`r formatPval(ctest$p.value)`$ gives no evidence for 
-an association between the mean PEFR measurement and the absolute difference of
-the PEFR measurements, so no transformation is required. 
+Spearman's rank correlation coefficient
+in the PEFR example  ($\rho_S = `r round(ctest_pefr$estimate, 2)`$)
+is larger than in the sodium example($\rho_S = `r round(ctest_sod$estimate, 2)`$), 
+but both has a large $p$-value ($p=`r formatPval(ctest_pefr$p.value)`$ and 
+$p=`r formatPval(ctest_sod$p.value)`$, respectively)
+so there is no evidence for 
+an association between the mean measurement and the absolute difference of
+the measurements, so no transformation is required. 
 
 
 ### Repeatability {#sec:repeatability}
 
 :::{.definition}
 *Repeatability* is the value below which the difference $d$ between
-two measurements will lie with probability 0.95.
+two measurements will lie with a certain probability, usually 0.95.
 :::
 
 Repeatability is 
-  usually computed as $2 \sqrt{2} s_w$ (or $1.96 \sqrt{2} s_w$), where 
-  $s_w$ is the standard deviation within subjects.
-  Note that  $s_d = \sqrt{2} s_w$ is the standard deviation of $d$.
-  In the PERF example we obtain
-  $2 \sqrt{2} s_w 
- = `r round(2*sqrt(2)*sigmaw,1)`$ litres/min. \\[2mm]
+usually computed as $2 \sqrt{2} s_w$ (or $1.96 \sqrt{2} s_w$), with 
+$s_w$ is the within-subjects standard deviation. The standard deviation of $d$ 
+is 
+$s_d = \sqrt{2} s_w$.
+In the PERF data (Example \@ref(exm:pefr)) we obtain
+$s_d = 2 \sqrt{2} s_w 
+ = `r round(2*sqrt(2)*sigmaw,1)`$ litres/min, and in the 
+ sodium data (Example \@ref(exm:sodium)), $s_d = `r round(2*sqrt(2)*sigmaw_sod,1)`$
+ mg.
+ 
 The value $2 \sqrt{2} s_w$ is also called the *smallest real difference*, 
 because it is the smallest difference that can be interpreted as evidence for 
 a real change in the subject's true value. 
@@ -248,14 +298,14 @@ a real change in the subject's true value.
 ### Reliability and the intraclass correlation coefficient
 
 :::{.definition}
-*Reliability* is the correlation between pairs of readings.
+*Reliability* refers to the correlation between pairs of readings.
 :::
-
-  
-A problem is that the standard Pearson correlation coefficient between the
-first and
-  second measurement depends on the ordering of pairs.
-  To illustrate the problem we change the ordering of some random pairs in the PERF data: 
+Pearson correlation coefficient between the
+first and second measurement depends on the ordering of pairs
+and is therefore not appropriate to assess the reliability 
+between two pairs of measurements. 
+To illustrate this problem we change the ordering of 
+some random pairs in the PERF data: 
 
 ```{r echo=FALSE}
 set.seed(1)
@@ -278,8 +328,9 @@ cor(First, Second)
 cor(First.new, Second.new)
 ``` 
 
-The solution to this problem is the \emph{intraclass correlation
-  coefficient} (ICC). ICC is the average correlation among all
+In contrast, the \emph{intraclass correlation coefficient} (ICC)
+does not depend on the ordering of the pairs and should be used instead.
+The ICC is the average correlation among all
 possible ordering of pairs and extends easily to the case of more than
 two observations per subject. It can be defined based on the between- and 
 within-subject variances: 
@@ -291,8 +342,9 @@ variance $s_b^2$ to the total variance $s_b^2 + s_w^2$ of the measurements:
 \mathrm{ICC} = \frac{s_b^2}{s_b^2 + s_w^2}.
 \end{equation*}
 :::
-
-
+```{r, echo = TRUE}
+# add how to compute between subject variance 
+```
 
 
 ```{r echo=F}
@@ -312,17 +364,18 @@ ICCbare(x=as.factor(subject), y=measurement)
 ``` 
 
 ICC can be interpreted as the *proportion* of the variance of
-  measurements which is due to the variation between true values
-  rather than to measurement error.
-  Therefore ICC depends on the *variation between subjects* and thus
-  relates to the population, from which the sample was taken. 
-    "This method should only be used, if we have a
-  *representative sample* of the subjects in whom we are interested" [@bland]
+measurements which is due to the variation between true values
+rather than to measurement error.
+Therefore ICC depends on the *variation between subjects* and thus
+relates to the population, from which the sample was taken. 
+This method should hence 
+be used only when we have a *representative sample* of the subjects of interest
+[@bland].
 
-:::{.example}
-  PEFR data continued. For illustration we modify the PERF
-  data to have less variation between subjects, but the same within-subject
-  standard deviation, see Figure \@ref(fig:sb). 
+:::{.example #pefr name="continued"}
+For illustration we modify the PERF
+data to have less variation between subjects, but the same within-subject
+standard deviation, see Figure \@ref(fig:sb). 
 :::
 
   
@@ -360,7 +413,7 @@ summary(my.aov)
 
 The within-subject standard deviation doesn't change: 
 $s_w = \sqrt{`r round(sigmaw^2,0)`} = {`r round(sigmaw,1)`}$ litres/min, 
-but ICC is smaller:
+but the ICC is smaller:
 
 ```{r echo=TRUE}
 ICCbare(x=as.factor(subject), y=ShrunkenMeasurement)
