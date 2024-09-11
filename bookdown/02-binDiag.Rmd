@@ -126,11 +126,11 @@ analysing data from more than one million women aged 50 and over [@MWS].
 `r format.bigmark(sum(c(tp, fp, fn, tn)))` `r const` women between 50 and
 64 years underwent a mammography and have been followed-up for a year to
 determine whether or not they have been diagnosed with breast cancer,
-confirmed via histology (the gold standard). The results are summarized in Table \@ref(tab:MWS-2x2).
+confirmed via histology (the gold standard). The results are summarized in Table \@ref(tab:MWS).
 :::
 
 
-```{r MWS-2x2, echo = FALSE}
+```{r MWS, echo = FALSE}
 library(knitr)
 library(kableExtra)
 # Example data for mat
@@ -225,7 +225,7 @@ that is, the probability of correctly identifying study subjects
 
 In the MW Study (Example \@ref(exm:mws)), the following estimates
 for the sensitivity and specificity are obtained 
-from Table \@ref(tab:MWS-2x2):
+from Table \@ref(tab:MWS):
 
 \begin{eqnarray}
 \mbox{Sens} &=& \displaystyle\frac{{tp}}{{tp}+{fn}} = \displaystyle\frac{`r tp`}{`r format.bigmark(tp+fn)`} = `r sens.ci[[1]]`\% \mbox{ and} \\
@@ -475,7 +475,7 @@ This corresponds to a predictive value of
 \]
 
 
-```{r updating, fig.cap = "Bayesian updating with likelihood ratios.", echo = FALSE}
+```{r updating, fig.cap = "Bayesian updating with likelihood ratios. For example, the posterior odds after a positive test result are obtained through multiplication of the prior odds with the positive likelihood ratio: $\\frac{1}{21} \\cdot \\frac{27}{1} = \\frac{27}{21}$.", echo = FALSE}
 formatLR <- function(x, y)
     return(paste(x, " to ", y, sep=""))
 LRp <- 27
@@ -526,15 +526,17 @@ plot.lines(0.275)
 :::{.definition}
 The *diagnostic odds ratio*
 
-\begin{equation*}
+\begin{eqnarray}
 \mbox{DOR}
-=  \frac{\Pr(D=1 \given Y=1)/\Pr(D=0 \given Y=1)}{\Pr(D=1 \given Y=0)/\Pr(D=0 \given Y=0)}
-\end{equation*}
+&=&  \frac{\Pr(Y=1 \given D=1)/\Pr(Y=0 \given D=1)}{\Pr(Y=1 \given D=0)/\Pr(Y=0 \given D=0)} (\#eq:DOR1)\\
+&= & \frac{\Pr(D=1 \given Y=1)/\Pr(D=0 \given Y=1)}{\Pr(D=1 \given Y=0)/\Pr(D=0 \given Y=0)} (\#eq:DOR2)
+\end{eqnarray}
 
 is a single indicator of test performance.
-It is defined as the ratio of the odds of a positive test result in 
-individuals with the disease to the odds of a positive test result in
-individuals without the disease. A higher DOR indicates better diagnostic
+It is defined as the ratio of the odds $\Pr(Y=1)/\Pr(Y=0)$ of a positive test result in 
+individuals with the disease ($D=1$) to the odds of a positive test result in
+individuals without the disease ($D=0$) (equation \@ref(eq:DOR1). It can also be written as the ratio of the odds of diseasae in test positives relative to the odds of disease in test negatives (equation \@ref(eq:DOR2)). 
+A higher DOR indicates better diagnostic
 accuracy, with the test more effectively distinguishing between those with 
 and without the disease. 
 ```{r}
@@ -544,7 +546,7 @@ and without the disease.
 :::
 
 
-It can be calculated as
+The diagonstic odds ratio can be calculated as
 \[
 \mbox{DOR}  =  \frac{\mbox{LR}^+}{\mbox{LR}^-} = \frac{tp \cdot tn}{fp \cdot fn}.
 \]
@@ -557,9 +559,9 @@ In the MW study (Example \@ref(exm:mws)) we obtain
 \]
 
 Figure \@ref(fig:DOR-dep) illustrates that the same DOR can be achieved by
-very different combinations of sensitivity and specificity.
+very different combinations of sensitivity and specificity. For example, a diagnostic test with sensitivity 0.9 and specificity 0.7 will have the same $\mbox{DOR}=21$ as a test with sensitivity 0.7 and specificity 0.9. 
 
-```{r DOR-dep, fig.cap = "Dependence of diagnostic odds ratios on sensitivity and specificity.", echo = FALSE }
+```{r DOR-dep, fig.cap = "Contour plot of the diagnostic odds ratio DOR as a function of sensitivity and specificity. The dots represent a diagnostic test with sensitivity 0.9 and specificity 0.7 and *vice versa*, where DOR = 21 in both cases.", echo = FALSE }
 sens <- spec <- seq(0.5, 0.99, 0.01) ## c(.5,.6,.7,.8,.9, .95)
 DOR <- matrix(NA, nrow=length(sens), ncol=length(spec))
 for(i in 1:length(sens))
@@ -572,13 +574,17 @@ for(i in 1:length(sens))
 ## print(xtable(DOR+eps, digits=1, align="r|rrrrrr"), add.to.row=list(pos=list(-1),   command=c(
 ##    " \\multicolumn{1}{c}{Sensitivity} & \\multicolumn{6}{c}{Specificity}  \\\\ \\hline"
 ##     )))
-par(las=0)
-filled.contour(sens, spec, log10(DOR), xlab="sensitivity", ylab="specificity",
-               key.axes=axis(4, at=seq(0, 4, by = 1), labels=c("1", "10", "100", "1000", "10000")))
+par(las=1, pty="s")
+contour(sens, spec, (DOR), xlab="sensitivity", ylab="specificity", levels=c(1, 3, 10, 30, 100, 300, 1000, 3000, 10000))
+points(0.9, 0.7, pch=19)
+points(0.7, 0.9, pch=19)
+
+               ## key.axes=axis(4, at=seq(0, 4, by = 1), 
+               ##              labels=c("1", "10", "100", "1000", "10000")))
 ##               levels=log(c(1,3,10,30,100,300,1000, 3000, 10000)))
 
 ##               key.axes=5)
-title("Contour plot of DOR")
+## title("Contour plot of DOR")
 ```
 
 
@@ -1049,6 +1055,8 @@ discussed in @SN_LR.  A comprehensive account of statistical
 aspects of binary diagnostic tests can be found in @pepe (Chapter 2).
 @altman discuss the relevant confidence intervals
 in Chapter 6 and 10.
+
+@glas_etal2003 discuss properties of the diagnostic odds ratio in detail. 
 
 @arroll is an example of a study where the methods from this chapter are used 
 in practice. The "Statistics Notes" by Douglas G. Altman and Martin Bland, 
