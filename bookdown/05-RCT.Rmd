@@ -7,20 +7,18 @@ A *randomized controlled trial* (RCT)
 is an experiment performed on human
 subjects (usually patients) in order to assess the efficacy of a 
 *treatment* (or *intervention*) for some condition.
-It has two key features:
-
--  The new treatment is given to a group of patients, the \emph{treated
-  group}, and another treatment (standard or placebo treatment) is given to
-  another group of patients, the *control group*, at the same time.
--  Patients are allocated to one group or another by *randomization*.
-
-A more accurate name is randomized *concurrently* controlled
-*clinical* trial, because patients in the intervention and in the control group obtain 
-treatment at the same time. 
+It has two key features. First, the new treatment is given to a group of
+patients, the *treatment group*, and another treatment 
+(standard of care or placebo treatment) is given to
+another group of patients, the *control group*, at the same time.
+Second, patients are allocated to one group or another by *randomization*.
+A more accurate name for RCT is randomized *concurrently* controlled
+*clinical* trial, because patients in the intervention and in the control group
+receive treatment at the same time. 
 
 There are often more than two treatments being compared in a single trial,
-for example a treatment in different doses. However, the essential ideas of RCTs 
-become transparent already for the case of two groups.
+such as a treatment in different doses. However, 
+the fundamental principles of RCTs become clear already in the case of two groups.
 Moreover, the treatment is not necessarily a drug, but may also be a new 
 surgical procedure, a certain therapy (e.g. acupuncture, psychotherapy), etc.
 Participants of an RCT may not get the "optimal" treatment, so there are 
@@ -30,52 +28,53 @@ important ethical aspects when conducting an RCT.
 
 Ronald Aylmer Fisher (1890-1962) and Austin 
 Bradford Hill (1897–1991) were pioneers of randomization.
-
 In the 1920s, R.A. Fisher presented randomization as a crucial 
 element of the design and analysis of experiment [@Fisher1925].
-
 He also said about the importance of design:
 
-
-"To consult the statistician after an experiment is finished is often merely to ask him to conduct a post mortem examination. He can perhaps say what the experiment died of"
+"To consult the statistician after an experiment is finished is often merely to 
+ask him to conduct a post mortem examination. He can perhaps say what the 
+experiment died of"
 
 (Presidential Address to the First Indian Statistical Congress, 1938).
 
-A.B.Hill also advocated for randomization [@Hill1937]
+A.B. Hill also advocated for randomization [@Hill1937]
 and was the trial statistician in one of the very first RCTs among humans: 
 the MRC Strepromycin trial. 
 
 
-### The MRC Streptomycin Trial
+#### The MRC Streptomycin Trial {-}
 
-The Streptomycin trial conducted by the Medical Research Council (MRC) in the U.K
-in 1946-7 and the results were published in 1948 [@Strepto1948].
-It is considered the first RCT, double-blind and placebo-controlled.
-The participants were randomly assigned to Streptomycin and bed-rest, 
-or bed-rest alone. The randomization series were not known to the 
+The Streptomycin trial was conducted by the Medical Research Council (MRC) in 
+the U.K. in 1946-1947 and the results were published in 1948 [@Strepto1948].
+Patients with pulmonary tuberculosis were randomly assigned to receive
+Streptomycin (a bactericidal antibiotic drug) 
+and bed-rest, or bed-rest alone (the standard of care). 
+The randomization series were not known to the 
 investigator and the patient did not know whether they were in the 
 treatment or control group. 
-
-Results showed efficacy of the bactericidal antibiotic drug Streptomycin 
+Results showed efficacy of Streptomycin 
 against tuberculosis, albeit with
 minor toxicity and acquired bacterial resistance to the drug.
-Today, Streptomycin, in combination with penicillin, is used in a standard antibiotic
+Today, Streptomycin, in combination with penicillin, is used in 
+a standard antibiotic
 cocktail to prevent bacterial infection in cell culture.
 
+This trial is considered the first RCT, double-blind and placebo-controlled.
 However, this trial is not the first study using randomization and 
 double blinding. 
-
-
-### The Nuremberg salt test of 1835
 More than 100 years before the MRC Streptomycin Trial,
-the `Nuremberg salt test' was performed, using randomization and double blinding to evaluated the efficacy of homeopathy. \citet{Stolberg2006} summarized and commented on 
+the `Nuremberg salt test' was performed, using randomization and double blinding
+to evaluated the efficacy of homeopathy. @Stolberg2006 summarized and
+commented on 
 the study.
 
-### The Salk Polio Vaccine Trial
+#### The Salk Polio Vaccine Trial {-}
 Polio was a major public health problem worldwide
 in the late 19th and early 20th centuries. 
 Over 500,000 cases of polio were reported every year by the mid-20th century
-(source: (https://www.who.int/news-room/spotlight/history-of-vaccination/history-of-polio-vaccination)).
+(source:
+(https://www.who.int/news-room/spotlight/history-of-vaccination/history-of-polio-vaccination)).
 
 By 1953, several potential vaccines had been developed. One of the more promising
 was an inactivated virus vaccine developed by Jonas Salk at the University of 
@@ -96,15 +95,19 @@ library(kableExtra)
 data <- data.frame(
   Vaccine = c("Yes", "No"),
   Polio_Yes = c(82, 162),
-  Polio_No = c(200663, 201067)
+  Polio_No = c(200663, 201067),
+  Infection_r = c("0.041%", "0.081%")
 )
 
 # Create the table using kable
 kable(data, 
-      col.names = c("Vaccine", "Yes", "No"), 
+      col.names = c("", "Yes", "No", "Infection risk"), 
       caption = "Vaccine effectiveness in the Salk Polio Vaccine Trial.", 
-      booktabs = TRUE) %>%
-  kable_styling(position = "center")
+      booktabs = TRUE, align = "c", 
+      label = NA) %>%
+  kable_styling(position = "center") %>%
+ kable_styling(full_width = FALSE) %>%
+  add_header_above(c("Vaccine" = 1, "Polio" = 2, " " = 1))
 ```
 
 
@@ -114,7 +117,8 @@ that the vaccine was indeed effective.
 
 ### Ethical issues of RCTs
 
-There are important ethical aspects of RCTs. 
+There are important ethical aspects to consider when planning and 
+conducting an RCTs. 
 First, a patient must never be given a treatment that is known to be
 inferior. Moreover, patients must be fully informed about
 possible adverse reactions, side-effects etc. They must give 
@@ -137,6 +141,13 @@ RCTs have five key characteristics:
 4.  Allocation to treatment by *randomization*
 5.  Outcome measures in the treatment groups are 
     compared *at the end* of the trial. 
+    
+:::{.example #covidVacc}
+@Polack2020 conducted a multinational, placebo-controlled, 
+observer-blinded, pivotal efficacy trial to assess the efficacy
+of the BNT162b2 vaccine candidate against laboratory-confirmed 
+Covid-19.
+:::
 
 
 ### Eligibility criteria
@@ -149,6 +160,15 @@ trials with *long enrollment period* (months, years) and
 *multicenter* trials.
 Otherwise the type of patient recruited may change over the duration of the
 trial or may vary from center to center.
+
+:::{.example #covidVacc name="continued"}
+The inclusion criteria in @Polack2020 were: adults 16 years of age 
+or older, healthy or with a stable chronic medical conditions. Some 
+of the key exclusion included: a medical history of Covid-19, treatment 
+with immunosupressive therapy, or diagnosis with an immunocompromising condition. 
+Out of the 44820 participants which were screened for the study, 
+1150 were excluded because they did not meet the eligibility criteria.
+:::
 
 
 
@@ -165,7 +185,7 @@ treatment, so without a control group we do not know to what extent patient
 response is due to treatment. For example, without a control group, 
 *regression to the mean* may indicate an apparent, non-existing treatment effect.
 
-### Regression to the mean
+#### Regression to the mean {-}
 
 :::{.example}
   Regression to the mean in the absence of a control group is
@@ -189,7 +209,7 @@ library(knitr)
 include_graphics(c("figures/sign509-fig-0002-m.jpg", "figures/sign509-fig-0003-m.jpg"))
 ```
 
-### Historical controls
+#### Historical controls {-}
 
 Historical controls are an alternative to concurrent controls 
 in situation where randomizing patients to a control treatment 
@@ -206,7 +226,7 @@ there might be difference in the conduct and analysis of
 the historical and the new trial [@Marion2023].
 
 :::{.example}
-Coehlo conducted an open-label, single-group, phase 3 
+@Coelho2023 conducted an open-label, single-group, phase 3 
 trial to evaluate the use of transthyretin gene silencing as 
 a treatment for hereditary transthyretin (ATTRv) amyloidosis.
 ATTRv amyloidosis is a life threatening genetic disorder
@@ -214,20 +234,28 @@ for which several medications have been approved by the FDA.
 In order to not "unnecessarily expose participants to sequelae
 from a rapidly progressive and potentially fatal neurologic
 disease", a historical placebo 
-from a previous trial was chosen. In this example, 
-the historical trial was double-blinded... while open label in other.
+from a previous trial conducted between 2013 and 2017 
+was chosen. 
+<!-- In this example,  -->
+<!-- the historical trial was double-blinded... while open label in other. -->
 :::
 
-### Allocation at random
+
+
+
+### The importance of randomization
+
 *Allocation at random* aims to ensure that all *prognostic factors* 
 (both known and unknown) are similarly represented in the two groups. 
 That means that there is *no systematic difference* between the groups
 which may have caused treatment difference.
 
-
-### The importance of randomization
 :::{.example}
-Table \@ref(tab:kidney) summarizes the results from an observational study from @charig about two different treatments of kidney stones. This is a non-randomized study, as can be seen from the different distribution of the two therapies among patients with small resp. large kidney stones ($87:270$ vs. $263:80$). 
+Table \@ref(tab:kidney) summarizes the results from an observational study from
+@charig about two different treatments of kidney stones. This is a 
+non-randomized study, as can be seen from the different distribution 
+of the two therapies among patients with small resp. large kidney stones 
+($87:270$ vs. $263:80$). 
 :::
 
 
