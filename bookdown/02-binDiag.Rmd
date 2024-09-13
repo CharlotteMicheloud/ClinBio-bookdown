@@ -12,7 +12,7 @@ prostate-specific antigen (PSA) screening for the diagnosis of prostate cancer.
 dichotomized to binary tests using a suitable threshold, see 
 Chapter \@ref(contDiag).
 
-### Study designs
+### Study designs{#sec:design}
 
 The study design determines the selection of study subjects from a population.
 In a *case-control design*, a diagnostic test is applied to a sample of diseased
@@ -21,16 +21,16 @@ In a *cohort design*, a diagnostic test is applied to a sample of subjects
 from the population of interest, and the true disease status
 is also ascertained using a reference test, the *gold standard*. 
 
-The design of studies comparing two diagnostic tests is also considered. In an
+The design of studies comparing two diagnostic tests is also important. In an
 *unpaired design*, each study subject is tested with only one of the two tests. 
-In contrat, each study subject is tested with both tests in a *paired design*.
+In contrast, each study subject is tested with both tests in a *paired design*.
 
 ### Test integrity
 
 Knowledge of the true disease status of the individual must not 
 influence the assessment of the diagnostic test. For example, if a radiologist 
 is aware that a woman has breast cancer, 
-they may scrutinize her mammogram more closely for signs of cancer, 
+she/he may scrutinize her mammogram more closely for signs of cancer, 
 introducing a potential *bias*. In order to address this issue, *blinding*
 should be used. This means that the person who applies the diagnostic test 
 must not know the true disease status, and the person who determines 
@@ -77,6 +77,7 @@ must not know the test result.
     fp <- 3885
     tn <- 117744
     fn <- 97
+    n <- tp + fp + tn + fn
 
     mat <- matrix(c(tn, fn, fp, tp), byrow = TRUE, ncol = 2)
     mat <- cbind(mat, apply(mat, 1, sum))
@@ -175,7 +176,9 @@ The following notation is used for binary diagnostic tests:
 \end{eqnarray*}
 
 Table \@ref(tab:notation) introduces our notation for the counts from a
-simple diagnostic accuracy study with total sample size $n$.
+simple diagnostic accuracy study with total sample size $n$. For the data from the MW study shown in Table \@ref(tab:MWS)
+we have $tp = `r format.bigmark(tp)`$ true positives,  $fp = `r format.bigmark(fp)`$ false positives,  $tn = `r format.bigmark(tn)`$ true negatives,  $fn = `r format.bigmark(fn)`$ false negatives, and a total sample size of 
+ $n = `r format.bigmark(n)`$. 
 
     
 ```{r notation, echo = FALSE}
@@ -245,9 +248,7 @@ J = \mbox{Sens} + \mbox{Spec} - 1 .
 
 :::
 
-In the MW study (Example \@ref(exm:mws)), we obtain $J=`r round(sens.ci[[1]]/100, 3)` +
-`r round(spec.ci[[1]]/100, 3)` - 1
-= `r round(sens.ci[[1]]/100+spec.ci[[1]]/100-1, 2)`$. A categorization of
+A categorization of
 *test quality* based on Youden's index is shown in Table \@ref(tab:quality):
 
 ```{r quality, echo = FALSE}
@@ -280,6 +281,11 @@ non-diseased individuals:
 A harmful test can be made useful by *relabelling*
 test results $Y=1$ to $Y=0$ and vice versa.
 
+In the MW study (Example \@ref(exm:mws)), we obtain $J=`r round(sens.ci[[1]]/100, 3)` +
+`r round(spec.ci[[1]]/100, 3)` - 1
+= `r round(sens.ci[[1]]/100+spec.ci[[1]]/100-1, 2)`$, so mammography is a useful test to diagnose breast cancer according to 
+Table \@ref(tab:quality). 
+
 ### Predictive values
 The accuracy of a diagnostic test can also be described with *predictive values*.
 
@@ -303,15 +309,17 @@ that is, the probability that a study subject with a positive test
 result actually does not have the disease. 
 :::
 
-Predictive values can be directly estimated in a cohort design, such as the
+Predictive values can be directly estimated in a cohort design (see Section
+      \@ref(sec:design)), such as the
 MW study shown in Example \@ref(exm:mws):
 
 \begin{eqnarray*}
   \mbox{PPV} &=& \displaystyle\frac{{tp}}{{tp}+{fp}} = 629/`r format.bigmark(4514)` = `r round(629/4514*100, 1)`\% \mbox{ and} \\
   \mbox{NPV} &=& \displaystyle\frac{{tn}}{{tn}+{fn}} = `r format.bigmark(117744)`/`r format.bigmark(117841)` = `r round(117744/117841*100, 1)`\%.
 \end{eqnarray*}
+The negative predictive value NPV is close to 100\%, which means that a women with a negative mammogram is very likely not to have breast cancer. However, the positive predictive value is only `r round(629/4514*100, 1)`\%, so a women with a positive mammogram still has a fairly small probability to have breast cancer. 
 
-This assumes that the observed *disease prevalence*
+This simple calculation assumes that the observed *disease prevalence*
 
 \begin{eqnarray*}
 {\mbox{Prev}} = n_1/n = 726/`r format.bigmark(122355)` &=& \, \, `r round(726/122355*100, 1)`\%
@@ -320,8 +328,7 @@ This assumes that the observed *disease prevalence*
 in the study sample is representative for the underlying population.
 
 
-Predictive values can also be calculated for other values of the prevalence.
-In general, any disease prevalence can be specified. Then,
+Predictive values can also be calculated for other values of the prevalence with Bayes' theorem:
 
 \begin{eqnarray*}
 \mbox{PPV} & = & \frac{\mbox{Sens} \cdot \mbox{Prev}}{\mbox{Sens} \cdot \mbox{Prev} + (1-\mbox{Spec}) \cdot (1-\mbox{Prev})} \mbox{ and} \\
@@ -330,7 +337,7 @@ In general, any disease prevalence can be specified. Then,
 
 as the transition from *pre-test probability* of disease (the prevalence) 
 to *post-test probabilities* of disease ($\mbox{PPV}$ and $\mbox{NPV}$) 
-after observing a positive, respectively negative, test result.
+after observing a positive, or negative test result.
 Table  \@ref(tab:MWS-predvalues) gives predictive values in the MW study
 also for other values of the prevalence. 
 As the prevalence increases, 
@@ -366,7 +373,7 @@ table_data$Prevalence[3] <- paste0("<span style='color:red;'>", table_data$Preva
 # Create the table using kable
 kable(table_data, 
       col.names = c("Prevalence", "PPV", "NPV"),
-      caption = "Predictive values in the Million Women Study for different prevalences.",
+      caption = "Predictive values in the Million Women Study for different prevalences. The entries in the first line are based on the observed disease prevalence in the study sample.",
       escape = FALSE)  # escape = FALSE to render LaTeX syntax
 ```
 
@@ -401,12 +408,12 @@ the *negative likelihood ratio* as
 :::
 
 
-Likelihood ratios summarise how many times more (or less) likely
+Likelihood ratios are ratios of probabilities and summarise how many times more (or less) likely
 study subjects with the disease are to have a particular test result 
 ($\mbox{LR}^+$ for a positive result, $\mbox{LR}^-$ for a negative result) than
 study subjects without the disease.
 In contrast to predictive values, they do not depend on disease
-prevalence.  Likelihood ratios are ratios of probabilities.
+prevalence.  
 
 Useful tests have $\mbox{LR}^+ > 1$ and
 $\mbox{LR}^- < 1$.
@@ -425,6 +432,7 @@ In the MW study (Example \@ref(exm:mws)) we obtain:
 = {`r round(LRneg[[1]], digits = 2)`} \approx
 {1/`r round(1/LRneg[[1]], digits = 0)`}.  \end{align*}
 
+### Bayesian updating with likelihood ratios
 
 LRs quantify the *change in disease odds* after having observed a
 positive or negative test result:
@@ -629,7 +637,7 @@ However, they do not account for non-sampling errors, such as biases arising
 from study design, conduct, or analysis.
 
 There are different methods to compute a CI for proportions 
-(e.g. sensitivity, specificity) and ratios (e.g. likelihood ratios)
+(e.g. sensitivity, specificity) and ratios (e.g. likelihood ratios).
 Details how to construct confidence intervals  can be found in Appendix
 \@ref(confint).
  
@@ -673,8 +681,8 @@ the appropriate standard normal quantile for other confidence levels.
 This can be done using the following code: 
 
 ```{r echo=TRUE}
-gamma <- c(0.9, 0.95, 0.99) # confidence levels
-print(qnorm((1+gamma)/2)) # factor
+level <- c(0.9, 0.95, 0.99) # confidence levels
+print(qnorm((1 + level)/2)) # factor
 ```
 
 
@@ -687,7 +695,7 @@ Additionally, the Wilson confidence interval does not have overshoot issues:
 its limits are always within the unit interval, eliminating the need for truncation.
 
 
-```{r coverage, echo = FALSE, fig.cap = "Empirical coverage of Wald and Wilson confidence intervals with confidence level $95\\%$ and sample size $n=50$.", echo = FALSE, message = FALSE }
+```{r coverage, echo = FALSE, fig.cap = "Empirical coverage of Wald and Wilson confidence intervals with confidence level $95\\%$ and sample size $n=50$ (grey line). The solid line is a local average of the coverage, computed as described in @held", echo = FALSE, message = FALSE }
  source("code/settings.R")
 
  par(mfrow=c(1,2), las=1, pty="s")
@@ -734,8 +742,8 @@ are obtained using:
 ```{r wald, echo=T}
 library(biostatUZH)
 
-(wald(x=629, n=726, conf.level = 0.95))
-(wilson(x=629, n=726, conf.level = 0.95))
+wald(x=629, n=726, conf.level = 0.95)
+wilson(x=629, n=726, conf.level = 0.95)
 ```
 
 The `R` function `prop.test()` without continuity correction also 
@@ -752,7 +760,7 @@ we obtain the following confidence interval for the specificity:
 wald(x = 763, n = 763 + 25, conf.level = 0.95)
 wilson(x = 763, n = 763 + 25, conf.level = 0.95)
 ```
-
+The limits of the Wald confidence interval are -- by construction -- symmetric around the observed proportion. The limits of the Wilson interval are shifted slightly to the left. 
 
 
 #### Other confidence intervals
@@ -762,7 +770,8 @@ Here is an artificial example for $x=1$ successes out of $n=10$ trials.
 ```{r echo=TRUE}
  (res <- confIntProportion(x=1, n=10, conf.level = 0.95))
 ```
-Note: Lower limit of Wald interval is truncated to 0.
+
+The lower limit of Wald interval is actually negative ("overshoot") and therefore truncated to 0. The lower limit of Agresti's method is also zero. The other methods have a positive lower limit. The method by Clopper-Pearson produces the widest confidence interval. 
 
 
 ### Likelihood ratios{#sec:CIforLR}
@@ -777,10 +786,9 @@ Note: Lower limit of Wald interval is truncated to 0.
   Note that log always refers to the natural logarithm in this document.
   Back-transformation to the original scale gives a 95\% (multiplicative)
   Wald confidence
-  interval for the positive likelihood ratio ${\mbox{LR}}^+$ with limits:
+  interval for the positive likelihood ratio ${\mbox{LR}}^+$ with limits
   \[
-    {\mbox{LR}}^+/\EF_{.95} \mbox{ and } {\mbox{LR}}^+ \cdot \EF_{.95},
-    
+    {\mbox{LR}}^+/\EF_{.95} \mbox{ and } {\mbox{LR}}^+ \cdot \EF_{.95}
   \]
   where
   
@@ -810,6 +818,7 @@ Note: Lower limit of Wald interval is truncated to 0.
   3.  The 95\% confidence interval for ${\mbox{LR}}^+$ then has limits
   $${\mbox{LR}}^+/\EF_{.95} \mbox{ and } {\mbox{LR}}^+ \cdot \EF_{.95}$$
 
+A 95\% confidence interval for ${\mbox{LR}}^-$ is computed accordingly using the standard error $\SE(\log {\mbox{LR}}^-)$ for a negative test result. 
 
 ```{summary}
 
@@ -874,8 +883,7 @@ and the true prevalence to $\Pr(D=1)$.
 ### Predictive values
  
 If the study follows a cohort design, confidence intervals can be
-computed for PPV, NPV and disease prevalence directly from the data.  
-This is what the function `epi::epi.tests()` always computes.  The function `biostatUZH::confIntDiagnostic()` also computes CIs for PPV and NPV for 
+computed for PPV, NPV and disease prevalence directly from the data.  This is what the function `epi::epi.tests()` always computes.  The function `biostatUZH::confIntDiagnostic()` also computes CIs for PPV and NPV for 
 a pre-specified prevalence. This approach is based on the following steps:
 
 1.  The limits of a confidence interval for $\mbox{LR}^+$
@@ -884,7 +892,7 @@ a pre-specified prevalence. This approach is based on the following steps:
 2.  Multiplication with ${\mbox{Prev}}/({1-\mbox{Prev}})$ gives the limits of
       a confidence interval for ${\mbox{PPV}/(1-\mbox{PPV})}$ resp. ${(1-\mbox{NPV})/\mbox{NPV}}$ according to  equation \@ref(eq:PPVBayes), resp. \@ref(eq:NPVBayes)
       
-3.  Confidence intervals for $\mbox{PPV}$ resp. $\mbox{NPV}$ can be obtained by the usual transformation of the limits obtained in 2. to the  probability scale.
+3.  Confidence intervals for $\mbox{PPV}$ resp. $\mbox{NPV}$ can be obtained by the usual transformation of the limits obtained in step 2.~to the  probability scale.
 
 
 
@@ -964,9 +972,7 @@ kable(combined_data, label = NA,
 
 
  The sensitivity and specificity are $\mbox{Sens}=116/122=`r round(116/(116+6)*100,1)`$\%
-  and $\mbox{Spec}=4844/4878=`r round(4844/(4844+34)*100,1)`$\% for EA and  
-  $\mbox{Sens}=111/124=`r round(111/(111+13)*100,1)`$\% and 
-  $\mbox{Spec}=4765/4876=`r round(4765/(4765+111)*100,1)`$\% for CVS. 
+  and $\mbox{Spec}=4844/4878=`r round(4844/(4844+34)*100,1)`$\% for EA and $\mbox{Sens}=111/124=`r round(111/(111+13)*100,1)`$\% and $\mbox{Spec}=4765/4876=`r round(4765/(4765+111)*100,1)`$\% for CVS. 
 Hence
 
   \begin{eqnarray*}
@@ -975,6 +981,9 @@ Hence
   \mbox{rSpec}  & = & `r round(4844/(4844+34)*100,1)`\%/`r round(4765/(4765+111)*100,1)`\%
   = `r round(4844/(4844+34)/(4765/(4765+111)),2)`.
   \end{eqnarray*}
+We see that the sensitivity of EA is `r round(100*(116/(116+6)/(111/(111+13))-1))`\% larger than the sensitivity of
+CSV. The specificity of EA is `r round(100*(4844/(4844+34)/(4765/(4765+111))-1))`\% increased compared to
+CSV. 
 
 ```{r echo=F}
   sens.ea <- 116/(116+6)
