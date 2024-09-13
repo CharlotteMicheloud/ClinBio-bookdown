@@ -251,11 +251,13 @@ That means that there is *no systematic difference* between the groups
 which may have caused treatment difference.
 
 :::{.example}
-Table \@ref(tab:kidney) summarizes the results from an observational study from
-@charig about two different treatments of kidney stones. This is a 
-non-randomized study, as can be seen from the different distribution 
-of the two therapies among patients with small resp. large kidney stones 
-($87:270$ vs. $263:80$). 
+Table \@ref(tab:kidney) summarizes the results of an observational study
+comparing two different treatments for renal calculi [@charig].
+The overall odds ratio (comparing treatment A to treatment B) is
+
+\[\mbox{OR} = \frac{273 \cdot 61}{77 \cdot 289} = 0.75.\]
+
+Therapy B is hence apparently more successful than Therapy A.
 :::
 
 
@@ -273,25 +275,47 @@ data <- data.frame(
 
 # Create the table using kable
 kable(data, 
-      col.names = c("", "Success (yes)", "Success (no)", "Total"), 
-      caption = "Results from an observational study about two different treatments of kidney stones [@charig], overall and in two sub-groups.",
+      col.names = c("", "Yes", "No", "Total"), 
+      caption = "Results from an observational study about two different treatments for renal calculi [@charig], overall and in two sub-groups.",
+      label = NA,
       booktabs = TRUE) %>%
+  add_header_above(c(" " = 1, "Success" = 2, " " = 1)) %>%
   kable_styling(position = "center", full_width = FALSE)
 ```
+However, this study is non-randomized, and the distribution of the 
+two therapies differs among patients with small resp. large kidney stones, 
+see Table \@ref(tab:subgroup). 
 
+```{r subgroup}
+table_data <- data.frame(
+  Therapy = c("Therapy A", "Therapy B"),
+  Small_kidney_stones_Success_yes = c("81 (93%)", "234 (87%)"),
+  Small_kidney_stones_Success_no = c(6, 36),
+  Small_kidney_stones_total = c(87, 270),
+  Large_kidney_stones_Success_yes = c("192 (73%)", "55 (69%)"),
+  Large_kidney_stones_Success_no = c(71, 25),
+  Large_kidney_stones_total = c(263, 80)
+)
 
-The overall odds ratio is
+# Use kable to create the table in bookdown format
+kable(table_data, 
+      col.names = c("", "yes", "no", "total", "yes", "no", "total"),
+      align = "c",
+      caption = "Success of therapies for small and large kidney stones", 
+      label = NA) %>%
+  kable_styling(full_width = F) %>%
+    add_header_above(c(" " = 1, "Success" = 2, " " = 1, "Success" = 2, " " = 1)) %>%
+  add_header_above(c(" " = 1, "Small kidney stones" = 3, "Large kidney stones" = 3)) 
+```
+The odds ratio in the subgroups of patients with small kidney stones is
 
-\[\mbox{OR} = \frac{273 \cdot 61}{77 \cdot 289} = 0.75,\]
+\[ \mbox{OR} = \frac{81 \cdot 36}{6 \cdot 234} = {2.10} \]
 
-meaning that Therapy B is apparently more successful than Therapy A. However, 
-the odds ratios in the subgroups of patients with small and large kidney stones are
+and the odd ratio in the subgroup of patient with large kidney stones is 
+\[\mbox{OR} = \frac{192 \cdot 25}{71 \cdot 55} = {1.23}.\]
 
-\[ \quad \quad  \quad \mbox{OR} = \frac{81 \cdot 36}{6 \cdot 234} = {2.10} \quad \quad \text{and} \quad \quad
-\mbox{OR} = \frac{192 \cdot 25}{71 \cdot 55} = {1.23}.\]
-
-This sub-group analysis reveals that Therapy A is more successful than Therapy B 
-*in both sub-groups*! This is an example of *Simpson's paradox*.
+This sub-group analysis hence reveals that Therapy A is more successful than Therapy B 
+*in both sub-groups*. This is an example of *Simpson's paradox*.
 The success rate was on average higher for small kidney stones 
 (seem to be easier to cure) and because patients receiving therapy B included 
 a much larger proportion of patients with small kidney stones, this therapy 
