@@ -9,7 +9,7 @@ bibliography: bib.bib
 biblio-style: apalike
 link-citations: yes
 github-repo: rstudio/bookdown-demo
-description: "Adapted from the lecture notes from STA404: Clinical Biostatistics."
+description: "Based on the lecture notes from STA404: Clinical Biostatistics."
 always_allow_html: yes
 ---
 

@@ -643,6 +643,13 @@ Details how to construct confidence intervals  can be found in Appendix
  
 ### Proportions
 
+:::{.example #depression}
+
+@arroll investigated the diagnostic accuracy of two verbally asked questions for screening for depression in 15 general practices in New Zealand. Figure \@ref(fig:depression) gives the numbers of true 
+positives, false positives, true negatives, false 
+negatives, sensitivity and specificity, positive and negative likelihood ratio (with 95\% CI) of each question and both questions combined.
+:::
+      
 :::{.example #diabetes}
 
 @Kaur2020 performed a systematic review to assess the diagnostic 
@@ -654,6 +661,9 @@ negatives, sensitivity and specificity (with 95\% CI) of 17 studies
 using HBA1c 6.5\% for detecting diabetes.
 :::
            
+```{r depression, fig.cap = "Results from screening for depression study [@arroll].", echo = FALSE}
+knitr::include_graphics("figures/Arroll_etal2003.jpg")
+```
 ```{r diabetes, fig.cap = "Forest plot of HbA1c 6.5\\% for detecting diabetes [@Kaur2020_fig].", echo = FALSE}
 knitr::include_graphics("figures/diabetes-meta.png")
 ```
@@ -695,7 +705,7 @@ Additionally, the Wilson confidence interval does not have overshoot issues:
 its limits are always within the unit interval, eliminating the need for truncation.
 
 
-```{r coverage, echo = FALSE, fig.cap = "Empirical coverage of Wald and Wilson confidence intervals with confidence level $95\\%$ and sample size $n=50$ (grey line). The solid line is a local average of the coverage, computed as described in @held", echo = FALSE, message = FALSE }
+```{r coverage, echo = FALSE, fig.cap = "Empirical coverage of Wald and Wilson confidence intervals with nominal confidence level $95\\%$ and sample size $n=50$ (grey line). The solid line is a local average of the coverage, computed as described in @held", echo = FALSE, message = FALSE }
  source("code/settings.R")
 
  par(mfrow=c(1,2), las=1, pty="s")
@@ -765,14 +775,46 @@ The limits of the Wald confidence interval are -- by construction -- symmetric a
 
 #### Other confidence intervals
 Other types of confidence intervals can be calculated, for example Agresti, 
-Jeffreys or Clopper-Pearson. 
-Here is an artificial example for $x=1$ successes out of $n=10$ trials.
+Jeffreys or Clopper-Pearson. Here we compute the different confidence intervals for 
+the sensitivity in Example \@ref(exm:depression) (screening for depression) based on both questions. 
+
+```{r echo=FALSE}
+res <- confIntProportion(x=28, n=29)
+```
 ```{r echo=TRUE}
- (res <- confIntProportion(x=1, n=10, conf.level = 0.95))
+confIntProportion(x=28, n=29)
 ```
 
-The lower limit of Wald interval is actually negative ("overshoot") and therefore truncated to 0. The lower limit of Agresti's method is also zero. The other methods have a positive lower limit. The method by Clopper-Pearson produces the widest confidence interval. 
+The Upper limit 
+of the Wald confidence interval is actually larger than 1 ("overshoot"): 
+\[
+p + \mbox{ET}_{95} = `r res$p` + 1.96 \cdot \sqrt{(`r res$p` \cdot (1-`r res$p`) / 29} = `r round(res$p + 1.96*sqrt(res$p*(1-res$p)/29),3)`
+\]
+and in the output truncated to 1.
+The upper limit of Agresti's method is also 1. The other methods have an upper limit smaller than one. The method by Clopper-Pearson produces the widest confidence interval. It is often called "exact", but this is misleading, as it is known to be conservative with too large coverage, see Figure  \@ref(fig:coverage2). 
 
+
+```{r coverage2, echo = FALSE, fig.cap = "Empirical coverage of Clopper-Pearson confidence intervals with nominal confidence level $95\\%$ and sample size $n=50$ (grey line). The solid line is a local average of the coverage, computed as described in @held", echo = FALSE, message = FALSE }
+ source("code/settings.R")
+
+ par(mfrow=c(1,1), las=1, pty="s")
+ # Szenario festlegen:
+ n1 = 50
+ x1 = 0:n1
+ prob = 0.95 # confidence level?
+ ygrenzen = c(0.8, 1) # y-Skala?
+
+
+
+ ## Clopper-Pearson-Intervalle berechnen
+ cp.ci = clopperPearson(x=x1, n=n1)
+ cp.lower = cp.ci[,"lower"]
+ cp.upper = cp.ci[,"upper"]
+
+ plot.coverage(cbind(cp.lower, cp.upper), ylim = ygrenzen, smooth = 0.05, main="Clopper-Pearson")
+
+
+```
 
 ### Likelihood ratios{#sec:CIforLR}
                                   
@@ -859,26 +901,24 @@ A 95\% confidence interval for ${\mbox{LR}}^-$ is computed accordingly using the
 
 The function `biostatUZH::confIntDiagnostic()` computes the estimate and 
 confidence interval of several indicators of test performance. 
-For example, for the MW study (Example \@ref(exm:mws)): 
+For example, for the screening for depression study (Example \@ref(exm:depression)): 
 ```{r echo=T}
 library(biostatUZH)
-res <- confIntDiagnostic(tp=629, fp=3885, tn=117744, fn=97, cohort=TRUE)
-print(format(res, scientific=FALSE))
+confIntDiagnostic(tp=28, fp=129, tn=263, fn=1, cohort=TRUE)
 ```
+
+
 
 Alternatively, the computation can be performed with `epiR::epi.tests()`:
-```{r, echo = FALSE, message = FALSE}
-  dat <- as.table(matrix(c(629, 3885, 97, 117744), nrow = 2, byrow = TRUE))
-  colnames(dat) <- c("Dis+", "Dis-")
-  rownames(dat) <- c("Test+", "Test-")
-```
-
 ```{r echo=TRUE, message = FALSE}
+  ScreeningData <- as.table(matrix(c(28,129,1,263), nrow = 2, byrow = TRUE))
+  colnames(ScreeningData) <- c("Dis+","Dis-")
+  rownames(ScreeningData) <- c("Test+","Test-")
   library(epiR)
-  epi.tests(dat)
+  epi.tests(ScreeningData)
 ```
-The apparent prevalence corresponds to $\Pr(Y=1)$, 
-and the true prevalence to $\Pr(D=1)$.
+The apparent prevalence corresponds to $\Pr(Y=1)=37\%$, 
+and the true prevalence to $\Pr(D=1)=7\%$.
 
 ### Predictive values
  
@@ -896,13 +936,13 @@ a pre-specified prevalence. This approach is based on the following steps:
 
 
 
-In the MW study (Example \@ref(exm:mws)), the predictive values for prevalence 
-of $4.5\%$ are:
+In the screening for depression study (Example \@ref(exm:depression)), the predictive values for a prevalence 
+of $10\%$ are:
 
 ```{r, echo = TRUE}
-confIntDiagnostic(tp=629, fp=3885, tn=117744, fn=97, pr=.045)
+confIntDiagnostic(tp=28, fp=129, tn=263, fn=1, pr=.1)
 ```
-
+The assumed prevalence of 10\% is higher than the prevalence in the data (6.8\%), the positive predictive value is therefore larger and the negative predictive value is smaller. 
 
 
 ## Comparing two diagnostic tests
