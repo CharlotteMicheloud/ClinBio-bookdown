@@ -76,12 +76,17 @@ always_allow_html: yes
 William Osler (1849-1919).
 </div>
 
-Biostatistics is the science of managing medical uncertainty. Biostatistical
-methods play a key role in the scientific assessment of the three main areas of medical practice:
+Biostatistics is a fundamental discipline at the core of modern health
+data science [@lee_biostatistics_2019]. It is the science of
+managing medical uncertainty and biostatistical methods play a key
+role in the scientific assessment of the main areas of medical
+practice:
 
 - Diagnosis
+- Aetiology
 - Treatment
 - Prognosis
+
 
 <div style="text-align: right;">
   Leonhard Held
