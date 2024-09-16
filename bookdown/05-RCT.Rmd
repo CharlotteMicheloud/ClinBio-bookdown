@@ -385,12 +385,12 @@ This problem can be addressed by *blinded outcome assessment*.
 ### Stopping bias
 
 It is tempting to assess the outcomes of a trial repeatedly and to
-stop the trial, once a promising result has been obtained. This can be
+stop the trial once a promising result has been obtained. This can be
 done as part of a prespecified method for assessing the data,
 so-called *group sequential methods* (see 
 Section \@ref(sec:groupsequential)). However, naive repeated
 checking of "significance" will introduce *stopping bias*. 
-
+Stopping bias is illustrated in Example \@ref(exm:stop). 
 
 :::{.example #stop}
 Data with 250 patients
@@ -459,8 +459,8 @@ arrows(80, 0, 70, 1.9, length=0.1)
 ### Publication bias
 
 Successful publication of the results of a clinical trial will depend
-on referees and editors of suitable journals.  Papers reporting
-positive (typically ``significant'') findings are more likely to be
+on the referees and editors of suitable journals.  Papers reporting
+positive (typically "significant") findings are more likely to be
 published than those that do not.  This will lead to *publication bias*.
 Also, papers are more likely to be written and submitted by the
 investigators of the outcome of the trial was positive.
@@ -474,10 +474,8 @@ has finished.
 
 ## Target trials (RWE)
 
-```{}
-TODO: add text of RWE and target trials 
-```
-
+Randomized controlled trials are the gold standard for assessing the 
+effectiveness and safety of new drugs or interventions.
 
 ## Additional references
 
