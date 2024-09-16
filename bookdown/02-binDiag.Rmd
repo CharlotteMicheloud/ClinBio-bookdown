@@ -645,9 +645,13 @@ Details how to construct confidence intervals  can be found in Appendix
 
 :::{.example #depression}
 
-@arroll investigated the diagnostic accuracy of two verbally asked questions for screening for depression in 15 general practices in New Zealand. Figure \@ref(fig:depression) gives the numbers of true 
-positives, false positives, true negatives, false 
-negatives, sensitivity and specificity, positive and negative likelihood ratio (with 95\% CI) of each question and both questions combined.
+@arroll investigated the diagnostic accuracy of two verbally asked questions for screening for depression in 15 general practices in New Zealand. They report $tp = 28$ true positives, $fp = 129$ false positives, $tn = 263$ true negatives and $fn = 1$ false negative among $n=421$ patients in primary care. Overall, 37\% (157/421) of the patients screened positive for depression while only 7\% (29/421) acually had the disease, according to a subsequent computerised composite international diagnostic interview considered to be the gold standard. 
+
+Sensitivity was 
+97\% (95% confidence
+interval, 83% to 99%) and specificity was 67% (62% to 72%). The likelihood ratio for a positive test
+was 2.9 (2.5 to 3.4) and the likelihood ratio for a
+negative test was 0.05 (0.01 to 0.35), see Figure \@ref(fig:depression). 
 :::
       
 :::{.example #diabetes}
@@ -691,7 +695,7 @@ the appropriate standard normal quantile for other confidence levels.
 This can be done using the following code: 
 
 ```{r echo=TRUE}
-level <- c(0.9, 0.95, 0.99) # confidence levels
+level <- c(0.9, 0.95, 0.99) # confidence level
 print(qnorm((1 + level)/2)) # factor
 ```
 
