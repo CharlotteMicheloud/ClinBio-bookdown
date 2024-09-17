@@ -665,9 +665,10 @@ negatives, sensitivity and specificity (with 95\% CI) of 17 studies
 using HBA1c 6.5\% for detecting diabetes.
 :::
            
-```{r depression, fig.cap = "Results from screening for depression study [@arroll].", echo = FALSE}
-knitr::include_graphics("figures/Arroll_etal2003.jpg")
+```{r depression, fig.cap = "Results from screening for depression study [@arroll].", echo = FALSE, out.width="90%"}
+knitr::include_graphics("figures/Arroll_etal2003_Tables.png")
 ```
+
 ```{r diabetes, fig.cap = "Forest plot of HbA1c 6.5\\% for detecting diabetes [@Kaur2020_fig].", echo = FALSE}
 knitr::include_graphics("figures/diabetes-meta.png")
 ```
