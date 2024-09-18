@@ -567,7 +567,9 @@ In the MW study (Example \@ref(exm:mws)) we obtain
 \]
 
 Figure \@ref(fig:DOR-dep) illustrates that the same DOR can be achieved by
-very different combinations of sensitivity and specificity. For example, a diagnostic test with sensitivity 0.9 and specificity 0.7 will have the same $\mbox{DOR}=21$ as a test with sensitivity 0.7 and specificity 0.9. 
+very different combinations of sensitivity and specificity. For example, a diagnostic test with sensitivity 0.9 and specificity 0.7 will have the same $\mbox{DOR}=21$ as a test with sensitivity 0.7 and specificity 0.9. The same is true for other summary statistics, such as Youden's index, which is $J=0.6$ in both cases.
+
+
 
 ```{r DOR-dep, fig.cap = "Contour plot of the diagnostic odds ratio DOR as a function of sensitivity and specificity. The dots represent a diagnostic test with sensitivity 0.9 and specificity 0.7 and *vice versa*, where DOR = 21 in both cases.", echo = FALSE }
 sens <- spec <- seq(0.5, 0.99, 0.01) ## c(.5,.6,.7,.8,.9, .95)
