@@ -274,6 +274,85 @@ there is no evidence for
 an association between the mean measurement and the absolute difference of
 the measurements, so no transformation is required. 
 
+:::{.example #cotinine}
+@Bland1996 report the duplicate salivary cotinine measurements for a group 
+of 20 Scottish schoolchildren, see Figure \@ref(fig:cotinine).
+:::
+
+```{r cotinine, fig.cap = "Measurement 1 versus Measurement 2 for the 20 schoolchildren in Example \\@ref(exm:cotinine)."}
+SC <- read.table("data/SalivaryCotinine.txt", header = TRUE)
+
+par(las = 1, pty = "s")
+plot(SC$Measurement1, SC$Measurement2, pch = 19, xlab = "Measurement 1 (ng/ml)",
+     ylab = "Measurement 2 (ng/ml)", cex = 0.8)
+abline(0, 1, lty = 2)
+
+```
+```{r, warning=FALSE}
+
+y <- abs(SC$Measurement1-SC$Measurement2)
+x <- (SC$Measurement1 + SC$Measurement2)/2
+
+logy <- abs(log10(SC$Measurement1)-log10(SC$Measurement2))
+logx <- (log10(SC$Measurement1) + log10(SC$Measurement2))/2
+
+
+ctest_cot <- cor.test(x, y, method="spearman")
+ctest_logcot <- cor.test(logx, logy, method="spearman")
+```
+
+
+There is a strong correlation between the absolute value of the difference 
+of the two measurements and the mean of the two measurements 
+($\rho_S$ = `r round(ctest_cot$estimate, 2)`, $p$ = `r biostatUZH::formatPval(ctest_cot$p.value)`).
+This correlation becomes small when log measurements are used 
+($\rho_S$ = `r round(ctest_logcot$estimate, 2)`, $p$ = `r biostatUZH::formatPval(ctest_logcot$p.value)`), 
+see Figure \@ref(fig:log).
+
+
+```{r log, fig.cap="Absolute difference versus mean of measurement (left) or log measurements (right) for the  Example \\@ref(exm:cotinine)."}
+
+par(las=1, 
+    mfrow = c(1, 2), 
+    pty = "s")
+# original scale 
+
+
+plot(x, y, xlab = "mean of measurements", 
+     ylab = "absolute diff of measurements", 
+     pty = "s", 
+     pch = 19, 
+     col = 2, 
+     cex = 0.9)
+
+abline(coef(lm(y ~ x)), lty=2, col=1)
+text(2.5, 3, 
+     paste("Spearman correlation =", format(cor(x, y, method = "spearman"), 
+                                            digits = 2, nsmall = 2)), 
+     cex = 0.9)
+
+
+
+# log scale 
+
+
+plot(logx, logy, xlab = "mean of log measurements", 
+     ylab = "absolute diff of log measurements", 
+     pty = "s", 
+     pch = 19, 
+     col = 2, 
+     cex = 0.9)
+
+abline(coef(lm(logy ~ logx)), lty=2, col=1)
+text(- 0.25, 0.4, 
+     paste("Spearman correlation =", format(cor(logx, logy, method = "spearman"),
+                                             digits = 2, nsmall = 2)), 
+     cex = 0.9)
+
+```
+
+
+
 
 ### Repeatability {#sec:repeatability}
 
