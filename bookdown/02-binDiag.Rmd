@@ -696,7 +696,7 @@ This can be done using the following code:
 
 ```{r echo=TRUE}
 level <- c(0.9, 0.95, 0.99) # confidence level
-print(qnorm((1 + level)/2)) # factor
+qnorm((1 + level)/2) # factor
 ```
 
 
