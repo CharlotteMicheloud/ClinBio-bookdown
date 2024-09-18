@@ -645,13 +645,21 @@ Details how to construct confidence intervals  can be found in Appendix
 
 :::{.example #depression}
 
-@arroll investigated the diagnostic accuracy of two verbally asked questions for screening for depression in 15 general practices in New Zealand. They report $tp = 28$ true positives, $fp = 129$ false positives, $tn = 263$ true negatives and $fn = 1$ false negative among $n=421$ patients in primary care. Overall, 37\% (157/421) of the patients screened positive for depression while only 7\% (29/421) acually had the disease, according to a subsequent computerised composite international diagnostic interview considered to be the gold standard. 
+@arroll investigated the diagnostic accuracy of two verbally asked questions 
+for screening for depression in 15 general practices in New Zealand.
+They report $tp = 28$ true positives, $fp = 129$ false positives, 
+$tn = 263$ true negatives and $fn = 1$ false negative among $n=421$ 
+patients in primary care. Overall, 37\% (157/421) of the patients screened 
+positive for depression while only 7\% (29/421) acually had the disease, 
+according to a subsequent computerised composite international diagnostic 
+interview considered to be the gold standard. 
 
 Sensitivity was 
 97\% (95% confidence
-interval, 83% to 99%) and specificity was 67% (62% to 72%). The likelihood ratio for a positive test
+interval, 83% to 99%) and specificity was 67% (62% to 72%). 
+The likelihood ratio for a positive test
 was 2.9 (2.5 to 3.4) and the likelihood ratio for a
-negative test was 0.05 (0.01 to 0.35), see Figure \@ref(fig:depression). 
+negative test was 0.05 (0.01 to 0.35). 
 :::
       
 :::{.example #diabetes}
@@ -665,7 +673,7 @@ negatives, sensitivity and specificity (with 95\% CI) of 17 studies
 using HBA1c 6.5\% for detecting diabetes.
 :::
            
-```{r depression, fig.cap = "Results from screening for depression study [@arroll].", echo = FALSE, out.width="90%"}
+```{r depression, fig.cap = "Results from screening for depression study [@arroll].", echo = FALSE, out.width="90%", eval = FALSE}
 knitr::include_graphics("figures/Arroll_etal2003_Tables.png")
 ```
 
