@@ -969,7 +969,8 @@ confIntDiagnostic(tp=28, fp=129, tn=263, fn=1, cohort=TRUE)
 
 Alternatively, the computation can be performed with `epiR::epi.tests()`:
 ```{r echo=TRUE, message = FALSE}
-  ScreeningData <- as.table(matrix(c(28,129,1,263), nrow = 2, byrow = TRUE))
+  ScreeningData <- as.table(matrix(c(28,129,1,263), 
+                                   nrow = 2, byrow = TRUE))
   colnames(ScreeningData) <- c("Dis+","Dis-")
   rownames(ScreeningData) <- c("Test+","Test-")
   library(epiR)
@@ -990,7 +991,7 @@ a pre-specified prevalence. This approach is based on the following steps:
 2.  Multiplication with ${\mbox{Prev}}/({1-\mbox{Prev}})$ gives the limits of
       a confidence interval for ${\mbox{PPV}/(1-\mbox{PPV})}$ resp. ${(1-\mbox{NPV})/\mbox{NPV}}$ according to  equation \@ref(eq:PPVBayes), resp. \@ref(eq:NPVBayes)
       
-3.  Confidence intervals for $\mbox{PPV}$ resp. $\mbox{NPV}$ can be obtained by the usual transformation of the limits obtained in step 2.~to the  probability scale.
+3.  Confidence intervals for $\mbox{PPV}$ resp. $\mbox{NPV}$ can be obtained by the usual transformation of the limits obtained in step 2. to the  probability scale.
 
 
 
@@ -1151,7 +1152,7 @@ print(confIntPairedDiagnostic(diseased=Dis, nonDiseased=nonDis,
 ```
 
 There is some evidence that T2 performs better than T1 in terms of 
-sensitivity, and that T1 performs better than T2 for LR$^{-}$, 
+sensitivity and LR$^{-}$, 
 since the corresponding confidence intervals 
 do not include the reference value of 1.
 
