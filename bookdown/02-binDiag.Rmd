@@ -457,7 +457,7 @@ Useful tests have $\mbox{LR}^+ > 1$ and
 $\mbox{LR}^- < 1$.
 Likelihood ratios above 10 and below 0.1 are considered to
 provide strong evidence to rule in or rule out
-diagnoses respectively [@SN_LR].
+diagnoses, respectively [@SN_LR].
 
 
 In the MW study (Example \@ref(exm:mws)) we obtain:
@@ -581,7 +581,8 @@ The *diagnostic odds ratio*
 is a single indicator of test performance.
 It is defined as the ratio of the odds $\Pr(Y=1)/\Pr(Y=0)$ of a positive test result in 
 individuals with the disease ($D=1$) to the odds of a positive test result in
-individuals without the disease ($D=0$) (equation \@ref(eq:DOR1). It can also be written as the ratio of the odds of diseasae in test positives relative to the odds of disease in test negatives (equation \@ref(eq:DOR2)). 
+individuals without the disease ($D=0$), see Equation \@ref(eq:DOR1). 
+It can also be written as the ratio of the odds of disease in test positives relative to the odds of disease in test negatives, see Equation \@ref(eq:DOR2). 
 A higher DOR indicates better diagnostic
 accuracy, with the test more effectively distinguishing between those with 
 and without the disease. 
@@ -878,9 +879,9 @@ The upper limit of Agresti's method is also 1. The other methods have an upper l
   Likelihood ratios are by definition positive quantities. To avoid
   overshoot, confidence intervals are therefore constructed on the
   log-scale. The limits of the 95\%-Wald confidence interval for the log positive
-  likelihood ratio $\SE(\log {\mbox{LR}}^+)$, for example, are
+  likelihood ratio $\log {\mbox{LR}}^+$, for example, are
   \[
-  \SE(\log {\mbox{LR}}^+) - 1.96 \cdot \SE(\log {\mbox{LR}}^+) \mbox{ and } \SE(\log {\mbox{LR}}^+) + 1.96 \cdot \SE(\log {\mbox{LR}}^+).
+  \log {\mbox{LR}}^+ - 1.96 \cdot \SE(\log {\mbox{LR}}^+) \mbox{ and } \log {\mbox{LR}}^+ + 1.96 \cdot \SE(\log {\mbox{LR}}^+).
   \]
   Note that log always refers to the natural logarithm in this document.
   Back-transformation to the original scale gives a 95\% (multiplicative)
@@ -1101,7 +1102,7 @@ CSV.
 The relative sensitivity, specificity, LR$^{+}$ and LR$^{-}$, together 
 with the corresponding confidence intervals, can be computer using the function 
 `biostatUZH::confIntIndependentDiagnostic()`: 
-```{r echo=T}
+```{r echo=T, size = "small"}
 fetAb.tp <- c(116, 111)
 fetAb.fp <- c(34, 111)
 fetAb.tn <- c(4844, 4765)
@@ -1109,7 +1110,8 @@ fetAb.fn <- c(6, 13)
 
 ## T1 (EA) versus T2 (CVS)
 print(confIntIndependentDiagnostic(tp=fetAb.tp, fp=fetAb.fp,
-                                   tn=fetAb.tn, fn=fetAb.fn, 
+                                   tn=fetAb.tn, fn=fetAb.fn,
+                                   names = c("EA", "CVS"),
                                    conf.level = 0.95))
 ```
 
@@ -1131,8 +1133,8 @@ both tests.
 ```{r echo=FALSE}
 Dis <- as.table(matrix(c(36, 7, 17, 152), ncol=2, byrow=T))
 nonDis <- as.table(matrix(c(290, 11, 10, 25), ncol=2, byrow=T))
-colnames(Dis) <- colnames(nonDis) <- c("T2-", "T2+")
-rownames(Dis) <- rownames(nonDis) <- c("T1-", "T1+")
+colnames(Dis) <- colnames(nonDis) <- c("T1-", "T1+")
+rownames(Dis) <- rownames(nonDis) <- c("T2-", "T2+")
 ```
 The results for the diseased (`Dis`) and non-diseased (`nonDis`) males 
 are as follows: 
@@ -1142,9 +1144,10 @@ print(Dis); print(nonDis)
 
 
 The function `biostatUZH::confIntPairedDiagnostic()`can be used in this case: 
-```{r echo=T}
+```{r echo=T, size = "small"}
 # Estimates for T1 vs T2
-print(confIntPairedDiagnostic(diseased=Dis, nonDiseased=nonDis, conf.level = 0.95))
+print(confIntPairedDiagnostic(diseased=Dis, nonDiseased=nonDis,
+                              names = c("T1", "T2"), conf.level = 0.95))
 ```
 
 There is some evidence that T2 performs better than T1 in terms of 
