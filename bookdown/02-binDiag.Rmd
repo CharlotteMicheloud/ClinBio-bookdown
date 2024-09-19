@@ -305,7 +305,7 @@ The *negative predictive value* is defined as
 \mbox{NPV} = \Pr(D=0 \given Y=0), 
 \end{equation*}
 
-that is, the probability that a study subject with a positive test 
+that is, the probability that a study subject with a negative test 
 result actually does not have the disease. 
 :::
 
