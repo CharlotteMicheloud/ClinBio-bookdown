@@ -476,9 +476,15 @@ has finished.
 
 Randomized controlled trials are the gold standard for assessing the 
 effectiveness and safety of new drugs or interventions.
-However, they are not always feasible due to ethical or financial 
-considerations. In that case, observational data can be used to 
-emulate a target trial [@Matthews2022].
+However, they might be restricted to a specific study population, and 
+are not always feasible due to ethical or financial 
+considerations.
+In that case, observational data can be used to 
+emulate a target trial. 
+Details on the challenges and conduct of target trials 
+are explained in @Hernan2022 and @Matthews2022, for example.
+
+
 
 ## Additional references
 
