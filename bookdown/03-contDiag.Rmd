@@ -27,7 +27,7 @@ Suppose we have data from a diagnostic test performed on $n$ controls (that is,
 individuals without the disease in question) and $m$ 
 cases (individuals with the disease). 
 If there are  *no ties*, meaning that each observation has a unique value
-with no two observations being equal, the ROC curve is an 
+with no two observations being equal, the ROC curve is a 
 *step function* with vertical jumps of size $1/m$ and horizontal jumps of 
 size $1/n$. If several controls or cases have the same value, then the corresponding
 step size increases accordingly. If a case and a control have the same value 
@@ -178,13 +178,12 @@ names(auc) <- ""
 
 The *standard error* $\SE({\mbox{AUC}})$ of the ${\mbox{AUC}}$ is difficult 
 to compute and requires the execution of a computer program. 
-The limits of a Wald confidence interval for ${\mbox{AUC}}$ are:
+The limits of a 95% Wald confidence interval for ${\mbox{AUC}}$ are:
   \begin{equation*}
-  \mbox{AUC} - z \cdot \SE({\mbox{AUC}}) \mbox{ and } 
-  \mbox{AUC} + z \cdot \SE({\mbox{AUC}}).
+  \mbox{AUC} - \mbox{ET}_{95} \mbox{ and } 
+  \mbox{AUC} + \mbox{ET}_{95}, 
   \end{equation*}
-For 95\% confidence intervals we use $z=1.96$.
-
+  where the error term $\mbox{ET}_{95} = 1.96 \cdot \SE({\mbox{AUC}})$.
 
 
 Improved confidence intervals for $\mbox{AUC}$ can be obtained with the logit transformation.
