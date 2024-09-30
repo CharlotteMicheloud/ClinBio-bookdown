@@ -1132,26 +1132,26 @@ both tests.
 :::
 
 ```{r echo=FALSE}
-Dis <- as.table(matrix(c(36, 7, 17, 152), ncol=2, byrow=T))
-nonDis <- as.table(matrix(c(290, 11, 10, 25), ncol=2, byrow=T))
+Dis <- as.table(matrix(c(36, 17, 7, 152), ncol=2, byrow=T))
+nonDis <- as.table(matrix(c(290, 10, 11, 25), ncol=2, byrow=T))
 colnames(Dis) <- colnames(nonDis) <- c("T1-", "T1+")
 rownames(Dis) <- rownames(nonDis) <- c("T2-", "T2+")
 ```
 The results for the diseased (`Dis`) and non-diseased (`nonDis`) males 
 are as follows: 
 ```{r echo=TRUE}
-print(Dis); print(nonDis)
+print(Dis); print(nonDis) 
 ```
 
 
-The function `biostatUZH::confIntPairedDiagnostic()`can be used in this case: 
-```{r echo=T, size = "small"}
-# Estimates for T1 vs T2
+The function `biostatUZH::confIntPairedDiagnostic()`can be used in this case:
+```{r echo=T}
+# Estimates for T1 vs T2 
 print(confIntPairedDiagnostic(diseased=Dis, nonDiseased=nonDis,
                               names = c("T1", "T2"), conf.level = 0.95))
 ```
 
-There is some evidence that T2 performs better than T1 in terms of 
+There is some evidence that T1 performs better than T2 in terms of 
 sensitivity and LR$^{-}$, 
 since the corresponding confidence intervals 
 do not include the reference value of 1.

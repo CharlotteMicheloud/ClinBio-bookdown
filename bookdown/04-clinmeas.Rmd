@@ -224,7 +224,8 @@ y_sod <- abs(sodium_f$urinary1 - sodium_f$urinary2)
 
 ```{r PEFR-corr, fig.cap = "Absolute difference against mean of the two measurements.", width = 15, heigt = 4.5, echo = FALSE}
 par(las = 1, 
-    mfrow = c(1, 2))
+    mfrow = c(1, 2), 
+    pty = "s")
 
 plot(x_pefr, y_pefr, xlab = "Mean of measurements", 
      ylab = "Absolute difference of measurements", 
@@ -234,7 +235,7 @@ plot(x_pefr, y_pefr, xlab = "Mean of measurements",
      cex = 0.9, 
      main = "PEFR")
 
-abline(coef(lm(y_pefr ~ x_pefr)), lty=2, col=1)
+abline(coef(lm(y_pefr ~ x_pefr)), lty=2, col=4)
 text(400, 25, 
      paste("Spearman correlation =", format(cor(x_pefr, y_pefr, method = "spearman"), 
                                             digits = 2, nsmall = 2)), 
@@ -250,7 +251,7 @@ plot(x_sod, y_sod, xlab = "Mean of measurements",
      cex = 0.9, 
      main = "Sodium")
 
-abline(coef(lm(y_sod ~ x_sod)), lty=2, col=1)
+abline(coef(lm(y_sod ~ x_sod)), lty=2, col=4)
 text(4.5, 1.8, 
      paste("Spearman correlation =", format(cor(x_sod, y_sod, method = "spearman"), 
                                             digits = 2, nsmall = 2)), 
@@ -284,8 +285,9 @@ SC <- read.table("data/SalivaryCotinine.txt", header = TRUE)
 
 par(las = 1, pty = "s")
 plot(SC$Measurement1, SC$Measurement2, pch = 19, xlab = "Measurement 1 (ng/ml)",
-     ylab = "Measurement 2 (ng/ml)", cex = 0.8)
-abline(0, 1, lty = 2)
+     ylab = "Measurement 2 (ng/ml)", cex = 0.8, 
+     col = 2)
+abline(0, 1, lty = 2, col = 4)
 
 ```
 ```{r, warning=FALSE}
@@ -318,14 +320,14 @@ par(las=1,
 # original scale 
 
 
-plot(x, y, xlab = "mean of measurements", 
-     ylab = "absolute diff of measurements", 
+plot(x, y, xlab = "Mean of measurements", 
+     ylab = "Absolute diff of measurements", 
      pty = "s", 
      pch = 19, 
      col = 2, 
      cex = 0.9)
 
-abline(coef(lm(y ~ x)), lty=2, col=1)
+abline(coef(lm(y ~ x)), lty=2, col=4)
 text(2.5, 3, 
      paste("Spearman correlation =", format(cor(x, y, method = "spearman"), 
                                             digits = 2, nsmall = 2)), 
@@ -336,14 +338,14 @@ text(2.5, 3,
 # log scale 
 
 
-plot(logx, logy, xlab = "mean of log measurements", 
-     ylab = "absolute diff of log measurements", 
+plot(logx, logy, xlab = "Mean of log measurements", 
+     ylab = "Absolute diff of log measurements", 
      pty = "s", 
      pch = 19, 
      col = 2, 
      cex = 0.9)
 
-abline(coef(lm(logy ~ logx)), lty=2, col=1)
+abline(coef(lm(logy ~ logx)), lty=2, col=4)
 text(- 0.25, 0.4, 
      paste("Spearman correlation =", format(cor(logx, logy, method = "spearman"),
                                              digits = 2, nsmall = 2)), 
