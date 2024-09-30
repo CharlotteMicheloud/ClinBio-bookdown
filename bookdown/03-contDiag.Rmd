@@ -174,6 +174,11 @@ n.pairs <- ncases*ncontrols
 names(auc) <- ""
 ``` 
 
+There is practical interest how to interpret a certain AUC value. 
+@deHond2022 note that the variety in AUC labelling systems in the literature is substantial. However, some rough guidance may still be helpful for end-users, see @ref{tab:???}. Figure ??? illustrates how much two normal distributions (one for the cases and one for controls) with unit variance are apart for certain AUC values. 
+
+
+
 
 
 The *standard error* $\SE({\mbox{AUC}})$ of the ${\mbox{AUC}}$ is difficult 
