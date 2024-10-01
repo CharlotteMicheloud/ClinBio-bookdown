@@ -488,5 +488,5 @@ are explained in @Hernan2022 and @Matthews2022, for example.
 
 ## Additional references
 
-An introduction to randomized controlled clinical trials is given in @matthews. The design of experiments is discussed in \citet[Chapter 2]{bland}. Regression to the mean is discussed in the Statistics Notes @SN_regrtothemean,SN_exregrtothemean. A practical example for allocation concealment is @adamsen, and @hijazi for convenience sampling.
+An introduction to randomized controlled clinical trials is given in @matthews. The design of experiments is discussed in \citet[Chapter 2]{bland}. Regression to the mean is discussed in the Statistics Notes @SN_regrtothemean, @SN_exregrtothemean. A practical example for allocation concealment is @adamsen, and @hijazi for convenience sampling.
 
