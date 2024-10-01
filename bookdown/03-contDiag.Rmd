@@ -175,9 +175,37 @@ names(auc) <- ""
 ``` 
 
 There is practical interest how to interpret a certain AUC value. 
-@deHond2022 note that the variety in AUC labelling systems in the literature is substantial. However, some rough guidance may still be helpful for end-users, see @ref{tab:???}. Figure ??? illustrates how much two normal distributions (one for the cases and one for controls) with unit variance are apart for certain AUC values. 
+@deHond2022 note that the variety in AUC labeling systems in the literature is substantial. However, some rough guidance may still be helpful for end-users, see Figure \@ref(fig:hond). Figure \@ref(fig:auc) illustrates how much two normal distributions (one for the cases and one for controls) with unit variance are apart for certain AUC values. 
+
+```{r hond, fig.cap = "Different labelling systems of AUC from literature, taken from @deHond2022.", echo = FALSE, out.width="90%"}
+knitr::include_graphics("figures/dehond_auc.jpg")
+```
 
 
+```{r auc, fig.cap = "Normal distributions for cases and controls with unit variance and the corresponding AUC.", echo = FALSE, out.width="90%"}
+
+plotd <- function(d=0.2){
+    x <- seq(-5, 5, .1)
+    y0 <- dnorm(x, mean=0, sd=1)
+    y1 <- dnorm(x, mean=d, sd=1)
+    matplot(x, cbind(y0, y1), type="l", col=c(1,2),
+            ylab="Density", xlab="Test result", lty=1, lwd=2)
+    finaltitle <- paste0("AUC = ", as.character(round(pnorm(d/sqrt(2)), 2)))
+    title(finaltitle)
+    legend("topleft", col=c(1,2), lty=1, legend=c("Controls", "Cases"),
+           lwd=2, cex=0.575, bty="n")
+}
+
+par(mfrow=c(2,2), las=1, pty="s", mar = c(4, 3, 3, 1))
+AUC <- c(6,7,8,9)/10
+d <- qnorm(AUC)*sqrt(2)
+
+plotd(d=d[1])
+plotd(d=d[2])
+plotd(d=d[3])
+plotd(d=d[4])
+
+```
 
 
 
