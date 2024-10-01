@@ -1,0 +1,964 @@
+# (APPENDIX) Appendix  {-}
+
+#  Confidence intervals {#confint}
+
+
+## Concepts
+
+### Standard error
+When we estimate some unknown parameter $\theta$, for example the mean of 
+a distribution, the point estimate $\widehat \theta$ is usually imprecise. 
+Repeating the same experiment over and over would give us a range of estimates. 
+The standard error $\SE(\widehat \theta)$ of $\widehat \theta$ is an estimate
+of the standard deviation of $\widehat \theta$ in repeated random samples. 
+It is very important to understand that the terms
+"standard error" and "standard deviation" are different things [@SN_SDvsSE]. 
+
+### Confidence interval
+The point estimate and the standard error can be used to compute a 
+$\gamma\cdot 100$ \%
+confidence interval (CI) for the unknown parameter $\theta$. In
+practice, we choose a large confidence level $\gamma$ (between $0$ and
+$1$), usually $\gamma = 0.95$. A CI is an interval estimate. Its width describes the
+precision of the point estimate $\widehat \theta$.
+
+A CI contains a range of plausible values of $\theta$. 
+The exact frequentist interpretation of a CI is: 
+For repeated random samples from a distribution with unknown parameter $\theta$, a $\gamma\cdot 100$ \% CI will cover $\theta$ in $\gamma\cdot 100$ \% of all cases.
+
+
+## Methods
+
+### Normal approximation
+The most common construction of a CI for a parameter $\theta$ is a Wald CI, which is symmetric around the point estimate $\widehat\theta$:
+
+\begin{equation}
+(\#eq:wald)
+\widehat\theta - z_\gamma\cdot \SE(\widehat\theta)\;\;\; \text{to}\;\;\; \widehat\theta + z_\gamma\cdot \SE(\widehat\theta)
+\end{equation}
+
+This construction relies on the normal approximation of the estimator in case of a large sample size. Any normal random variable $X\sim \Nor(\mu, \sigma^2)$ can be transformed into a standard normal random variable by $(X-\mu)/\sigma$. Since a standard normal random variable $Z$ is symmetric around $0$, there is a value $z_\gamma$ such that with a probability of $95$\%, $Z$ takes a value between $-z_\gamma$ and $z_\gamma$. This value $z_\gamma$ is the $(1+\gamma)/2$-quantile of the standard normal distribution. For $\gamma = 0.95$, we have $z_\gamma \approx 1.96$.
+
+For small sample size $n$, an approximate $t$-distribution with $n-1$ degrees of freedom is more appropriate than the normal approximation. Then, a symmetric CI as in 
+\@ref(eq:wald) but with $t_\gamma$ instead of $z_\gamma$ is used ($t$-test):
+
+\begin{equation}
+(\#eq:t)
+\widehat\theta - t_\gamma\cdot \SE(\widehat\theta)\;\;\; \text{to}\;\;\; \widehat\theta + t_\gamma\cdot \SE(\widehat\theta)
+\end{equation}
+
+
+### Delta method
+Suppose we know the standard error of an estimator $\widehat{\theta}$. Then, a standard error of the transformed estimator $h(\widehat{\theta})$ is given by
+%
+\begin{equation}
+(\#eq:delta)
+\SE\bigr(h(\widehat{\theta})\bigr) = \SE(\widehat{\theta}) \cdot \Bigr| \dfrac{dh(\widehat{\theta})}{d\theta} \Bigr|
+\end{equation}
+%
+if $\widehat{\theta}$ is a consistent estimator of $\theta$ and 
+$\dfrac{dh(\theta)}{d\theta}\neq 0$. This is called the *delta method* \citep[Section 3.2.4, p.~63]{held}.
+
+
+### Difference{#appCI:difference}
+Suppose we know the standard errors of two estimators $\widehat{\theta}_1, \widehat{\theta}_2$ from independent groups. Since $\Var(X-Y) = \Var(X) + \Var(Y)$ for two independent random variables $X$ and $Y$, the standard error of the difference $\Delta = \widehat{\theta}_1 - \widehat{\theta}_2$ can be calculated as
+
+\begin{equation}
+(\#eq:diff1)
+\SE(\Delta) = \sqrt{\SE(\widehat{\theta}_1)^2 + \SE(\widehat{\theta}_2)^2}.
+\end{equation}
+
+This standard error can be used to compute a symmetric CI for the difference 
+(in an unpaired scenario) as in \@ref(eq:wald) or \@ref(eq:t). 
+
+#### Square-and-add method
+Suppose that, for two independent groups, we know the lower and upper limits 
+$l_1$ and $u_1$ of a CI for $\theta_1$ and $l_2$ and $u_2$ of a CI for 
+$\theta_2$. The square-and-add method computes a CI for the difference 
+$\widehat{\theta}_1 - \widehat{\theta}_2$ using these limits as follows:
+
+\begin{equation}
+(\#eq:diff2)
+\Delta - \sqrt{(\widehat{\theta}_1 - l_1)^2 + (u_2 - \widehat{\theta}_2)^2}\;\;\; \text{to}\;\;\; \Delta + \sqrt{(\widehat{\theta}_2 - l_2)^2 + (u_1 - \widehat{\theta}_1)^2}
+\end{equation}
+
+When the limits of Wald CIs for $\theta_1$ and $\theta_2$ are used, then the square-and-add method results in the Wald CI for the difference. This is how this method was originally discovered. However, it is recommended to use the limits of Wilson CIs instead to improve the properties of the CI (also called Newcombe's method described in 
+@newcombe1998 or @altman (Section 6, p.49).
+For example, this CI preserves the property of the Wilson CIs to be 
+boundary-respecting (no overshoot).
+
+A more complicated variant of the square-and-add method (with Wilson CIs) 
+can also be used for the paired case, where both groups consist of the same 
+patients (see @newcombe1998b or @altman (Section 6, p.52)).
+
+
+### Substitution method
+Sometimes it is preferable to compute a CI for a transformation of the 
+unknown parameter $\theta$. For example, it is usually easier to look at 
+log-transformed ratios such as log(RR) since the logarithm transforms a ratio 
+into a difference. It is a useful trick to compute CIs on the log-scale with 
+the log-transformed point estimate and then back-transform by exponentiating 
+the limits of the CI. Note that when we exponentiate the limits of a symmetric 
+CI, the obtained CI is no longer symmetric around the point estimate $\widehat{\theta}$.
+
+Suppose we have calculated a $95$\% Wald CI for a log-transformed parameter $\log({\theta})$. Back-transformation to the original scale gives the $95$\% CI
+
+\begin{equation}
+(\#eq:ef)
+\widehat{\theta}/\text{EF}_{.95}\; \;\; \text{to}\;\;\; \widehat{\theta}\cdot \text{EF}_{.95}
+\end{equation}
+
+for $\theta$, where
+
+$$\text{EF}_{.95} = 
+\exp\Bigr(z_\gamma \cdot \SE\bigr(\log(\widehat{\theta})\bigr)\Bigr)$$
+
+denotes the $95$\% error factor.
+
+The substitution method can also be useful with other transformations such as
+the logit transformation or Fisher's $z$-transformation. While transformations
+of the parameter to estimate also transform the CI, the $p$-value is not
+affected by transformations but the reference value from the corresponding 
+hypothesis test is transformed too.
+
+### Bootstrap
+Remember that a CI relies on the concept of repeated sampling. We can also 
+construct a CI by simulation. This is called a bootstrap CI. A bootstrap CI
+is especially helpful if the sample size is small or if we cannot assume an
+underlying normal distribution. Then, we draw a large number of samples of 
+the same size with replacement from the data. For all these samples, 
+we compute the point estimate, for example a mean. The simplest $95$\%
+bootstrap CI is given by computing the $2.5$\% and $97.5$\% quantile 
+of the estimators. There are better bootstrap methods reducing bias 
+but they will not be discussed here.
+
+Bootstrap CIs have by construction a good empirical coverage and do not 
+overshoot. No overshoot means that the limits of the CI lie in the range 
+of values that the unknown parameter can take. For example, the limits of 
+a CI for a proportion should be between $0$ and $1$. Bootstrap CIs are
+usually not symmetric around the point estimate.
+
+
+## Continuous outcome
+
+In the following, we discuss commonly used CIs for continuous outcomes.
+
+### One group
+
+:::{.example #pima} 
+The data {PimaIndiansDiabetes2 contains diastolic blood pressure levels
+from $n=252$ diabetic women and $m=481$ non-diabetic women (missing values 
+excluded). We are interested in mean blood pressure $\mu_D$ in the diabetic 
+group. Denote the observations in this group by $x_1,\ldots, x_n$. Suppose
+$s_D^2$ is the sample variance of $x_1,\ldots, x_n$. Then:
+
+
+-  $\widehat{\mu}_D = \bar{x}$
+-  $\SE(\widehat{\mu}_D) = \dfrac{s_D}{\sqrt{n}}$
+
+
+We build a Wald CI for $\mu_D$ as in \@ref(eq:wald):
+
+$$\widehat{\mu}_D - z_\gamma\cdot \SE(\widehat{\mu}_D)\;\;\; \text{to}\;\;\; \widehat{\mu}_D + z_\gamma\cdot \SE(\widehat{\mu}_D)$$
+
+
+The Wald CI can be computed in R:
+
+```{r echo=TRUE, warning=FALSE}
+## Data
+library(mlbench)
+data("PimaIndiansDiabetes2")
+
+## Exclude missing values
+ind <- which(!is.na(PimaIndiansDiabetes2$pressure))
+pima <- PimaIndiansDiabetes2[ind, ]
+
+summary(pima[, c("pressure", "diabetes")])
+
+## Blood pressure levels for the diabetic group
+ind <- which(pima$diabetes == "pos")
+bpDiabetic <- pima$pressure[ind]
+
+## Wald CI
+n <- length(bpDiabetic)
+mu <- mean(bpDiabetic)
+se <- sd(bpDiabetic) / sqrt(n)
+z <- qnorm((1+0.95)/2)
+mu + (z * c(-se, +se))
+```
+
+\noindent
+A symmetric CI based on the $t$-distribution can be conveniently computed in R
+using a one sample $t$-test which also reports a CI.
+
+```{r echo=TRUE}
+t.test(bpDiabetic, conf.level = 0.95)
+```
+
+Wald and $t$-test CIs are very similar due to the large sample size $n=252$.
+:::
+
+### Two unpaired groups with equal variance
+
+:::{.example}
+We consider the same example as before (Example \@ref(exm:pima)).
+Denote the observations in the non-diabetic group by $y_1,\ldots, y_m$, the mean by $\mu_{\bar{D}}$ and the sample variance of $y_1,\ldots, y_m$ by $s_{\bar{D}}^2$. This group is independent from the diabetic group (unpaired). We are interested in the mean difference $\Delta=\mu_D-\mu_{\bar{D}}$. If the two groups have equal variances (hence equal standard deviations), then:
+
+-  $\widehat{\Delta} = \bar{x}-\bar{y}$
+-  $\SE(\widehat{\Delta}) = s \sqrt{\dfrac{1}{m} + \dfrac{1}{n}}$, where $s^2=\dfrac{(m-1)\cdot s_{\bar{D}}^2 + (n-1)\cdot s_D^2}{m+n-2}$
+
+
+
+We build a symmetric CI for $\Delta$ using the $t$-distribution with $m+n-2$ degrees of freedom:
+
+$$\widehat{\Delta} - t_\gamma\cdot \SE(\widehat{\Delta})\;\;\; \text{to}\;\;\; \widehat{\Delta} + t_\gamma\cdot \SE(\widehat{\Delta})$$
+
+
+In R, such a CI is reported in a two sample $t$-test where we need to specify the argument `var.equal = TRUE` (the default value is {\tt FALSE}):
+
+```{r echo=TRUE}
+## Check ordering of groups
+levels(pima$diabetes)
+pima$diabetes <- factor(pima$diabetes, levels = c("pos", "neg"))
+
+levels(pima$diabetes)
+
+t.test(pressure ~ diabetes, data = pima, 
+       conf.level = 0.95, var.equal = TRUE)
+
+## Mean difference
+res <- t.test(pressure ~ diabetes, data = pima, 
+              conf.level = 0.95, var.equal = TRUE)
+mean(res$conf.int)
+```
+:::
+
+### Two unpaired groups with unequal variance
+
+If the variances in the two groups are unequal, the standard error of the difference $\Delta$ is:
+
+
+-  $\SE(\widehat{\Delta}) = \sqrt{\dfrac{s_{\bar{D}}^2}{m} + \dfrac{s_D^2}{n}}$
+
+
+
+A Welch-Satterthwaite test using the $t$-distribution with adjusted degrees of freedom should be used.
+
+:::{.example}
+In R, again in Example \@ref(exm:pima), we can use `t.test` with the default argument `var.equal = FALSE` to compute the CI:
+
+```{r echo=TRUE}
+t.test(pressure ~ diabetes, data = pima,
+       conf.level = 0.95, var.equal = FALSE)
+```
+:::
+
+### Two paired groups
+
+In a paired design, we look at the differences for each patient.
+Then, we construct a CI as in the case of one group. 
+See Example \@ref(exm:sleep).
+
+
+## Binary outcome
+
+Now, we discuss commonly used CIs for binary outcomes.
+Examples in this section come from @altman (Section 6).
+
+### One group
+
+:::{.example}
+Of $n=29$ female prisoners who did not inject drugs, $x=1$ was found to be positive on testing for HIV on discharge. We are interested in the probability $\pi$ with which such cases happen. Then:
+
+-  $\widehat{\pi} = \dfrac{x}{n}$
+-  $\SE(\widehat{\pi}) = \sqrt{\dfrac{\widehat{\pi}(1-\widehat{\pi})}{n}}$
+
+
+
+We can build a Wald CI for $\pi$ as in \@ref(eq:wald). However, for proportions there is a better CI called Wilson CI. Especially if $n$ is small or if $\widehat{\pi}$ is very small (close to $0$) or very large (close to $1$), the Wilson CI has better properties: better empirical coverage and no overshoot. It is of the form:
+
+\begin{equation}
+(\#eq:wilson)
+\dfrac{x + z_\gamma^2/2}{n + z_\gamma^2} \pm \dfrac{z_\gamma^2 \sqrt{n}}{n + z_\gamma^2} \sqrt{\widehat{\pi}(1-\widehat{\pi}) + \dfrac{z_\gamma^2}{4n}}
+\end{equation}
+
+
+This formula is complicated. In practice, we use the library biostatUZH 
+where both Wald and Wilson CIs for proportions are implemented.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+library(biostatUZH)
+
+## Data
+x <- 1
+n <- 29
+
+wald(x, n, conf.level = 0.95)
+wilson(x, n, conf.level = 0.95)
+```
+
+
+Note that when the Wald CI overshoots, the function `wald` returns a CI that is truncated such that the limits lie between $0$ and $1$.
+
+Also the function `prop.test` computes the Wilson CI: 
+```{r echo=TRUE}
+prop.test(x, n, conf.level = 0.95, correct = FALSE)
+``` 
+:::
+
+### Two unpaired groups
+
+:::{.example}
+A collaborative clinical trial assessed the value of extracorporeal 
+membrane oxygenation for term neonates with severe respiratory failure.
+$63$ out of $93$ patients randomised to active treatment survived to one
+year compared with $38$ out of $92$ infants who received conventional
+management. Let $\pi_1$ and $\pi_2$ be the probabilities to survive up
+to one year in the two groups.
+
+The two groups can be compared using different effect measures such as the 
+absolute risk reduction (or risk difference or probability difference), 
+the relative risk reduction (or risk ratio or relative risk) and the (sample) 
+odds ratio. These effect measures are computed from the following $2\times 2$ table:
+
+```{r echo=FALSE, results='asis'}
+
+m <- as.data.frame(matrix(c("$a=x_1=63$", "$c=x_2=38$", 
+                            "$b=n_1-x_1=30$", "$d=n_2-x_2=54$", 
+                            "$n_1=93$", "$n_2=92$"), 
+                          nrow = 2))
+rownames(m) <- c("Treatment", "Control")
+colnames(m) <- c("Survived", "Not survived", "Total")
+
+kable(m, format = "latex", escape = FALSE, align = c('l', 'r', 'r', 'r'))
+```
+
+
+For the absolute risk reduction $\ARR = \pi_1 - \pi_2$, we have:
+
+
+-  $\widehat{\ARR} = \dfrac{x_1}{n_1} - \dfrac{x_2}{n_2}$
+-  $\SE(\widehat{\ARR}) = \sqrt{\dfrac{\widehat{\pi}_1(1-\widehat{\pi}_1)}{n_1} + \dfrac{\widehat{\pi}_2(1-\widehat{\pi}_2)}{n_2}}$
+
+
+
+The standard error is computed using equation \@ref(eq:diff1) for the difference.
+
+Wald and Wilson CIs can be computed in R using the library 
+biostatUZH. A Wald CI uses the above standard error.
+A Wilson CI uses the square-and-add method with Wilson CIs 
+for $\pi_1$ and $\pi_2$. Also here, Wilson CIs have better properties.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+## Data
+tabRespiratory <- matrix(c(63, 38, 30, 54), nrow = 2)
+colnames(tabRespiratory) <- c("Survived", "Not survived")
+rownames(tabRespiratory) <- c("Treatment", "Control")
+
+print(tabRespiratory)
+
+confIntRiskDiff(x = tabRespiratory[, 1], 
+                n = rowSums(tabRespiratory), 
+                conf.level = 0.95)
+```
+
+
+For the risk ratio $\RR=\pi_1/\pi_2$, we have:
+
+
+-  $\widehat{\RR} = \dfrac{x_1/n_1}{x_2/n_2}$
+-  $\log(\widehat{\RR}) = \log\Bigr(\dfrac{x_1/n_1}{x_2/n_2}\Bigr)$
+-  $\SE\bigr(\log(\widehat{\RR})\bigr) = \sqrt{\dfrac{1}{x_1} - \dfrac{1}{n_1} + \dfrac{1}{x_2} - \dfrac{1}{n_2}}$
+
+
+
+The standard error is computed using equation \@ref(eq:diff1) for the 
+difference of two log proportions. The standard error of a log proportion 
+can be computed using the standard error of a proportion and the delta method:
+
+-  $\SE\bigr(\log(\widehat{\pi}_1)\bigr) = \sqrt{\dfrac{1}{x_1} - \dfrac{1}{n_1}}$
+
+
+We use the substitution method to compute a CI:
+
+CI for the $\log(\widehat{\RR})$:
+$$\log(\widehat{\RR}) - z_\gamma\cdot \SE\bigr(\log(\widehat{\RR})\bigr)\;\;\; \text{to}\;\;\; \log(\widehat{\RR}) + z_\gamma\cdot \SE\bigr(\log(\widehat{\RR})\bigr)$$
+
+CI for the $\widehat{\RR}$:
+$$\exp\Bigr(\log(\widehat{\RR}) - z_\gamma\cdot \SE\bigr(\log(\widehat{\RR})\bigr)\Bigr)\;\;\; \text{to}\;\;\; \exp\Bigr(\log(\widehat{\RR}) + z_\gamma\cdot \SE\bigr(\log(\widehat{\RR})\bigr)\Bigr)$$
+
+which is the same as
+
+$$\widehat{\RR}/\text{EF}_{.95}\;\;\; \text{to}\;\;\; \widehat{\RR}\cdot \text{EF}_{.95}$$
+
+For the odds ratio $\OR=\dfrac{\pi_1/(1-\pi_1)}{\pi_2/(1-\pi_2)}$, we have:
+
+
+-  $\widehat{\OR} = \dfrac{a\cdot d}{b\cdot c}$
+-  $\log(\widehat{\OR}) = \log\Bigr(\dfrac{a\cdot d}{b\cdot c}\Bigr)$
+-  $\SE\bigr(\log(\widehat{\OR})\bigr) = \sqrt{\dfrac{1}{a} + \dfrac{1}{b} + \dfrac{1}{c} + \dfrac{1}{d}}$
+
+
+The standard error is computed using equation \eqref{diff1} for the difference of two log odds. The standard error of the log odds can be computed from the standard error of a proportion and the delta method:
+
+
+-  $\SE\bigr(\log(\widehat{\pi_1}(1-\widehat{\pi_1}))\bigr) = \sqrt{\dfrac{1}{a} + \dfrac{1}{b}}$
+
+
+We use the substitution method to compute a CI:
+
+CI for the $\log(\widehat{\OR})$:
+$$\log(\widehat{\OR}) - z_\gamma\cdot \SE\bigr(\log(\widehat{\OR})\bigr)\;\;\; \text{to}\;\;\; \log(\widehat{\OR}) + z_\gamma\cdot \SE\bigr(\log(\widehat{\OR})\bigr)$$
+
+CI for the $\widehat{\OR}$:
+$$\exp\Bigr(\log(\widehat{\OR}) - z_\gamma\cdot \SE\bigr(\log(\widehat{\OR})\bigr)\Bigr)\;\;\; \text{to}\;\;\; \exp\Bigr(\log(\widehat{\OR}) + z_\gamma\cdot \SE\bigr(\log(\widehat{\OR})\bigr)\Bigr)$$
+
+which is the same as
+
+$$\widehat{\OR}/\text{EF}_{.95}\;\;\; \text{to}\;\;\; \widehat{\OR}\cdot \text{EF}_{.95}$$
+
+
+In R, Wald CIs for OR and RR and a Wilson CI for ARR can be computed using the function `twoby2` from the library {\tt Epi}.
+
+```{r echo=TRUE}
+library(Epi)
+
+twoby2(tabRespiratory, alpha = 0.05)
+```
+
+### Two paired groups
+
+:::{.example #ischemia}
+In a reliability exercise carried out as part of the Multicenter Study of Silent Myocardial Ischemia, $41$ patients were randomly selected from those who had undergone a thallium-$201$ stress test. The $41$ sets of images were classified as normal or ischemic by the core thallium laboratory and, independently, by clinical investigators from different centers who had participated in training sessions to support standardization.
+
+This is a paired design. The results for one of the participating clinical investigators compared to the core laboratory are presented in a contingency table showing the frequency distribution of these two variables:\bigskip
+
+```{r echo=FALSE, results='asis'}
+m <- as.data.frame(matrix(c("$14$", "$0$", "$14$", 
+                            "$5$", "$22$", "$27$", 
+                            "$19$", "$22$", "$n=41$"), nrow = 3))
+rownames(m) <- c("Ischemic", "Normal", "Total")
+colnames(m) <- c("Ischemic", "Normal", "Total")
+
+xtab <- xtable(m, digits = c(0, 0, 0, 0))
+addtorow <- list()
+addtorow$pos <- list(0, 0)
+addtorow$command <- c("& \\multicolumn{3}{c}{Core laboratory} \\\\\n",
+                      "Clinical investigator & Ischemic & Normal & Total \\\\\n")
+align(xtab) <- "lrrr"
+print.xtable(xtab, sanitize.text.function = function(x) {x},
+             add.to.row = addtorow, include.colnames = FALSE)
+```
+
+The square-and-add method for paired data can be used to compute a Newcombe CI. This method is implemented in the library biostatUZH where the CI is computed from the contingency table for "Ischemic vs. Normal":
+
+```{r echo=TRUE}
+## Data
+tabIschemia <- matrix(c(14, 0, 5, 22), nrow = 2)
+colnames(tabIschemia) <- c("Lab ischemic", "Lab normal")
+rownames(tabIschemia) <- c("Clin ischemic", "Clin normal")
+
+print(tabIschemia)
+
+confIntPairedProportion(tabIschemia, conf.level = 0.95)
+```
+:::
+
+
+# Statistical tests and $p$-values {#Pvalues}
+
+## Concepts
+
+### $P$-value
+The $p$-value $p$ is a value between $0$ and $1$ which can be used for
+hypothesis testing or for significance testing. We test for evidence 
+against a point null hypothesis H$_0$ which is given by a reference value,
+usually $0$. For example, H$_0$ could be the hypothesis that there is no 
+treatment effect.
+The $p$-value is correctly interpreted as the probability, under the 
+assumption of the null hypothesis H$_0$, of obtaining a result equal 
+to or more extreme than what was actually observed.
+
+### Hypothesis testing
+The type I error rate $\alpha$ is the probability of rejecting $H_0$ 
+although $H_0$ is true. Hypothesis testing wants to control the probability
+for this type of error by keeping it small, usually $\alpha = 0.05$. 
+In practice, the $p$-value is compared to the threshold $\alpha$ and 
+rejects $H_0$ if and only if $p\leq \alpha$.
+
+#### Relation to confidence interval
+A $\gamma\cdot 100$\% confidence interval (CI) can be used to carry 
+out a hypothesis test with $\alpha= 1-\gamma$ by rejecting H$_0$ if
+and only if the CI does not contain the reference value. If the reference
+value lies just on the boundary of the CI, then the $p$-value is $1-\gamma$.
+Below, we show how to compute a $p$-value from a CI in case of a $z$-test or
+a $t$-test, see also \citet{altman1,altman2}.
+
+Suppose we know the estimate $\widehat{\theta}$ and the lower and upper 
+limits $l$ and $u$ of the $\gamma\cdot 100$\% Wald CI. Using the definition 
+of the Wald CI, we can compute the standard error:
+
+
+\begin{equation*}
+\SE(\widehat{\theta})=\dfrac{u-l}{2z_\gamma}
+\end{equation*}
+
+
+From this, we can compute what was observed for the test statistic to compute
+the $p$-value:
+
+\begin{equation*}
+p = 2\bigr(1-\text{pnorm}(\widehat{\theta}/\SE(\widehat{\theta}))\bigr)
+\end{equation*}
+
+The same can be done if we know the symmetric CI based on the $t$-distribution
+by exchanging $z_\gamma$ and "pnorm()" with $t_\gamma$ and "pt()" using the
+correct degrees of freedom for the $t$-distribution.
+
+While the $p$-value quantifies the strength of evidence in one number,
+the CI shows the effect size and the amount of uncertainty. This is different 
+information, hence both $p$-value and CI should be reported.
+
+### Significance testing 
+
+Significance testing uses the $p$-value to quantify the strength of evidence 
+against the null hypothesis. Instead of a strict threshold, the interval from 
+$0$ to $1$ is divided into regions of "weak evidence", "strong evidence" etc. 
+(see Figure \@ref(fig:strengthofevidence)).
+
+
+## Continuous outcome
+
+Commonly used tests for continuous outcomes with known variances are the
+$z$- and $t$-test. The $z$-test should only be used if the sample size is 
+large. Otherwise, the $t$-test is more appropriate.
+
+### $z$-test {#sec:ztest}
+
+The $p$-value is the probability that under the null hypothesis,
+we would obtain a certain result for our test statistic. 
+If we know the reference distribution of the test statistic under 
+the null hypothesis, it can be used to compute the $p$-value. We consider 
+the estimated test statistic
+
+$$Z=\widehat{\theta}/\SE(\widehat{\theta}),$$
+
+where $\widehat{\theta}$ is the estimate of the unknown parameter
+$\theta$ and $\SE(\widehat{\theta})$ is the standard error. Using normal 
+approximation of the estimator for large sample size, 
+$Z$ follows approximately a standard normal distribution ($z$-test or also Wald test).
+
+
+#### Application in one group
+
+:::{.example #pima2}
+In Example \@ref(exm:pima), let the null hypothesis be $H_0$: $\mu_D = 73$.
+Two-sided or one-sided $p$-values from a $z$-test can be computed as follows:
+
+```{r warning=FALSE, message=FALSE, echo=TRUE}
+## Data
+library(mlbench)
+data("PimaIndiansDiabetes2")
+
+## Exclude missing values
+ind <- which(!is.na(PimaIndiansDiabetes2$pressure))
+pima <- PimaIndiansDiabetes2[ind, ]
+
+## Blood pressure levels for the diabetic group
+ind <- which(pima$diabetes == "pos")
+diab_bp <- pima$pressure[ind]
+
+n <- length(diab_bp)
+mu <- mean(diab_bp-73)
+se <- sd(diab_bp-73) / sqrt(n)
+
+## two-sided p-value
+library(biostatUZH)
+printWaldCI(theta = mu, se.theta = se, conf.level = 0.95)
+
+## one-sided p-value
+test_stat <- mu/se
+pnorm(q = test_stat, mean = 0, sd = 1, lower.tail = FALSE) # H_0: <73
+pnorm(q = test_stat, mean = 0, sd = 1, lower.tail = TRUE)  # H_0: >73
+```
+
+Note that the test is performed by shifting the blood pressure levels by $73$ and then testing if these shifted blood pressure levels are different from $0$.
+:::
+
+
+### $t$-test {#sec:ttest}
+
+The $t$-test assumes independent measurements in two groups that are normally
+distributed with equal variances:
+
+\begin{eqnarray*}
+\text{Treatment: }&Y_1, \ldots, Y_{m} &\sim \Nor(\mu_T, \sigma_T^2)\\
+\text{Control: }&X_1, \ldots, X_{n} &\sim \Nor(\mu_C, \sigma_C^2)
+\end{eqnarray*}
+
+The sample sizes are $m$ and $n$, respectively, and the equal variances
+assumption implies that $\sigma_T^2=\sigma_C^2$ The quantity of interest is the *mean difference* $\Delta = \mu_T-\mu_C$. The null hypothesis is
+
+$$H_0: \Delta = 0.$$
+
+The estimate of $\Delta$ is the *difference in sample means*
+
+$$\widehat \Delta = \bar{Y} - \bar{X}$$
+
+with standard error
+
+\begin{equation*}
+\SE(\widehat \Delta) = s \cdot \sqrt{\frac{1}{m} + \frac{1}{n}},
+\end{equation*}
+
+where
+
+$$s^2 = \frac{(m-1) s_T^2 +(n-1) s_C^2}{m+n-2}$$
+
+is an estimate of the common variance $\sigma^2$. Here, $s_T^2$ and $s_C^2$ are
+the estimates of the variances $\sigma_T^2$ and $\sigma_C^2$ in the two groups. The $t$-test statistic is
+
+$$T = \frac{\widehat \Delta}{\SE(\widehat \Delta)}.$$
+
+Assuming $H_0$ is true, the test statistic $T$ follows a 
+$t$-distribution with $m+n-2$ "degrees of freedom" (df). 
+In case of only one group of size n (no difference),
+it is a $t$-distribution with $n-1$ degrees of freedom.
+
+#### Application in two unpaired groups
+See Example \@ref(exm:didgeridoo) and Section~\@ref(sec:equalvariance).
+
+#### Application in two paired groups
+See Example \@ref(exm:sleep).
+
+
+## Binary outcome
+
+For binary outcomes, Wald CIs are often not appropriate.
+However, $p$-values cannot be easily computed from CIs other than Wald or 
+$t$-test CIs. In these cases, it is common to use the $\chi^2$-test, Fisher's 
+exact test for small samples or McNemar's test for paired data. These tests 
+generally test the null hypothesis that the events of an investigated factor 
+(or the proportions) in two groups are independent.
+
+### $\chi^2$-test
+
+The $\chi^2$-test computes the *expected number of cases* $e_i$
+in each cell $i=1,\ldots,4$ of a $2 \times 2$ table under the assumption of no
+difference between the groups.
+
+
+```{r apsacappendix}
+# Create the data frame
+apsac_data <- data.frame(
+  Therapy = c("APSAC", "Heparin", "total"),
+  dead = c(9, 19, 28),
+  alive = c(153, 132, 285),
+  total = c(162, 151, 313)
+)
+
+# Display the table using kable
+kable(apsac_data, col.names = c("Therapy", "Dead", "Alive", "Total"),
+      caption = "Results of the APSAC Study from Example", 
+       align = c("l", "l", "l", "l"))
+
+
+```
+
+
+
+#### Application in one group
+
+:::{.example}
+The $p$-value from a $t$-test can be read from the t.test output, 
+here also in Example \@ref(exm:pima2). The argument mu = 73 shifts the
+reference value from $0$ (the default value) to $73$.
+The argument alternative can be set to two-sided or less/greater for one-sided.
+
+```{r echo=TRUE}
+t.test(diab_bp, mu = 73, alternative = "two.sided", 
+       conf.level = 0.95)
+```
+:::
+
+
+The expected number of cases in a particular cell are defined as the product 
+of the corresponding row and column sums divided by the total number of 
+participants. For example, the expected number of cases in the first cell of
+Table \@ref(tab:apsacappendix) are 
+
+\begin{equation*}
+\left(\frac{162}{313}\cdot \frac{28}{313}\right) \cdot 313 = 
+\frac{162\cdot 28}{313} = `r round(162*28/313,2)`, 
+\end{equation*}
+
+to be compared with 9 observed cases. The part in the bracket is the 
+probability to lie in this cell based on the marginal frequencies 
+(in this case, in the first row and first column). Multiplying this 
+probability with the total number of participants yields the expected number of 
+cases in this cell. The expected frequencies for agreement by chance are 
+calculated in the same way (Table \@ref(tab:expected)).
+
+The expected number of cases $e_i$ are then compared with the observed number
+of cases $y_i$ based on the test statistic
+\[
+  T = \sum_i \frac{(y_i - e_i)^2}{e_i}.
+\]
+This test statistic follows a $\chi^2$-distribution with 1 degree of
+freedom under the null hypothesis of no difference between the two
+groups, so a $p$-value can be easily calculated. Note that it is a two-sided
+test due to the quadratic differences where it does not matter whether $y_i<e_i$ or $e_i<y_i$.
+
+The $\chi^2$-test with *continuity correction* is based on the modified
+test statistic
+\[
+  T = \sum_i \frac{\left((\abs{y_i - e_i} - 0.5)_+\right)^2}{e_i},
+\]
+here $x_+ = \max\{x, 0\}$. What we illustrated here for $2 \times 2$ tables can also be generalized to more categories.
+
+
+#### Application in two unpaired groups
+See Example \@ref(exm:apsactest). The default of the chisq.test 
+is with continuity correction.
+
+
+
+#### Application in two paired groups
+
+:::{.example}
+In Example \@ref(exm:ischemia) with paired data, a McNemar test can be performed in 
+R as follows (default is with continuity correction):
+
+```{r echo=TRUE}
+## Data
+tabIschemia <- matrix(c(14, 0, 5, 22), nrow = 2)
+colnames(tabIschemia) <- c("Lab ischemic", "Lab normal")
+rownames(tabIschemia) <- c("Clin ischemic", "Clin normal")
+
+print(tabIschemia)
+
+## With continuity correction
+mcnemar.test(x = tabIschemia, correct = TRUE)
+
+## Without continuity correction
+mcnemar.test(x = tabIschemia, correct = FALSE)
+```
+:::
+
+### Fisher's exact test
+
+Fisher's exact test is based on the probabilities of all possible tables 
+with the observed row and column totals under the null hypothesis of 
+no difference between the groups. It is a two-sided test, there are three 
+different versions and it can also be generalized to more categories.
+
+#### Application in two unpaired groups
+See Example \@ref(exm:apsactest). The fisher.test also provides an odds ratio with CI.
+
+
+## Survival outcome
+For survival outcomes, the log-rank test can be used to compare two treatment 
+groups. The log-rank test gives a $p$-value based on the expected number of 
+events under the null hypothesis of no difference between the two groups. 
+An estimate of the hazard ratio with CI can be derived from the observed and 
+expected number of events in the two groups. 
+
+
+
+
+# Some proofs on ROC curves {#ROC}
+
+<!-- {#sec:appendixROC} -->
+
+## The ROC curve {#sec:ROC}
+
+Assume we have a continuous (in mathematical terminology "absolutely
+continuous") result $Y$ from a diagnostic test and denote the true and
+false positive fraction for a given threshold $c$
+
+\begin{eqnarray*}
+\mbox{TPF}(c) & = & \Pr(Y \geq c \given D=1) \\
+\mbox{FPF}(c) & = & \Pr(Y \geq c \given D=0).
+\end{eqnarray*}
+
+The test result $Y$ will have different distributions in the diseased ($D=1$) and
+non-diseased ($D=0$) population and we will denote the corresponding random variable
+by $Y_D$ and $Y_{\bar D}$, respectively.
+
+
+Further define the ROC curve via
+
+\begin{eqnarray*}
+\mbox{ROC}(.) & = & \{(\mbox{FPF}(c), \mbox{TPF}(c)), c \in (-\infty, \infty)\},
+\end{eqnarray*}
+
+\ie the ROC curve are the points $(\mbox{FPF}(c), \mbox{TPF}(c))$ for
+all possible thresholds $c$. Now define
+the survivor functions in the diseased and non-diseased populations:
+
+\begin{eqnarray*}
+S_D(y) & = & \Pr(Y \geq y \given D=1) = \mbox{TPF}(y) \\
+S_{\bar D}(y) & = & \Pr(Y \geq y \given D=0) = \mbox{FPF}(y).
+\end{eqnarray*}
+
+Note that the survivor functions are strictly monotone and hence invertible.
+
+For a given threshold $c$, suppose $t=\mbox{FPF}(c)= S_{\bar D}(c)$, so
+$c=S_{\bar D}^{-1}(t)$ and we obtain
+\[
+\mbox{ROC}(t) =  \mbox{TPF}(c) = S_D(c)  = S_D(S_{\bar D}^{-1}(t)).
+\]
+
+
+## AUC {#sec:AUC}
+
+The area under the curve (AUC) is defined as
+\[
+\mbox{AUC} = \int_0^1 \mbox{ROC}(t)dt
+\]
+and we have
+
+\begin{equation}
+(\#eq:eq2)
+\mbox{AUC} = \Pr(Y_D > Y_{\bar D}), 
+\end{equation}
+
+if $Y_D$ and $Y_{\bar D}$ are independent test results from the diseased
+and non-diseased
+populations, respectively.
+
+
+To proof this result, we first note that the derivative of a survivor function $S(y)$ of
+a continous test result $Y$ is
+closely related to the cumulative distribution function $F(y)$ of $Y$:
+\[
+S(y) = \Pr(Y \geq y) = 1 - \Pr(Y < y) = 1 - \Pr(Y \leq y) =  1 - F(y)
+\]
+Now
+\begin{eqnarray*}
+\partials{F(y)}{y} = f(y)
+\end{eqnarray*}
+where $f(y)$ denotes the density function of $Y$. Therefore
+\[
+\partials{S(y)}{y} = -f(y).
+\]
+
+Now consider
+\begin{eqnarray}
+ (\#eq:eq1)
+\mbox{AUC} &=& \int_0^1 \mbox{ROC}(t)dt \nonumber \\
+&=& \int_0^1 S_D(S_{\bar D}^{-1}(t))dt \nonumber \\
+&=& \int_{\infty}^{-\infty} S_D(y) \left\{ -f_{\bar D}(y) dy \right\}\nonumber  \\
+&=& \int_{-\infty}^{\infty} S_D(y) f_{\bar D}(y) dy,
+\end{eqnarray}
+where we have applied the substitution $t=S_{\bar D}(y)$, so
+\[
+dt = d S_{\bar D}(y) = -f_{\bar D}(y)dy.
+\]
+Let $\Ind\{A\}$ denote the indicator function of an event $A$.
+Now $Y_D$ and $Y_{\bar D}$ are assumed to be independent, so
+\begin{eqnarray*}
+\Pr(Y_D \geq Y_{\bar D}) &=& \int_{-\infty}^{\infty} \int_{-\infty}^{\infty} \Ind\{y_D \geq y_{\bar D}\} f(y_D, y_{\bar D}) dy_D dy_{\bar D} \\
+&=& \int_{-\infty}^{\infty} \int_{-\infty}^{\infty} \Ind\{y_D \geq y_{\bar D}\} f_D(y_D) f_{\bar D}(y_{\bar D}) dy_D dy_{\bar D} \\
+&=& \int_{-\infty}^{\infty} \int_{-\infty}^{\infty} \left[ \Ind\{y_D \geq y_{\bar D}\} f_D(y_D)dy_D \right] f_{\bar D}(y_{\bar D}) dy_{\bar D} \\
+&=& \int_{-\infty}^{\infty} \Pr(Y_D \geq y_{\bar D}) f_{\bar D}(y_{\bar D}) dy_{\bar D} \\
+&=& \int_{-\infty}^{\infty} S_D(y_{\bar D}) f_{\bar D}(y_{\bar D}) dy_{\bar D}
+\end{eqnarray*}
+
+where the last equation is equal to \@ref(eq:eq1) with $y_{\bar D}=y$. 
+This proofs equation \@ref(eq:eq2).
+
+
+
+# Some theory on equivalence trials {#equiv}
+
+## Type I error in equivalence trials 
+
+Assume we have a continuous outcome with variance $\sigma^2$ and two
+treatment groups of size $n_A$ and $n_B$, respectively. Now consider
+the difference $\bar d$ of the mean outcomes as treatment effect, so
+$\bar d \sim \Nor(\Delta, \sigma^2 \, \lambda^2)$ where 
+the true treatment difference is $\Delta$ and $\lambda =
+\sqrt{1/n_A+1/n_B}$. 
+
+
+
+Equivalence is established if the $\gamma \cdot 100$ \% confidence
+interval for the treatment difference is within the pre-specified
+*interval of equivalence* $(-\delta, \delta)$, i.e.
+  \[
+  \bar d \pm z_{(1+\gamma)/2} \, \sigma \, \lambda \subset (-\delta, \delta).
+  \]
+With $z = z_{(1+\gamma)/2}$ we obtain the equivalent requirement 
+  \[
+  \bar d \in  (-\xi, \xi) \, \mbox{ where } \xi = \delta - z_{(1+\gamma)/2} \, \sigma \, \lambda
+  \]
+  
+  to establish equivalence.  This happens with probability
+  
+\begin{eqnarray}
+(\#eq:eq1App)
+\P(\bar d \in (-\xi, \xi) ) &=& \Phi\left(\frac{\xi - \Delta }{\lambda \, \sigma}\right)
+- \Phi\left(\frac{-\xi - \Delta }{\lambda \, \sigma}\right) \nonumber \\
+&=& \Phi\left(\frac{\delta - \Delta }{\lambda \, \sigma} - z_{(1+\gamma)/2}\right)
+- \Phi\left(\frac{-\delta - \Delta }{\lambda \, \sigma} + z_{(1+\gamma)/2}\right).
+\end{eqnarray}
+
+Now evaluate \@ref(eq:eq1App) at $\Delta = \delta$ to obtain 
+the  *Type I error rate* (more precisely an upper bound on the
+Type I error rate)
+
+\begin{eqnarray}
+(\#eq:eq2App)
+\alpha = \Phi(-z_{(1+\gamma)/2}) - \Phi\left(z_{(1+\gamma)/2} - \frac{2 \delta}{\lambda \, \sigma}\right).
+\end{eqnarray}
+
+Likewise, the *power* $1 - \beta$ is derived from \@ref(eq:eq1App) with
+$\Delta = 0$:
+
+\[
+1 - \beta = 2 \Phi\left(\frac{\delta}{\lambda \, \sigma} - z_{(1+\gamma)/2}\right) - 1
+\]
+so
+\[
+1 - \beta/2 = \Phi\left(\frac{\delta}{\lambda \, \sigma} - z_{(1+\gamma)/2}\right).
+\]
+
+Note that $1 - \beta/2 = \Phi(z_{1-\beta/2})$, and therefore
+
+\begin{eqnarray}
+(\#eq:eq3App)
+\frac{\delta}{\lambda \, \sigma} = z_{(1+\gamma)/2} + z_{1-\beta/2}.
+\end{eqnarray}
+
+With \@ref(eq:eq2App) we obtain
+
+\begin{eqnarray}
+(\#eq:eq3App)
+\alpha \approx \Phi(-z_{(1+\gamma)/2}) = 1-(1+\gamma)/2 = (1-\gamma)/2
+\end{eqnarray}
+
+for relatively small $\beta$ (say  $\beta \leq 30$ \%), since the second term 
+in \@ref(eq:eq2App) 
+
+\[
+\Phi\left(z_{(1+\gamma)/2} - \frac{2 \delta}{\lambda \, \sigma}\right) = \Phi(z_{(1+\gamma)/2} - 2 \, (z_{(1+\gamma)/2} + z_{1-\beta/2})) = \Phi(-z_{(1+\gamma)/2} - 2 \, z_{1-\beta/2})
+\]
+
+is then very close to zero. Note that \@ref(eq:eq3App)  is in contrast to
+superiority trials, where $\alpha = 1-\gamma$.
+
+
+## Sample size calulations in equivalence trials 
+
+Assume equal group sizes, i.e. $n=n_A=n_B$, then $\lambda=\sqrt{2/n}$.
+
+With \@ref(eq:eq3App) we then obtain
+
+\begin{eqnarray*}
+n &=& \frac{2 \sigma^2 (z_{(1+\gamma)/2} + z_{1-\beta/2})^2}{\delta^2} \\
+&=& \frac{2 \sigma^2 (z_{1-\alpha} + z_{1-\beta/2})^2}{\delta^2}
+\end{eqnarray*}
+
+as the required sample size in each group for Type I error rate $\alpha$
+and power $1-\beta$.

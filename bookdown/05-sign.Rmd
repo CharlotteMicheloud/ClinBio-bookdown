@@ -1,0 +1,1292 @@
+# Statistical significance and sample size calculations 
+
+```{}
+TODO: add Bayes factor // predictive power, assurance
+```
+
+
+
+## Statistical significance
+
+When conducting a clinical trial,
+the primary aim is often to know whether 
+a new treatment or intervention 
+has an effect, or more precisely, whether its effect 
+is larger than the effect of a placebo or control.
+In order to measure the strength of the evidence, 
+a null hypothesis is fixed, usually 
+
+\begin{eqnarray*}
+H_0: \mbox{``There is no treatment effect"}.
+\end{eqnarray*}
+
+<!-- In the case of a continuous outcome,  -->
+<!-- let us denote the true mean in the treatment group and  -->
+<!-- in the control group by $\mu_1$ and $\mu_0$, respectively.  -->
+<!-- The treatment effect is then denoted as  -->
+
+<!-- \begin{eqnarray*} -->
+<!-- \theta = \mu_1 - \mu_0 \, . -->
+<!-- \end{eqnarray*} -->
+
+<!-- In the case of a binary outcome,  -->
+<!-- the true proportion in the treatment and control groups  -->
+<!-- are $\pi_1$ and $\pi_0$, respectively, and  -->
+<!-- the treatment effect is  -->
+
+<!-- \begin{eqnarray*} -->
+<!--   \theta = \pi_1 - \pi_0 \, . -->
+<!-- \end{eqnarray*} -->
+
+<!-- The estimate of the treatment effect is denoted by $\hat\theta$. -->
+
+<!-- ### $P$-values -->
+
+<!-- In order to measure the strength of the evidence, a null hypothesis $H_0$ -->
+<!-- and an alternative hypothesis $H_1$ -->
+<!-- need to be specified: -->
+
+<!-- \begin{eqnarray} -->
+<!-- (\#eq:hyp) -->
+<!-- H_0: \theta = \mu \mbox{ vs } H_1: \theta \neq \mu \, . -->
+<!-- \end{eqnarray} -->
+
+The reference value is represented by a reference value 
+for the treatment effect, usually $0$, i.e. there is no treatment effect.
+The standard approach to quantify the evidence against the null hypothesis
+is to use a $P$-value:
+
+:::{.definition #pval}
+The *$P$-value* is the probability, under the assumption of no effect 
+(the null hypothesis $H_0$), of obtaining a result equal to or more extreme 
+than what was actually observed.
+:::
+
+The $P$-value quantifies the strength of 
+evidence against the null hypothesis, with
+smaller values indicating larger evidence against $H_0$.
+It is hence an *indirect* measure 
+of evidence as it does not directly give evidence 
+*for* the alternative hypothesis. However, 
+significance does not mean that the effect is real. This is 
+illustrated in Figure \@ref(fig:reppower), which 
+shows the replication power, i.e. the probability to obtain 
+a significant result in an identically design replication study. 
+
+<!-- The alternative hypothesis $H_1$ in Equation \@ref(eq:hyp) is two-sided,  -->
+<!-- meaning that differences between the two treatments groups  -->
+<!-- in *either direction* provide evidence against the null  -->
+<!-- hypothesis. In clinical research, the alternative is often  -->
+<!-- one-sided, namely $H_1: \theta > 0$, as only differences in a  -->
+<!-- *pre-specified direction* are of interest. If the difference  -->
+<!-- goes in the expected direction, the one-sided $P$-value  -->
+<!-- is half the two-sided $P$-value.  -->
+<!-- One-sided hypotheses therefore carry the risk -->
+<!-- of cheating by defining the test  -->
+<!-- direction after having seen the data.  -->
+<!-- The use of two-sided alternative hypotheses, along with -->
+<!-- a verification of the direction, has hence become the standard practice in -->
+<!-- clinical trials. -->
+
+
+<!-- A useful quantitative interpretation of $P$-values is the  -->
+<!-- *replication power*, \ie the probability to obtain a significant  -->
+<!-- result in an independent and identically designed replication study,  -->
+<!-- assuming that the observed effect estimate from the original study is the true  -->
+<!-- effect [@Goodman1992, Held2020Sign].  -->
+<!-- The concept of replication power is related to the *post-hoc power* or  -->
+<!-- *observed power* and shown in Figure \@ref(fig:reppower) as a function of  -->
+<!-- the two-sided $P$-value from the original study.  -->
+<!-- The replication power for a $P$-value of 0.05 is only 50\%,  -->
+<!-- and the $P$-value needs to be as small as 0.005 to reach a  -->
+<!-- replication power of 80\%.  -->
+<!-- These numbers also highlight the importance of a  -->
+<!-- proper sample size calculation when designing a replication study,  -->
+<!-- as an identically designed study has low power if the  -->
+<!-- original $P$-value is only borderline significant [@Micheloud2022]. -->
+
+
+$P$-values are the basis 
+of Fisher's significance test, which considers the $P$-value 
+as an informal quantitative measure of evidence. 
+In contrast, Neyman dismissed the $P$-value and proposed the
+hypothesis test: 
+a qualitative "all or nothing" decision-theoretic approach 
+based on error rates. This results in a binary classification into
+"significant" and "not significant", depending on whether 
+the $P$-value lies below or above the significance level $\alpha$.
+The two methods are fundamentally different approaches
+to statistical inference as illustrated in 
+Figure \@ref(fig:strengthofevidence). It has recently been 
+proposed to redefine the region between $0.005$ and $0.05$ 
+to "suggestive evidence" in the hypothesis test [@Johnson2013]. 
+
+
+Despite their widespread use in the scientific community, 
+$P$-values are often misinterpreted: There are *not*
+the probability of the null hypothesis, nor the probability that
+the observed data occurred by chance.
+
+```{r strengthofevidence, fig.cap = "Significance vs Hypothesis Test, adapted from @bland", echo = F, fig.width=10, fig.height=7}
+library(biostatUZH, warn.conflicts = FALSE, quietly = TRUE)
+
+par(mfrow=c(1,2))
+
+histborder <- "black"#"white"
+histcol <- gray(0.4)
+pch.mean <- 8 # 4, 16
+pch.median <- 17
+lwd.lines <- 2
+lwds <- 1.5 ## points 
+pars.boxplot <- list(boxwex = 0.5, staplewex = 0.5, medlwd = 2, whisklty = 1,  whisklwd = 1)
+library(colorspace)
+n <- 100
+N <- 100
+cor.range <- seq(-1, 1, length.out = n)
+mat <- matrix(rep(cor.range, N), ncol = N, byrow = TRUE)
+
+yloggrid <- seq(log(0.0001), log(1), length.out = 100)
+ygrid <- exp(yloggrid)
+cols <- rep("darkgrey", 100)
+#cols[ygrid >= 0.005] <- "grey"
+cols[ygrid >= 0.05] <- "lightgrey"
+x <- 0.1
+names <- rev(c(1, 0.1, 0.05, 0.01, 0.005, 0.001, format(0.0001, scientific = FALSE)))
+
+yhelp <- log(c(0.0001, 0.001, 0.005, 0.01, 0.05, 0.1, 1.0))
+y <- (yhelp - min(yhelp))/(range(yhelp)[2]-range(yhelp)[1])
+posy <- y[-7] + 0.125/c(1,1,1,2,2,1)
+
+
+
+
+cols <- (diverge_hcl(n*2, c = c(100, 0), l = c(50, 90), power = 1.3))[(2*n):(n+1)]
+
+par(mar = c(4, 4, 4, 4))
+image(z = mat, col = cols, axes = FALSE, bty = "n", ylab = "P-Value",
+      main = "Significance Test")
+axis(2, at = y, labels = names, las = 1, lwd = 0, lwd.ticks = 1)
+
+f.lines <- function(pos, x = 0.1, const = 0.01)
+{
+    lines(rep(x, 2), pos, col = "white", lwd = lwds)
+    lines(c(x-const, x+const), rep(pos[1], 2), col = "white", lwd = lwds)
+    lines(c(x-const, x+const), rep(pos[2], 2), col = "white", lwd = lwds)
+}
+
+eps <- c(0.005, -0.005)
+#f.lines(y[1:2] + eps, x = x-0.05)
+#f.lines(y[2:3] + eps, x = x-0.05)
+f.lines(y[c(1,2)] + eps, x = x-0.05)
+f.lines(y[c(2,4)] + eps, x = x-0.05)
+f.lines(y[4:5] + eps, x = x-0.05)
+f.lines(y[5:6] + eps, x = x-0.05)
+f.lines(y[6:7] + eps, x = x-0.05)
+
+text(x, posy[6], "Little or no evidence", col = "white", cex = 1.5, font = 2, adj = 0)
+text(x, posy[5]-0.02, "Weak evidence", col = "white", cex = 1.5, font = 2, adj = 0)
+text(x, posy[4]+0.03, "Moderate evidence", col = "white", cex = 1.5, font = 2, adj = 0)
+text(x, posy[2], "Strong evidence", col = "white", cex = 1.5, font = 2, adj = 0)
+text(x, posy[1], "Very strong evidence", col = "white", cex = 1.5, font = 2, adj = 0)
+
+
+histborder <- "black"#"white"
+histcol <- gray(0.4)
+pch.mean <- 8 # 4, 16
+pch.median <- 17
+lwd.lines <- 2
+lwds <- 1.5 ## points 
+pars.boxplot <- list(boxwex = 0.5, staplewex = 0.5, medlwd = 2, whisklty = 1,  whisklwd = 1)
+library(colorspace)
+n <- 100
+N <- 100
+cor.range <- seq(-1, 1, length.out = n)
+mat <- matrix(rep(cor.range, N), ncol = N, byrow = TRUE)
+
+yloggrid <- seq(log(0.0001), log(1), length.out = 100)
+ygrid <- exp(yloggrid)
+cols <- rep("darkgrey", 100)
+#cols[ygrid >= 0.005] <- "grey"
+cols[ygrid >= 0.05] <- "lightgrey"
+x <- 0.1
+names <- rev(c(1, 0.1, 0.05, 0.01, 0.005, 0.001, format(0.0001, scientific = FALSE)))
+
+yhelp <- log(c(0.0001, 0.001, 0.005, 0.01, 0.05, 0.1, 1.0))
+y <- (yhelp - min(yhelp))/(range(yhelp)[2]-range(yhelp)[1])
+
+
+par(mar = c(4, 4, 4, 4))
+image(z = mat, col = cols, axes = FALSE, bty = "n", ylab = "P-Value",
+      main = "Hypothesis Test")
+axis(2, at = y, labels = names, las = 1, lwd = 0, lwd.ticks = 1)
+
+f.lines <- function(pos, x = 0.1, const = 0.01, mycol="white")
+{
+    lines(rep(x, 2), pos, col = mycol, lwd = lwds)
+    lines(c(x-const, x+const), rep(pos[1], 2), col = mycol, lwd = lwds)
+    lines(c(x-const, x+const), rep(pos[2], 2), col = mycol, lwd = lwds)
+}
+
+eps <- c(0.005, -0.005)
+f.lines(y[c(1,5)] + eps, x = x-0.05, mycol="black")
+f.lines(y[c(5,7)] + eps, x = x-0.05, mycol="black")
+
+posy <- y[-7] + 0.125/c(1,1,1,2,2,1)
+
+x <- 0.1
+text(x, posy[4]+.25, "Not significant", col = "black", cex = 1.5, font = 2, adj = 0)
+text(x, posy[2]+.12, "Significant", col = "black", cex = 1.5, font = 2, adj = 0)
+#text(x, posy[2]-.10, "Significant", col = "black", cex = 1.5, font = 2, adj = 0)
+
+
+abline(h=y[5], col="black", lty=2)
+#abline(h=y[3], col="black", lty=2)
+```
+
+
+
+### Computation of the $P$-value for a continuous outcome
+The null hypothesis of no treatment effect can be 
+expressed as: 
+
+\begin{eqnarray}
+H_0: \Delta = 0 \, ,
+\end{eqnarray}
+with $\Delta$ denoting the difference in group means. 
+
+The test statistic 
+
+\begin{eqnarray*}
+z = \frac{\mbox{Estimate}}{\mbox{Standard error of the estimate}}
+\end{eqnarray*}
+quantifies how many standard errors the estimate 
+if away from the null hypothesis. 
+Most test statistics follow approximately a known *reference distribution* 
+under the null hypothesis. Typical  reference distributions include 
+the standard normal distribution for large samples @bland (Chapter 9)
+and the $t$-distribution for small samples @bland (Chapter 10), 
+in which case the test statistic is usually denoted $t$ rather than $z$.
+
+<!-- Let us assume that the reference distribution is standard normal. -->
+<!-- Rewriting Definition \@ref(def:pval) of the two-sided $P$-value in mathematical  -->
+<!-- terms gives:  -->
+
+<!-- \begin{eqnarray*} -->
+<!-- p &  = &   \Pr\left(\abs{Z} \geq \abs{z}\right)  \\ -->
+<!--  & =  &\Pr(Z \geq z) + \Pr(Z \leq -z) \\ -->
+<!--  & = &  1 - \Phi(z) + \Phi(-z) \hspace{0.2cm}  \mbox{(as $Z \sim \Nor(0,1)$ under $H_0$)} \\ -->
+<!--  & = &  2 \cdot\left\{1 - \Phi(z)\right\} \hspace{0.2cm}  \mbox{(due to the symmetry of the normal distribution)}. -->
+<!-- (\#eq:pval) -->
+<!-- \end{eqnarray*} -->
+
+```{r echo=F}
+z <- 2.3/4.7 
+```    
+
+
+```{r pvalregion, fig.cap = "Two-sided p-value (blue region) for $z=0.49$ and a standard normal reference distribution.", echo=FALSE, quit=T, fig.width = 6, fig.height=3}
+colpal4 <- c("#E41A1C", "#377EB8", "#4DAF4A", "#984EA3")
+colpal4.pastell <- c("#FBB4AE", "#B3CDE3", "#CCEBC5", "#DECBE4")
+colpal2 <- colpal4[2:3] 
+colpal3 <- colpal4[1:3] 
+colarea <- colpal4[2]
+lwd.lines <- 2
+lwds <- 1.5 ## points 
+
+x <- c(-300:300)/100
+y <- dnorm(x)
+par(mar = c(4,4,4, 4), mfrow = c(1,1))
+plot(x, y, type="l", ylim=c(0,0.42), las = 1)
+lines(c(z,z), c(0,0.35), col=colpal4[3])
+text(z, 0.4, labels="z", adj = 0, font = 4)
+lines(c(-z,-z), c(0,0.35), col=colpal4[3])
+text(-z, 0.4, labels="-z", adj = 1, font = 4)
+xsel <- x[x>=z]
+ysel <- y[x>=z]
+nx <- length(xsel)
+polygon(c(xsel, xsel[nx:1]), c(ysel, rep(0, nx)), col = colarea)
+polygon(-c(xsel, xsel[nx:1]), c(ysel, rep(0, nx)), col = colarea)
+myq <- 1- pnorm(z)
+``` 
+
+
+The $P$-value (for a $z$-value of $z = `r round(z, 2)`$) is graphically 
+illustrated in Figure \@ref(fig:pvalregion). 
+The two-sided $P$-value is the area of the two blue regions 
+of the standard normal density, i.e. $p = \Pr(\abs{Z} > \abs{z}) = 
+0.62$, where $Z \sim \Nor(0, 1)$. In a two-sided test, only the 
+size of the effect matters, not its direction. 
+
+
+<!-- If the reference distribution is a $t$-distribution,  -->
+<!-- the $P$-value is calculated as:  -->
+
+<!--   \begin{eqnarray*} -->
+<!--   p & = & \Pr(\abs{T} \geq \abs{t_{\tiny{\mbox{df}}}}) \\ -->
+<!--   & = & 2 \cdot \left\{1 - pt(t_{\tiny{\mbox{df}}})\right\} \, , -->
+<!--   \end{eqnarray*} -->
+
+<!-- where df is the degrees of freedom. -->
+
+
+:::{.example #sleep}
+A study published in 1905 compared the effect of two soporific 
+drugs on the increase in hours of sleep as compared to a control drug
+[@Cushny1905]. The two drugs were given to ten individuals, 
+so the data are paired and a two-sided paired $t$-test is used 
+for the analysis. 
+Data are shown in Figure \@ref(fig:soporific). 
+:::
+
+
+
+```{r soporific, fig.cap = "Increase in hours of sleep compared to control for two different drugs.", echo=F, fig.width= 5.5, fig.height=4.5}
+histborder <- "black"#"white"
+histcol <- gray(0.4)
+pch.mean <- 8 # 4, 16
+pch.median <- 17
+lwd.lines <- 2
+lwds <- 1.5 ## points 
+pars.boxplot <- list(boxwex = 0.5, staplewex = 0.5, medlwd = 2, whisklty = 1,  whisklwd = 1)
+
+library(beeswarm)
+library(scales)
+par(mar = c(4,4,4,4), mfrow = c(1,1))
+plot(0, 0, 
+      xlim = c(0.5, 2.5), 
+     ylim = c(-2, 6), 
+     ylab="increase in hours of sleep", 
+         xlab="",
+         xaxt = "n", las = 1, lwd = lwds, main = "")
+points(extra ~ group, data = sleep, 
+       col = alpha("black", 0.8), 
+       pch=16, cex=1.2)
+
+sleep$ID <- as.numeric(sleep$ID)
+
+for(i in c(min(sleep$ID):max(sleep$ID)))
+    lines(c(1,2), c(sleep$extra[sleep$group==1 & sleep$ID==i],sleep$extra[sleep$group==2 & sleep$ID==i]), col= alpha("black", 0.5))
+axis(1, c(1, 2), c("Drug 1", "Drug 2"), padj = 0.5)
+``` 
+
+
+```{r echo=FALSE}
+# print(head(sleep, 15))
+```
+
+```{r echo=T}
+res <- t.test(extra ~ group, data = sleep)
+# extra: extra hours of sleep 
+# group: drug 
+print(res)
+``` 
+
+
+The two-sided $P$-value is $p \approx `r formatPval(res$p.value)`$, 
+so there is *strong evidence* against the null hypothesis of no difference
+between the two drugs.
+
+
+
+:::{.example #birth}
+In 1986, the data on 189 births were collected at 
+Baystate Medical Center, Springfield, with 
+the aim to identify risk factors associated 
+with a low birth weight [@Hosmer1989]. 
+Let us assume that we are interested in knowing the impact 
+of the smoking status of the mother on the baby weight at birth. 
+Figure \@ref(fig:baby) shows the baby birth weight 
+for smoking and non-smoking mothers. 
+:::
+
+
+```{r baby, fig.cap = "Birthweight of the baby as a function of the smoking status of the mother during the pregnancy.", echo = FALSE}
+library(MASS)
+data("birthwt")
+
+par(mfrow = c(1, 1), las = 1)
+boxplot(bwt ~ factor(smoke, levels = c(0, 1), labels = c("Non-smoker", "Smoker")), data = birthwt, 
+     ylab = "Birtweight (in grams)", 
+     xlab = "Smoking status")
+beeswarm(birthwt$bwt ~ as.factor(birthwt$smoke), pch = 19, add = TRUE, 
+         method = "compactswarm")
+
+```
+
+
+
+```{r echo = TRUE}
+res.baby <- t.test(bwt ~ smoke, data = birthwt)
+print(res.baby)
+```
+
+A $t$-test can be conducted and the resulting 
+$P$-value $p = `r formatPval(res.baby$p.value)`$
+indicates that there evidence for a difference in 
+mean birthweight between babies whose 
+mother smoked and did not smoke during the pregnancy.
+
+In two-sided tests, differences between treatments *in either direction*
+provide evidence against the null hypothesis. In contrast, 
+only differences in a *pre-specified* direction provide evidence 
+against the null in one-sided tests. 
+If the different goes in the expected direction, 
+the one-sided $P$-value is half of the two-sided $P$-value, so $\tilde p = p/2$
+If not, $\tilde p = 1 - p/2$.
+However, there is a risk of cheating by defining the test 
+direction *after* having seen the data. For this reason, 
+two-sided significance tests are the standard in clinical research. 
+
+:::{.example #birth name="continued"}
+Now let us assume that the researchers expected the mean birthweight
+to be higher for non-smoking as compared to smoking mothers. In that case, 
+one can calculate a *one-sided $P$-value* as follows
+:::
+
+```{r echo = TRUE}
+res.baby2 <- t.test(bwt~ smoke, data = birthwt, alternative = "greater")
+print(res.baby2)
+```
+
+The one-sided $P$-value $\tilde p = `r biostatUZH::formatPval(res.baby2$p.val)`$ is half the 
+two-sided $P$-value as the difference in means goes in 
+the expected direction. 
+```{r echo = TRUE}
+res.baby3 <- t.test(bwt~ smoke, data = birthwt, alternative = "less")
+print(res.baby3)
+```
+
+In contrast, if researchers expect the mean birthweight
+to be higher for smoking as compared to non-smoking mothers, 
+the one-sided $P$-value is
+$\tilde p =  1 - p/2 = `r biostatUZH::formatPval(res.baby3$p.val)`$.
+
+
+### Confidence intervals and $P$-values
+
+Confidence intervals can be used to carry out a hypothesis
+test: If (and only if) the 95% CI does not contain the reference
+value, then the corresponding test is significant
+(p < 0.05).
+
+It is possible to transform a CI to a $P$-value, and vice-versa. 
+The effect estimate must be known, the exact $p$-value must be reported 
+and the confidence interval needs to be of Wald-type and the $P$- 
+value based on a normal test statistic. 
+
+<!-- Suppose we know the lower and upper limits -->
+<!-- $l$ and $u$ of the $\gamma\cdot 100$\% Wald CI.  -->
+<!-- Using the definition of the Wald CI, we can compute the estimate  -->
+<!-- $\hat\theta$ -->
+
+<!-- \begin{equation*} -->
+<!-- \hat\theta = (u + l)/2 \, , -->
+<!-- \end{equation*} -->
+
+<!-- and its standard error -->
+
+<!-- \begin{equation*} -->
+<!-- \SE(\widehat{\theta})=\dfrac{u-l}{2z_\gamma} \, , -->
+<!-- \end{equation*} -->
+
+<!-- where $z_\gamma = \Phi^{-1}(\gamma)$. -->
+
+<!-- The $P$-value is then calculated as -->
+
+<!-- \begin{equation} -->
+<!-- (\#eq:pvalCI) -->
+<!-- p = 2\left\{1-\Phi\left[\hat{\theta}/\SE(\hat{\theta})\right]\right\} \,. -->
+<!-- \end{equation} -->
+
+<!-- The same can be done if we know the symmetric CI based on the $t$-distribution -->
+<!-- by exchanging $z_\gamma$ and  $\Phi(\cdot)$  with $t_\gamma$ and -->
+<!-- `pt()` using the correct degrees of freedom for the $t$-distribution. -->
+
+
+:::{.example #birth name="continued"}
+The 95\% confidence interval for the difference in mean baby weight 
+between non-smoking and smoking mothers is 
+$[`r round(res.baby$conf.int[1], 2)`, 
+`r round(res.baby$conf.int[2], 2)`]$. 
+:::
+
+The two-sided $p$-value can be retrieved using:
+```{r echo = TRUE}
+library(biostatUZH)
+l <- 78.57
+u <- 488.98
+gamma <- 0.95
+t_gamma <-  qt(p = (1 - gamma)/2, df = 170, lower.tail = FALSE)
+
+estimate <- (u + l)/2; print(estimate)
+se <- (u - l)/(2*t_gamma); print(se)
+z <- estimate/se
+p <- 2*(1 - pt(z, df = 170))
+print(p)
+```
+
+
+<!-- One can also transform a $P$-Value to -->
+<!-- a confidence interval provided that the effect estimate is known,  -->
+<!-- the exact $P$-value is reported and is based on a normal test statistic based on -->
+<!-- a reference value of zero.  -->
+
+<!-- The $z$-statistic and standard error $\SE(\hat\theta)$ are retrieved  -->
+<!-- using  -->
+
+<!-- \begin{equation*} -->
+<!-- z = \Phi^{-1}(1 - p/2) -->
+<!-- \end{equation*} -->
+<!-- and -->
+<!-- \begin{equation*} -->
+<!-- \SE(\hat\theta) = \hat\theta/z \, .  -->
+<!-- \end{equation*} -->
+
+<!-- The $\gamma \cdot 100$\% CI is calculated as  -->
+
+<!-- \begin{equation} -->
+<!-- (\#eq:CIpval) -->
+<!-- \left[\hat\theta - z_\gamma\,\SE(\hat\theta), \hat\theta + z_\gamma \,\SE(\hat\theta)\right] \, . -->
+<!-- \end{equation} -->
+<!-- The procedure can be adapted to the $t$-distribution by using \texttt{pt()} and  -->
+<!-- $t_\gamma$. -->
+
+
+<!-- Suppose now that only the $P$-value $p = `r formatPval(res.baby$p.value)`$ -->
+<!-- and the estimate $\hat\theta = `r round(estimate, 2)`$  -->
+<!-- are known. The confidence interval is retrieved using Equation \@ref(eq:CIpval): -->
+
+```{r echo = FALSE, eval = FALSE}
+p <-  0.007
+estimate <- 283.8
+z <- qt(p = 1 - p/2, df = 170); print(z)
+se <- estimate/z; print(se)
+CI <- c(estimate - t_gamma*se, estimate + t_gamma*se); print(CI)
+```
+
+
+
+Confidence intervals convey very different information than
+$P$-values, see Figure \@ref(fig:pvalCIfig) for illustration. 
+Both quantities should be reported.
+
+
+### Error rates
+
+:::{.definition}
+Error rates
+
+-  The *Type-I error rate* $\alpha$ is the probability of a significant 
+finding if the *null hypothesis* $H_0$ is true. The Type-I error rate $\alpha$
+is *controlled* if we reject $H_0$ if and only if $p \leq \alpha$.
+-  The *Type-II error rate* $\beta$ is the probability of a 
+non-significant finding if the *alternative hypothesis* $H_1$ is true.
+The *power* of a study is $1-\beta$.
+Error rates are also useful for sample size calculations, see
+Section \@ref(sec:ss).
+:::
+
+
+
+<!-- A $\gamma\cdot 100$\% confidence interval (CI) can also be used to carry out a  -->
+<!-- hypothesis test with $\alpha = 1-\gamma$ by rejecting H$_0$ if and only if the  -->
+<!-- CI does not contain the reference value $\mu$. -->
+<!-- If the reference value lies just on the boundary of the CI,  -->
+<!-- then the $P$-value is $1-\gamma$.  -->
+
+
+It is useful to compare hypothesis tests to diagnostic tests as discussed in 
+Chapter \@ref(binDiag).
+If we consider a significant test result as a positive test and equate the 
+null hypothesis of no effect
+with a non-diseased person then we see the following equivalences: 
+
+| Hypothesis test                  | Diagnostic test                          |
+|----------------------------------|------------------------------------------|
+| Type-I error rate                | \(1 - \text{Specificity}\)               |
+| Type-II error rate               | \(1 - \text{Sensitivity}\)               |
+| Power                            | \(\text{Sensitivity}\)                   |
+| False positive report probability| \(1 - \text{Positive predictive value}\) |
+
+
+
+
+```{r echo=F}
+dig <- 1
+
+
+total <- 1000
+p0 <- 0.9
+alpha <- 0.05
+beta <- 0.2
+counts <- round(matrix(total*c((1-alpha)*p0,beta*(1-p0),alpha*p0,(1-beta)*(1-p0)),ncol=2,nrow=2,byrow=T))
+percent <- format(counts/sum(counts)*100,digits=dig,nsmall=dig)
+
+row.sums <- apply(counts, 1, sum)
+col.sums <- apply(counts, 2, sum)
+
+row.sums.percent <- format(row.sums/total*100,digits=dig,nsmall=dig)
+col.sums.percent <- format(col.sums/total*100,digits=dig,nsmall=dig)
+
+
+row.percent <- format(counts/matrix(row.sums,ncol=2,nrow=2,byrow=F)*100,digits=dig,nsmall=dig)
+col.percent <- format(counts/matrix(col.sums,ncol=2,nrow=2,byrow=T)*100,digits=dig,nsmall=dig)
+``` 
+
+
+
+### Misinterpretation of Type I Error
+The $P$-value is not the only concept which suffers from 
+misinterpretation; the Type-I error too. Namely, 
+  \[
+  \alpha = \underbrace{\Pr(\mbox{significance} \given H_0)}_{\tiny \mbox{Type I error rate}} \neq \underbrace{\Pr(H_0 \given \mbox{significance})}_{\tiny \mbox{False positive report probability}}.
+  \]
+
+Although is a mathematically trivial result, the
+  misinterpretation of the Type I error rate $\alpha$ as
+  *false positive report probability* is very common. 
+  For example, @Giesecke claims that
+  a 5\% significance level ``means that out of 20 studies reporting significant associations,
+  one will just be a chance finding''. 
+  This statement is wrong, as it confuses the Type I error 
+  rate with the false positive report probability. 
+
+The false positive report probability can be calculated as 
+
+\begin{eqnarray}
+(\#eq:fprp)
+\mbox{FPRP} = \frac{\Pr(H_0) \cdot \alpha}{\Pr(H_0) \cdot \alpha + \Pr(H_1) \cdot (1 - \beta)} \, .
+\end{eqnarray}
+  
+```{r, echo = FALSE}
+FPRP <- function(power, alpha, pH0, pH1){
+  fprp <- pH0 * alpha/(pH0*alpha + pH1*power)
+  return(fprp)
+}
+
+fprp_1 <- FPRP(power = 0.8, alpha = 0.05, pH0 = 0.9, pH1 = 0.1)
+fprp_2 <- FPRP(power = 0.8, alpha = 0.05, pH0 = 0.3, pH1 = 0.7)
+```
+  
+
+Suppose that a number of trials are performed and consider two scenarios: 
+10\% of the trials
+are truly effective in scenario 1 ($\Pr(H_1) = 0.1$), and 70\% in scenario 2
+($\Pr(H_1) = 0.7$). 
+The Type-I error rate and the power are fixed to $\alpha = 0.05$ and 
+$1 - \beta = 0.8$, respectively, in both scenarios. 
+Using Equation \@ref(eq:fprp), the false positive report probability is 
+$`r round(fprp_1, 2)*100`$\%
+in the first scenario and $`r round(fprp_2, 2)*100`$\% in the second. 
+While the type-I error rate is fixed and the same in both scenarios, the 
+false positive report probability is very different as it depends 
+on the power and the probability of $H_1$.
+
+
+
+
+
+
+
+<!-- Brief History of Significance and Hypothesis Tests -->
+
+<!-- -  The *significance test*: R.A. Fisher suggested the -->
+<!--   *$P$-value* as an informal *quantitative* measure of the -->
+<!--   strength of *statistical evidence*. -->
+<!-- -    The *hypothesis test*: J. Neyman *dismissed* the -->
+<!--   $P$-value. He proposed a *qualitative* "all or nothing" -->
+<!--   *decision-theoretic* approach based on *error rates*. This -->
+<!--   leads to a binary categorization into "significant" and "not -->
+<!--   significant" as shown in right plot of -->
+<!--   Figure \@ref(fig:strengthofevidence) based on the standard *significance level* of 0.05.  -->
+
+<!--   These two methods are -->
+<!--   fundamentally different approaches to statistical inference. The -->
+<!--   hypothesis testing framework is useful for sample size calculations -->
+<!--   and if a decision is required (for example whether or not to stop a -->
+<!--   trial at interim). However, @bland argues that "an 'all or -->
+<!--   nothing' decision making approach is seldom appropriate in medical -->
+<!--   research". A recent proposal was to consider only $P$-values below -->
+<!--   0.005 as ``significant'' and p-values between 0.05 and 0.005 as "suggestive". -->
+<!--   This can be viewed as a first step towards a quantitative interpretation -->
+<!--   of $P$-values.  -->
+
+
+
+```{r reppower, fig.cap = "Replication power as a function of the $P$-value.", fig.height=4.5, fig.width=8, echo=FALSE}
+library("ReplicationSuccess")
+fac <- 2.5
+p <- exp(seq(log(0.00001), log(0.06), length.out=250))
+
+standardPowerPoint <- powerSignificance(zo=p2z(p))
+standardPower <- powerSignificance(zo=p2z(p), designPrior="predictive")
+
+standardPowerPointB <- powerSignificance(zo=p2z(p), c=fac)
+standardPowerB <- powerSignificance(zo=p2z(p), designPrior="predictive", c=fac)
+
+mycol <- c("cadetblue4", "cadetblue4", "darkgrey", "darkgrey", "cadetblue1", "cadetblue1")
+mycol <- c("#1b9e77", "#1b9e77", "#7570b3","#7570b3") 
+mylty <- c(1,5,1,5)
+par(mfrow=c(1,1), las=1)
+partA <- cbind(standardPowerPoint)#, standardPower, standardPowerPointB, standardPowerB)#, myPowerPoint, myPower, myPowerPointB, myPowerB)
+matplot(p, 100*partA, type="l", lwd=2, xlim=c(0, 0.05), ylim=c(40,100), lty=mylty, ylab="replication power (in %)", xlab="two-sided p-value in original study", axes=FALSE, col=mycol)
+axis(1, at=c(0.00, 0.01, 0.02, 0.03, 0.04), label=as.character(c(0.00, 0.01, 0.02, 0.03, 0.04)))
+axis(2)
+pthres <- 0.05
+## axis(1, at=pthres, label=as.character(pthres), col=2, col.ticks=2, col.axis=2)
+## axis(2, at=50, label=as.character(50), col=1, col.ticks=1, col.axis=1)
+pthres2 <- 0.005
+axis(1, at=pthres2, label=as.character(pthres2), col="#d95f02", col.ticks="#d95f02", col.axis="#d95f02")
+axis(1, at=pthres, label=as.character(pthres), col="#d95f02", col.ticks="#d95f02", col.axis="#d95f02")
+box()
+abline(v=0.005, col="#d95f02", lty=2)
+abline(v=0.05, col="#d95f02", lty=2)
+##text(0.03, 85, paste("relative sample size:", as.character(fac)), col="#7570b3")
+##text(0.03, 65, "relative sample size: 1", col="#1b9e77")
+
+
+for(i in seq(40,100,10))
+    abline(h=i, lty=2, col="lightgrey")
+##legend("topright", col=c(1, 1), lty=c(1,5), legend=c("Point prior", "Normal prior"), lwd=2, bg="white", bty="n")
+##legend(0.005, 57, col="black", lty=c(1,5), legend=c("conditional", "predictive"), lwd=2, bg="white", bty="n")
+``` 
+
+
+
+
+```{r pvalCIfig, fig.cap = "P-values and confidence intervals convey different information.", echo = FALSE, quiet = TRUE, fig.height = 4, fig.width = 8}
+d1 <- 3
+d2 <- 18
+p1 <- 0.03
+p2 <- 0.03
+se1 <- abs(d1 / qnorm(1 - p1 / 2))
+se2 <- abs(d2 / qnorm(1 - p2 / 2))
+const <- qnorm(1-0.05/2)
+pch.fill <- 16
+figurecolor <- c("#00aad2","#005072","#0081ab","#5fceea")
+line.lwd <- 2
+
+# check
+p1 <- 2 * (1 - pnorm(abs(d1 / se1)))
+p2 <- 2 * (1 - pnorm(abs(d2 / se2)))
+
+par(mfrow = c(1, 2), mar = c(2, 4, 4, 2), las = 1, font.main = 1)
+hli <- function(h = 0, col = "black", lty = 3, ...) abline(h = h, lty = lty, col = col, lwd = 2, ...)
+
+plotCI.wrap <- function(..., sfrac = 0.03, pch = pch.fill, gap = 0.5, lwd = line.lwd, col = figurecolor[1]){
+    gplots::plotCI(..., pch = pch, sfrac = sfrac, gap = gap, col = col, lwd = lwd)
+}
+
+
+plotCI.wrap(x = c(1.2, 1.8), y = c(d1, d2), uiw = c(const*se1, const*se2), xaxt = "n", xlim = c(0.9,
+2.1), ylim = c(0, 35), main =
+"Different effect,\nsame p-value", ylab = "Mean difference", xlab = "", add = FALSE)
+axis(1, at = c(1.2, 1.8), labels = paste("p = ", c(p1, p2), sep = ""))
+hli()
+plotCI.wrap(x = c(1.2, 1.8), y = c(d1, d2), uiw = c(const*se1, const*se2), add = TRUE)
+
+d1 <- 8
+d2 <- 8
+p1 <- 0.30
+p2 <- 0.003
+se1 <- abs(d1 / qnorm(1 - p1 / 2))
+se2 <- abs(d2 / qnorm(1 - p2 / 2))
+
+
+plotCI.wrap(x = c(1.2, 1.8), y = c(d1, d2), uiw = c(const*se1, const*se2), xaxt = "n", xlim = c(0.9, 2.1), ylim = c(-10, 25), main =
+"Same effect,\ndifferent p-value", ylab = "Mean difference", xlab = "", add = FALSE)
+axis(1, at = c(1.2, 1.8), labels = paste("p = ", c(p1, p2), sep = ""))
+hli()
+plotCI.wrap(x = c(1.2, 1.8), y = c(d1, d2), uiw = c(const*se1, const*se2), xaxt = "n", add = TRUE)
+```
+
+
+
+
+
+## Sample size calculations {#sec:ss}
+
+Having a fixet target for recruitment implies that you 
+have a known objective stopping rule. 
+Appropriate sample size calculations ensure that 
+enough patients are recruited to collect 
+statistical evidence for a treatment effect and 
+that the number of patient treated with inferior 
+treatment is not unnecessarily large. 
+
+Sample size calculations requires the specification of 
+the *primary outcome variable* (*``primary endpoint''*). 
+
+A (minimal) *clinically relevant treatment effect* $\Delta$
+(*``clinically relevant difference''*) for the primary outcome
+also needs to be specified in advance.
+
+:::{.definition}
+The *minimal clinically relevant difference* is the smallest difference
+of the primary outcome variable that clinicians and patients would care about.
+:::
+
+
+"The medical statistician assigned to help design the trial
+is given a license to drive the physician crazy by pestering
+him or her for 'the clinically relevant difference'.'' 
+
+@senn2003(p. 96)
+
+:::{.example #a1c}
+@Doyle2024 conducted an RCT to test whether an intensive 
+food-as-medicine program for patients with diabetes improves glycemic control.
+the primary outcome was hemoglobin A$_{\small{1c}}$ level at six months, 
+and the minimal clinically relevant
+difference was $\Delta = -0.5$-percentage point in 
+hemoglobin A$_{\small{1c}}$ levels.
+Secondary outcomes included other biometric measures and healthcare use, 
+among others.
+:::
+
+### Continuous outcomes
+
+Suppose two independent *equally sized groups* are to be compared.
+In order to derive the sample size formula,
+four quantities are required: 
+
+-  Clinically relevant difference $\Delta$
+- Common standard deviation $\sigma$
+- Type-I error rate $\alpha \rightarrow u = z_{1 - \alpha/2}$
+- Power $1 - \beta \rightarrow v = z_{1 - \beta}$
+    where $z_x = `qnorm(x)`
+
+<!-- one needs to start with the *power* -->
+<!-- $1 - \beta$  -->
+<!-- of the study, \ie what is the probability of a significant result  -->
+<!-- under the alternative hypothesis $H_1: \theta = \Delta$?  -->
+<!-- This can be written as  -->
+
+<!-- \begin{eqnarray} -->
+<!-- 1 - \beta & = & \Pr\left(\abs{z} > z_{1 - \alpha/2} = u \mid H_1 \right) \notag\\ -->
+<!--  & = & \Pr\left(z > u \mid H_1\right) + \Pr\left(z < -u \mid H_1\right) \, . -->
+<!-- (\#eq:powformula) -->
+<!-- \end{eqnarray} -->
+
+<!-- Now, the second term in Equation \@ref(eq:powformula) -->
+<!-- gets very small for $\Delta > 0$ and is hence assumed to be $0$.  -->
+<!-- Furthermore, under the alternative hypothesis, the distribution  -->
+<!-- of the test statistic is $z \sim \Nor(\Delta/\sqrt{2\sigma^2/n}, 1)$,  -->
+<!-- where $n$ is the sample size per group.  -->
+
+<!-- The power hence becomes -->
+
+<!-- \begin{eqnarray} -->
+<!-- (\#eq:pow) -->
+<!-- 1 - \beta \approx  \Phi\left(\frac{\Delta}{\sqrt{2\sigma^2/n}} - u\right) \, . -->
+<!-- \end{eqnarray} -->
+
+<!-- Equation \@ref(eq:pow) is now rearranged and gives  -->
+
+The required sample size $n$ per group is
+
+
+\begin{eqnarray}
+(\#eq:nZtest)
+n = \frac{ 2 \sigma^2 (u + v)^2}{ \Delta^2} = \frac{ 2 (u + v)^2}{ \left(\Delta/\sigma\right)^2} \, ,
+\end{eqnarray}
+
+where *Cohen's $d$* $=\Delta/\sigma$ is the *relative difference* 
+in terms of standard deviations. Formula \@ref(eq:nZtest) is implemented in the function `biostatUZH::power.z.test()`.
+
+The classification of Cohen's $d$ and the corresponding 
+AUC can be found in Table \@ref(tab:cohenTBL) and are illustrated in 
+Figure \@ref(fig:cohen).
+
+
+
+```{r cohenTBL, echo = FALSE}
+library(kableExtra)
+# Calculate AUC values based on Cohen's d
+cohen_d <- c(0.0, 0.2, 0.5, 0.8, 1.3)
+auc_values <- round(pnorm(cohen_d/sqrt(2)), 2)
+
+# Create a data frame for the table
+df <- data.frame(
+  `Cohen's effect size $d$` = cohen_d,
+  AUC = auc_values,
+  Interpretation = ifelse(cohen_d == 0.0, "Null",
+                          ifelse(cohen_d <= 0.2, "Small",
+                                 ifelse(cohen_d <= 0.5, "Medium",
+                                        ifelse(cohen_d <= 0.8, "Large", "Very large"))))
+)
+
+# Print the table using kable
+kable(df, format = "html", caption = "Cohen's $d$ classification", align = c("l", "c", "l")) %>%
+  kable_styling(full_width = FALSE)
+```
+
+
+
+```{r cohen, fig.cap = "Outcomes in the Intervention and Control groups for $d = 0.2$, $d = 0.5$ and $d = 0.8$.", fig.height = 3.5, echo = FALSE}
+plotd <- function(d=0.2){
+    x <- seq(-3, 4, .1)
+    y0 <- dnorm(x, mean=0, sd=1)
+    y1 <- dnorm(x, mean=d, sd=1)
+    matplot(x, cbind(y0, y1), type="l", col=c(1,2),
+            ylab="Density", xlab="Outcome", lty=1, lwd=2)
+    if(d==.2) mytitle <- "d = 0.2,"
+    if(d==.5) mytitle <- "d = 0.5,"
+    if(d==.8) mytitle <- "d = 0.8,"
+    finaltitle <- paste0(mytitle, " AUC = ", as.character(round(pnorm(d/sqrt(2)), 2)))
+    title(finaltitle)
+    legend("topleft", col=c(2,1), lty=1, legend=c("Intervention", "Control"),
+           lwd=2, cex = 0.57, bty="n")
+}
+
+par(mfrow = c(1,3), las = 1)
+plotd(d = 0.2)
+plotd(d = 0.5)
+plotd(d = 0.8)
+
+```
+
+
+Suppose $d=1$, so the clinically relevant difference $\Delta$ equals the 
+standard deviation $\sigma$ of the measurements.
+Table \@ref(tab:samplesizecont) gives for this case the required
+sample size $n=2(u+v)^2$ in each group. The numbers have to be adjusted 
+for different values of $d$. For example, if $d = 1/2$ then the numbers 
+have to be multiplied with 4.
+
+```{r echo=FALSE}
+u1 <- qnorm(0.975)
+u2 <- qnorm(0.995)
+v1 <- qnorm(0.8)
+v2 <- qnorm(0.9)
+``` 
+
+```{r samplesizecont}
+library(kableExtra)
+# Define parameters
+alpha <- c("5%", "5%", "1%", "1%")
+beta <- c("20%", "10%", "20%", "10%")
+u1 <- 1.96  # Example values for u and v
+u2 <- 2.58
+v1 <- 0.84
+v2 <- 1.28
+
+# Calculate required values
+sample_size <- c(15.7, 21.0, 23.4, 29.8)
+uv_squared <- (u1 + v1)^2
+
+# Create a data frame for the table
+df <- data.frame(
+  alpha = alpha,
+  beta = beta,
+  u = c(u1, u1, u2, u2),
+  v = c(v1, v2, v1, v2),
+  uv_squared = c(uv_squared, (u1 + v2)^2, (u2 + v1)^2, (u2 + v2)^2),
+  `Group sample size $n$` = sample_size
+)
+
+# Print the table using kable
+kable(df, format = "html", caption = "Required sample size depending on type I and II error rates, assuming Cohen's $d=1$.",
+      align = c("r", "r", "r", "r", "r", "r")) 
+```
+
+
+:::{.example #laparo}
+A randomized controlled trial is conducted to assess the clinical and 
+cost effectiveness of conservative management compared with 
+laparoscopic cholecystectomy for the prevention of symptoms and complications 
+in adults with uncomplicated symptomatic gallstone disease [@Ahmed2023].
+A clinically relevant effect of $\Delta = 0.33$ standard deviations
+was selected.
+A Type-I error rate of $\alpha = 0.05$ and a power of 
+$1 - \beta = 0.90$ were agreed on.
+:::
+
+
+```{r echo=TRUE}
+library(biostatUZH)
+power.z.test(delta = 0.33, sd = 1, sig.level = 0.05, power=.90)
+```
+
+```{r echo=FALSE}
+n <- power.z.test(delta = 0.33, sd = 1, sig.level = 0.05, power=.90)$n
+``` 
+
+$n = `r ceiling(n)`$ patients are needed in each group.
+
+Exact calculations based on the t-test give a slightly larger value for $n$, 
+which corresponds to the value given in @Ahmed2023:
+
+```{r echo=TRUE}
+power.t.test(delta = 0.33, sd = 1, sig.level = 0.05, power=.90)$n
+``` 
+
+The exact statement in the paper reads: 
+"A  sample  size  of  194  in  each  group  was  needed  to  
+detect  a  mean  difference  in  area  under  the  curve  of  
+0.33 standard deviations derived from the SF-36 bodily 
+pain domain with 90% power and a 5% (two sided $\alpha$) 
+significance level."
+ 
+
+#### Minimum detectable difference
+
+:::{.definition}
+The *minimum detectable difference* (MDD) is the smallest difference that will lead to a significant result:
+%
+\[
+  \mbox{MDD} = \sigma \sqrt{2/n} \cdot u.
+\]
+:::
+
+
+The MDD and the clinically relevant difference $\Delta$ are different 
+concepts which should not be mixed up. the MDD relates to the 
+statistical significance, hence depends on power (via the sample size),
+while $\Delta$ relates to the clinical relevant and as a result, 
+does not depend on the power.
+Suppose the sample size $n$ is calculated to detect $\Delta$ with a certain power
+using Equation \@ref(eq:nZtest).
+Figure \@ref(fig:mdd) compares the minimum detectable difference MDD 
+as a function of that power to the minimal clinically relevant difference 
+$\Delta$. If the power $>50\%$, then MDD $<\Delta$.
+
+
+```{r mdd, fig.cap = "Minimum detectable difference is smaller than the (minimal) clinically relevant difference $\\Delta$ if the trial is powered for $>50\\%$",echo=F}
+mypower <- seq(0.5, 0.97, 0.01)
+Delta <- 1
+mysd <- 1
+n <- power.z.test(delta=Delta, sd=mysd, sig.level = 0.05, power=mypower)$n
+MDD <- 1.96*mysd*sqrt(2/n)
+
+par(las=1)
+plot(mypower*100, MDD, lty=1, type="l", lwd=2, xlab="Power (in %)", ylab="MDD")
+lines(range(mypower*100), rep(1, 2), lty=1, col=2, lwd=2)
+text(85, 0.95, "clinically relevant difference", col=2)
+arrows(76, 0.95, 72, 1, angle=20, col=2)
+text(86, 0.8, "minimum detectable difference", col=1)
+arrows(76, 0.8, 74, 0.75, angle=20, col=1)
+```   
+
+
+### Binary outcomes
+
+In order to calculate the sample size for a binary outcome, 
+the outcome probabilities $\pi_1$ and $\pi_2$ in the two groups 
+are needed. The clinically relevant difference
+$\Delta = \pi_1 - \pi_0$ is then implicit. No standard deviation 
+is required. 
+<!-- Let us imagine that we now compare the outcome probabilities -->
+<!-- $\pi_1$ and $\pi_0$ in two groups. The corresponding  -->
+<!-- estimates are $\hat\pi_1$ and $\hat\pi_0$, respectively,  -->
+<!-- and the average probability $\bar \pi = (\pi_0 + \pi_1)/2$.  -->
+<!-- % -->
+<!-- The null hypothesis $H_0: \pi_1 - \pi_0 = 0$ is tested by using  -->
+
+<!-- \todo[inline]{There is a hat problem which I still need to fix} -->
+<!-- \begin{eqnarray} -->
+<!-- z = \frac{\hat\pi_1 - \hat\pi_0}{\sqrt{2 \bar \pi (1 - \bar\pi)}/n} \, ,  -->
+<!-- \end{eqnarray} -->
+
+<!-- which is approximately normally distributed. -->
+<!-- % -->
+<!-- Using the definition of the power as in Equation \@ref(eq:powformula) -->
+<!-- and the distribution -->
+
+<!-- \begin{eqnarray*} -->
+<!-- z \sim \Nor\left(\frac{\Delta\sqrt{n}}{\sqrt{2 \bar\pi(1 - \bar\pi)}},  -->
+<!--   \frac{\hat\pi_1(1 - \hat\pi_1) + \hat\pi_0(1 - \hat\pi_0)}{ \bar\pi (1 - \bar\pi)} \right) -->
+
+<!-- \end{eqnarray*} -->
+
+<!-- under the alternative hypothesis $H_1: \pi_1 - \pi_0 = \Delta$,  -->
+<!-- the power is  -->
+
+<!-- \begin{eqnarray} -->
+<!-- (\#eq:powbinary) -->
+<!-- 1 - \beta = \Phi\left( \frac{\Delta\sqrt{n} - u \sqrt{2 \bar\pi(1 - \bar \pi)}} -->
+<!--   {\sqrt{\hat\pi_1(1 - \hat\pi_1) + \hat\pi_0(1 - \hat\pi_0)}} \right) \, . -->
+<!-- \end{eqnarray} -->
+
+<!-- Finally, rearranging Equation \@ref(eq:powbinary) give -->
+
+
+The 
+required sample size per group: 
+
+\begin{eqnarray}
+n = \left(\frac{v\sqrt{\hat\pi_1 (1 - \hat\pi_1) + \hat\pi_0(1 - \hat\pi_0)} +
+  u\sqrt{2\bar\pi(1 - \bar\pi)}}{\Delta}\right)^2
+\end{eqnarray}
+
+An alternative approach 
+based on the *variance stabilizing (angular) transformation* 
+(also variance-stabilizing transformation) 
+$h(\pi) = \arcsin(\sqrt{\pi})$ is described in @matthews (Sec. 3.4) where
+
+\[
+n = \frac{(u+v)^2}{2\{h(\pi_1) - h(\pi_0)\}^2}.
+\]
+
+This corresponds to the traditional formula for continuous outcomes with clinically relevant difference 
+$\Delta = h(\pi_1) - h(\pi_0)$ and standard deviation $\sigma = 1/2$.
+
+
+:::{.example #prophy}
+An RCT was conducted to investigate the effectiveness 
+of oral antimicrobial prophylaxis on surgical site infection after elective 
+colorectal surgery [@Futier2022].
+The primary outcome was the proportion of patients with surgical 
+site infection within 30 days after surgery, and
+a difference in proportion of $\Delta = 15\% - 9\%  = 6\%$ was considered clinically 
+relevant. A power of 80\% and Type-I error rate of 5\% were agreed on. 
+:::
+
+
+```{r echo=F}
+u <- qnorm(0.95)
+v <- qnorm(0.975)
+term <- (u+v)^2
+p0 <- .2
+p1 <- 0.05
+trafo <- function(p) asin(sqrt(p))
+n.trafo <- term/(2*(trafo(p0)-trafo(p1))^2)
+
+pbar <- 0.5*(p0+p1)
+num <- (u*sqrt(p1*(1-p1)+p0*(1-p0))+v*sqrt(2*pbar*(1-pbar)))^2
+den <- (p0-p1)^2
+n <- num/den
+``` 
+
+The required sample size can be calculated using \code{R}:
+```{r echo=TRUE}
+power.prop.test(p1=0.15, p2=0.09, sig.level=0.05, power=0.9)
+``` 
+The statement in the paper is: 
+"Assuming a 15% rate of surgical site infections 
+with  placebo, we  estimated  that  enrolling  920  
+patients  would  provide  80%  power  to  detect  a  40%
+relative  between  group  difference  in  the  incidence  of  
+the  primary  outcome  (i.e.,  15%  in  the  placebo  group  
+and  9%  in  the  oral  ornidazole  group), with  a  5%  
+two  sided  Type  I  error.  "
+
+The alternative approach based on the variance-stabilizing transformation 
+gives a somewhat smaller sample size: 
+```{r echo=TRUE}
+h <- function(p) asin(sqrt(p))
+power.z.test(delta=h(0.15)-h(0.09), sd=0.5, power=.8)
+``` 
+
+
+### Adjusting for loss to follow-up
+
+In practice, the calculated sample size $n$ should be increased to
+allow for possible non-response or loss to follow-up.
+If a drop-out rate of $x$ \% can be anticipated, then we obtain
+the *adjusted sample size*
+\[
+  n^\star = \underbrace{\frac{100}{100-x}}_{\tiny \mbox{adjustment factor}} \cdot \,\, n
+\]
+For example, to incorporate a drop-out rate of 20\%,
+we need to use an adjustment factor of $100/80 = 1.25$.
+
+In the study presented in Example \@ref(exm:laparo), a drop-out rate of 10\%
+was expected, so 430 patients were required. In the Example \@ref(exm:prophy), 
+the sample size was inflated to 960 patients to account for a 5\% loss to
+follow-up. 
+
+
+### Study designs with unequal group sizes
+
+```{r echo=F}
+c <- c(1:10)
+f <- (1+c)/(2*c)
+ff <- (1+c)^2/(2*c)
+increase <- (ff/2-1)*100
+ff <- round(ff, 1)
+increase <- round(increase)
+``` 
+
+In the case of equally sized groups with $n$ patients each, 
+the standard error of the estimate $\hat \theta$ is 
+
+\begin{equation}
+(\#eq:3a)
+\SE(\hat \theta) = {\sigma \sqrt{2/n}} 
+\end{equation}
+
+In the case of different sample sizes $n_0$ and $n_1$ with *group size ratio* $c = n_1/n_0$, 
+the term ${2/n}$ in \#ref(eq:3a) has to be replaced by ${1/n_0 + 1/n_1} = (1+c)/n_1$ and so
+
+\begin{eqnarray*}
+  n_1 &=& n \cdot (1+c)/ 2 \\
+n_0 & = & n_1/c
+\end{eqnarray*}
+
+where $n$ is the required sample size for equal-sized groups. 
+The total sample size $n_0+n_1$ increases with increasing ratio $c$, 
+as illustrated in Figure \@ref(fig:uneqgroupsize). 
+This indicates that the greater the imbalance, the larger the total sample size 
+needs to be.
+
+
+```{r uneqgroupsize, fig.cap = "Required sample size depending on the group size ratio for study designs with unequal group sizes.", echo=F, fig.width = 7.5, fig.height = 5, }
+par(las=1)
+c <- seq(1,5,.5)
+adjust0 <- (1+c)/(2*c)
+adjust1 <- c*adjust0
+total <- (1+c)^2/(2*c)
+matplot(c, cbind(total, adjust0, adjust1), type="b", ylab="Sample Size", xlab="Group Size Ratio", axes=F, pch=19, ylim=c(0,3.6))
+axis(1)
+axis(2, at=c(0:5), labels=c("0", "n", "2n", "3n", "4n", "5n"))
+box()
+
+for(i in 0:4)
+    abline(h=i, lty=3, col=1, cex=0.75)
+legend("topleft", col=c(1,3,2), lty=1, legend=c("Total", "Larger Group", "Smaller Group"), lwd=1.5, bg="white")
+``` 
+
+
+
+### Sample size based on precision
+It has been argued in @bland2009 that sample size calculations should 
+be based on *precision*, ie the *width of the confidence interval* of the treatment effect.
+
+
+#### Difference between two means
+
+Specify the *width* $w \approx 4 \cdot \SE(\hat \theta)$ of
+the 95\% confidence interval for the mean difference $\theta$. Both groups are assumed to have sample size $n$.
+
+With $\SE(\hat \theta) = \sigma \sqrt{2/n}$, we obtain for the sample size in each group:
+\[
+n = 2 \, \frac{\sigma^2}{\SE(\hat \theta)^2} = 32 \, \frac{\sigma^2}{w^2} \, . 
+\]
+For example, if the width $w$ is required to be half as large as $\sigma$, the sample size per group is $n=128$. 
+```{r echo=FALSE}
+p1 <- 0.2
+p0 <- 0.05 
+delta <- p1-p0
+w <- 0.1
+seDelta <- w/4
+myn <- ceiling((p1*(1-p1)+p0*(1-p0))/(seDelta^2))
+``` 
+
+
+#### Difference between two proportions
+If $\Delta=\pi_1-\pi_o$ is the difference between two proportions $\pi_1$ and $\pi_0$, the required sample size in each group is
+\[
+n = \frac{\pi_1 (1-\pi_1) + \pi_0 (1-\pi_0)}{\SE(\hat \theta)^2}=  16 \, \frac{\pi_1 (1-\pi_1) + \pi_0 (1-\pi_0)}{w^2} \, .
+\]
+
+For example, if $\pi_1=`r p1`$, $\pi_0=`r p0`$ and $w=0.1$, then $n=`r myn`$.
+
+
+## Additional references
+
+Significance tests and and sample size determination are discussed in @bland (Chapters 9 and 18).
+Specifically for RCTs, @matthews (Chapter 3) discusses the question of "how many patients do I need".
+Studies where the methods from this chapter are used in practice are for example @freedman, @heal and @wen.
+
+

@@ -1,0 +1,845 @@
+# Subgroup analysis and multiple outcomes
+
+Up to now we have focused on the comparison of two or more groups of
+patients, usually intervention vs. control. It is natural to
+investigate whether a treatment effect exists only in a certain
+subgroup of patients. Multiplicity issues arise if there are more than
+one subgroup-defining variables.
+
+Multiplicity issues also arise if more than one outcome are considered
+in a randomized trial. Here we distinguish methods that adjust the
+outcome-specific $p$-values from multivariate methods, which combine the different outcomes in a single analyses. 
+
+## Subgroup analysis
+
+In a subgroup analysis, the question is whether the treatment effect
+is different for different types of patients. Possible subgroups are
+Male vs. Female, Children vs. Adults etc. Subgroups may also be
+disease-related, for example patients with/without diabetes or
+with/without a certain disease or disease status.
+
+Problems that occur with this type of question are:
+
+-  RCTs are usually powered to detect an overall difference between the two treatment groups.  Analyses of subgroups will then have less power to detect
+  a significant difference of the treatment effect between subgroups.
+-   If subgroups are defined by many variables, the risk of a false positive (significant) finding increases. 
+  -  The choice of subgroups is difficult. Subgroup analyses are more credible if they were  {\it a priori} specified before the data were collected rather than {\it post hoc}.
+
+
+### Comparing subgroups
+
+```{r echo=F}
+diff <- (64 * 2.445 + 169 * 2.300)/(64 + 169) - (102 * 2.408 + 285 * 2.195)/(102 + 285)
+
+var.w1 <- (64 * 0.0853 + 169 * 0.0752)/(64 + 169) 
+var.w2 <- (102 * 0.0987 + 285 * 0.1018)/(102 + 285)
+
+se1 <- sqrt(((0.0365^2 * 64 + 0.0211^2 * 169) + (2.445 - 2.300)^2)/(64 + 169))
+se2 <- sqrt(((0.0311^2 * 102 + 0.0189^2 * 285) + (2.408 - 2.195)^2)/(102 + 285))
+```
+
+
+
+
+:::{.example}
+The Neonatal Hypocalcemia trial is a placebo-controlled trial of vitamin D supplementation of expectant mothers for the prevention of neonatal hypocalcemia @matthews (Section 9.2). The primary endpoint is serum calcium level of the babies at 1 week of age. Table \@ref(tab:hypocalcemia) shows the summary-level data for the serum calcium levels in the treatment and placebo groups. It shows it separately for the breast-fed and bottle-fed babies as the question is whether the treatment has a different effect in these two subgroups.
+:::
+
+```{r hypocalcemia, results='asis'}
+library(knitr)
+library(kableExtra)
+
+# Create the data frame with the table data
+df <- data.frame(
+  Group = c("Breast-fed", "Breast-fed", "Bottle-fed", "Bottle-fed"),
+  Type = rep(c("Supplement", "Placebo"), times = 2),
+  n = c(64, 102, 169, 285),
+  Mean = c(2.445, 2.408, 2.300, 2.195),
+  Var = c(0.0853, 0.0987, 0.0752, 0.1018),
+  SE = c(0.0365, 0.0311, 0.0211, 0.0189)
+)
+
+# Print the table using kable and kableExtra
+kable(df,
+      caption = "Summary-level data for the Neonatal Hypocalcemia Trial [@matthews].",
+      booktabs = TRUE, escape = FALSE, caption.placement = "top") %>%
+  kable_styling(latex_options = "striped", full_width = FALSE)
+```
+
+
+```{r echo=TRUE}
+## data
+n <- c(64, 102, 169, 285)
+mean <- c(2.445, 2.408, 2.300, 2.195)  
+var <- c(0.0853, 0.0987, 0.0752, 0.1018)
+se <- sqrt(var/n)
+```
+
+
+To estimate the treatment effects in these two subgroups, we use the function printWaldCI() from biostatUZH.
+
+```{r echo=TRUE}
+library(biostatUZH)
+
+# Breast-fed babies:
+theta.breast <- mean[1] - mean[2]
+se.breast <- sqrt(se[1]^2 + se[2]^2)
+printWaldCI(theta.breast, se.breast)
+
+# Bottle-fed babies:
+theta.bottle <- mean[3] - mean[4]
+se.bottle <- sqrt(se[3]^2 + se[4]^2)
+printWaldCI(theta.bottle, se.bottle)
+```
+
+
+
+```{r hypocalcemiafig, fig.cap = "reatment effects and $p$-values for each subgroup in the Neonatal Hypocalcemia Trial", echo=F, warning=FALSE, fig.height=3, fig.width=5.5}
+library(gplots)
+
+eff <- c(0.037, 0.105)
+se <- c(0.0480, 0.0283)
+lower <- eff-1.96*se
+upper <- eff+1.96*se
+p <- c(0.44, 0.0002)
+
+myx <- eff
+li <- lower
+ui <- upper
+
+par(mar = c(4, 6, 4, 1), las = 1)
+plotCI(x=myx, y=c(1,2), ui=ui, li=li, col="blue", barcol="blue", lwd=1, err='x', axes=F, xlab="Treatment effect", ylab="", ylim=c(0.5,2.5), pch=19, xlim=c(-.07, 0.23))
+axis(2, at=c(1,2), label=c("breast-fed", "bottle-fed"))
+axis(1)
+lines(rep(0,2), c(0,3), lty=2)
+myn <- c(n[1]+n[2], n[3]+n[4])
+for(i in 1:2){
+    text(myx[i], i+.2, paste("p = ", format(p[i], scientific=FALSE), sep=""))
+    text(0.18, i, paste("n = ", myn[i], sep=""), pos=4)
+}
+```
+
+The estimated treatment effects are shown in Figure \@ref(fig:hypocalcemiafig) together with confidence intervals and $p$-values.
+
+
+
+#### Test for interaction
+The correct approach to investigate whether there is a subgroup effect 
+is a *test for interaction*. Suppose we have two subgroups defined by males (M) and females (F). To investigate if the treatment effect $\theta$ differs between subgroups we consider the
+%%     truct a *test of interaction* with
+*subgroup difference*
+     \[
+     \Delta \hat {\theta} = \hat
+     \theta^{\tiny{\mbox{M}}} - \hat \theta^{\tiny{\mbox{F}}}
+     \]
+where $\hat \theta^{\tiny{\mbox{M}}}$ and $\hat \theta^{\tiny{\mbox{F}}}$
+are the estimated treatment effects for males and females, respectively.
+Based on the standard error
+     \[
+     \SE(\Delta \hat {\theta}) = \sqrt{\SE^2(\hat \theta^{\tiny{\mbox{M}}})+\SE^2(\hat \theta^{\tiny{\mbox{F}}})},
+     \]
+tests and confidence intervals can be constructed.
+
+The test for interaction is known in meta-analysis as the
+$Q$-test for heterogeneity and can also be used for more than two groups. Alternatively, a regression model with \alert{interaction} between treatment and subgroup could be used, if individual-level data are available.
+
+
+:::{.example}
+The test for interaction can be performed with the 
+function printWaldCI() from biostatUZH.
+:::
+
+```{r echo=T}
+theta.diff <- theta.breast - theta.bottle
+se.diff <- sqrt(se.breast^2 + se.bottle^2)
+printWaldCI(theta.diff, se.diff)
+```     
+
+In the Neonatal Hypocalcemia trial, there is *no evidence* for a different treatment effect in the two subgroups ($p=0.22$). Perhaps the study sample size and specifically the breast-fed group ($n=`r myn[1]`$) was too small to provide such evidence.
+
+
+
+It is tempting to consider the treatment effect separately in each
+subgroup and to assess the existence of a *treatment interaction*
+based on an informal comparison of the $p$-values in each subgroup. As
+shown in Figure \@ref(fig:hypocalcemiafig), for breast-fed and bottle-fed
+babies we obtain $p=0.44$ and $p=0.0002$, respectively, so one may
+argue that the two $p$-values are very different and conclude that
+there is a subgroup difference. However, this constitutes an erroneous
+and flawed reasoning.  This becomes obvious in the following example:
+Suppose the effect estimates in the two groups are identical but the
+sample sizes are different such that one of the subgroups has a
+significant treatment effect whereas the treatment effect is
+non-significant in the other group. The difference in the $p$-values
+is then only a result of different sample sizes, without any difference
+in effect sizes. Indeed, with equal effect sizes in the
+two groups, the test for interaction will return a $p$-value of 1.0,
+so no evidence for a subgroup difference whatsoever. 
+This example clearly illustrates, that we need to
+compare effect sizes and not $p$-values to establish evidence for a
+difference between subgroups [@SN_interaction]. 
+
+
+
+The test for interaction described above assumes normality of the
+effect estimates $\hat \theta^{\tiny{\mbox{M}}}$ and
+$\hat \theta^{\tiny{\mbox{F}}}$. If we have binary outcomes and want
+to compare relative risks or odds ratios, the test for interaction
+should be performed on the log scale because the distributions of log
+ratios tend to be closer to normal then [@SN_interactionrev].
+
+
+
+### Selecting subgroups
+
+The risk of *false positive findings* increases with increasing number of subgroup comparisons. For example, if we compare treatment effects in 20 different subgroups, then we would expect one of the analyses to yield a significant result (at $\alpha=5\%$), even if the treatment effect is the same in all subgroups ($H_0$).
+%% This result follows from the (approximate) uniform
+%% distribution of a (two-sided) $p$-value under $H_0$ 
+%% and holds even if the $p$-values are dependent. 
+If the subgroups have been selected *before* the data were collected based on biological or clinical reasoning, then positive (significant) findings are more trustworthy than if subgroups have been defined _post hoc_.
+
+### Qualitative and quantitative interaction
+The test for interaction tests the null hypothesis 
+$H_0$: $\theta_1 = \theta_2 = \ldots = \theta_I$ 
+of equal treatment effects $\theta_i$ in $i=1,\ldots,I$ subgroups. 
+This is known as the $Q$-test in meta-analysis. 
+A useful distinction between *quantitative* and *qualitative* interactions (subgroup differences) has been made.
+
+
+:::{.definition}
+1. For a *quantitative interaction*, the size of the treatment effect $\theta_i$ varies between subgroups $i=1,\ldots,I$, but is always *in the same direction*.
+2.  For a *qualitative interaction*, also the *direction of the treatment effect varies* between subgroups.
+:::
+
+It has been argued that quantitative interactions are not surprising, whereas qualitative interactions are of greater clinical importance.
+
+#### The method of Gail and Simon
+
+The *Gail-Simon test* is a modified test for interaction with null hypothesis that there is no *qualitative* interaction [@gailsimon], \ie 
+\[
+H_0: \theta_i \geq 0 \mbox{ for all $i$ or } \theta_i \leq 0 \mbox{ for all $i=1,\ldots,I$.} 
+\]
+
+This test for qualitative interaction is based on the test statistic
+
+\begin{equation*}
+T = \min\{Q^+,Q^{-}\}, 
+\end{equation*}
+
+where
+
+\begin{eqnarray*}
+Q^+ = \sum_{i: \hat \theta_i \geq 0} T_i^2 & \mbox{ and } & 
+Q^- = \sum_{i: \hat \theta_i < 0} T_i^2
+\end{eqnarray*}
+
+with $T_i=\hat \theta_i/\SE(\hat \theta_i)$ being the test statistics in each subgroup $i$. The reference distribution for $T$ is a mixture of $I-1$ $\chi^2$-distributions, so we use statistical software to calculate a $p$-value, as implemented in biostatUZH::gailSimon().
+
+An alternative method is based on pairwise comparisons of simultaneous confidence intervals [@panwolfe].
+
+
+:::{.example}
+  In the  National Surgical Adjuvant Breast and Bowel Project  Trial @{matthews} (Section 9.2), the outcome was the proportion disease-free survival at 3 years, comparing chemotherapy (PF) only versus chemotherapy plus tamoxifen (PFT) for the treatment of Breast Cancer. The proportion difference $\theta$ is positive if disease free survival is more likely under PF. Four subgroups based on the progesterone receptor status (PR) and age are considered, see Table \@ref(tab:breastcancer) and Figure \@ref(fig:tamoxifen). There appears to be an advantage to PF in one of the four subgroups while PFT seems preferable in the other three subgroups.
+:::
+
+```{r, echo = FALSE}
+rd <- c(0.163, -0.114, -0.047, -0.151)
+se.rd <-  c(0.0788, 0.0689, 0.0614, 0.0547)
+t <- rd/se.rd
+tp <- round(t, 2)
+p <- 2*pnorm(abs(t), lower.tail=FALSE)
+library(biostatUZH)
+p <- formatPval(p)
+```   
+
+
+
+```{r breastcancer}
+# Creating a data frame for the table
+# Create a data frame with the appropriate structure
+df <- data.frame(
+  Metric = c("Difference in proportions $\\widehat{\\theta}$", 
+             "$\\SE(\\widehat{\\theta})$", 
+             "$\\widehat{\\theta}/\\SE(\\widehat{\\theta})$", 
+             "$p$-value"),
+  "Age < 50" = c(rd[1], se.rd[1], tp[1], p[1]),
+  "Age >= 50" = c(rd[2], se.rd[2], tp[2], p[2]),
+  "Age < 50" = c(rd[3], se.rd[3], tp[3], p[3]),
+  "Age >= 50" =c(rd[4], se.rd[4], tp[4], p[4])
+)
+
+df <- as.data.frame(df, keep.rownames = TRUE)
+
+kable(df, booktabs = TRUE, escape = FALSE, 
+      caption = "Subgroups by age and progesterone receptor status (PR) in the National Surgical Adjuvant Breast and Bowel Project Trial (Matthews, 2023).") %>%
+  kable_styling(latex_options = "hold_position") %>%
+  add_header_above(c(" " = 1, "PR < 10 fmol" = 2, "PR >= 10 fmol" = 2)) %>%
+  column_spec(1, bold = TRUE)
+
+```
+
+
+
+
+```{r tamoxifen, fig.cap = "Treatment effects with confidence intervals and (two-sided) $p$-values for each subgroup in the National Surgical Adjuvant Breast and Bowel Project Trial [@matthews].", echo=F, warning=FALSE, fig.height=3, fig.width=5.5}
+library(gplots) 
+
+eff <- rd
+se <- se.rd
+lower <- eff-1.96*se
+upper <- eff+1.96*se
+
+myx <- eff
+li <- lower
+ui <- upper
+
+par(mar = c(4, 6, 4, 1), las = 1)
+plotCI(x=myx, y=c(1,2,3,4), ui=ui, li=li, col="blue", barcol="blue", lwd=1, err='x', axes=F, xlab="Difference in survival (PF-PFT)", ylab="", ylim=c(0.3,4.5), pch=19, xlim=c(-.3, 0.34))
+axis(2, at=c(1,2,3,4), label=c("PR < 10, Age < 50",
+                               "PR < 10, Age > 50",
+                               "PR > 10, Age < 50",
+                               "PR > 10, Age > 50"), cex.axis=0.6)
+                               
+axis(1)
+lines(rep(0,2), c(0,5), lty=2)
+```
+
+
+```{r echo=FALSE}
+## data
+rd <- c(0.163, -0.114, -0.047, -0.151)
+rd.se <- c(0.0788, 0.0689, 0.0614, 0.0547)
+
+## Q-test for interaction
+library(meta)
+mymeta <- metagen(TE=rd, seTE=rd.se)
+pQ <- formatPval(mymeta$pval.Q)
+
+## Gail and Simon test
+pGS <- gailSimon(thetahat = rd, se = rd.se)
+``` 
+The standard test for interaction gives $p=`r formatPval(mymeta$pval.Q)`$, as application of
+the function \code{meta::metagen()} shows.
+For the Gail-Simon test, we obtain 
+$T=`r round(sqrt(pGS["statistic"]), 2)`^2=`r round(pGS["statistic"], 2)`$ and 
+$p=`r formatPval(pGS["p-value"])`$.
+So, there is moderate to strong evidence for a quantitative interaction ($p=`r formatPval(mymeta$pval.Q)`$), but only weak evidence for a qualitative interaction 
+($p=`r formatPval(pGS["p-value"])`$).
+
+
+```{r echo=TRUE}
+## data
+rd <- c(0.163, -0.114, -0.047, -0.151)
+rd.se <- c(0.0788, 0.0689, 0.0614, 0.0547)
+
+## Q-test for interaction
+library(meta)
+mymeta <- metagen(TE=rd, seTE=rd.se)
+print(formatPval(mymeta$pval.Q))
+
+## Gail and Simon test
+pGS <- gailSimon(thetahat = rd, se = rd.se)
+print(formatPval(pGS))
+``` 
+
+
+## Methods for multiple outcomes
+
+Many clinical trials measure *numerous outcome variables* (primary and secondary) relevant to the condition studied. This raises *multiplicity* problems similar to those encountered when several subgroups are compared.
+
+In what follows we assume that no distinction between primary and
+secondary outcomes has been made. In practice the problem of
+multiplicity is often avoided by selecting just one primary outcome.
+If there is more than one primary outcome, multiplicity adjustments
+need to be applied. Multiplicity adjustments can also be applied to
+secondary outcomes, but this is not always required @ich1999statistical.
+
+
+:::{.example}
+Additionally to the primary endpoint (Epworth scale), the Didgeridoo Study (see Example \@ref(exm:didgeridoo)) had also secondary endpoints:
+:::
+
+-  Pittsburgh quality of sleep index (range 0-21)
+-  Partner-rating of sleep disturbance (range 0-10)
+-  Apnoea-hypopnoea index (range 0-36)
+
+
+Figure \@ref(fig:didgeridooBaselineFU) shows the baseline and follow-up (4 months) measurements for the primary and secondary outcomes, compared between the treatment and control group. Change score analyses (using two-sample $t$-tests) have been performed for each of these outcomes, see Table \@ref(tab:didgeridooeffects) or also the published results in Figure \@ref(fig:didgeridootab2).
+
+
+@puhan have selected the Epworth index as primary outcome, but in what follows we assume that no distinction between primary and secondary outcomes has been made.
+
+```{r echo=F, warning=FALSE}
+alphorn<-read.table("data/alphorn.dat",header=TRUE,sep="\t")
+alphorn$treatment <- abs(alphorn$group-1)
+```
+
+
+```{r didgeridooBaselineFU, fig.cap = "Baseline and follow-up measurements for primary and secondary outcomes in the Didgeridoo Study.", echo=F, warning=FALSE}
+attach(alphorn, warn.conflicts = FALSE)
+x1<-alphorn[group==0,17:18]
+y1<-alphorn[group==1,17:18]
+x2<-alphorn[group==0,23:24]
+y2<-alphorn[group==1,23:24]
+x3<-alphorn[group==0,20:21]
+y3<-alphorn[group==1,20:21]
+x4<-alphorn[group==0,26:27]
+y4<-alphorn[group==1,26:27]
+
+names<-c("didgeridoo","control")
+ylab<-c("Epworth scale","Pittsburgh index",
+"Partner rating","Apnoea index")
+
+ylim1<-c(0,24)
+ylim2<-c(0,21)
+ylim3<-c(0,10)
+ylim4<-c(0,36)
+
+nx<-dim(x1)[1]
+ny<-dim(y1)[1]
+
+par(mfrow=c(2,4), las=1, mar=c(2, 4, 4, 2) + 0.1)
+
+plot(0,0,type="n",xlim=c(0,1),ylim=ylim1,xlab="",xaxt="n",ylab=ylab[1])
+points(rep(0,nx),x1[,1],pch=19)
+points(rep(1,nx),x1[,2],pch=19)
+for(i in 1:nx) lines(c(0,1),c(x1[i,1],x1[i,2]),lty=1,col=5)
+title(names[1],cex=0.8)
+
+plot(0,0,type="n",xlim=c(0,1),ylim=ylim2,xlab="",xaxt="n",ylab=ylab[2])
+points(rep(0,nx),x2[,1],pch=19)
+points(rep(1,nx),x2[,2],pch=19)
+for(i in 1:nx) lines(c(0,1),c(x2[i,1],x2[i,2]),lty=1,col=4)
+title(names[1],cex=0.8)
+
+plot(0,0,type="n",xlim=c(0,1),ylim=ylim3,xlab="",xaxt="n",ylab=ylab[3])
+points(rep(0,nx),x3[,1],pch=19)
+points(rep(1,nx),x3[,2],pch=19)
+for(i in 1:nx) lines(c(0,1),c(x3[i,1],x3[i,2]),lty=1,col=6)
+title(names[1],cex=0.8)
+
+plot(0,0,type="n",xlim=c(0,1),ylim=ylim4,xlab="",xaxt="n",ylab=ylab[4])
+points(rep(0,nx),x4[,1],pch=19)
+points(rep(1,nx),x4[,2],pch=19)
+for(i in 1:nx) lines(c(0,1),c(x4[i,1],x4[i,2]),lty=1,col=2)
+title(names[1],cex=0.8)
+
+plot(0,0,type="n",xlim=c(0,1),ylim=ylim1,xlab="",xaxt="n",ylab=ylab[1])
+points(rep(0,ny),y1[,1],pch=19)
+points(rep(1,ny),y1[,2],pch=19)
+for(i in 1:ny) lines(c(0,1),c(y1[i,1],y1[i,2]),lty=1,col=5)
+title(names[2],cex=0.8)
+
+plot(0,0,type="n",xlim=c(0,1),ylim=ylim2,xlab="",xaxt="n",ylab=ylab[2])
+points(rep(0,ny),y2[,1],pch=19)
+points(rep(1,ny),y2[,2],pch=19)
+for(i in 1:ny) lines(c(0,1),c(y2[i,1],y2[i,2]),lty=1,col=4)
+title(names[2],cex=0.8)
+
+
+plot(0,0,type="n",xlim=c(0,1),ylim=ylim3,xlab="",xaxt="n",ylab=ylab[3])
+points(rep(0,ny),y3[,1],pch=19)
+points(rep(1,ny),y3[,2],pch=19)
+for(i in 1:ny) lines(c(0,1),c(y3[i,1],y3[i,2]),lty=1,col=6)
+title(names[2],cex=0.8)
+
+plot(0,0,type="n",xlim=c(0,1),ylim=ylim4,xlab="",xaxt="n",ylab=ylab[4])
+points(rep(0,ny),y4[,1],pch=19)
+points(rep(1,ny),y4[,2],pch=19)
+for(i in 1:ny) lines(c(0,1),c(y4[i,1],y4[i,2]),lty=1,col=2)
+title(names[2],cex=0.8)
+``` 
+
+
+```{r echo=F, warning=FALSE}
+attach(alphorn, warn.conflicts = FALSE)
+
+alphorn$ep <- alphorn$change_e
+alphorn$pi <- alphorn$dpsqi
+alphorn$pa <- alphorn$d_partne
+alphorn$ap <- alphorn$dah
+
+ep1 <- change_e[group==0]
+ep2 <- change_e[group==1]
+pi1 <- dpsqi[group==0]
+pi2 <- dpsqi[group==1]
+pa1 <- d_partne[group==0]
+pa2 <- d_partne[group==1]
+ap1 <- dah[group==0]
+ap2 <- dah[group==1]
+
+Delta <- function(x1, x2){
+  return(mean(x1, na.rm=TRUE) - mean(x2, na.rm=TRUE))
+}
+
+SD <- function(x1, x2){
+  x1 <- x1[!is.na(x1)]
+  x2 <- x2[!is.na(x2)]
+
+  n1 <- length(x1)
+  n2 <- length(x2)
+  var1 <- var(x1)
+  var2 <- var(x2)
+  SD <- sqrt((var1*(n1-1)+var2*(n2-1))/(n1+n2-2))
+  return(SD)
+}
+
+SE <- function(x1, x2){
+  x1 <- x1[!is.na(x1)]
+  x2 <- x2[!is.na(x2)]
+  n1 <- length(x1)
+  n2 <- length(x2)
+  return(sqrt((n1+n2)/(n1*n2)))
+}
+
+ep.D <- Delta(ep1, ep2)
+pi.D <- Delta(pi1, pi2)
+pa.D <- Delta(pa1, pa2)
+ap.D <- Delta(ap1, ap2)
+ep.SD <- SD(ep1, ep2)
+pi.SD <- SD(pi1, pi2)
+pa.SD <- SD(pa1, pa2)
+ap.SD <- SD(ap1, ap2)
+ep.d <- ep.D/ep.SD
+pi.d <- pi.D/pi.SD
+pa.d <- pa.D/pa.SD
+ap.d <- ap.D/ap.SD
+ep.SE <- SE(ep1, ep2)
+pi.SE <- SE(pi1, pi2)
+pa.SE <- SE(pa1, pa2)
+ap.SE <- SE(ap1, ap2)
+
+D <- c(ep.D, pi.D, pa.D, ap.D)
+d <- c(ep.d, pi.d, pa.d, ap.d)
+SD <- c(ep.SD, pi.SD, pa.SD, ap.SD)
+SE <- c(ep.SE, pi.SE, pa.SE, ap.SE)
+lower <- d - 2*SE
+upper <- d + 2*SE
+
+myoutput <- cbind(ylab, round(D, 1), round(SD, 1), round(d, 2))
+colnames(myoutput) <- c("Endpunkt", "Abs. Differenz $\\Delta$", "SD", "Stand. Differenz $\\delta$")
+library(reporttools)
+myoutput2 <- cbind(ylab, disp(D, 1), disp(SE*SD, 1), disp(D-2*SE*SD, 1), "bis", disp(D+2*SE*SD, 1))
+myoutput3 <- cbind(ylab, disp(d, 2), disp(SE, 2), disp(lower, 2), "bis", disp(upper, 2))
+``` 
+
+```{r didgeridooeffects, results="asis", echo=F}
+ep.t <- t.test(ep1, ep2, var.equal = TRUE)
+pi.t <- t.test(pi1, pi2, var.equal = TRUE)
+pa.t <- t.test(pa1, pa2, var.equal = TRUE)
+ap.t <- t.test(ap1, ap2, var.equal = TRUE)
+
+t <- c(ep.t$statistic,pi.t$statistic,pa.t$statistic,ap.t$statistic)
+p <- c(ep.t$p.value,pi.t$p.value,pa.t$p.value,ap.t$p.value)
+
+
+# Create data frame
+myoutput4 <- data.frame(
+  Endpoint = ylab,
+  Estimate = round(D, 1),
+  SE = round(SE * SD, 1),
+  `t-value` = round(t, 1),
+  `p-value` = as.character(formatPval(p, digits = 2))
+)
+
+# Print table using kable and kableExtra
+kable(myoutput4, digits = c(1, 1, 1, 1, 2),
+      caption = "Treatment effects for primary and secondary endpoints in the Didgeridoo Study using change score analyses.",
+      booktabs = TRUE, escape = FALSE, caption.placement = "top") %>%
+  kable_styling(latex_options = "striped", full_width = FALSE)
+
+
+``` 
+
+
+The next subsections explain two different approaches how to prevent multiplicity problems: $p$-value adjustments and multivariate methods. 
+
+
+
+### Adjusting for multiplicity
+
+The problem with multiple outcomes is that the chance that at least one of them will provide a siginficant result will be larger than the nominal $\alpha$ level. Several adjustments for this are described in the following. 
+
+:::{.definition}
+The *family-wise error rate* (FWER) is the probability of at least one false significant result.
+If $k>1$ outcomes are considered, the FWER will be larger than the Type I error rate $\alpha$. Under independence, we have
+:::
+
+\begin{equation*}
+\mbox{FWER} = 1-(1-\alpha)^k.
+\end{equation*}
+
+For small $k$, the FWER under independence is close to the *Bonferroni bound* $k \cdot \alpha$ as can be seen in Figure \@ref(fig:FWER).
+
+
+```{r FWER, fig.cap = "Family-wise error rate (FWER) under independence of the outcomes for a type I error rate $\\alpha = 0.05$ (black line) compared to the Bonferroni bound (green dotted line) as functions of the number of outcomes $k$.", echo=F, fig.height=4}
+k=c(1:50)
+alpha <- 0.05
+FWER <- 1-(1-alpha)^k
+par(las=1)
+plot(k, FWER, type="l", ylim=c(0,1), xlab="number of outcomes k", axes=FALSE, lwd=1.5)
+axis(2)
+box()
+val <- c(1, 10, 20, 30, 40, 50)
+axis(1, at=val, as.character(val))
+text(45, 0.1, "alpha = 0.05")
+abline(h=0.05, lty=2)
+points(4, FWER[4], col=2, pch=19)
+text(15, 0.2, paste("k=4, FWER=0.19"), col=2)
+### abline(0, 0.05, lty=2, col=3)
+lines(c(1,20), c(alpha,1), lty=2, col=3, lwd=1.5)
+text(8, 0.9, paste("Bonferroni bound"), col=3, lwd=1)
+``` 
+
+
+
+#### Bonferroni method
+
+The *Bonferroni method* compares the $p$-values $p_1, \ldots, p_k$, obtained from different outcomes, not with $\alpha$, but with threshold $\alpha/k$. If at least one of the $p$-values is smaller than $\alpha/k$, then the trial result is considered significant at the $\alpha$ level. This procedure controls FWER at level $\alpha$. An equivalent procedure is to compare the *adjusted $p$-values* $k \, p_i$ with the standard $\alpha$ threshold.
+
+
+:::{.example}
+In the Didgeridoo Study, there is still evidence for a treatment effect after Bonferroni adjustments:
+:::
+
+```{r echo=FALSE}
+printPval <- function(p)
+    print(formatPval(p), quote=FALSE)
+``` 
+
+
+```{r echo=TRUE}
+## unadjusted p-values
+printPval(p)
+
+## Bonferroni-adjusted p-values
+printPval(p.adjust(p, method = "bonferroni"))
+``` 
+
+
+However, the Bonferroni method is unsatisfactory as it takes only the smallest $p$-value into account, e.g. 
+
+-  $p=$ *0.01*, 0.7, 0.8, 0.9 is ``significant'',
+-  $p=$ 0.03, 0.04, 0.05, 0.05 is ``not significant''.
+
+As a result, the Bonferroni method is very conservative and has low power.
+
+#### Holm method
+
+The *Holm method* is based on all ordered $p$-values 
+$p_{(1)} \leq \ldots \leq p_{(k)}$.
+A significant result is obtained, if 
+\[
+k \, p_{(1)}  \leq  \alpha , \mbox{ or }       
+(k-1) \, p_{(2)}  \leq  \alpha, 
+  \ldots   \mbox{ or }
+p_{(k)}  \leq  \alpha.
+%p_{(j)} \leq \alpha / (k-j+1)
+\]
+
+:::{.example} 
+In the Didgeridoo Study:
+:::
+
+
+```{r echo=TRUE}
+## Holm-adjusted p-values
+printPval(p.adjust(p, method = "holm"))
+``` 
+
+
+
+#### Simes' method
+
+*Simes' method* [@Simes1986] is also based on the ordered $p$-values $p_{(1)} \leq \ldots \leq p_{(k)}$. A significant result is obtained, if 
+\[
+k \, p_{(1)} \leq \alpha, \mbox{ or }  k/2 \, p_{(2)} \leq \alpha ,  \ldots 
+\mbox{ or }
+p_{(k)} \leq \alpha.
+%p_{(j)} \leq \alpha / (k-j+1)
+\]
+
+Variations of it are the @Hochberg1988 and @Hommel1988 method.
+
+
+:::{.example}
+In the Didgeridoo Study:
+:::
+
+
+```{r echo=TRUE}
+## Simes-adjusted p-values and variants
+printPval(p*(4/rank(p)))
+printPval(p.adjust(p, method = "hochberg"))
+printPval(p.adjust(p, method = "hommel"))
+``` 
+
+#### Comparison of methods
+
+
+```{r multfactors, fig.cap = "Multiplicative factors for multiplicity-adjustment of `r k` $p$-values.", echo=FALSE}
+k <- 15
+rank <- c(1:k)
+bonferroni <- rep(k, k)
+holm <- seq(k, 1, -1)
+simes <- k/seq(1:k)
+par(las=1)
+matplot(rank, cbind(bonferroni, holm, simes), type="b", lty=1, lwd=2, xlab="rank of p-value", ylab="multiplicative factor", axes=FALSE, ylim=c(1,k), pch=19)
+# title(paste("Multiplicative factors for ", as.character(k), " p-values", sep=""))
+myseq <- seq(1, k, 2)
+axis(1, at=myseq, as.character(myseq))
+axis(2, at=myseq, as.character(myseq))
+box()
+legend(k-4, k-2, lty=1, col=c(1:3), lwd=2, legend=c("Bonferroni", "Holm", "Simes"))
+
+## (p <- seq(0.1, 0.9, 0.1))
+## p.adjust(p)
+## p.adjust(p, method="holm")
+## pmin(p*c(9:1),1)
+## p.adjust(p, method="hochberg")
+## p*9/c(1:9)
+``` 
+
+
+
+To obtain multiplicity-adjusted $p$-values, the ordinary $p$-values are multiplied with a factor, with subsequent truncation at 1 if necessary. The multiplicative factors for `r k` $p$-values are compared in Figure \@ref(fig:multfactors) between the Bonferroni, Holm and Simes' methods. Important differences between the three methods are the following:
+
+
+-  The **Bonferroni method** controls FWER, but has low power. 
+-  The **Holm method** also controls FWER, but with a lower decrease of power than the classical Bonferroni method.
+-  If the $p$-values are independent or positively correlated, then
+  **Simes' method** also controls FWER.
+  For {positively correlated} $p$-values,
+  **Simes' method** is even closer to the nominal $\alpha$
+  level than the **Holm method**.
+-  Application of **Holm** and **Simes** requires
+  knowledge of the $p$-value rank, whereas the **Bonferroni method** requires
+  only knowledge of the number of $p$-values.
+
+
+
+### Multivariate methods
+
+Multiplicity issues can also be avoided by considering the whole $k$-dimensional outcome vector simultaneously rather than separately.
+#### Hotelling's $T$-test
+If all outcomes are continuous, then *Hotelling's $T$-test*, a generalization of the $t$-Test, could be used.
+
+But this test accepts deviations from the null hypothesis in any direction, so typically lacks power.
+
+:::{.example}
+Hotelling's $T$-test for the Didgeridoo Study:
+:::
+
+
+
+```{r echo=TRUE}
+library(Hotelling)
+print(hot.test <- hotelling.test(ep + pi + pa + ap ~ group, 
+                                 data=alphorn))
+``` 
+ 
+
+#### Combining outcomes in a summary score
+
+Under the assumption that all outcomes are continuous and are orientated in the same direction, the following procedure can be used to combine multiple outcomes into one summary score:
+
+1.  Standardize endpoints separately to a common scale:
+\[
+\mbox{$z$-score} = {(\mbox{Observation} - \mbox{M})}/{\mbox{SD}}
+\]
+Here $\mbox{M}$ and ${\mbox{SD}}$ are mean and standard deviation of
+the respective endpoint (ignoring group membership).
+2.  Compute a summary score as the average of the different
+  $z$-scores for each individual.
+3.  Compare summary scores between treatment groups with a *two-sample
+  $t$-test*.
+
+
+
+:::{.example}
+
+Summary scores in the Didgeridoo Study are shown in Figure \@ref(fig:summaryscore).
+Below we repeat the analysis. There are slight differences in the results, presumably due to a different handling
+  of missing values (there was one patient with missing partner rating information
+  and another one with missing Pittsburgh index measurement).
+:::
+
+
+```{r echo=TRUE}
+## z-scores
+ep.z <- scale(alphorn$ep)
+pi.z <- scale(alphorn$pi)
+pa.z <- scale(alphorn$pa)
+ap.z <- scale(alphorn$ap)
+
+## summary scores
+z.summary <- (ep.z + pi.z + pa.z + ap.z)/4
+
+## t-test
+print(summary.test <- t.test(z.summary ~ group, var.equal = TRUE))
+print(DifferenceInMeans <- mean(summary.test$conf.int))  
+```
+
+```{r summaryscore, fig.cap="Summary score analysis combining the $z$-scores of all outcomes. Published figure from the Didgeridoo Study.", fig.align='center', out.width='100%'}
+knitr::include_graphics("figures/figzscore.pdf")
+```
+
+
+
+#### O'Brien's  rank-based method
+*O'Brien's rank-based method* [@OBrien1984] is useful if some or all outcome variables are not normally distributed, such as non-normal continuous or categorical with a sufficiently large number of categories. 
+The procedure starts by replacing each observation with its *within-outcome rank*. The test is accomplished by performing a $t$-test to compare the *within-patient sums of ranks* between the two treatment groups.
+  
+:::{.example}
+O'Brien's rank-based method in the Didgeridoo Study:
+:::
+
+
+```{r echo=TRUE}
+## ranks and rank sums
+ep.r <- rank(alphorn$ep, na.last="keep")
+pi.r <- rank(alphorn$pi, na.last="keep")
+pa.r <- rank(alphorn$pa, na.last="keep")
+ap.r <- rank(alphorn$ap, na.last="keep")
+rank.sum <- ep.r + pi.r + pa.r + ap.r
+
+## t-test for rank sums
+(obrian.test <- t.test(rank.sum ~ group, var.equal=TRUE))
+(DifferenceInMeans <- mean(obrian.test$conf.int))  
+```
+
+Figure \@ref(fig:didgeridooranks) shows the within-outcome ranks for
+the primary outcome Epworth score and the within-patient sums of ranks
+for all outcomes.  We can see a difference in the distribution with
+tendency for smaller ranks respectively rank sums in the Didgeridoo
+group. The $t$-test above identifies evidence for a difference in the
+mean rank sums ($p=`r formatPval(obrian.test$p.value)`$), very similar to the
+$p$-value from the summary score analysis ($p=`r formatPval(summary.test$p.value)`$).
+
+
+
+```{r didgeridooranks, fig.cap = "Ranks of the observations of the primary outcome in the Didgeridoo Study (left plot) and sum of the ranks of all outcomes (primary plus 3 secondary).", echo=FALSE, fig.height=4, fig.width=6}
+library(beeswarm)
+par(mfrow=c(1,2))
+
+beeswarm(ep.r ~ group, method = "center", breaks=NA, ylab="Rank", xlab="", pch=16, cex=1.5, xlim = c(0.5, 2.5), xaxt = "n", las = 1, lwd = 1.5, main = "", col="red")
+title("Rank of Epworth Score")
+axis(1, c(1, 2), (c("Didgeridoo", "Control")), padj = 0.5)
+
+beeswarm(rank.sum ~ group, method = "center", breaks=NA, ylab="Rank sum", xlab="", pch=16, cex=1.5, xlim = c(0.5, 2.5), xaxt = "n", las = 1, lwd = 1.5, main = "", col="red")
+title("Rank Sum")
+axis(1, c(1, 2), (c("Didgeridoo", "Control")), padj = 0.5)
+```
+
+
+## Additional references
+
+The topics of this chapter are discussed in 
+@bland (Ch. 9.10 Multiple Significance Tests) and @matthews (Ch. 9 Subgroups and Multiple Outcomes). Interactions are discussed in the Statistics Notes @SN_interaction and @SN_interactionrev.
+
+More details on subgroup analyses in RCTs are given in @rothwell2005subgroup. Studies where the methods from this chapter are used in practice are for example @pinkney, @bennewith and @olivarius.
+
+
+
+
+
