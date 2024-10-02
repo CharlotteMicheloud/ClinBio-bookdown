@@ -644,7 +644,7 @@ The Bland-Altman plot for the glucose measurements is shown in Figure
 The bias is `r format(ba1$difference.mean, nsmall=2, digits=2)`
 mmol/L with 95\% CI `r displayCI(ba1$ci.mean, 2)` (left). The limits of agreement are  
 $\LOAlow$ =  `r format(ba1$lower.agreement.limit, nsmall=2, digits=2)` mmol/L with 95\% CI `r displayCI(ba1$ci.lower.loa, 2)` and 
-$\LOAup$ = `r format(ba1$upper.agreement.limit, nsmall=2, digits=2)` mmol/L with 95\% CI `r displayCI(ba1$ci.lower.loa, 2)` (right).
+$\LOAup$ = `r format(ba1$upper.agreement.limit, nsmall=2, digits=2)` mmol/L with 95\% CI `r displayCI(ba1$ci.upper.loa, 2)` (right).
 :::
 
 
@@ -757,7 +757,7 @@ kable(data, format = "html", row.names = FALSE, booktabs = TRUE,
 
 The *proportion of agreement* between the two classifications is
 \begin{eqnarray*}
-    \pobs &=& (`r a` + `r d`) / `r n` \ = \ `r format((a + d) / n, nsmall = 2, digits = 2)` \,\, (`r format(100*(a + d) / n, nsmall = 0)` \%)
+    \pobs &=& (`r a` + `r d`) / `r n` \ = \ `r format((a + d) / n, nsmall = 2, digits = 2)`.
 \end{eqnarray*}
 The problem is that two "random" classifiers would also agree for
 some patients, so we need to adjust for this *agreement by chance*. We can calculate this based on the
