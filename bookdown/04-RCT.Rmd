@@ -358,7 +358,7 @@ all relevant prognostic factors.
 difference between participants in how they were allocated to
 treatment groups. We do not expect this to happen if randomization is properly
 done. However, it is sometimes forgotten that proper randomization rests on 
-adequate *allocation concealment*).
+adequate *allocation concealment*.
 Allocation concealment means that the allocation sequence is not known 
 to those selecting the participants and assigning them to the intervention 
 groups until the moment of assignment. If the allocation sequence is not 

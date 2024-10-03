@@ -2,9 +2,22 @@
 
 
 ## Methods of allocation
+There exist several methods to allocate patients to the different 
+treatment groups in a clinical trial. In this chapter we focus 
+on the case where there are two treatments. 
 
 ### Simple randomization
-Using *simple randomization* for allocation of $2n$ patients to two treatment groups, A and B, the number of patients $N_A$ in group A has a binomial distribution: $N_A \sim \Bin(2n, 1/2)$, likewise for $N_B$. However, one is fixed by the other: $N_B = 2n - N_A$. The distribution of the larger group size $N_{\max}=\max(N_A,N_B)$ can be derived as
+Using *simple randomization* for allocation of $2n$ patients to 
+two treatment groups, A and B, the number of patients $N_A$ in group A
+has a binomial distribution: 
+$$
+N_A \sim \Bin(2n, 1/2),
+$$
+which is the same for $N_B$.
+However, one is fixed by the other: $N_B = 2n - N_A$. 
+
+The distribution of the larger group size $N_{\max}=\max(N_A,N_B)$ can then be 
+derived as
 
 \[
 \Pr(N_{\max}=r) = \left\{
@@ -16,21 +29,10 @@ Using *simple randomization* for allocation of $2n$ patients to two treatment gr
 \]
 
 
-```{proof}
+:::{.proof}
 Given a specific $N_A$, $N_{\max}$ takes the following value:
-```
 
-\begin{table}[!h]
-\centering
-\begin{tabular}{p{1cm} p{1cm} p{1cm} p{1cm} c c c c c c}
-  \toprule
-  $N_A$ & $0$ & $1$ & $\dots$ & $n - 1$ & $n$ & $n + 1$ & $\dots$ & $2n - 1$ & $2n$ \\
-  $N_B$ & $2n$ & $2n - 1$ & $\dots$ & $n + 1$ & $n$ & $n - 1$ & $\dots$ & $1$ & $0$ \\
-  \midrule
-  $N_{\max}$ & $2n$ & $2n - 1$ & $\dots$ & $n + 1$ & $n$ & $n + 1$ & $\dots$ & $2n - 1$ & $2n$ \\
-\bottomrule
-\end{tabular}
-\end{table}
+
 
 ```{r, results='asis', echo=FALSE}
 library(knitr)
@@ -51,7 +53,7 @@ df <- as.data.frame(data, stringsAsFactors = FALSE)
 colnames(df) <- NULL
 
 # Print the table using kable
-kable(df, format = "html", escape = FALSE) %>%
+kable(df, format = "html", escape = FALSE,row.names = FALSE) %>%
   kable_styling(full_width = FALSE, position = "center")
 ```
 
@@ -69,14 +71,16 @@ For $r = n + 1, \dots, 2n$, the larger group can be either A or B, leading to:
 & \overset{\text{symm.}}{=} & 2 \cdot \binom{2n}{r} \left(\frac{1}{2}\right)^{2n} 
 = 2^{1 -2n} \binom{2n}{r}.
 \end{eqnarray*}
+:::
+\
 
 
-For example, for $n=15$, $\Pr(N_{\max} \geq 20) = 0.10$. So, there is a substantial chance that the two groups will end up with markedly differing sizes, as illustrated by Figure \@ref(fig:simple). Unequal group sizes lead to a *loss in power*:
-
-\[
-\mbox{ Power } = \Phi\left(\sqrt{({n_A n_B})/({n_A+n_B})} - z_{1-\alpha/2}\right)
-\]
-
+For example, for $n=15$, $\Pr(N_{\max} \geq 20) = 0.10$. So, there is a substantial chance that the two groups will end up with markedly differing sizes, as illustrated by Figure \@ref(fig:simple).
+<!-- The power can be calculated as:  -->
+<!-- \[ -->
+<!-- \mbox{ Power } = \Phi\left(\sqrt{({n_A n_B})/({n_A+n_B})} - z_{1-\alpha/2}\right) \, , -->
+<!-- \] -->
+Unequal group sizes lead to a *loss in power*.
 For example, for Cohen's $d=1$, total sample size $2n = n_A+n_B=30$ and $\alpha=0.05$ the loss in power is illustrated in Figure \@ref(fig:powerloss).
 
 
@@ -98,7 +102,7 @@ text(24, 0.06, "Pr = 0.10", col=2)
 
 
 
-```{r powerloss, fig.cap = "Loss in power for unequal group sizes in a scenario with $d=1$, $n_1+n_2=30$ and $\alpha=0.05$.", echo=F}
+```{r powerloss, fig.cap = "Loss in power for unequal group sizes in a scenario with $d=1$, $n_1+n_2=30$ and $\\alpha=0.05$.", echo=F}
 n <- 30
 n1 <- c(1:(n-1))
 n2 <- n-n1
@@ -134,7 +138,7 @@ kable(data, format = "html", escape = FALSE, col.names = NULL) %>%
 
 In this case, the randomization selects randomly a block for every group of four patients. Block randomization using RPBs of length 4 ensures that group sizes never differ by more than 2. After every fourth patient, the two treatment groups must have the same size.
 
-RPBs can also be used with other block lengths or for more than two groups, \eg for a block length of 6 and three groups:
+RPBs can also be used with other block lengths or for more than two groups, e.g. for a block length of 6 and three groups, there are 90 different sequences:
 ```{r, echo = FALSE, message = FALSE}
 library(knitr)
 library(kableExtra)
@@ -156,43 +160,35 @@ kable(df, format = "html", escape = FALSE, col.names = NULL) %>%
 ```
 
 
-```{example}
-\code{R} code for RPBs of length 4:
-```
+The following `R` code computes the different sequences for RPBs of length 4:
+
 
 ```{r echo=TRUE, message = FALSE}
 library(randomizeR)
 ## bc: length of block
-obj4 <- pbrPar(bc=4)
+## K: number of treatment groups 
+obj4 <- pbrPar(bc = 4, K = 2)
 getAllSeq(obj4)
 ```
 
 :::{.example #ulcers}
-Am RCT was conducted to examine the use of cold atmosperic plasma 
-as a method to treat diabetic foot ulcers [@Mirpour2020]. Statement from the 
-Methods section: 
-"Patients were randomly, double-blinded, assigned to an SC groupe or SC + CAP
-using bloc randomization with mixing block sizes of $4$. The size of blocks
-was not disclosed for minimizing the chance of cracking the code. 
-An investigator with no clinical involvement in the trial prepared a
-computer random number list for block randomization. A trained physician and 
-nurse who were blinded to the randomization method and treatment assignment 
-collected the data. The data also were analyzed by a blinded
-investigator to the study groups."
+An RCT was conducted to examine the use of cold atmosperic plasma 
+as a method to treat diabetic foot ulcers [@Mirpour2020].
+The Methods section states that the patients were randomly assiged to 
+the two treatment groups using block randomization with mixing block sizes 
+of $4$. 
 :::
 
-In some instances, knowledge of the block length and of previous treatments
+In some instances, the knowledge of the block length and of previous treatments
 allows the next treatment to be predicted. This may cause *selection bias*.
 RPBs with *random block length* have been suggested to avoid the potential for
 selection bias.
 
-```{example}
-R code for RBPs with random block length 2 and 4:
-```
-
+The following `R` code creates the randomization list for RBPs with random 
+block length of 2 and 4: 
 
 ```{r echo=TRUE}
-obj24 <- rpbrPar(N=100, rb=c(2,4))
+obj24 <- rpbrPar(N=100, K = 2, rb=c(2,4))
 (seq24 <- genSeq(obj24))
 
 # Randomization list
@@ -203,37 +199,40 @@ as.character(getRandList(seq24))
 
 ### Unequal randomization
 Unequal allocation can provide greater experience of a new treatment and may 
-even encourage recruitment in certain trials. Provided the imbalance is no
-greater than 2:1, the loss in power is small (\eg from 90\% to 86\% for 
+even encourage recruitment in certain trials. If the imbalance is no
+greater than 2:1, the loss in power is small (e.g. from 90\% to 86\% for 
 $\alpha=5\%$).
-%% RPBs could easily be adapted to provide a means of ensuring an imbalance 
-close to 2:1. 
-Treatment allocation sequences could be built by randomly selecting from the 
+The treatment allocation sequences could be built by randomly selecting from the 
 15 blocks of length 6, comprising 4 As and 2 Bs.
 
-```{example}
-R code for 2:1 allocation ratio using RPBs of length 6 for two groups:
-```
+The following `R` code computes the 2:1 allocation sequences
+for a 2:1 allocation ratio using RPBs of length 6 for two groups:
+
 
 ```{r echo=TRUE}
 library(randomizeR)
 ## bc: length of each block
-obj <- pbrPar(bc=6, ratio=c(2,1))
+obj <- pbrPar(bc=6, K = 2, ratio=c(2,1))
 genSeq(obj, r=3, seed=123)
 ``` 
 
-
 ### Stratification
-*Stratification* is useful when there is imbalance with respect to prognostic factors. Suppose we wish to compare a new treatment $T$ with placebo $P$ to see if it improves a certain continuous outcome. A RCT is conducted with $n$ patients in each group. %%  (perhaps using RPBs).
-An important binary *prognostic factor* (\eg age) has level $A$ (child) in a proportion %% $\theta$ 
-of the eligible patients, otherwise it has level $B$ (adults).
-Suppose that there is *no treatment* effect, but the mean outcomes $\mu_A$ and $\mu_B$ for type $A$ and $B$ differ: $\mu_A \neq \mu_B$.
-We have conducted one particular trial with $n$ patients per treatment group and 
-%
-\begin{itemize}  
--   $n_T$ patients of type $A$ in group $T$ and
+*Stratification* is useful when there is imbalance with respect to prognostic factors. 
+Suppose we wish to compare a new treatment $T$ with placebo $P$ to see if it 
+improves a certain continuous outcome. An RCT is conducted with $n$ patients 
+in each group, all younger than 16 years of age. 
+However, there is an important binary *prognostic factor* 
+(e.g. age) which has level $A$ (child, < 12 years) in a proportion 
+of the eligible patients, otherwise it has level $B$ 
+(adolescent, $\geq$ 12 years).
+Suppose that there is *no treatment* effect, but the mean outcomes 
+$\mu_A$ and $\mu_B$ for type $A$ and $B$ differ: $\mu_A \neq \mu_B$.
+Let us assume that we have conducted one particular trial with $n$ patients 
+per treatment group and 
+
+-   $n_T$ patients of type $A$ (children) in group $T$ and
 -   $n_P$ patients of type $A$ in group $P$.
-\end{itemize}
+
 
 The expected 
 outcome difference between group $T$ and $P$ then is
@@ -250,7 +249,8 @@ $n_T \approx n_P$.
 
 
 Stratification aims to control the imbalance between groups not with respect to
-their size, but with respect to their *composition*. The idea is to use different
+their size, but with respect to their *composition*. 
+The idea is to use different
 RPBs for different strata defined by relevant prognostic factors. For example,
 if age is an important prognostic factor, one may use an RPB design for 
 children and another one for adults. The number of children (and of adults)
@@ -261,12 +261,17 @@ receiving each treatment will then be very similar.
 If there are many prognostic factors, using a separate RPB for each possible 
 combination of these factors becomes impractical. For example, if there are 
 5 binary prognostic factors, there will be already $2^5=32$ strata. 
-*Minimization* aims to balance the groups with respect to each factor, but not for each combination of the factors. The minimization algorithm is:
+*Minimization* aims to balance the groups with respect to each factor,
+but not for each combination of the factors. The minimization algorithm is:
 
--  Suppose a new patient enters the trial with certain values 
+1.  Suppose a new patient enters the trial with certain values 
 $x_1, \ldots, x_J$ of relevant prognostic factors.
--  The difference $D_j$ of numbers of patients allocated to group $A$ and patients allocated to group $B$ is computed for the observed value $x_j$ of each prognostic factor $j=1,\ldots,J$.
--  Compute the *total difference* $D = \sum_j D_j$ and proceed as follows (with some $p>1/2$): 
+2.  The difference $D_j$ of numbers of patients allocated to group
+$A$ and patients allocated to group $B$ is computed for the observed value
+$x_j$ of each prognostic factor $j=1,\ldots,J$.
+3.  Compute the *total difference* $D = \sum_j D_j$ and proceed as 
+follows (with some $p>1/2$): 
+
 \[
 \mbox{If} \left\{ \begin{array}{c} D = 0 \\ D < 0 \\ D > 0 \end{array} \right\}
 \begin{array}{c}
@@ -280,26 +285,41 @@ $x_1, \ldots, x_J$ of relevant prognostic factors.
 ## Blinding and placebos
 
 ### Single and double blindness
-Blinding is used to avoid assessment bias. We distinguish
+Blinding is used to avoid assessment bias. We distinguish between
 
 
--  *Single-blind trial*: patient is unware of the treatment being given.
--  *Double-blind trial*: neither doctor nor patient knows what treatment is being given.
-
-
-In some trials the *statistical analysis* is also carried out *blinded*, because of subjective elements in any statistical analysis, e.g.
+-  *Single-blind trial*: the patient is unaware of the treatment being given, and
+-  *Double-blind trial*: neither the doctor nor the patient knows what treatment 
+is being given.
+Moreover, *blinded outcome assessment is often possible even if 
+the treating doctors cannot be blinded. 
+In some trials the *statistical analysis* is also carried out *blinded*,
+because of subjective elements in any statistical analysis, e.g.
 
 -  Should I transform the outcome variable? 
 -  Should I compute risk differences, risk ratios or odds ratios for binary outcomes?
 -  Should I include a covariate in the analysis?
 
+However, a precise statistical analysis plan helps. 
+
+
+:::{.example #ulcers name="continued"}
+In the RCT from @Mirpour2020, the patient were blinded, and 
+the data were collected by a trained physician 
+and nurse who were blinded to the randomization method and the treatment 
+assignment. Moreover, the data were analyzed by a blinded investigator 
+to the study groups. 
+:::
 
 
 ### Placebos
-Placebos are treatments that look similar to the true treatment but contain no active ingredient. They have essentially two roles: 
 
+Placebos are treatments that look similar to the true treatment but contain
+no active ingredient. They have essentially two roles: 
 
-1. Placebos *facilitate blindness* in RCTs: A *treatment* versus *no treatment at all* comparison cannot be blinded, but  *treatment* versus *placebo* can often be blinded.
+1. Placebos *facilitate blindness* in RCTs: A *treatment* versus
+*no treatment at all* comparison cannot be blinded, but  *treatment* versus 
+*placebo* can often be blinded.
 
 2.   Placebos help to control the *placebo effect*.
 
