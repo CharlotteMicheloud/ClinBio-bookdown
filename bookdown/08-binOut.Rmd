@@ -1,4 +1,4 @@
-# Analysis of binary outcomes 
+# Analysis of binary outcomes {#binOut}
 
 Binary outcomes are ubiquitous in medical research and the comparison
 of binary outcomes in RCTs is very common.  This chapter discusses

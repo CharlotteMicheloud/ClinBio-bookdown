@@ -1,36 +1,38 @@
-# Analysis of continuous outcomes 
+# Analysis of continuous outcomes {#contOut}
 
 
 
 Effect size estimates quantify clinical relevance, confidence intervals 
-(CIs) indicate the (im)precision of the effect size estimates as population 
-values and $P$-values quantify statistical significance, i.e. evidence against 
-the null hypothesis. All three should be reported for each outcome of an RCT 
-where the reported $p$-value should be compatible with the type of confidence 
-interval. While this chapter is about continuous outcomes, these reporting 
-guidelines are true for all outcomes and elaborated on in Section \@ref(sec:consort).
-Throughout this chapter, the RCT in Example \@ref(exm:didgeridoo) will
-be used repeatedly for illustration. Binary outcomes are discussed in the next chapter.
+indicate the (im)precision of the effect size estimates as population 
+values, and $P$-values quantify statistical significance, i.e. the 
+evidence against the null hypothesis. 
+All three should be reported for each outcome of an RCT 
+and the reported $P$-value should be compatible with the selected confidence 
+interval. 
+While this chapter focuses on continuous outcomes,
+guidelines presented in Section \@ref(sec:consort) 
+are true for all outcome types. 
+Binary outcomes are discussed in Chapter \@ref(contOut). 
+
 
 
 
 ## The CONSORT Statement {#sec:consort}
 
-The CONSORT Statement [@consort,consortEE],
-
-**CONS**olidated **S**tandards **O**f **R**eporting **T**rials,
-(<http://www.consort-statement.org/>)
-
-is an evidence-based minimum set of recommendations for reporting RCTs. 
+The CONSORT 
+(**CONS**olidated **S**tandards **O**f **R**eporting **T**rials) statement
+is an evidence-based minimum set of recommendations for reporting RCTs [@consort, @consortEE].
 It encompasses various initiatives developed by the CONSORT Group to alleviate 
 the problems arising from inadequate reporting of RCTs. It offers a standard 
 way for authors to prepare reports of trial findings, facilitating their 
 complete and transparent reporting, and aiding their critical appraisal and 
 interpretation. The CONSORT Statement comprises a 25-item *checklist* and a 
-*flow diagram*, see Figures \@ref(fig:CONSORTchecklist) and \@ref(fig:CONSORTdiagram).
+*flow diagram*, see Figure \@ref(fig:CONSORTdiagram). The recommendations 
+have been established in 2010, an update will be published soon (see 
+@Hopewell2022 and https://www.consort-spirit.org/)
 
 
-```{r CONSORTchecklist, fig.cap="The CONSORT checklist.", fig.align="center", echo=FALSE}
+```{r CONSORTchecklist, fig.cap="The CONSORT checklist.", fig.align="center", echo=FALSE, eval = FALSE}
 knitr::include_graphics("figures/ConsortCheckList.png")
 ```
 
@@ -42,19 +44,23 @@ knitr::include_graphics("figures/consort-flow-diagram.png")
 
 
 ### Reporting results
-Results from a statistical analysis should be reported as follows:
+The results of a statistical analysis should be reported as follows:
 
 -  The recommended format for CIs is "from $a$ to $b$" or "$a$ to $b$",
   *not* "$(a,b)$", "$[a,b]$" or "$a-b$".
   
--  Round $P$-values to two significant digits, e.g. $p=0.43$ or $p=0.057$. 
-Round to one significant digit if $0.001 < p < 0.0001$, e.g. $p=0.0004$. 
-Report very small $P$-values with "$p < 0.0001$".
+-  The $P$-values should be rounded to two significant digits, 
+e.g. $p = 0.43$ or $p = 0.057$. 
+If $0.001 < p < 0.0001$, $P$-values should be rounded to one significant digit, 
+e.g. $p=0.0004$. 
+$P$-values should not be reported 
+as $p<0.1$ or $p<0.05$ etc., as important information about the actual
+$P$-value is lost. 
+Only very small $P$-values should be reported with the "<" symbol, e.g.
+"$p < 0.0001$".
 
--  Do not report $P$-values as $p<0.1$ or $p<0.05$ etc., as important information about the actual $P$-value is lost. 
 
-
-An example from the Didgeridoo Study is (see Example \@ref(exm:didgeridoo)):
+An example a good reporting is:
 
 "The difference in means at follow-up was 2.28 units 
 (95\% CI: $-1.34$ to $5.90$, $p=0.21$)."
@@ -62,14 +68,16 @@ An example from the Didgeridoo Study is (see Example \@ref(exm:didgeridoo)):
 
 :::{.example #didgeridoo}
 The Didgeridoo Study [@puhan]
-is a randomized controlled trial with simple randomization, see the abstract in Figure \@ref(fig:puhan). 
+is a randomized controlled trial with simple randomization. Patients 
+with moderate obstructive sleep apnoea syndrome have been randomized to 
+4 months of Didgeridoo practice ($n = 11$) or 4 months on the waiting list
+($n = 11$).
 :::
 
-```{r puhan, echo=FALSE, fig.cap="Abstract of publication of the Didgeridoo Study.", fig.align='center'}
+```{r puhan, echo=FALSE, fig.cap="Abstract of publication of the Didgeridoo Study.", fig.align='center', eval = FALSE}
 knitr::include_graphics("figures/abstract2.pdf")
 ```
 
-Patients with moderate obstructive sleep apnoea syndrome are divided in two groups as follows:
 
 ```{r echo=F}
 library(xtable)
@@ -87,13 +95,10 @@ epworth <- rbind(x1, y1)
 baseline <- epworth[,1]
 ```
 
-```{r echo=TRUE}
+```{r echo = FALSE, eval = F}
 table(treatment)
 ```
 
-
--  Treatment group: 4 months Didgeridoo practice ($m=14$)
--  Control group: 4 months waiting list ($n=11$)
 
 The primary endpoint is the Epworth scale (integers from 0-24). This scale is 
 ordinal but for the analysis, it is considered as continuous due to the 
@@ -102,9 +107,8 @@ study (*Baseline*) and after four months (*Follow-up*).
 Figure \@ref(fig:puhanFUmeas) compares the follow-up measurements of the 
 treatment and control group for the primary endpoint. When we want to 
 analyze the difference of these follow-up measurements between the two 
-groups, regression analysis gives equivalent results as a $t$-test:
+groups, regression analysis gives identical results as a $t$-test:
 
-\begin{figure}
 ```{r puhanFUmeas, fig.cap = "Follow-up measurements of primary endpoint in the Didgeridoo Study.", echo=F}
 ylab<-c("Epworth scale")
 ylim1<-c(0,24)
@@ -145,10 +149,6 @@ legend("topleft", "Mean", col = "black", lwd = 3, bty = "n", cex=1)
 
 f.up <- epworth[,2]
 
-## %% plot(0,0,type="n",xlim=c(0,1),ylim=ylim1,xlab="",xaxt="n",ylab=ylab[1])
-## %% points(rep(0.25,nx),x1[,2],pch=19)
-## %% points(rep(.75,ny),y1[,2],pch=19)
-## %% axis(1, at=c(0.25,.75), labels=names) 
 ``` 
 
 
@@ -162,7 +162,7 @@ print(res <- t.test(f.up ~ treatment, var.equal=TRUE))
 # regression analysis
 library(biostatUZH)
 m1 <- lm(f.up ~ treatment)
-knitr::kable(tableRegression(m1, intercept=FALSE, latex = FALSE))
+knitr::kable(tableRegression(m1, intercept=FALSE, latex = FALSE, xtable = FALSE))
 ```
 
 ## Comparison of two groups
