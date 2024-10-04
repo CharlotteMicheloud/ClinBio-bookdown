@@ -372,11 +372,25 @@ is
 $s_d = \sqrt{2} s_w$.
 The repeatability is
 $`r round(2*sqrt(2)*sigmaw,1)`$ litres/min
- in the PERF data (Example \@ref(exm:pefr)) and
+ in the PERF data (Example \@ref(exm:pefr)) with 95% CI
+```{r, echo = FALSE}
+round(confintSD(sd=2*sqrt(2)*sigmaw, dof=17), 1)
+```
+ 
+
+ and
  $`r round(2*sqrt(2)*sigmaw_sod,1)`$mg
  in the 
  sodium data 
- (Example \@ref(exm:sodium)).
+ (Example \@ref(exm:sodium)) with 95% CI
+ 
+```{r, echo = FALSE}
+round(confintSD(sd=2*sqrt(2)*sigmaw_sod, dof=17), 1)
+```
+
+The limits of the confidence interval for $2\sqrt{2}s_w$ are calculated 
+by multiplying the limits of the confidence interval for $s_w$ 
+by $2\sqrt{2}$.
  
 The value $2 \sqrt{2} s_w$ is also called the *smallest real difference*, 
 because it is the smallest difference that can be interpreted as evidence for 
@@ -449,6 +463,19 @@ A convenient way to compute ICC is to use the function `ICC::ICCbare()`:
 library(ICC) 
 ICCbare(x=as.factor(subject), y=measurement)
 ``` 
+
+The `ICC` package also provides a function to calculate confidence intervals 
+for the ICC: 
+
+```{r, echo = TRUE}
+sel <- c("LowerCI", "ICC", "UpperCI")
+## Compute CIs
+ICC.CI <- ICCest(x=subject, y=measurement)[sel]
+
+print(t(ICC.CI))
+```
+
+
 
 ICC can be interpreted as the *proportion* of the variance of
 measurements which is due to the variation between true values

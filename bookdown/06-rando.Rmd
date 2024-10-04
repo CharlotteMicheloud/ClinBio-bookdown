@@ -3,8 +3,7 @@
 
 ## Methods of allocation
 There exist several methods to allocate patients to the different 
-treatment groups in a clinical trial. In this chapter we focus 
-on the case where there are two treatments. 
+treatment groups in a clinical trial. 
 
 ### Simple randomization
 Using *simple randomization* for allocation of $2n$ patients to 
