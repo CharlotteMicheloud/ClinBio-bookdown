@@ -38,9 +38,12 @@ experiment died of"
 
 (Presidential Address to the First Indian Statistical Congress, 1938).
 
-A.B. Hill also advocated for randomization [@Hill1937]
-and was the trial statistician in one of the very first RCTs among humans: 
-the MRC Strepromycin trial. 
+A.B. Hill also advocated for randomization [@Hill1937] and was the
+trial statistician in one of the very first RCTs among humans: the MRC
+Strepromycin trial. However, a much earlier example of a randomized
+and double blinded study was an evaluation of homeopathy conducted in
+Nuremberg in 1835 [@Stolberg2006].
+
 
 
 #### The MRC Streptomycin Trial {-}
@@ -68,6 +71,7 @@ the `Nuremberg salt test' was performed, using randomization and double blinding
 to evaluated the efficacy of homeopathy. @Stolberg2006 summarized and
 commented on 
 the study.
+
 
 #### The Salk Polio Vaccine Trial {-}
 Polio was a major public health problem worldwide
