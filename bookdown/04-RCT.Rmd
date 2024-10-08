@@ -40,9 +40,12 @@ experiment died of"
 
 A.B. Hill also advocated for randomization [@Hill1937] and was the
 trial statistician in one of the very first RCTs among humans: the MRC
-Strepromycin trial. However, a much earlier example of a randomized
-and double blinded study was an evaluation of homeopathy conducted in
-Nuremberg in 1835 [@Stolberg2006].
+Strepromycin trial. In 1835, more than 100 years before the MRC Streptomycin Trial,
+the `Nuremberg salt test' was performed, using randomization and double blinding
+to evaluate the efficacy of homeopathy. @Stolberg2006 summarized and
+commented on 
+the study.
+
 
 
 
@@ -66,11 +69,7 @@ cocktail to prevent bacterial infection in cell culture.
 This trial is considered the first RCT, double-blind and placebo-controlled.
 However, this trial is not the first study using randomization and 
 double blinding. 
-More than 100 years before the MRC Streptomycin Trial,
-the `Nuremberg salt test' was performed, using randomization and double blinding
-to evaluated the efficacy of homeopathy. @Stolberg2006 summarized and
-commented on 
-the study.
+
 
 
 #### The Salk Polio Vaccine Trial {-}
@@ -202,9 +201,9 @@ response is due to treatment. For example, without a control group,
   hypertension at baseline, which is defined as DBP $>$ 95 mmHg. The
   resulting distribution is shown in Figure \@ref(fig:senn) (right
   plot). In this hypothetical trial, 
-  mean DBP at follow-up is more than 2 mmHg
-  lower than at baseline. This suggests a treatment effect which is
-  not present. The apparent Placebo effect may be just regression to the mean.
+  mean DBP at follow-up is 100.6 mmHg, more than 2 mmHg
+  lower than at baseline (98.0 mmHg). This suggests a treatment effect which is
+  not present. Now suppose that this hypothetical trial was in fact the Placebo arm in a two-arm trial. An apparent Placebo effect in the Placebo arm of this trial will then be just an artefact due to regression to the mean [@dirnagl2018]!
 :::
 
 
