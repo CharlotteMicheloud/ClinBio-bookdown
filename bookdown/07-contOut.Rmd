@@ -15,13 +15,12 @@ are true for all outcome types.
 Binary outcomes are discussed in Chapter \@ref(contOut). 
 
 
-
-
 ## The CONSORT Statement {#sec:consort}
 
 The CONSORT 
 (**CONS**olidated **S**tandards **O**f **R**eporting **T**rials) statement
-is an evidence-based minimum set of recommendations for reporting RCTs [@consort, @consortEE].
+is an evidence-based minimum set of recommendations for reporting RCTs 
+[@consort, @consortEE].
 It encompasses various initiatives developed by the CONSORT Group to alleviate 
 the problems arising from inadequate reporting of RCTs. It offers a standard 
 way for authors to prepare reports of trial findings, facilitating their 
