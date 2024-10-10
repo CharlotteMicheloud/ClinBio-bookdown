@@ -1,6 +1,6 @@
 # Define variables
 BOOK_FILE := _book/index.html  # Path to the generated HTML file
-BROWSER := google-chrome       # Change this to your preferred browser
+BROWSER := chromium       # Change this to your preferred browser
 
 # Build the Bookdown project
 build:
@@ -21,5 +21,5 @@ refresh:
 		echo "No existing tab to close."; \
 	fi; \
 	$(BROWSER) $(BOOK_FILE) > /dev/null 2>&1 &  # Run in the background
-	
+
 all: build refresh	
