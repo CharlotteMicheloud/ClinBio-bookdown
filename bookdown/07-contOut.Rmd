@@ -65,12 +65,19 @@ An example a good reporting is:
 (95\% CI: $-1.34$ to $5.90$, $p=0.21$)."
 
 
+## Comparison of two groups 
 :::{.example #didgeridoo}
 The Didgeridoo Study [@puhan]
 is a randomized controlled trial with simple randomization. Patients 
 with moderate obstructive sleep apnoea syndrome have been randomized to 
-4 months of Didgeridoo practice ($n = 11$) or 4 months on the waiting list
+4 months of Didgeridoo practice ($m = 14$) or 4 months on the waiting list
 ($n = 11$).
+The primary endpoint is the Epworth scale (integers from 0-24). This scale is 
+ordinal but for the analysis, it is considered as continuous due to the 
+large number of possible values. Measurements are taken at the start of the 
+study (*Baseline*) and after four months (*Follow-up*). 
+Figure \@ref(fig:puhanFUmeas) compares the follow-up measurements of the 
+treatment and control group for the primary endpoint. 
 :::
 
 ```{r puhan, echo=FALSE, fig.cap="Abstract of publication of the Didgeridoo Study.", fig.align='center', eval = FALSE}
@@ -97,16 +104,6 @@ baseline <- epworth[,1]
 ```{r echo = FALSE, eval = F}
 table(treatment)
 ```
-
-
-The primary endpoint is the Epworth scale (integers from 0-24). This scale is 
-ordinal but for the analysis, it is considered as continuous due to the 
-large number of possible values. Measurements are taken at the start of the 
-study (*Baseline*) and after four months (*Follow-up*). 
-Figure \@ref(fig:puhanFUmeas) compares the follow-up measurements of the 
-treatment and control group for the primary endpoint. When we want to 
-analyze the difference of these follow-up measurements between the two 
-groups, regression analysis gives identical results as a $t$-test:
 
 ```{r puhanFUmeas, fig.cap = "Follow-up measurements of primary endpoint in the Didgeridoo Study.", echo=F}
 ylab<-c("Epworth scale")
@@ -150,13 +147,15 @@ f.up <- epworth[,2]
 
 ``` 
 
-
+In order to analyze the difference of the follow-up measurements between the two 
+groups, a $t$-test can be performed:
 ```{r echo=T}
 # t-test
 print(res <- t.test(f.up ~ treatment, var.equal=TRUE))
 (DifferenceInMeans <- mean(res$conf.int))  
 ```
 
+The t-test gives identical results as a linear regression analysis:
 ```{r echo=T, results="asis"}
 # regression analysis
 library(biostatUZH)
@@ -164,28 +163,40 @@ m1 <- lm(f.up ~ treatment)
 knitr::kable(tableRegression(m1, intercept=FALSE, latex = FALSE, xtable = FALSE))
 ```
 
-## Comparison of two groups
+### $t$-test 
 
-We can compare the follow-up measurements in two groups 
+Data are assumed to be normally distributed, 
+and the measurement in the two groups to be independent: 
+with mean $\mu_T$, variance $\sigma^2_T$ and sample size $m$
+in the treatment group, and with mean 
+ $\mu_C$, variance $\sigma^2_C$ and sample size $n$
+in the control group.
+The quantity of interest is the mean difference $\Delta = \mu_T - \mu_C$. The variances are assumed to be equal in the two groups, 
+i.e. $\sigma^2_T = \sigma^2_C = \sigma^2$. 
 
--  with a $t$-test in case of *equal variances*,
--  with Welch's-test or Behrens test in case of *unequal variances*.
+The null hypothesis is 
+$$
+H_0: \Delta = 0 .
+$$
+The estimate $\hat\Delta$ of $\Delta$ is the 
+difference in sample means. 
+The $t$-test statistic is 
+$$
+T = \frac{\hat\Delta}{\se(\hat\Delta)}, 
+$$
+with 
+$$
+\se(\hat\Delta) = s \sqrt{\frac{1}{m} + \frac{1}{n}}, 
+$$
+where $s^2$ is the pooled estimate of the variance $\sigma^2$:
+$$
+s^2 = \frac{(m - 1)s^2_T + (n-1)s^2_C}{m + n - 2}.
+$$
 
-The $t$-test is explained in Appendix \@ref(Pvalues) (and also the $z$-test). 
-Alternative methods that adjust for baseline values are discussed in 
-Section \@ref(sec:baseline).
+Under the null hypothesis of no effect, the test statistic 
+T follows a $t$-distribution with $m + n - 2$ degrees of freedom. 
 
-### Equal variances {#sec:equalvariance}
-
-The $t$-test assumes independent measurements in two groups that are normally distributed with equal variances. The null hypothesis is that the mean difference $\Delta$ between the two groups is $0$. Assuming $H_0$ is true, the test statistic
-
-$$T = \frac{\widehat \Delta}{\SE(\widehat \Delta)}.$$
-
-follows a $t$-distribution with $m+n-2$ ``degrees of freedom'' (df).
-
-For large df's, the $t$-distribution is close to a standard normal 
-distribution as illustrated in Figure \@ref(fig:tdistr).
-
+For large degrees of freedom, the $t$-distribution is close to a standard normal distribution,  as illustrated in Figure \@ref(fig:tdistr).
 
 
 ```{r tdistr, fig.cap = "Comparison of $t$-distribution (with large degree of freedom) to a standard normal distribution.", echo = FALSE}
@@ -198,9 +209,8 @@ matplot(grid, cbind(normDensity, tDensity), type="l", lty=1, lwd=2, xlab="x", yl
 legend("topright", lty=1, lwd=2, col=c(1,2), legend=c("standard normal", "t with 23 df"))
 ``` 
 
-
-Here is a comparison of the two-sided $P$-value $p = \P(\abs{T} \geq \abs{t})$
-using the exact $t$-distribution and the approximate normal distribution: 
+The exact two-sided $P$-value $p = \P(\abs{T} \geq \abs{t})$
+using the exact $t$-distribution and the approximate normal distribution is: 
 ```{r echo=TRUE}
 print(res$statistic)
 ## exact p-value based on t-distribution
@@ -209,10 +219,11 @@ unname(2*(1-pt(abs(res$statistic), df=23)))
 unname(2*(1-pnorm(abs(res$statistic))))
 ```
 
-Here we compare the factor used to compute the limits of exact and approximate 95\% confidence intervals 
+The factor $t$ and $z$ used to compute the limits of exact and approximate 95\% confidence intervals 
 ${\widehat \Delta} \pm t % t_{(1+\gamma)/2}%(m+n-2) 
   \cdot \SE(\widehat \Delta)$ resp. ${\widehat \Delta} \pm z % t_{(1+\gamma)/2}%(m+n-2) 
-  \cdot \SE(\widehat \Delta)$.
+  \cdot \SE(\widehat \Delta)$ are compared in the 
+  following `R`-code
   
 ```{r echo=TRUE}
 gamma <- 0.95
@@ -222,11 +233,9 @@ gamma <- 0.95
 (z <- qnorm((1+gamma)/2))
 ```
 
+### Unequal variances 
 
-
-### Unequal variances
-
-In case of unequal variances, $\sigma_T^2$ and $\sigma^2_C$ are assumed to be
+In the case of unequal variances, $\sigma_T^2$ and $\sigma^2_C$ are assumed to be
 different and the standard error then is
 
 \begin{equation*}
@@ -234,21 +243,20 @@ different and the standard error then is
 \end{equation*}
 where $s_T^2$ and $s_C^2$ are estimates of the variances $\sigma_T^2$ and 
 $\sigma_C^2$ in the two groups. In this case, the exact null distribution of
-$T=\widehat \Delta/{\SE(\widehat \Delta)}$ is unknown. Approximate solutions are:
+$T=\widehat \Delta/{\SE(\widehat \Delta)}$ is unknown. Approximate solutions are to use: 
 
-
--  *Standard normal*, which is fine for large $m$ and $n$.
--  *Welch's Test*, which uses a $t$-distribution with (non-integer) degrees of freedom
-$\nu$ where $\nu$ is the solution of
-\[
-\frac{(s_T^2/m+s_C^2/n)^2}{\nu} = \frac{(s_T^2/m)^2}{m-1} + \frac{(s_C^2/n)^2}{n-1}
-\]
--  *Behrens Test* \code{biostatUZH::behrensTest} is another option that can be derived with Bayesian arguments \citep[Sec. 4.3]{ArmitageBerryMatthews}.
+-  *Welch's Test*, which uses a $t$-distribution with (non-integer) degrees of freedom.
+<!-- $\nu$ where $\nu$ is the solution of -->
+<!-- \[ -->
+<!-- \frac{(s_T^2/m+s_C^2/n)^2}{\nu} = \frac{(s_T^2/m)^2}{m-1} + \frac{(s_C^2/n)^2}{n-1} -->
+<!-- \] -->
+-  *Behrens Test*, another option that can be derived with Bayesian arguments \citep[Sec. 4.3]{ArmitageBerryMatthews} 
+and is implemented in `biostatUZH::behrensTest()`.
 
 -  The *Mann-Whitney Test* gives a $p$-value, which is not compatible with the CI for the mean difference. Instead, it provides a CI for the *median* of the difference between a sample from X and a sample from Y.
 
 
-In R
+In `R`
 
 ```{r echo=T, warning = FALSE}
 ## Welch Test
