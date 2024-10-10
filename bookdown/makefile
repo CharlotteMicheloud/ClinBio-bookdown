@@ -12,7 +12,7 @@ open:
 	$(BROWSER) --new-window $(BOOK_FILE) > /dev/null 2>&1 &  # Run in the background
 
 
-# Refresh the book by closing and reopening the Firefox window
+# Refresh the book by closing and reopening the Chrome window
 refresh:
 	@echo "Closing existing tab showing $(BOOK_FILE)..."; \
 	if wmctrl -c "Clinical Biostatistics"; then \
