@@ -1,10 +1,5 @@
 # Statistical significance and sample size calculations 
 
-```{}
-TODO: add Bayes factor // predictive power, assurance
-```
-
-
 
 ## Statistical significance
 
