@@ -9,7 +9,7 @@ evidence against the null hypothesis.
 All three should be reported for each outcome of an RCT 
 and the reported $P$-value should be compatible with the selected confidence 
 interval. 
-While this chapter focuses on continuous outcomes,
+While this chapter focuses on the analysis of continuous outcomes,
 guidelines presented in Section \@ref(sec:consort) 
 are true for all outcome types. 
 Binary outcomes are discussed in Chapter \@ref(contOut). 
@@ -20,13 +20,13 @@ Binary outcomes are discussed in Chapter \@ref(contOut).
 The CONSORT 
 (**CONS**olidated **S**tandards **O**f **R**eporting **T**rials) statement
 is an evidence-based minimum set of recommendations for reporting RCTs 
-[@consort, @consortEE].
+[@consort; @consortEE].
 It encompasses various initiatives developed by the CONSORT Group to alleviate 
 the problems arising from inadequate reporting of RCTs. It offers a standard 
 way for authors to prepare reports of trial findings, facilitating their 
 complete and transparent reporting, and aiding their critical appraisal and 
 interpretation. The CONSORT Statement comprises a 25-item *checklist* and a 
-*flow diagram*, see Figure \@ref(fig:CONSORTdiagram). The recommendations 
+*flow diagram*, see Figure \@ref(fig:CONSORTdiagram). The current recommendations 
 have been established in 2010, an update will be published soon (see 
 @Hopewell2022 and https://www.consort-spirit.org/)
 
@@ -67,17 +67,17 @@ An example a good reporting is:
 
 ## Comparison of two groups 
 :::{.example #didgeridoo}
-The Didgeridoo Study [@puhan]
+The Didgeridoo study [@puhan]
 is a randomized controlled trial with simple randomization. Patients 
 with moderate obstructive sleep apnoea syndrome have been randomized to 
 4 months of Didgeridoo practice ($m = 14$) or 4 months on the waiting list
 ($n = 11$).
 The primary endpoint is the Epworth scale (integers from 0-24). This scale is 
-ordinal but for the analysis, it is considered as continuous due to the 
+ordinal but for the analysis, it is considered continuous due to the 
 large number of possible values. Measurements are taken at the start of the 
 study (*Baseline*) and after four months (*Follow-up*). 
 Figure \@ref(fig:puhanFUmeas) compares the follow-up measurements of the 
-treatment and control group for the primary endpoint. 
+treatment and control groups for the primary endpoint. 
 :::
 
 ```{r puhan, echo=FALSE, fig.cap="Abstract of publication of the Didgeridoo Study.", fig.align='center', eval = FALSE}
@@ -165,8 +165,8 @@ knitr::kable(tableRegression(m1, intercept=FALSE, latex = FALSE, xtable = FALSE)
 
 ### $t$-test 
 
-Data are assumed to be normally distributed, 
-and the measurement in the two groups to be independent: 
+In a $t$-test, data are assumed to be normally distributed, 
+and the measurements in the two groups to be independent: 
 with mean $\mu_T$, variance $\sigma^2_T$ and sample size $m$
 in the treatment group, and with mean 
  $\mu_C$, variance $\sigma^2_C$ and sample size $n$
@@ -174,19 +174,19 @@ in the control group.
 The quantity of interest is the mean difference $\Delta = \mu_T - \mu_C$. The variances are assumed to be equal in the two groups, 
 i.e. $\sigma^2_T = \sigma^2_C = \sigma^2$. 
 
-The null hypothesis is 
+The null hypothesis of a $t$-test is 
 $$
 H_0: \Delta = 0 .
 $$
-The estimate $\hat\Delta$ of $\Delta$ is the 
+The estimate $\widehat\Delta$ of $\Delta$ is the 
 difference in sample means. 
 The $t$-test statistic is 
 $$
-T = \frac{\hat\Delta}{\se(\hat\Delta)}, 
+T = \frac{\widehat\Delta}{\se(\widehat\Delta)}, 
 $$
 with 
 $$
-\se(\hat\Delta) = s \sqrt{\frac{1}{m} + \frac{1}{n}}, 
+\se(\widehat\Delta) = s \cdot \sqrt{\frac{1}{m} + \frac{1}{n}}, 
 $$
 where $s^2$ is the pooled estimate of the variance $\sigma^2$:
 $$
@@ -194,8 +194,7 @@ s^2 = \frac{(m - 1)s^2_T + (n-1)s^2_C}{m + n - 2}.
 $$
 
 Under the null hypothesis of no effect, the test statistic 
-T follows a $t$-distribution with $m + n - 2$ degrees of freedom. 
-
+T follows a $t$-distribution with $m + n - 2$ degrees of freedom (df). 
 For large degrees of freedom, the $t$-distribution is close to a standard normal distribution,  as illustrated in Figure \@ref(fig:tdistr).
 
 
@@ -205,8 +204,8 @@ grid <- seq(-4, 4, .01)
 tDensity <- dt(grid, df=df)
 normDensity <- dnorm(grid)
 par(las=1)
-matplot(grid, cbind(normDensity, tDensity), type="l", lty=1, lwd=2, xlab="x", ylab="density")
-legend("topright", lty=1, lwd=2, col=c(1,2), legend=c("standard normal", "t with 23 df"))
+matplot(grid, cbind(normDensity, tDensity), type="l", lty=c(2, 1), lwd=2, xlab="x", ylab="density")
+legend("topright", lty=c(2, 1), lwd=2, col=c(1,2), legend=c("standard normal", "t with 23 df"))
 ``` 
 
 The exact two-sided $P$-value $p = \P(\abs{T} \geq \abs{t})$
@@ -219,11 +218,11 @@ unname(2*(1-pt(abs(res$statistic), df=23)))
 unname(2*(1-pnorm(abs(res$statistic))))
 ```
 
-The factor $t$ and $z$ used to compute the limits of exact and approximate 95\% confidence intervals 
+The factors $t$ and $z$ used to compute the limits of exact and approximate 95\% confidence intervals 
 ${\widehat \Delta} \pm t % t_{(1+\gamma)/2}%(m+n-2) 
   \cdot \SE(\widehat \Delta)$ resp. ${\widehat \Delta} \pm z % t_{(1+\gamma)/2}%(m+n-2) 
   \cdot \SE(\widehat \Delta)$ are compared in the 
-  following `R`-code
+  following `R`-code:
   
 ```{r echo=TRUE}
 gamma <- 0.95
@@ -236,14 +235,14 @@ gamma <- 0.95
 ### Unequal variances 
 
 In the case of unequal variances, $\sigma_T^2$ and $\sigma^2_C$ are assumed to be
-different and the standard error then is
+different and the standard error of $\widehat\Delta$ then is
 
 \begin{equation*}
   \SE(\widehat \Delta) = \sqrt{\frac{s_T^2}{m} + \frac{s_C^2}{n}},
 \end{equation*}
 where $s_T^2$ and $s_C^2$ are estimates of the variances $\sigma_T^2$ and 
 $\sigma_C^2$ in the two groups. In this case, the exact null distribution of
-$T=\widehat \Delta/{\SE(\widehat \Delta)}$ is unknown. Approximate solutions are to use: 
+$T=\widehat \Delta/{\SE(\widehat \Delta)}$ is unknown. Approximate solutions include
 
 -  *Welch's Test*, which uses a $t$-distribution with (non-integer) degrees of freedom.
 <!-- $\nu$ where $\nu$ is the solution of -->
@@ -253,7 +252,9 @@ $T=\widehat \Delta/{\SE(\widehat \Delta)}$ is unknown. Approximate solutions are
 -  *Behrens Test*, another option that can be derived with Bayesian arguments \citep[Sec. 4.3]{ArmitageBerryMatthews} 
 and is implemented in `biostatUZH::behrensTest()`.
 
--  The *Mann-Whitney Test* gives a $p$-value, which is not compatible with the CI for the mean difference. Instead, it provides a CI for the *median* of the difference between a sample from X and a sample from Y.
+-  The *Mann-Whitney Test* which gives a $p$-value that is not compatible with 
+the CI for the mean difference. Instead, it provides a CI for the *median*
+of the difference between a sample from X and a sample from Y.
 
 
 In `R`
@@ -272,11 +273,24 @@ behrens.test(f.up ~ treatment)
 wilcox.test(f.up ~ treatment, conf.int=TRUE)
 ```
 
+`wilcox.test()` provides a confidence interval for the median 
+of the difference between a sample from the Didgeridoo and the 
+control group ("difference in location"). Here, 
+the difference in location is 1.0 with 95% CI from -2.0 to 6.0.
 
-## Adjusting for baseline {#sec:baseline}
+
+
+
+
+## Analysis of baseline and follow-up measurements {#sec:baseline}
+
+In the previous section, we focused solely on follow-up measurements. 
+Now, we consider both baseline and follow-up measurements in the analysis.
 
 ### Change scores
-Baseline values may be imbalanced between treatment groups just as any other prognostic factor. To analyse change from baseline, we use change scores:
+
+Baseline values may be imbalanced between treatment groups just as any other
+prognostic factor. To analyse change from baseline, we use change scores:
 
 :::{.definition}
 The *change score* is the change from baseline defined as:
@@ -285,8 +299,12 @@ The *change score* is the change from baseline defined as:
   \]
 :::
 
-:::{.example #3methods}
-Figure \@ref(fig:puhanBaselineFU) shows the combinations of baseline and follow-up measurements for each individual. It is visible that the change from baseline to follow-up is larger in the treatment group than in the control group. Figure \@ref(fig:puhanChangeScore) now directly compares the change scores.
+:::{.example #didgeridoo name="continued"}
+Figure \@ref(fig:puhanBaselineFU) shows the combinations of baseline and
+follow-up measurements for each individual. 
+It is visible that the change from baseline to follow-up is larger in the 
+treatment group than in the control group. Figure \@ref(fig:puhanChangeScore)
+now directly compares the change scores.
 :::
 
 ```{r puhanBaselineFU, fig.cap = "Individual baseline and follow-up measurements in the Didgeridoo Study by treatment group.", echo=F}
@@ -367,110 +385,151 @@ print(res3 <- t.test(change.score ~ treatment, var.equal=TRUE))
 (DifferenceInMeans <- mean(res3$conf.int))  
 ```
 
-This result can also be found in an extract of the reported results in 
-Figure \@ref(fig:didgeridootab2).
+Let us know define some notation. The outcome means 
 
-```{r didgeridootab2, fig.cap="Reported results of the Didgeridoo Study.", out.width="90%", fig.align='center', echo = FALSE}
-knitr::include_graphics("figures/TBL22.pdf")
+- at Baseline in both groups is $\mu_B$,
+- at Follow-up in the control group is $\mu$, and
+- at Follow-up in the treatment group is $\mu + \Delta$.
+
+The mean difference $\Delta$ is of primary interest. We assume a common 
+variance $\sigma^2$ of all measurements, and $n$ observations in each group.
+The correlation between 
+baseline and follow-up measurements is defined as $\rho$. 
+The estimated difference of mean follow-up measurements is denoted 
+by $\widehat\Delta_1$ and the estimated difference of mean change 
+scores by $\widehat\Delta_2$. Both estimates are unbiased (assuming baseline balance).
+
+The variance of these estimates is
+$\Var(\widehat\Delta_1) = 2\sigma^2/n$ and 
+$\Var(\widehat\Delta_2) = 4\sigma^2(1 - \rho)/n$, respectively. 
+The estimate $\widehat\Delta_2$ will thus have smaller variance than 
+$\widehat\Delta_1$ for $\rho > 1/2$, 
+and it will produce narrower confidence intervals and 
+more powerful tests. 
+In the Didgeridoo study, the estimated correlation $\hat \rho = 0.72$.
+
+The change score analysis can also be done with a regression: 
+
+```{r, echo = TRUE}
+# Change score analysis
+m2 <- lm(f.up ~ treatment + offset(baseline))
+knitr::kable(tableRegression(m2, intercept=FALSE,
+                             latex = FALSE, xtable = FALSE))
 ```
 
+The `offset(x)` command fixes the coefficient of `x` at 1.
 
-### Analysis of covariance (ANCOVA)
+### Analysis of covariance
 
-*Analysis of covariance* (ANCOVA) is an extension of the change score analysis. 
-First note that the change score analysis can also be done with regression, 
-see model m2 in Example \@ref(exm:3methods). Here, the \code{offset(x)} command
-fixes the coefficient of \code{x} at 1. It is therefore natural to extend this
-regression model to the ANCOVA model as it is done in model m3 of the example. 
-Now the \code{baseline} coefficient $\beta$ is estimated. The ANCOVA model reduces
+*Analysis of covariance* (ANCOVA) is an extension of the change score analysis:
 
--  to the analysis of follow-up for $\beta=0$,
--  to the analysis of change scores for $\beta=1$.
+```{r, echo = TRUE}
+m3 <- lm(f.up ~ treatment + baseline)
+knitr::kable(tableRegression(m3, intercept = FALSE, 
+                             latex = FALSE, xtable = FALSE))
+```
 
+Now the coefficient of `baseline` is estimated from the data.
 
-Denote the different outcome means as $\mu_B$ at baseline (in both groups), 
-$\mu$ at follow-up in the control group, $\mu + \Delta$ at follow-up in the 
-treatment group. The mean difference $\Delta$ is of primary interest. Let 
-$\sigma^2$ be the common variance of all measurements and $\rho$ the 
-correlation between baseline and follow-up measurements. Assume there are 
-$n$ observations in each group.
+Let us denote the coefficient of the baseline variable as $\beta$.
+The ANCOVA model reduces to the analysis of follow-up for $\beta = 0$, 
+and to the analysis of change scores for $\beta = 1$.
+
 
 The ANCOVA model estimates $\beta$ and the mean difference $\Delta$ jointly 
-with *multiple regression*. With ${\sigma_B^2}$ and ${\sigma_F^2}$ being the 
-variances of baseline and follow-up, it holds that
-\[
-  \beta = \rho \, \frac{\sigma_F}{\sigma_B},
-\]
-which simplifies to $\rho$ if the variance does not change from baseline to follow-up, \ie if $\sigma_B^2 = \sigma_F^2$.
+with *multiple regression*. The estimate $\hat\beta$ is usually close to the 
+correlation $\rho$.
 
-:::{.example}
-Comparing the three different analysis methods in the Didgeridoo Study:
+:::{.example #didgeridoo name="continued"}
+Comparison of the three different analysis methods in the Didgeridoo study:
 :::
 
 ```{r echo=T, results="asis"}
 # Follow-up analysis
 m1 <- lm(f.up ~ treatment)
-knitr::kable(tableRegression(m1, intercept=FALSE, latex = FALSE))
+knitr::kable(tableRegression(m1, intercept=FALSE, 
+                             latex = FALSE, xtable = FALSE))
 
 # Change score analysis
 m2 <- lm(f.up ~ treatment + offset(baseline))
-knitr::kable(tableRegression(m2, intercept=FALSE, latex = FALSE))
+knitr::kable(tableRegression(m2, intercept=FALSE, 
+                             latex = FALSE, xtable = FALSE))
 
 # ANCOVA
 m3 <- lm(f.up ~ treatment + baseline)
-knitr::kable(tableRegression(m3, intercept = FALSE, latex = FALSE))
+knitr::kable(tableRegression(m3, intercept = FALSE, 
+                             latex = FALSE, xtable = FALSE))
 ```
 
+<!-- With ${\sigma_B^2}$ and ${\sigma_F^2}$ being the  -->
+<!-- variances of baseline and follow-up, it holds that -->
+<!-- \[ -->
+<!--   \beta = \rho \, \frac{\sigma_F}{\sigma_B}, -->
+<!-- \] -->
+<!-- which simplifies to $\rho$ if the variance does not change from baseline to follow-up, \ie if $\sigma_B^2 = \sigma_F^2$. -->
 
 
-#### Comparison of effect estimates
 
-Let $\bar F_T$ and $\bar F_C$ be the mean follow-up values and $\bar B_T$ and $\bar B_C$ the mean baseline values in the treatment and control group, respectively. Then, 
+
+#### Comparison of effect estimates {-}
+
+<!-- Let $\bar F_T$ and $\bar F_C$ be the mean follow-up values  -->
+<!-- and $\bar B_T$ and $\bar B_C$ the mean baseline values in the treatment  -->
+<!-- and control group, respectively. Then,  -->
+
+<!-- \begin{eqnarray*}     -->
+<!-- \widehat \Delta_1 & = & \bar F_T - \bar F_C, \\ -->
+<!-- \widehat \Delta_2 & = & (\bar F_T - \bar B_T) - (\bar F_C - \bar B_C). -->
+<!-- \end{eqnarray*} -->
+
+Let $\bar {b}_T$ and $\bar {b}_C$ denote the *observed* mean baseline 
+values in the current trial. 
+The expectation of $\widehat\Delta_1$ and $\widehat\Delta_2$ given $\bar b_T$ and $\bar b_C$,
+are 
 
 \begin{eqnarray*}    
-\widehat \Delta_1 & = & \bar F_T - \bar F_C, \\
-\widehat \Delta_2 & = & (\bar F_T - \bar B_T) - (\bar F_C - \bar B_C).
-\end{eqnarray*}
+    \E(\widehat \Delta_1 \given \bar {b}_T, \bar {b}_C) & = & \Delta + \underbrace{\rho \cdot (\bar b_T - \bar b_C)}_{\color{red}{bias}} \\
+    \E(\widehat \Delta_2 \given \bar {b}_T, \bar {b}_C) & = & \Delta + \underbrace{(\rho - 1) \cdot (\bar b_T - \bar b_C)}_{\color{red}{bias}} \\
+  \end{eqnarray*}
 
-Now, let $\bar {b}_T$ and $\bar {b}_C$ denote the *observed* mean baseline values in the current trial. Conditioning on these baseline values, we have (the proof is part of the exercises):
+Hence both $\widehat\Delta_1$ and $\widehat\Delta_2$ given $\bar b_T$ and $\bar b_C$
+are biased if there is correlation $\rho > 0$ between baseline and follow-up measurements
+and there is baseline imbalance ($\bar b_T \neq \bar b_C$).
 
-\begin{eqnarray*}    
-    \E(\widehat \Delta_1 \;|\; \bar b_T, \bar b_C) & = & \Delta + \rho \cdot (\bar b_T - \bar b_C) \\
-    \E(\widehat \Delta_2 \;|\; \bar b_T, \bar b_C) & = & \Delta + (\rho - 1) \cdot (\bar b_T - \bar b_C)
-\end{eqnarray*}
-
-Hence, given the mean baseline values $\bar {b}_T$ and $\bar {b}_C$,
-$\widehat \Delta_1$ and $\widehat \Delta_2$ are unbiased if there is 
-baseline balance ($\bar {b}_T=\bar {b}_C$). However, they are both *biased* 
-whenever the following two conditions hold:
-
-1.  There is (positive) *correlation* $0 < \rho < 1$,  between baseline and follow-up measurements.
-2.  There is *baseline imbalance* ($\bar b_T \neq \bar b_C$):
-
-
-In the Didgeridoo Study, \eg, there is baseline imbalance: 
+In the Didgeridoo study there is some baseline imbalance: 
 $\bar {b}_T=`r round(mean(baseline[group==1]), 1)`$, 
 $\bar {b}_C=`r round(mean(baseline[group==0]), 1)`$. 
 
-The ANCOVA estimate
+In contrast, the ANCOVA estimate $\widehat \Delta_3$ is an unbiased estimate of the mean 
+difference $\Delta$ with variance
 
-\begin{equation*}
-\widehat \Delta_3 =    \bar F_T - \bar F_C - \rho \cdot (\bar b_T - \bar b_C)
-\end{equation*}
+$$
+\Var(\widehat \Delta_3) = 2 \sigma^2(1-\rho^2)/n,
+$$
+which is always smaller than the variances of 
+$\widehat \Delta_1$ and $\widehat \Delta_2$. 
+This means that the treatment effect estimate has a smaller standard error. 
+As a result, the required sample size for ANCOVA reduces by the factor 
+$1- \rho^2$ compared to the standard comparison of two groups 
+without baseline adjustments. 
 
-on the other hand is an unbiased estimate of the mean difference $\Delta$ (see proof in the exercises).
+
+
+<!-- \begin{equation*} -->
+<!-- \widehat \Delta_3 =    \bar F_T - \bar F_C - \rho \cdot (\bar b_T - \bar b_C) -->
+<!-- \end{equation*} -->
+
+<!-- on the other hand is an unbiased estimate of the mean difference $\Delta$ (see proof in the exercises). -->
 
 The variances of the effect estimates in the three models can be compared by the corresponding variance factors (derived in the exercises):
+
 
 $$
 \Var(\widehat \Delta) = \color{red}{\mbox{variance factor}} \cdot \sigma^2 /n 
 $$
 
+___________________________________________________________
 
-------------------------------------------------
-
-
-\vspace{-0.5cm}
 
 $$
 \begin{aligned}
@@ -482,14 +541,7 @@ $$
 
 
 Figure \@ref(fig:varfactors) compares the variance factors of the three
-models for varying correlations $\rho$. The variance of $\widehat \Delta_3$ 
-is *always smaller* than the variances of $\widehat \Delta_1$ and
-$\widehat \Delta_2$. Hence, the required *sample size* for ANCOVA reduces
-by the factor $(1-\rho^2)$ compared to the standard comparison of two 
-groups without baseline adjustments. For $\rho > 1/2$, $\widehat \Delta_2$
-will have *smaller variance* than $\widehat \Delta_1$, so will produce 
-narrower CIs and more powerful tests. In the Didgeridoo Study we obtain
-$\hat \rho=`r round(cor(f.up, baseline), 2)`$.
+models for varying correlations $\rho$.
 
 ```{r varfactors, fig.cap = "Comparison of variance factors", echo = FALSE}
 n <- 1
@@ -503,18 +555,17 @@ matplot(rho, cbind(var1, var2, var3), xlab="correlation", ylab="variance factor"
 legend("topright", legend=c("Follow-up analysis", "Change score analysis", "ANCOVA"), lty=1, col=1:3, lwd=2)
 ```
 
-#### Adjusting for other variables
+#### Adjusting for other variables {-}
 
 ANCOVA allows a wide range of variables measured at baseline to be used to
 adjust the mean difference. The safest approach to selecting these variables 
 is to decide this *before* the trial starts (in the study protocol). Prognostic
 variables used to stratify the allocation should *always* be included as covariates.
 
-:::{.example}
-In the Didgeridoo Study, the mean difference has been adjusted for 
-severity of the disease (\code{base.apnoea}) and for weight change during 
-the study period (\code{weight.change}). The same results as in
-Figure \@ref(fig:didgeridootab2) can be obtained with the following regression model.
+:::{.example #didgeridoo name="continued"}
+In the Didgeridoo study, the mean difference has been adjusted for 
+severity of the disease (`base.apnoea`) and for weight change during 
+the study period (`weight.change`).
 :::
 
 
@@ -525,7 +576,7 @@ base.apnoea <- ah1
 
 ```{r echo=T, results="asis"}
 m4 <- lm(f.up ~ treatment + baseline + weight.change + base.apnoea)
-knitr::kable(tableRegression(m4, intercept = FALSE, latex = FALSE))
+knitr::kable(tableRegression(m4, intercept = FALSE, latex = FALSE, xtable = FALSE))
 ``` 
 
 
@@ -535,6 +586,7 @@ Relevant references are Chapter 10 "Comparing the Means of Small Samples"
 and Chapter 15 "Multifactorial Methods" in @bland as well as Chapter 6
 "Analysis of Results" in @matthews. 
 Analysing controlled trials with baseline and follow up measurements
-is discussed in the Statistics Note @SN_baselineFU. Studies where the 
-methods from this chapter are used in practice are for example @ravaud,porto,james.
+is discussed in the Statistics Note from @SN_baselineFU. Studies where the 
+methods from this chapter are used in practice are for example @ravaud, @porto,
+@james.
 
