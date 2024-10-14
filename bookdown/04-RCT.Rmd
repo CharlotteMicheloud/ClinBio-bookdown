@@ -166,8 +166,8 @@ trial or may vary from center to center.
 
 :::{.example #covidVacc name="continued"}
 The inclusion criteria in @Polack2020 were: adults 16 years of age 
-or older, healthy or with a stable chronic medical conditions. Some 
-of the key exclusion included: a medical history of Covid-19, treatment 
+or older, healthy or with a stable chronic medical condition. Some 
+of the key exclusion criteria included: a medical history of Covid-19, treatment 
 with immunosupressive therapy, or diagnosis with an immunocompromising condition. 
 Out of the 44820 participants which were screened for the study, 
 1150 were excluded because they did not meet the eligibility criteria.
@@ -192,10 +192,10 @@ response is due to treatment. For example, without a control group,
 
 :::{.example}
   Regression to the mean in the absence of a control group is
-  illustrated with example from @senn2011. 
+  illustrated with an example from @senn2011. 
   Imagine a single-arm trial where all patients receive treatment. 
   Suppose that the mean diastolic blood pressure (DBP) is the same at baseline (before
-  treatment is given) and at follow-up (``at outcome''). So, there is
+  treatment is given) and at follow-up ("at outcome"). So, there is
   no treatment effect, as illustrated in Figure \@ref(fig:senn) (left
   plot).  The inclusion criteria of a hypothetical trial are
   hypertension at baseline, which is defined as DBP $>$ 95 mmHg. The
@@ -215,17 +215,17 @@ include_graphics(c("figures/sign509-fig-0002-m.jpg", "figures/sign509-fig-0003-m
 #### Historical controls {-}
 
 Historical controls are an alternative to concurrent controls 
-in situation where randomizing patients to a control treatment 
+in situations where randomizing patients to a control treatment 
 or placebo is not feasible, for practical or ethical reasons.
 
 
 The main issue with historical controls is that there may be systematic 
 differences between patients in the historical control group and 
 patients in the treatment group, which might cause biased results.
-There might for example be some heterogneteity in the selection 
+There might, for example, be some heterogeneity in the selection 
 of patients and possible time trends such as a change in disease severity 
 over time (e.g. different variants of COVID-19). In addition, 
-there might be difference in the conduct and analysis of 
+there might be differences in the conduct and analysis of 
 the historical and the new trial [@Marion2023].
 
 :::{.example}
@@ -466,16 +466,16 @@ on the referees and editors of suitable journals.  Papers reporting
 positive (typically "significant") findings are more likely to be
 published than those that do not.  This will lead to *publication bias*.
 Also, papers are more likely to be written and submitted by the
-investigators of the outcome of the trial was positive.
+investigators if the outcome of the trial was positive.
 
 Some attempts have been made to address this problem,
 e.g. *mandatory registration* of clinical trials before the study
 is conducted: (http://clinicaltrials.gov/). Today, trial results
-are required to be published on this website within 1 year after the trial
+are required to be published on this website within one year after the trial
 has finished.
 
 
-## Target trials (RWE)
+## Target trials
 
 Randomized controlled trials are the gold standard for assessing the 
 effectiveness and safety of new drugs or interventions.
