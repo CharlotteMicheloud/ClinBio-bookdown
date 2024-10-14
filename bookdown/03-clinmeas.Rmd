@@ -649,17 +649,25 @@ If differences within the limits of agreement are considered
 
 ### Confidence intervals for limits of agreement
 
-The standard error of the limits of agreement is
+Under normality, $\bar{d}$ and $s_d$ are independent. Using this and the fact 
+that 
+$\Var(\bar{d})=\sigma_d^2/n$, with $\sigma^2_d$ the population
+variance of the differences, and $\Var(s_d) \approx \sigma_d^2/2n$, 
+the standard error of the limits of agreement is
 \begin{equation*}
-  \SE(\LOAlow) = \SE(\LOAup) \approx  \sqrt{3/n} \, s_d \ ,
+  \SE(\LOAlow) = \SE(\LOAup)
+  =\sqrt{Var(\bar d) + 4 \Var(s_d)} 
+  \approx  \sqrt{3/n} \, s_d \ ,
 \end{equation*}
-with $n$ being the sample size, and can be used to compute 95\% CI for $\LOAlow$ and $\LOAup$.
+with $n$ being the sample size.
+This can be used to compute 95\% CI for $\LOAlow$ and $\LOAup$.
 The standard error can also be used to compute the required sample 
 size $n$ for a fixed width $w$
 of the 95\% confidence interval for the limits of agreement.
 A rule of thumb by Martin Bland is:
 "I usually recommend *$n$=100* as a good sample size, which gives a
 95\% CI about $\pm$ 0.34 $s_d$."
+
 
 ```{r echo=FALSE}
 ba1 <- BlandAltman(hi, co, group = NA, maintit = "", limy = NA, plot = TRUE)
