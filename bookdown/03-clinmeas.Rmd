@@ -649,17 +649,19 @@ If differences within the limits of agreement are considered
 
 ### Confidence intervals for limits of agreement
 
-Under normality, $\bar{d}$ and $s_d$ are independent. Using this and the fact 
-that 
-$\Var(\bar{d})=\sigma_d^2/n$, with $\sigma^2_d$ the population
-variance of the differences, and $\Var(s_d) \approx \sigma_d^2/2n$, 
-the standard error of the limits of agreement is
-\begin{equation*}
-  \SE(\LOAlow) = \SE(\LOAup)
-  =\sqrt{Var(\bar d) + 4 \Var(s_d)} 
-  \approx  \sqrt{3/n} \, s_d \ ,
-\end{equation*}
-with $n$ being the sample size.
+Under normality, $\bar{d}$ and $s_d$ are independent. 
+The variance of $\bar d$
+is estimated by $s_d^2/n$, with $n$ the sample size.
+The variance of $s_d$ can be approximately estimated 
+by $s_d^2/2n$ [@BlandAltman1986; @Bland1999].
+Hence, the standard error of the limits of agreement is estimated by
+\begin{eqnarray*}
+  \SE(\LOAlow)   =  &\SE(\LOAup) \\
+  = & \SE(\bar{d} \pm 2 \cdot s_d) \\
+  = & \sqrt{Var(\bar{d} \pm 2 \cdot s_d)} \\
+  = & \sqrt{Var(\bar d) + 4 \Var(s_d)} \\
+  \approx &   \sqrt{3/n} \, s_d \ .
+\end{eqnarray*}
 This can be used to compute 95\% CI for $\LOAlow$ and $\LOAup$.
 The standard error can also be used to compute the required sample 
 size $n$ for a fixed width $w$
