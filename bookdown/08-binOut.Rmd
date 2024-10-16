@@ -10,7 +10,7 @@ methods to adjust for possible baseline variables.
 
 Throughout this section, we will work with the following example.
 
-:::{.example}
+:::{.example #apsac}
 The APSAC Study is an RCT to compare a new thrombolytikum (APSAC) with the 
 standard treatment (Heparin) in patients with acute cardiac infarction [@meinertz].
 The outcome is mortality within 28 days of hospital stay. Table \@ref(tab:apsac) 
@@ -37,8 +37,8 @@ data <- data.frame(
   total = c(162, 151, 313),
   Percent_dead = c("5.6%", "12.6%", ""),
   Standard_error = c("1.8%", "2.7%", ""),
-  Wilson_CI = c(paste0(format(0.039, digits=1, nsmall=1), " to ", format(0.074, digits=1, nsmall=1)), 
-                paste0(format(0.098, digits=1, nsmall=1), " to ", format(0.157, digits=1, nsmall=1)), 
+  Wilson_CI = c(paste0(format(w1[1], digits=1, nsmall=1), " to ", format(w1[3], digits=1, nsmall=1)), 
+                paste0(format(w2[1], digits=1, nsmall=1), " to ", format(w2[3], digits=1, nsmall=1)), 
                 "")
 )
 
@@ -105,10 +105,20 @@ points(p2*100, 1.3, col=2, pch=19)
 
 
 ### Statistical tests
-Commonly used tests to compare two proportions are the \emph{$\chi^2$-test} and *Fisher's "exact" test*, explained in Appendix \@ref(Pvalues). The null hypothesis in these tests is that there is no difference between groups. Both methods give a $P$-value, but no effect measure. There is a second version of the $\chi^2$-test with *continuity correction*. There are at least *three* different versions to calculate the *two-sided* $P$-value for Fisher's ``exact'' test (see the \code{R} package \code{exact2x2} for details). Fisher's exact test should be used for small samples.
 
-:::{.example #apsactest}
-R code for statistical tests comparing two proportions in the APSAC Study:
+Commonly used tests to compare two proportions are the *$\chi^2$-test*
+and *Fisher's "exact" test* for small samples.
+The null hypothesis in these tests is that there is no difference 
+between groups. 
+Both methods give a $P$-value, but no effect measure. There is a second 
+version of the $\chi^2$-test which uses a *continuity correction*. Furthermore,
+there are at least *three* different versions to calculate the *two-sided* $P$-value 
+for Fisher's "exact" test (see the `R` package `exact2x2` 
+for details).
+
+:::{.example #apsac name="continued"}
+The $\chi^2$-test and Fisher's exact test are applied to the APSAC study in the 
+ following `R` code:
 :::
 
 ```{r echo=F}
@@ -123,7 +133,6 @@ print(APSAC.table)
 ## expected number of cases
 print(chisq.test(APSAC.table)$expected)
 
-
 # chi-squared test
 chisq.test(APSAC.table)
 chisq.test(APSAC.table, correct=FALSE)
@@ -132,7 +141,12 @@ chisq.test(APSAC.table, correct=FALSE)
 fisher.test(APSAC.table)
 ```
 
-Note that the function fisher.test also provides an odds ratio (with 95\% CI) as effect measure. The output from the $\chi^2$-test can also be used to compute an estimate of the relative risk based on the observed to expected death ratios:
+
+
+
+Note that the function `fisher.test()` also provides an odds ratio (with 95% CI) 
+as effect measure. The output from the $\chi^2$-test can also be used to compute
+an estimate of the relative risk based on the observed to expected death ratios:
 
 ```{r echo=TRUE}
 mytest <- chisq.test(APSAC.table)
@@ -149,37 +163,39 @@ printWaldCI(log(RR), SElogRR, FUN = exp)
 ``` 
 
 
-
 ### Effect measures and confidence intervals
 
-Let $\pi_0$ and $\pi_1$ be the ``true'' risks of death in the Control and APSAC group, respectively with $\pi_0 \geq \pi_1$.
-The following quantities are used to compare $\pi_0$ and $\pi_1$:
+Let $\pi_0$ and $\pi_1$ be the "true" risks of death in the control and intervention
+group, respectively, with $\pi_0 \geq \pi_1$.
 
 :::{.definition #twoprops}
-The *absolute risk reduction* is defined as
-$$\ARR  = \pi_0-\pi_1.$$
+The following quantities are used to compare $\pi_0$ and $\pi_1$: 
 
-The *number needed to treat* is defined as 
+- The *absolute risk reduction*
+$$\ARR  = \pi_0-\pi_1.$$
+- The *number needed to treat*
 $$\NNT = 1 / \ARR.$$
 
-The *relative risk* is defined as
+- The *relative risk*
 $$\RR = {\pi_1}/{\pi_0}.$$
 
-The *relative risk reduction* is defined as
+- The *relative risk reduction*
 $$\RRR = \frac{\ARR}{\pi_0} = 1 - \RR.$$
 
-The *odds ratio* is defined as
+- The *odds ratio*
 $$\OR = \frac{\pi_1/(1-\pi_1)}{\pi_0/(1-\pi_0)}.$$
 :::
 
 
 No difference between groups (i.e. $\pi_0 = \pi_1$) corresponds to 
-$\ARR=\RRR=0$ and $\RR=\OR=1$. We now discuss each of these effect measures
-together with their CIs for the example of the APSAC Study.
+$\ARR=\RRR=0$ and $\RR=\OR=1$.
+We now discuss each of these effect measures together with their CIs
+using Example \@ref(exm:apsac),
 
-#### Absolute Risk Reduction
+#### Absolute Risk Reduction {-}
 
-The ARR is also called *risk difference* ($\RD$) or *probability difference*. The estimated ARR
+The ARR is also called *risk difference* ($\RD$) or *probability difference*. 
+The estimated ARR
 
 $$\widehat{\ARR} \ = \ 12.6\%-5.6\%=7\%$$
 
@@ -189,9 +205,12 @@ with standard error
 \SE(\widehat{\ARR}) = \sqrt{\frac{\hat \pi_0 (1-\hat \pi_0)}{n_0}+\frac{\hat \pi_1 (1-\hat \pi_1)}{n_1}}= 3.2\%
 \]
    
- Here we obtain $\SE(\widehat{\RD}) = 3.2\%$.
-can be used to calculate a Wald CI for the ARR. An improved Wilson CI for the ARR can be calculated using the *``square-and-add''* approach [@newcombe1998,Newcombe], see Appendix \@ref(appCI:difference) for details. 
- (Newcombe, 1998).
+$\widehat{\ARR}$ and $\SE(\widehat{\ARR})$ can be used to 
+can be used to calculate a Wald CI for the ARR.
+An improved Wilson CI for the ARR can be calculated using the 
+*"square-and-add"* approach [@newcombe1998; @Newcombe], 
+see Appendix \@ref(appCI:difference) and the function 
+`biostatUZH::confIntSquareAdd()` for details.
 
 ```{r echo=F}
 x1 <- 9
@@ -211,14 +230,12 @@ nnt <- 1/abs(arr)
 ``` 
 
 
-:::{.example}
-  The following R code provides both Wald and Wilson CIs for
-  the ARR in the APSAC Study. They are visually compared in
-  Figure \@ref(fig:APSACartCIs).  There are no large differences
-  between the two types of confidence intervals, only the upper limit
-  of the Wilson is slightly larger than the corresponding Wald upper
-  limit.
-:::
+The following R code provides both Wald and Wilson CIs for
+the ARR in the APSAC study. They are visually compared in
+Figure \@ref(fig:APSACartCIs).  There are no large differences
+between the two types of confidence intervals, only the upper limit
+of the Wilson is slightly larger than the corresponding Wald upper
+limit.
 
 
 ```{r echo=TRUE}
@@ -238,9 +255,10 @@ nnt.upper.w <- 1/arr.upper.w
 ``` 
 
 
-The lower plot in Figure \@ref(fig:APSACartCIs) illustrates the
-distinct advantage of the Wilson CI that it avoids *overshoot*
-with artificial data. Indeed, the upper limit of the Wald confidence
+Using articifial data, 
+the lower plot in Figure \@ref(fig:APSACartCIs) highlights the distinct advantage 
+of the Wilson confidence interval: its ability to prevent *overshoot*. 
+Indeed, the upper limit of the Wald confidence
 interval for the risk difference is larger than 1 whereas this is not
 the case for the Wilson interval.
 
@@ -292,27 +310,31 @@ text(115, 1, "Overshoot!", col="red")
 #### Number Needed to Treat
 
 
-Suppose we have $n$ patients in each treatment group. The expected number of deaths in the control and intervention group are:
+Suppose we have $n$ patients in each treatment group. 
+The expected number of deaths in the control and intervention group are:
 \begin{eqnarray*}
 N_0 & = & n \, \pi_0, \\
 N_1 & = & n \, \pi_1.
 \end{eqnarray*}
-The difference is therefore $N_0-N_1 = n \, (\pi_0-\pi_1)$. Suppose we want the difference $N_0 - N_1$ to be one patient. The required sample size $n$ to achieve this is
+The expected difference is therefore $N_0-N_1 = n \, (\pi_0-\pi_1)$.
+Suppose we want the difference $N_0 - N_1$ to be one patient. 
+The required sample size $n$ to achieve this is
 \[
 n = 1/(\pi_0-\pi_1) = 1/\ARR.
 \]
 This is the *number needed to treat*, the required number of patients to be treated with the intervention rather than control to avoid one death. Depending on the direction of the effect, the NNT is also called *number needed to benefit* or *number needed to harm*.
 
 The interpretation of the estimated $\NNT$
-%
+
 $$\quad \widehat{\NNT} \ = \ 1/\widehat{\ARR} \ = 
 \ 1 / `r round(abs(arr), 2)` \ = \ `r round(nnt, 1)`$$
-%
-in the APSAC study is the following: To avoid one death, we need to treat $\widehat{\NNT} = `r round(abs(nnt),1)`$ patients with APSAC rather than with Heparin. A CI for $\NNT$ can be obtained by inverting the limits $\mbox{L}_{\mbox{\scriptsize ARR}}$ and $\mbox{U}_{\mbox{\scriptsize ARR}}$ of the CI for $\ARR$.
 
-:::{.example}
-The following R code shows this for the APSAC Study.
-:::
+in the APSAC study is the following: 
+To avoid one death, we need to treat
+$\widehat{\NNT} = `r round(abs(nnt),1)`$ patients with APSAC rather than
+with Heparin. A confidence interval for $\NNT$ can be obtained by inverting the limits 
+$\mbox{L}_{\mbox{ARR}}$ and $\mbox{U}_{\mbox{ARR}}$ 
+of the CI for $\ARR$: 
 
 ```{r echo=TRUE}
 (ci.arr <- confIntRiskDiff(x, n)$CIs[2,])
@@ -323,16 +345,98 @@ print(round(ci.ntt, 1))
 
 The CI for $\NNT$ in the APSAC Study is: $1 / `r round(abs(arr.upper.w),3)`$ to $1 / `r round(abs(arr.lower.w),3)`$ \ = \ $`r round(abs(nnt.upper.w),1)`$  to $`r round(abs(nnt.lower.w),1)`$.
 
-Note that the CI for $\NNT$ is only well-defined as long as the CI for $\ARR$ does not contain 0. Otherwise, the confidence interval is actually a confidence region, comprising two different intervals depending on the direction of the treatment effect [@altman1998].
-This problem can be circumvented by plotting the number needed to treat on the absolute risk reduction scale, as illustrated in the following example. 
+Note that the CI for $\NNT$ is not well-defined if the CI for 
+$\ARR$ contains 0. In that case, the confidence interval is actually
+a confidence region, comprising two different intervals depending on the 
+direction of the treatment effect [@altman1998].
+This problem can be circumvented by plotting the number needed to treat on
+the absolute risk reduction scale, as illustrated in the following example. 
 
 :::{.example}
 
-Figure \@ref(fig:NNTforest) shows a forest plot from @altman1998 where an overall number needed to benefit is calculated from a meta-analysis of data from randomized trials comparing bypass surgery with coronary angioplasty in relation to angina in one year. For three studies (CABRI, RITA, EAST) the 95\% confidence interval for NNT is a regular interval and includes only values that indicate a benefit of therapy. However, for two other entries (GABI and Other) the confidence region for NNT splits into two intervals. For example, for GABI the two intervals are 7.5 to infinity for benefit and 14.5 to infinity for harm. This indicates that this trial is inconclusive regarding the direction of the treatment effect with large uncertainty regarding the actual value of NNT. 
+Figure \@ref(fig:NNTforest) shows a forest plot reproduced from @altman1998
+where an overall number needed to benefit is calculated from a 
+meta-analysis of data from 
+randomized trials comparing bypass surgery with coronary angioplasty in 
+relation to angina in one year [@Pocock1995].
+For three studies (CABRI, RITA, EAST) the 95% confidence interval for NNT is a
+regular interval and includes only values that indicate a benefit of therapy. 
+However, for two other entries (GABI and Other) the confidence region for NNT 
+splits into two intervals. For example, for GABI the two intervals are 7.5 to 
+infinity for benefit and 14.5 to infinity for harm. This indicates that this 
+trial is inconclusive regarding the direction of the treatment effect with
+large uncertainty regarding the actual value of NNT. 
 :::
 
-```{r NNTforest, fig.cap="Forest plot for NNT in a meta-analysis [@altman1998].", out.width="100%", fig.align="center"}
-knitr::include_graphics("figures/altd5400_f3.jpg")
+```{r NNTforest, fig.cap="Forest plot for NNT (benefit = NNTB, harm = NNTH) in a meta-analysis. Figure reproduced from Figure 3 in @altman1998.", fig.align="center", fig.width = 8}
+
+## Reproducing figure from altman 1998
+
+
+## NNT
+
+CABRI <- 1/c(11.2, 21.5, 260); ss_C <- 513 + 541
+RITA <- 1/c(6.9, 10, 18.3); ss_R <- 501 + 510
+EAST <- 1/c(6.1, 10.6, 40.2); ss_E <- 194 + 198
+GABI <- 1/c(7.5, 31.2, -14.5); ss_G <- 177 + 182
+OTHER <- 1/c(13, 29.3, -119); ss_O <- 76 + 76 + 70 + 72 + 66 + 68 + 63 + 64
+
+OVERALL <- 1/c(11.2, 15.2, 24.2)
+
+
+mat_stud <- matrix(c(CABRI, RITA, EAST, GABI, OTHER, OVERALL), nrow = 6, byrow = T)
+mat_ss <- c(ss_C, ss_R, ss_E, ss_G, ss_O)
+stud_names <- c("CABRI", "RITA", "EAST", "GABI", "Other", "Overall")
+
+
+
+
+plot(NA,
+     xlim = c(0.17, -0.2),
+     ylim = c(1, 7.5),
+     xaxt = "n",
+     yaxt = "n",
+     xlab = "",
+     ylab = "Study")
+
+for (i in 1:nrow(mat_stud)){
+  start <-7
+segments(y0 = start - i , y1 = start - i , x0 = mat_stud[i, 3], x1 = mat_stud[i, 1])
+points(x = mat_stud[i, 2], y = start - i,
+       cex = mat_ss[i]/200,
+       pch = 15)
+
+if (i %in% c(1, 2, 3, 6)) {
+text(x = - 0.15, y = start - i,
+     labels = paste0(round(1/mat_stud[i, 2], 1),
+                     " (", round(1/mat_stud[i, 1], 1), " to ",
+                     round(1/mat_stud[i, 3], 1), ")"))
+} else {
+  text(x = -0.15, y = start - i,
+      labels = bquote(.(round(1/mat_stud[i, 2], 1)) ~ "(NNTB" ~
+                        .(round(1/mat_stud[i, 1], 1)) ~ "to" ~ infinity ~
+                        "to NNTH" ~ .(abs(round(1/mat_stud[i, 3], 1))) * ")"))
+
+}
+
+text(x = -0.15, 7, expression(bold("NNTB (95% CI)")))
+}
+
+axis(1, at = 1/c(6, 10, 20, 50, 100000000, -50, -20, -10),
+     labels = c(6, 10, 20, 50, expression(infinity), 50, 20, 10))
+axis(2, at = 1:6, labels = rev(stud_names), las = 1, cex.axis = 0.8)
+
+abline(v = 0)
+
+x1 <- 1/c(11.2,15.5,24.2, 15.2, 11.2)
+y1 <- c(1,1.2,1,0.8,1)
+
+polygon(x1,y1,col=2,border=2)
+
+
+mtext("NNT (Benefit)", side = 1, line = 3, cex = 1.2, adj = 0)  # Bottom
+mtext("NNT (Harm)", side = 1, line = 3, cex = 1.2, adj = 1)
+
 ```
 
 

@@ -36,7 +36,7 @@ kable(df, caption = "Precision of reported measurements depends on the number of
 ```
 
 
-### Measurement error
+### Measurement error {#measErr}
 
 Multiple measurements of the same quantity on the same subject will typically 
 differ due to *measurement error*. 
@@ -175,6 +175,8 @@ round(confintSD(sd = sigmaw_sod, dof = nrow(sodium_f)), 2) # for sodium data
 
 
 ```
+Derivation details are given in Appendix \@ref(CIvar).
+
 
 A simpler way to compute $s^2_w$ (which gives approximately the same result)
 is based on the variance $s^2_d$ of the 
@@ -647,13 +649,13 @@ Here $s_d=\sqrt{2} s_w$ is the standard deviation of the differences.
 If differences within the limits of agreement are considered 
 *not clinically relevant* then the two methods are considered exchangeable.
 
-### Confidence intervals for limits of agreement
+### Confidence intervals for limits of agreement {#CIloa}
 
 Under normality, $\bar{d}$ and $s_d$ are independent. 
 The variance of $\bar d$
 is estimated by $s_d^2/n$, with $n$ the sample size.
 The variance of $s_d$ can be approximately estimated 
-by $s_d^2/2n$ [@BlandAltman1986; @Bland1999].
+by $s_d^2/2n$ [see @BlandAltman1986; @Bland1999 and Appendix \@ref(CIvar)].
 Hence, the standard error of the limits of agreement is estimated by
 \begin{eqnarray*}
   \SE(\LOAlow)   =  &\SE(\LOAup) \\
