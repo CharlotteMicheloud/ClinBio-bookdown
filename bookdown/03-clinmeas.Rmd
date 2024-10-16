@@ -660,9 +660,10 @@ Hence, the standard error of the limits of agreement is estimated by
 \begin{eqnarray*}
   \SE(\LOAlow)   =  &\SE(\LOAup) \\
   = & \SE(\bar{d} \pm 2 \cdot s_d) \\
-  = & \sqrt{Var(\bar{d} \pm 2 \cdot s_d)} \\
-  = & \sqrt{Var(\bar d) + 4 \Var(s_d)} \\
-  \approx &   \sqrt{3/n} \, s_d \ .
+  = & \sqrt{\Var(\bar{d} \pm 2 \cdot s_d)} \\
+  = & \sqrt{\Var(\bar d) + 4 \Var(s_d)} \\
+  \approx   \sqrt{s_d^2/n + 4 s_d^2/2n} \\
+= & \sqrt{3/n} \, s_d \ .
 \end{eqnarray*}
 This can be used to compute 95\% CI for $\LOAlow$ and $\LOAup$.
 The standard error can also be used to compute the required sample 
