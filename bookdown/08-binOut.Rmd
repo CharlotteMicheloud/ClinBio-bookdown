@@ -307,7 +307,7 @@ lines(rep(100,2), c(0,3), lty=2, col=2)
 text(115, 1, "Overshoot!", col="red")
 ```
 
-#### Number Needed to Treat
+#### Number Needed to Treat {-}
 
 
 Suppose we have $n$ patients in each treatment group. 
@@ -368,7 +368,7 @@ trial is inconclusive regarding the direction of the treatment effect with
 large uncertainty regarding the actual value of NNT. 
 :::
 
-```{r NNTforest, fig.cap="Forest plot for NNT (benefit = NNTB, harm = NNTH) in a meta-analysis. Figure reproduced from Figure 3 in @altman1998.", fig.align="center", fig.width = 8}
+```{r NNTforest, fig.cap="Forest plot for NNT (benefit = NNTB, harm = NNTH) in a meta-analysis. Figure reproduced from Figure 3 in @altman1998.", fig.align="center", fig.width = 9.5, echo = FALSE}
 
 ## Reproducing figure from altman 1998
 
@@ -440,9 +440,9 @@ mtext("NNT (Harm)", side = 1, line = 3, cex = 1.2, adj = 1)
 ```
 
 
-#### Relative Risk
+#### Relative Risk {-}
 
-The RR is also called *risk ratio*. The estimated death risks in both treatment groups are
+The relative risk (RR) is also called *risk ratio*. The estimated death risks in both treatment groups from Example \@ref(exm:apsac) are
 
 -  $x_1/n_1=9/162=5.6\%$ for APSAC and 
 -  $x_0/n_0=19/151=12.6\%$ for Heparin.
@@ -451,7 +451,7 @@ The estimated RR is therefore
 
 $$\widehat{\RR} = \frac{5.6\%}{12.6\%} = 0.44.$$
 
-The calculation of a CI for the RR is based on the \color{red}{log} RR as explained in Table \@ref(tab:CIRR). With the standard error of the log RR
+The calculation of a CI for the RR is based on the logRR as explained in Table \@ref(tab:CIRR). With the standard error of the log RR
 
 \[
 \SE(\color{red}{\log}(\widehat{\RR})) = 
@@ -470,7 +470,8 @@ we can directly calculate the limits of the CI for the RR as
 \end{equation}
 
 :::{.example}
-This calculation is implemented in the \code{R} function \code{confIntRiskRatio()} from package \code{biostatUZH}. 
+This calculation is implemented in the `R` function
+`biostatUZH::confIntRiskRatio()`. 
 :::
 
 
@@ -487,7 +488,7 @@ We can see that the data are compatible with a relative risk between
 
 # Define the data frame
 data <- data.frame(
-  Quantity = c("RR", "", "\\log RR"),
+  Quantity = c("RR", "", "log RR"),
   Estimate = c("0.44", "<span style='color:red;'>&darr; log &darr;</span>", "-0.82"),
   Standard_Error = c("-", "", "0.39"),
   CI = c("0.21 to 0.95", "<span style='color:red;'>&uarr; exp &uarr;</span>", "-1.58 to -0.06")
@@ -512,21 +513,21 @@ kable(data, escape = FALSE, format = "html", table.attr = "class='table table-st
 ```
 
 
-The square-and-add method can also be applied to ratio measures such as the risk ratio @Newcombe (Section 7.3.4), but this is rarely used in practice. One reason might be that the simple approach \@ref(eq:rrci) based on error factors is - by construction - not prone to overshoot below zero. 
+The square-and-add method can also be applied to ratio measures such as the risk ratio [@Newcombe, Section 7.3.4], but this is rarely used in practice. One reason might be that the simple approach \@ref(eq:rrci) based on error factors is -- by construction -- not prone to overshoot below zero. 
 
 
-#### Relative Risk Reduction
+#### Relative Risk Reduction {-}
 
-Either ARR or RR can be used to estimate $\RRR$: 
+Either $\ARR$ or $\RR$ can be used to estimate $\RRR$: 
 \begin{eqnarray*}
 \widehat{\RRR} & = & \frac{\widehat{\ARR}}{\widehat{\pi}_0} \ = \ \frac{`r round(ci.rd$rd, 2)`}{`r round(p2, 3)`} \ = \ `r round(rrr*100, 0)`\% \mbox{ or} \\
-\widehat{\RRR} & = & 1-\widehat{\RR} \ = \ 1 - `r round(rr, 2)` \ = \ `r round(rrr*100, 0)`\% 
+\widehat{\RRR} & = & 1-\widehat{\RR} \ = \ 1 - `r round(rr, 2)` \ = \ `r round(rrr*100, 0)`\%. 
 \end{eqnarray*}
 A CI for $\RRR$ can be obtained based on the limits
-$\mbox{L}_{\mbox{\scriptsize RR}}$ and $\mbox{U}_{\mbox{\scriptsize RR}}$ of the CI for $\RR$: 
+$\mbox{L}_{\mbox{RR}}$ and $\mbox{U}_{\mbox{RR}}$ of the CI for $\RR$: 
 
 \begin{eqnarray*}
-    (1 - \mbox{U}_{\mbox{\scriptsize RR}}) \mbox{ to } (1 - \mbox{L}_{\mbox{\scriptsize RR}}) & = & 
+    (1 - \mbox{U}_{\mbox{RR}}) \mbox{ to } (1 - \mbox{L}_{\mbox{RR}}) & = & 
     (1 - 0.95) \mbox{ to } (1 - 0.21) \\ & = & 0.05 \mbox{ to } 0.79 
 \end{eqnarray*}
 
@@ -534,7 +535,7 @@ So, the risk of death with APSAC has been reduced by
 `r round(rrr*100, 0)`\% (95\% CI: 5\% to 79\%) compared to Heparin. 
 
 
-#### Odds Ratio
+#### Odds Ratio {-}
 
 ```{r 2x2apsac, results='asis'}
 # Load necessary libraries
@@ -546,11 +547,12 @@ data <- data.frame(
   Therapy = c("APSAC", "Heparin", ""),
   Yes = c("$a=9$", "$c=19$", ""),
   No = c("$b=153$", "$d=132$", ""),
-  Total = c("162", "151", "n=313")
+  Total = c("$162$", "$151$", "$n = 313$")
 )
 
 # Create the table
-kable(data, escape = FALSE, booktabs = TRUE, col.names = c("", "Yes", "No", "Total"), caption = "$2\\times 2$ table for the APSAC Study.") %>%
+kable(data, escape = FALSE, booktabs = TRUE, col.names = c("", "Yes", "No", "Total"), caption = "$2\\times 2$ table for the APSAC Study.", 
+      label = NA) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"), full_width = F, position = "center") %>%
   add_header_above(c("", "Dead" = 2, ""))
 ```
@@ -561,7 +563,9 @@ APSAC are $a/b = 9/153$ ($c/d=19/132$ for Heparin). The estimated OR is therefor
 \widehat{\OR} = \frac{a / b}{c / d} = \frac{9 / 153}{19 / 132} = \frac{9 \cdot
   132}{153 \cdot 19} \ = `r round(9*132/(153*19),2)`.
 \]
-This means that the odds of death are under APSAC 59\% lower than under Heparin treatment. The formulation $\widehat{\OR}=(a\cdot d) / (b \cdot c)$ motivates the alternative name *cross-product ratio*.
+This means that the odds of death are 59\% lower under APSAC than under
+Heparin treatment. The formulation $\widehat{\OR}=(a\cdot d) / (b \cdot c)$ 
+motivates the alternative name *cross-product ratio*.
 
 ```{r apsacSurvival, results='asis'}
 # Load necessary libraries
@@ -580,7 +584,8 @@ data <- data.frame(
 )
 
 # Create the table
-kable(data, escape = FALSE, booktabs = TRUE, col.names = c("", "Dead", "Alive", "Total", "Percent Alive", "Standard Error", "95% CI"), caption = "Considering survival probability in the APSAC Study.") %>%
+kable(data, escape = FALSE, booktabs = TRUE, col.names = c("", "Dead", "Alive", "Total", "Percent Alive", "Standard Error", "95% CI"), caption = "Survival probability in the APSAC Study.", 
+      label = NA) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"), full_width = F, position = "center")
 ```
 
@@ -604,9 +609,10 @@ Such a relationship does not hold for relative risks:
  \]
  
 A disadvantage of the ORs is their noncollapsibility [@Senn2]. 
-Consider an example: Table \@ref(tab:strat) presents a contingency table 
-stratified by strata while Table \@ref(tab:collapsed) present the collapsed 
-contingeny table. 
+Consider a hypothetical example with two therapies 
+and two stata. Table \@ref(tab:strat) presents a contingency table 
+stratified by strata, while Table \@ref(tab:collapsed) present the collapsed 
+contingency table. 
 ```{r }
 a1 <- 80
 b1 <- 20
@@ -631,15 +637,6 @@ or <- a*d/(b*c)
 ``` 
 
 ```{r strat, echo = FALSE}
-# Define your data
-a1 <- 10
-b1 <- 20
-c1 <- 30
-d1 <- 40
-a2 <- 15
-b2 <- 25
-c2 <- 35
-d2 <- 45
 
 # Create the data frame
 data <- data.frame(
@@ -653,7 +650,7 @@ data <- data.frame(
 )
 
 # Create the table
-kable(data, escape = FALSE, booktabs = TRUE, col.names = c("", "Yes", "No", "Total", "Yes", "No", "Total"), caption = "Stratified contingency table") %>%
+kable(data, escape = FALSE, booktabs = TRUE, col.names = c("", "Yes", "No", "Total", "Yes", "No", "Total"), caption = "Stratified contingency table", label = NA) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"), full_width = F, position = "center") %>%
   add_header_above(c("", "Stratum 1" = 3, "Stratum 2" = 3)) %>%
   column_spec(2:7, border_left = TRUE)
@@ -663,10 +660,6 @@ kable(data, escape = FALSE, booktabs = TRUE, col.names = c("", "Yes", "No", "Tot
 
 ```{r collapsed, echo = FALSE}
 # Define your data
-a <- 10
-b <- 20
-c <- 30
-d <- 40
 
 # Create the data frame
 data <- data.frame(
@@ -677,7 +670,8 @@ data <- data.frame(
 )
 
 # Create the table
-kable(data, escape = FALSE, booktabs = TRUE, col.names = c("", "Yes", "No", "Total"), caption = "Collapsed contingency table") %>%
+kable(data, escape = FALSE, booktabs = TRUE, col.names = c("", "Yes", "No", "Total"), caption = "Collapsed contingency table", 
+      label = NA) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"), full_width = F, position = "center")
 ```
 
@@ -695,20 +689,21 @@ kable(data, escape = FALSE, booktabs = TRUE, col.names = c("", "Yes", "No", "Tot
 -  The OR from the collapsed analysis is 
 $\mbox{OR} = \frac{`r a` \cdot `r d`}{`r b` \cdot `r c`} 
 = `r format(or, digits=2, nsmall=2)`$
-- [$\rightarrow$] The ORs are the same in both strata, but the OR collapsed 
-over strata is different
+
+$\rightarrow$ The ORs are the same in both strata, but the OR collapsed 
+over strata is different.
 
 
 
 As for $\RR$ (see Table \@ref(tab:CIRR)), we calculate the standard error of the OR on the log scale:
 \[
-  \SE(\color{red}{\log}(\widehat{\OR})) = \sqrt{\frac{1}{a}+\frac{1}{b}+\frac{1}{c}+\frac{1}{d}}
+  \SE(\color{red}{\log}(\widehat{\OR})) = \sqrt{\frac{1}{a}+\frac{1}{b}+\frac{1}{c}+\frac{1}{d}}.
   \]
 
-The CI can be directly calculated using the 95\% error factor 
-%
+A multiplicative Wald CI can be directly calculated using the 95\% error factor 
+
 \[
-  \EF_{.95} = \exp\left\{1.96 \cdot \SE(\color{red}{\log}(\widehat{\OR}))\right\}
+  \EF_{.95} = \exp\left\{1.96 \cdot \SE(\color{red}{\log}(\widehat{\OR}))\right\}.
 \]
 Note that CIs for odds ratios may differ even if group sample sizes remain the same:
 
@@ -722,24 +717,27 @@ n <- c(50, 50)
 (ci.or2 <- confIntOddsRatio(x, n))
 ``` 
   
-#### Odds Ratios and Relative Risks
+#### Odds Ratios and Relative Risks {-}
 
 
 There are the following relations between the OR and the RR:
 
--  If $\pi_0=\pi_1$ then $\OR = \RR = 1$
--  OR and RR always go in the same direction ($<1$ or $>1$)
--  If $<1$, then $\OR < \RR$
--  If $>1$, then $\OR > \RR$
+-  If $\pi_0=\pi_1$ then $\OR = \RR = 1$.
+-  OR and RR always go in the same direction ($<1$ or $>1$).
+-  If $<1$, then $\OR < \RR$.
+-  If $>1$, then $\OR > \RR$.
 -  Rare disease assumption: 
 If disease risks $\pi_0$ and $\pi_1$ are small, then
-  $\OR \approx \RR$
+  $\OR \approx \RR$.    
 
+The function `Epi::twoby2()` computes the RR, OR (in two versions) 
+and ARR (probability difference).
+The second version of the odds ratio is the conditional Maximum Likelihood 
+estimate under a hypergeometric likelihood function.
+There is no closed-form expression for this estimate, which
+may explain why it is rarely used, but it is compatible to the 
+$P$-value from Fisher's exact test (denoted here as `Exact P-value`). 
 
-:::{.example}
-The twoby2 function from the R package Epi computes the RR (relative risk), OR (in two versions) and ARR (probability difference).
-  The second version of the odds ratio is the conditional Maximum Likelihood estimate under a hypergeometric likelihood function. There is no closed-form expression for this estimate, which may explain why it is rarely used, but it is compatible to the $p$-value from Fisher's exact test (denoted here as Exact P-value). 
-:::
 
   
 ```{r echo=T, warning=FALSE}
@@ -759,7 +757,7 @@ pvalues <- z2p(z)
 formatPval(pvalues)
 ```
 
-The one for OR is called \code{Asymptotic P-value} in \code{twoby2()}.
+The one for OR is called `Asymptotic P-value` in `twoby2()`.
 
 
 #### Absolute and relative effect measures
@@ -783,10 +781,6 @@ gives a *weighted average* of strata-specific odds ratios. The MH method can als
 
 ### Logistic regression
 
-:::{.example}
-PUVA 
-:::
-
 ```{r echo=F}
 puva <- read.table("data/puva.txt", header=TRUE)
 puva$treatment <- factor(puva$treatment, 
@@ -798,56 +792,64 @@ puva <- puva[,c(2,1,3,4)]
 t <- puva$total
 ``` 
 
-The PUVA trial compares PUVA (drug followed by UVA exposure) versus TL-01 lamp therapy for treatment of psoriasis. The primary outcome is yes if the patient was clear of psoriasis at or before the end of the treatment, and no otherwise. The treatment allocation used RPBs stratified according to whether predominant plaque size was large or small. This ensures a balanced distribution in treatment arms (`r t[1]`:`r t[3]` vs. `r t[2]`:`r t[4]`).
+:::{.example #puva}
+The PUVA trial [@Gordon1999] compares PUVA 
+(oral methoxsalen followed by UVA exposure) versus TL-01 lamp therapy for treatment of
+psoriasis. The primary outcome is clearance of psoriasis (yes/no)
+at or before the end of the treatment.  
+The treatment allocation used RPBs stratified according to whether predominant 
+plaque size was large or small. This ensures a balanced distribution 
+in treatment arms (`r t[1]`:`r t[3]` vs. `r t[2]`:`r t[4]`).
+:::
+
 
 ```{r echo=T}
 print(puva)
 ``` 
 
-Unadjusted analysis:
+The unadjusted analyis can be performed as follows: 
 ```{r echo=T, results="asis"}
 m1 <- glm(cbind(cleared, total-cleared) ~ treatment, 
           data=puva, family=binomial)
 ## tableRegression gives profile confidence intervals
-knitr::kable(tableRegression(m1, latex = FALSE))
+knitr::kable(tableRegression(m1, latex = FALSE, xtable = FALSE))
 ``` 
 
 
-With standard formulae (p. 18):
-```{r echo=TRUE}
-(x <- rev(by(data=puva$cleared, INDICES=puva$treatment, FUN=sum)))
-(n <- rev(by(data=puva$total, INDICES=puva$treatment, FUN=sum)))
-round(confIntOddsRatio(x=as.numeric(x), n=as.numeric(n)), 2)
-``` 
-
-
-Strata-specific estimates:
+The strata-specific estimates are obtained using:
 ```{r echo=T, results="asis"}
 m2Small <- glm(cbind(cleared, total-cleared) ~ treatment, 
           subset=(plaqueSize=="Small"), data=puva, family=binomial)
-knitr::kable(tableRegression(m2Small, latex = FALSE))
+knitr::kable(tableRegression(m2Small, latex = FALSE, xtable = FALSE))
 m2Large <- glm(cbind(cleared, total-cleared) ~ treatment, 
           subset=(plaqueSize=="Large"), data=puva, family=binomial)
-knitr::kable(tableRegression(m2Large, latex = FALSE))
+knitr::kable(tableRegression(m2Large, latex = FALSE, xtable = FALSE))
 ``` 
 
-Adjusted analysis with logistic regression:
+Finally,  the adjusted analysis with logistic regression is:
 ```{r echo=T, results="asis"}
 m3 <- glm(cbind(cleared, total-cleared) ~ treatment + plaqueSize, 
           data=puva, family=binomial)
-knitr::kable(tableRegression(m3, latex = FALSE))
+knitr::kable(tableRegression(m3, latex = FALSE, xtable = FALSE))
 ```
 
 
-The adjusted treatment effect is $\widehat{\OR} = `r format(exp(coef(m3)[2]),nsmall=2, digits=2)`$ with 95\% CI from 
+The adjusted treatment effect is
+$\widehat{\OR} = `r format(exp(coef(m3)[2]),nsmall=2, digits=2)`$
+with 95\% CI from 
 $`r format(exp(confint(m3)[2,1]),nsmall=2, digits=2)`$ to 
 $`r round(exp(confint(m3)[2,2]),2)`$.
-Logistic regression also quantifies the effect of the variable used for adjustment, here plaque size.
+Logistic regression also quantifies the effect of the variable used for 
+adjustment, here plaque size.
 
 
 
 ## Additional references
 
-Relevant references for this chapter are in particular Chapters 13 "The Analysis of Cross-Tabulations" and 15.10 "Logistic Regression" in @bland as well as Chapter 7.1--7.4 "Further Analysis: Binary Data" in @matthews.
-The use of odds ratios is discussed in @altmansackett1996 and @altmandeeks1998. Studies where the methods from this chapter are used in practice are for example @heal,fagerstroem and @vadillo.
+Relevant references for this chapter are in particular Chapters 13 
+"The Analysis of Cross-Tabulations" and 15.10 "Logistic Regression"
+in @bland as well as Chapter 7.1--7.4 "Further Analysis: Binary Data" in @matthews.
+The use of odds ratios is discussed in @altmansackett1996 and
+@altmandeeks1998. Studies where the methods from this chapter are used in
+practice are for example @heal, @fagerstroem and @vadillo.
 
