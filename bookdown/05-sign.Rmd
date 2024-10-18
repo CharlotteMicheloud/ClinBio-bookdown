@@ -111,7 +111,7 @@ However,
 significance does not mean that the effect is real. This is 
 illustrated in Figure \@ref(fig:reppower), which 
 shows the replication power, i.e. the probability to obtain 
-a significant result in an identically design replication study. 
+a significant result in an identically designed replication study. 
 The two methods are fundamentally different approaches
 to statistical inference as illustrated in 
 Figure \@ref(fig:strengthofevidence).
@@ -408,7 +408,7 @@ data("birthwt")
 
 par(mfrow = c(1, 1), las = 1)
 boxplot(bwt ~ factor(smoke, levels = c(0, 1), labels = c("Non-smoker", "Smoker")), data = birthwt, 
-     ylab = "Birtweight (in grams)", 
+     ylab = "Birthweight (in grams)", 
      xlab = "Smoking status")
 beeswarm(birthwt$bwt ~ as.factor(birthwt$smoke), pch = 19, add = TRUE, 
          method = "compactswarm")
@@ -424,7 +424,7 @@ print(res.baby)
 
 A $t$-test can be conducted and the resulting 
 $P$-value $p = `r formatPval(res.baby$p.value)`$
-indicates that there evidence for a difference in 
+indicates that there is evidence for a difference in 
 mean birthweight between babies whose 
 mother smoked and did not smoke during the pregnancy.
 
@@ -845,7 +845,7 @@ of the primary outcome variable that clinicians and patients would care about.
 food-as-medicine program for patients with diabetes improves glycemic control.
 The primary outcome was hemoglobin A$_{\small{1c}}$ level at six months, 
 and the minimal clinically relevant
-difference was $\Delta = -0.5$-percentage point in 
+difference was $\Delta = -0.5$-percentage points in 
 hemoglobin A$_{\small{1c}}$ levels.
 Secondary outcomes included other biometric measures and healthcare use, 
 among others.
