@@ -63,14 +63,24 @@ par(las=1)
 ```
 
 
-A common form of data in clinical trials is survival (time to event) data. Survival outcomes can often be considered as continuous, but are usually quite skewed. The issue of *censoring* requires special techniques for statistical analysis.
+A common form of data in clinical trials is survival (time to event) data. 
+Survival outcomes can often be considered as continuous,
+but are usually quite skewed. 
+Moreover, the issue of *censoring* requires special techniques for statistical 
+analysis.
 
 ## Analysis of survival outcomes 
 
 ### Censoring
-A survival time $T$ is called *(right-)censored*, if it is known that the individual has survived up to time $T$, but whose survival status past that point is not known. For example, the study might be finished before all patients have died, a patient might decide to withdraw from the study or a patient might die from some other reason, for example in a car crash.
+A survival time $T$ is called *(right-)censored*, if it is known that the
+individual has survived up to time $T$, but whose survival status past that
+point is not known. For example, the study might be finished before all patients 
+have died,
+a patient might decide to withdraw from the study or a
+patient might die from some other reason, for example in a car crash.
 
-A central assumption in survival analysis is that the censoring time is independent from the survival time (non-informative censoring).
+A central assumption in survival analysis is that the censoring time is 
+independent from the survival time (non-informative censoring).
 
 ```{r dataprep-sakk, echo = FALSE}
 howmany <- 10
@@ -103,7 +113,15 @@ sakk.rt <- sakk[sakk$trt == "B", ]
 
 
 :::{.example #sakk}
-The Chemotherapy-Study is a randomized study to compare two treatments of head and neck cancer on $`r nrow(sakk)`$ patients: Combination of radiotherapy and chemotherapy (RT+CT) ($n=`r sum(sakk$trt == "A")`$) versus radiotherapy alone (RT) ($n=`r sum(sakk$trt == "B")`$). The outcome is survival time (in years) from start of treatment. Figure \@ref(fig:sakkTimes) shows data for the survival times of the first 10 patients. The survival time is measured from the start of treatment (starting point $0$) and it ends if a patient died or is censored.
+The Chemotherapy-Study [@Huguenin2004] is a randomized study to compare two treatments 
+of head and neck cancer on $`r nrow(sakk)`$ patients: 
+Combination of radiotherapy and chemotherapy (RT+CT)
+($n=`r sum(sakk$trt == "A")`$) versus radiotherapy alone (RT) 
+($n=`r sum(sakk$trt == "B")`$). The outcome is survival time (in years) 
+from start of treatment. Figure \@ref(fig:sakkTimes) shows data for the 
+survival times of the first 10 patients. The survival time is measured 
+from the start of treatment (starting point $0$) and it ends if a patient 
+died or is censored.
 :::
 
 
