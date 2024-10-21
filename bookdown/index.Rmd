@@ -1,6 +1,6 @@
 --- 
 title: "Clinical Biostatistics"
-author: "Leonhard Held, Charlotte Micheloud"
+author: "Leonhard Held, with contributions from Charlotte Micheloud, Lisa Hofer, Stefanie von Felten, Samuel Pawel"
 date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
 output: bookdown::gitbook
