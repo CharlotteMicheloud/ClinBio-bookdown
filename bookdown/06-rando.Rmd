@@ -1,5 +1,9 @@
 # Randomization and allocation, blinding and placebos
 
+In this chapter we discuss important techniques to allocate patients to two or more arms 
+or an RCT. We also discuss blinding and placebos and close with
+the CONSORT reporting guidelines in Section \@ref(sec:consort).
+
 
 ## Methods of allocation
 There exist several methods to allocate patients to the different 
@@ -343,6 +347,31 @@ red tablet to each patient, in one group with blue active treatment and
 red placebo and vice versa in the other group. For example, this method 
 is useful to blind a comparison of a treatment given as a tablet with an 
 intravenous treatment.
+
+
+## The CONSORT Statement {#sec:consort}
+
+The CONSORT 
+(**CONS**olidated **S**tandards **O**f **R**eporting **T**rials) statement
+is an evidence-based minimum set of recommendations for reporting RCTs 
+[@consort; @consortEE].
+It encompasses various initiatives developed by the CONSORT Group to alleviate 
+the problems arising from inadequate reporting of RCTs. It offers a standard 
+way for authors to prepare reports of trial design and analysis, facilitating their 
+complete and transparent reporting, and aiding their critical appraisal and 
+interpretation. The CONSORT Statement comprises a 25-item *checklist*, see Figure \@ref(fig:CONSORTchecklist),  and a 
+*flow diagram*, see Figure \@ref(fig:CONSORTdiagram). The current recommendations 
+have been established in 2010, an update will be published soon (see 
+@Hopewell2022 and https://www.consort-spirit.org/)
+
+
+```{r CONSORTchecklist, fig.cap="The CONSORT checklist.", fig.align="center", echo=FALSE, eval = TRUE}
+knitr::include_graphics("figures/ConsortCheckList.png")
+```
+
+```{r CONSORTdiagram, fig.cap="The CONSORT flow diagram.", fig.align="center", echo=FALSE}
+knitr::include_graphics("figures/consort-flow-diagram.png")
+```
 
 
 
