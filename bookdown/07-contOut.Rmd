@@ -536,8 +536,8 @@ cause confusion tables reporting results from RCTs, if both raw means
 of change are reported together with the ANOVA estimate of the
 difference.  An alternative is to report adjusted least-squares (LS)
 means via fitted values in both groups, which are compatible with the
-ANCOVA estimate. Computation is illustrated with the lsmeans package
-```{r lsmeans, fig.cap = "Least-squares means", echo = TRUE}
+ANCOVA estimate. Computation is illustrated with the `lsmeans` package
+```{r lsmeans, fig.cap = "Least-squares means", echo = TRUE, warnings = FALSE}
 
 library(lsmeans, quietly=TRUE)
 ## raw means
