@@ -1,7 +1,7 @@
 # Randomization and allocation, blinding and placebos
 
 In this chapter we discuss important techniques to allocate patients to two or more arms 
-or an RCT. We also discuss blinding and placebos and close with
+of an RCT. We also discuss blinding and placebos and close with
 the CONSORT reporting guidelines in Section \@ref(sec:consort).
 
 
@@ -78,16 +78,17 @@ For $r = n + 1, \dots, 2n$, the larger group can be either A or B, leading to:
 \
 
 
-For example, for $n=15$, $\Pr(N_{\max} \geq 20) = 0.10$. So, there is a substantial chance that the two groups will end up with markedly differing sizes, as illustrated by Figure \@ref(fig:simple).
+For example, for $n=15$, $\Pr(N_{\max} \geq 20) = 0.10$. So, there is a substantial chance that the two groups will end up with markedly differing sizes, as illustrated in Figure \@ref(fig:simple).
 <!-- The power can be calculated as:  -->
 <!-- \[ -->
 <!-- \mbox{ Power } = \Phi\left(\sqrt{({n_A n_B})/({n_A+n_B})} - z_{1-\alpha/2}\right) \, , -->
 <!-- \] -->
 Unequal group sizes lead to a *loss in power*.
-For example, for Cohen's $d=1$, total sample size $2n = n_A+n_B=30$ and $\alpha=0.05$ the loss in power is illustrated in Figure \@ref(fig:powerloss).
+For example, for Cohen's $d=1$, total sample size $n_A+n_B=30$ and $\alpha=0.05$ 
+the loss in power is illustrated in Figure \@ref(fig:powerloss).
 
 
-```{r simple, fig.cap = "Probability for unequal group sizes with simple randomization and a total sample size of $2n=30$.", echo=F}
+```{r simple, fig.cap = "Probability for unequal group sizes with simple randomization and a total sample size of $30$.", echo=F}
 P.NMax <- function(n, r) 2^(1-2*n)*choose(2*n, r)
 n <- 15
 support <- c(n:(2*n))
@@ -105,7 +106,7 @@ text(24, 0.06, "Pr = 0.10", col=2)
 
 
 
-```{r powerloss, fig.cap = "Loss in power for unequal group sizes in a scenario with $d=1$, $n_1+n_2=30$ and $\\alpha=0.05$.", echo=F}
+```{r powerloss, fig.cap = "Loss in power for unequal group sizes in a scenario with $d=1$, $n_A+n_B = 30$ and $\\alpha = 0.05$.", echo=F}
 n <- 30
 n1 <- c(1:(n-1))
 n2 <- n-n1
@@ -122,6 +123,7 @@ text(26.5, 73, labels=paste("max power = ", as.character(round(max(power*100))),
 
 
 ### Block randomization
+
 The problem of unbalanced group sizes can be solved by using a form of restricted randomization with so-called *random permuted blocks* (RPBs). For example, with blocks of length 4, there are the following six different sequences of length 4 that comprise two As and two Bs:
 
 ```{r, results='asis', echo=FALSE}
@@ -136,7 +138,8 @@ data <- data.frame(
   col4 = c("B", "A", "B", "A", "B", "A"))
 
 kable(data, format = "html", escape = FALSE, col.names = NULL) %>%
-  kable_styling(full_width = FALSE, position = "center")
+  kable_styling(full_width = FALSE, position = "center") %>%
+  column_spec(1, border_right = TRUE)
 ```
 
 In this case, the randomization selects randomly a block for every group of four patients. Block randomization using RPBs of length 4 ensures that group sizes never differ by more than 2. After every fourth patient, the two treatment groups must have the same size.
@@ -159,7 +162,8 @@ df <- data.frame(
 
 # Print the table using kable
 kable(df, format = "html", escape = FALSE, col.names = NULL) %>%
-  kable_styling(full_width = FALSE, position = "center")
+  kable_styling(full_width = FALSE, position = "center") %>%
+  column_spec(1, border_right = TRUE)
 ```
 
 
@@ -201,7 +205,8 @@ as.character(getRandList(seq24))
 
 
 ### Unequal randomization
-Unequal allocation can provide greater experience of a new treatment and may 
+
+Unequal randomization can provide greater experience of a new treatment and may 
 even encourage recruitment in certain trials. If the imbalance is no
 greater than 2:1, the loss in power is small (e.g. from 90\% to 86\% for 
 $\alpha=5\%$).
@@ -283,27 +288,23 @@ follows (with some $p>1/2$):
 \left\{ \begin{array}{c} 0.5 \\ p \\ 1-p \end{array} \right\}.
 \]
 
-
+The minimization is deterministic if $p = 1$ and $D \neq 0$.
 
 ## Blinding and placebos
 
 ### Single and double blindness
 Blinding is used to avoid assessment bias. We distinguish between
-
-
--  *Single-blind trial*: the patient is unaware of the treatment being given, and
--  *Double-blind trial*: neither the doctor nor the patient knows what treatment 
+*single-blind* and *double-blind* trials. In a single-blind trialm the patient 
+is unaware of the treatment being given, while in a 
+double-blind trial, neither the doctor nor the patient knows what treatment 
 is being given.
-Moreover, *blinded outcome assessment is often possible even if 
-the treating doctors cannot be blinded. 
-In some trials the *statistical analysis* is also carried out *blinded*,
-because of subjective elements in any statistical analysis, e.g.
-
--  Should I transform the outcome variable? 
--  Should I compute risk differences, risk ratios or odds ratios for binary outcomes?
--  Should I include a covariate in the analysis?
-
-However, a precise statistical analysis plan helps. 
+In some trials, the statistical analysis is also carried out 
+blinded because of subjective elements in any statistical analysis. 
+For example, decisions like whether to transform the outcome variable, 
+whether to compute risk differences, risk ratios or odds ratios for binary 
+outcomes, or whether to include a covariate in the analysis all 
+involve a degree of subjectivity.
+A precise statistical analysis plan helps in any case.
 
 
 :::{.example #ulcers name="continued"}
@@ -317,14 +318,12 @@ to the study groups.
 
 ### Placebos
 
-Placebos are treatments that look similar to the true treatment but contain
-no active ingredient. They have essentially two roles: 
-
-1. Placebos *facilitate blindness* in RCTs: A *treatment* versus
-*no treatment at all* comparison cannot be blinded, but  *treatment* versus 
-*placebo* can often be blinded.
-
-2.   Placebos help to control the *placebo effect*.
+Placebos are treatments that look similar to the true treatment but
+contain no active ingredient.
+They have essentially two roles: first, placebos facilitate blindness 
+in RCTs, as a treatment versus no treatment comparison cannot be blinded,
+but treatment versus placebo can often be blinded; second, placebos help
+control the placebo effect.
 
 
 The *placebo effect* occurs if a patient exhibits a response to treatment, 
@@ -362,7 +361,7 @@ complete and transparent reporting, and aiding their critical appraisal and
 interpretation. The CONSORT Statement comprises a 25-item *checklist*, see Figure \@ref(fig:CONSORTchecklist),  and a 
 *flow diagram*, see Figure \@ref(fig:CONSORTdiagram). The current recommendations 
 have been established in 2010, an update will be published soon (see 
-@Hopewell2022 and https://www.consort-spirit.org/)
+@Hopewell2022 and https://www.consort-spirit.org/).
 
 
 ```{r CONSORTchecklist, fig.cap="The CONSORT checklist.", fig.align="center", echo=FALSE, eval = TRUE}
