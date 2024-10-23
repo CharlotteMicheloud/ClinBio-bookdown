@@ -494,10 +494,19 @@ d <- p1-p2
 dl <- d - sqrt((p1-l1)^2+(u2-p2)^2)
 du <- d + sqrt((p2-l2)^2+(u1-p1)^2)
 ``` 
+The median survival time in the two groups
+with their respective CI are shown in Table \@ref(tab:mediane) and graphically in
+Figure \@ref(fig:sakkMedians).
+
 
 The difference in median survival time is `r round(d,1)` years 
-(95\%-CI: from $`r round(dl,1)`$ to $`r round(du,1)`$ years).
-Both medians with CI are shown in Table \@ref(tab:mediane) and graphically in Figure \@ref(fig:sakkMedians).
+(95\%-CI: from $`r round(dl,1)`$ to $`r round(du,1)`$ years) and is 
+computed with the `R` function `biostatUZH::confIntSquareAdd()`:
+
+```{r}
+biostatUZH::confIntSquareAdd(theta1 = 3.9, lower1 = 2.2, upper1 = 6, 
+                             theta2 = 2.4, lower2 = 1.8, upper2 = 3.8)
+```
 
 
 
@@ -572,10 +581,11 @@ ggsurvplot(sakk.surv1, risk.table = TRUE, conf.int = TRUE, pval = TRUE)
 
 
 ### Hazard function
+
 The mortality rate can also be used to describe the risk of death 
 in a certain interval: 
 \begin{eqnarray*}
-\frac{\mbox{Death risk in interval}}{\mbox{Length of interval}}
+\frac{\mbox{Death risk in interval}}{\mbox{Length of interval}}.
 \end{eqnarray*}
 
 The mortality rate is conditional on having survived up 
@@ -584,7 +594,7 @@ The *hazard function* is obtained by making the length of the intervals
 very small: 
 
 \begin{equation*}
-h(t)= \lim\limits_{h \rightarrow 0} \frac{\P(t < T < t+h \given T>t)}{h} 
+h(t)= \lim\limits_{h \rightarrow 0} \frac{\P(t < T < t+h \given T>t)}{h}. 
 \end{equation*}  
 
 The hazard function and the survival function have a one-to-one relationship:
@@ -593,15 +603,14 @@ The hazard function and the survival function have a one-to-one relationship:
 S(t) = \exp\left(- \int_0^t h(u) du \right).
 \end{equation*}
 
-Figure \@ref(fig:survhazard) shows the survival function once for
-a constant hazard rate and once for an increasing hazard rate.
+Figure \@ref(fig:survhazard) shows the  hazard and survival functions for a constant hazard rate ($HR = 2$, top) and once for an increasing hazard rate (bottom).
 
 
-```{r ch25, echo = FALSE, fig.width = 7, fig.height = 3.5}
+```{r survhazard, fig.cap = "Survival function and hazard ratio (HR) for different hazard rates: constant (top) and non-linearly increasing (bottom)", echo = FALSE}
 shapes <- c(1, 1)
 scales <- c(1, 2)
 
-par(mfrow = c(1, 2), mar = c(4.5, 4, 1, 1), las = 1)
+par(mfrow = c(2, 2), mar = c(4.5, 4, 1, 1), las = 1)
 ts <- seq(0, 5, by = 0.01)
 
 # hazards
@@ -611,7 +620,7 @@ for (i in 1:length(shapes)){
     ht <- dweibull(ts, shape = shapes[i], scale = scales[i]) / St
     lines(ts, ht, col = colors[i], lwd = 2, lty = 1)
     }
-text(0.1, 2.75, "HR = 2", adj = 0, font = 2, cex=1.5)
+# text(0.1, 2.75, "HR = 2", adj = 0, font = 2, cex=1.5)
 
 
 # S(t)
@@ -620,11 +629,18 @@ for (i in 1:length(shapes)){
     St <- 1 - pweibull(ts, shape = shapes[i], scale = scales[i])
     lines(ts, St, col = colors[i], lwd = 2, lty = 1)
     }
-#legend(1, 1, adj = 0, bty = 'n', paste("Weibull(a=", shapes, ", b=", scales, ")", sep = ""), col = 1:length(shapes) + 1, lwd = 2, lty = 1)
-``` 
 
-```{r ch23, echo = FALSE, fig.width = 7, fig.height = 3.5}
-par(mfrow = c(1, 2), mar = c(4.5, 4, 1, 1), las = 1)
+
+shapes <- c(1.5, 1, 3)
+scales <- c(4, 10, 3)
+
+shapes <- c(1, 0.5, 1.5)
+scales <- rep(1, 3)
+
+shapes <- c(1.4, 1.4)
+scales <- c(1, 1.5)
+
+# par(mfrow = c(1, 2), mar = c(4.5, 4, 1, 1), las = 1)
 ts <- seq(0, 5, by = 0.01)
 
 hconst <- function(x, threshold){
@@ -642,59 +658,24 @@ thresholds <- c(2, 3)
 
 # hazards
 plot(0, 0, type = 'n', xlim = range(ts), ylim  = c(0, 3), xlab = "Time t", ylab = "Hazard function h(t)")
+## for (i in 1:length(shapes)){
+##     St <- 1 - pweibull(ts, shape = shapes[i], scale = scales[i])
+##     ht <- dweibull(ts, shape = shapes[i], scale = scales[i]) / St
+##     lines(ts, ht, col = colors[i], lwd = 2, lty = 1)
+##     }
 for (i in 1:length(thresholds)){
     ht <- hconst(ts, thresholds[i])
     lines(ts, ht, col = colors[i], lwd = 2, lty = 1)
 }
-text(0.1, 2.75, "HR non-constant", adj = 0, font = 2, cex=1.5)
 
 # S(t)
 plot(0, 0, type = 'n', xlim = range(ts), ylim  = c(0, 1), xlab = "Time t", ylab = "Survival function S(t)")
-for (i in 1:length(thresholds)){
+for (i in 1:length(shapes)){
     St <- Sconst(ts, thresholds[i])
     lines(ts, St, col = colors[i], lwd = 2, lty = 1)
     }
 ``` 
 
-```{r survhazard, fig.cap = "Survival function and hazard ratio (HR) for different hazard rates: constant (top), linearly increasing (middle) and non-linearly increasing (bottom)", echo = FALSE, fig.width = 7, fig.height = 3.5}
-shapes <- c(1.353, 1.353)
-scales <- c(.75, 1.25)*1.5
-
-par(mfrow = c(1, 2), mar = c(4.5, 4, 1, 1), las = 1)
-ts <- seq(0, 5, by = 0.01)
-
-# hazards
-plot(0, 0, type = 'n', xlim = range(ts), ylim  = c(0, 3), xlab = "Time t", ylab = "Hazard function h(t)")
-for (i in 1:length(shapes)){
-    St <- 1 - pweibull(ts, shape = shapes[i], scale = scales[i])
-    ht <- dweibull(ts, shape = shapes[i], scale = scales[i]) / St
-    lines(ts, ht, col = colors[i], lwd = 2, lty = 1)
-    }
-
-
-i <- 1
-St <- 1 - pweibull(ts, shape = shapes[i], scale = scales[i])
-ht1 <- dweibull(ts, shape = shapes[i], scale = scales[i]) / St
-
-i <- 2
-St <- 1 - pweibull(ts, shape = shapes[i], scale = scales[i])
-ht2 <- dweibull(ts, shape = shapes[i], scale = scales[i]) / St
-
-HR <- (mean(ht1/ht2, na.rm=TRUE))
-
-
-
-text(0.1, 2.75, paste("HR = ", round(HR, 2), sep=""), adj = 0, font = 2, cex=1.5)
-
-
-# S(t)
-plot(0, 0, type = 'n', xlim = range(ts), ylim  = c(0, 1), xlab = "Time t", ylab = "Survival function S(t)")
-for (i in 1:length(shapes)){
-    St <- 1 - pweibull(ts, shape = shapes[i], scale = scales[i])
-    lines(ts, St, col = colors[i], lwd = 2, lty = 1)
-    }
-#legend(1, 1, adj = 0, bty = 'n', paste("Weibull(a=", shapes, ", b=", scales, ")", sep = ""), col = 1:length(shapes) + 1, lwd = 2, lty = 1)
-``` 
 
 
 
@@ -717,7 +698,7 @@ res3HRup <- summary(res3)$conf.int[4]
 
 ### Hazard ratio
 
-Let $h_A(t)$ and $h_B(t)$ denote the hazard functions in groups A and B. The *proportional hazards assumption* implies a time-constant *hazard ratio*\%
+Let $h_A(t)$ and $h_B(t)$ denote the hazard functions in groups A and B. The *proportional hazards assumption* implies a time-constant *hazard ratio*
 
 \begin{equation*}
 \mbox{HR} = {h_A(t)}/{h_B(t)}.
@@ -735,13 +716,13 @@ The hazard ratio can be interpreted as
 \end{equation*}
 
 2.  power transformation of the survival function at any time $t$:
-%
+
 \begin{equation*}
 S_A(t) = S_B(t)^{\scriptsize \mbox{HR}}.
 \end{equation*}
 
-Figure \@ref(fig:survhazard) shows two different settings of hazard functions 
-(constant and non-constant) that both have the same hazard ratio of 2.
+<!-- Figure \@ref(fig:survhazard) shows two different settings of hazard functions  -->
+<!-- (constant and non-constant) that both have the same hazard ratio of 2. -->
 
 
 
@@ -804,30 +785,30 @@ printWaldCI(log(HR), SElogHR, FUN = exp)
 
 #### The Cox model
 The (semiparametric) *Cox model* assumes that the hazard function $h_i(t)$ of individual $i$ with explanatory variables $\boldsymbol{ x}_i$ has the form
-%
+
 \begin{equation*}
 h_i(t; \boldsymbol{ x}_i) = \exp(\boldsymbol{ x}_i^{\top} \boldsymbol{ \beta}) \cdot h_0(t),
 \end{equation*}
-%
+
 where $h_0(t)$ is the *baseline hazard function*. Ratios of hazard functions are time-constant: 
-%
+
 \begin{equation*}
 \frac{h_i(t; \boldsymbol{ x}_i)}{h_j(t; \boldsymbol{ x}_j)} = 
 \frac{\exp(\boldsymbol{ x}_i^{\top} \boldsymbol{ \beta})}
 {\exp(\boldsymbol{ x}_j^{\top} \boldsymbol{ \beta})},
 \end{equation*}
-%
-\ie we have proportional hazards. A *profile likelihood approach* allows to estimate the log hazard ratios $\boldsymbol{ \beta}$, no matter which form 
+
+i.e. we have proportional hazards. A *profile likelihood approach* allows to estimate the log hazard ratios $\boldsymbol{ \beta}$, no matter which form 
 $h_0(t)$ has. To estimate the hazard ratio,
 we use *Cox-Regression* as in the following example.
 
 
-:::{.example}
+:::{.example #sakk name="continued"}
 Cox regression in Example \@ref(exm:sakk):
 :::
 ```{r ch29, echo = TRUE, results = "asis"}
 model.cox0 <- coxph(Surv(os, death) ~ trt2, data = dat.tmp)
-knitr::kable(tableRegression(model.cox0, latex = FALSE))
+knitr::kable(tableRegression(model.cox0, latex = FALSE, xtable = FALSE))
 ``` 
 The comparison RT vs. RT+CT gives $\mbox{HR}=1.23$ with relatively large confidence interval. There is no evidence for a treatment effect ($p=0.19$).
 
@@ -848,46 +829,47 @@ colnames(table_data) <- c("RT + CT", "RT")  # Set column names
 
 kable(table_data,
       caption = "Distribution of gender in the two treatment groups in Example \\@ref(exm:sakk).",
-      booktabs = TRUE, escape = FALSE, caption.placement = "top") %>%
+      booktabs = TRUE, escape = FALSE, caption.placement = "top", 
+      label = NA) %>%
   kable_styling(latex_options = "striped", full_width = FALSE)
 ``` 
 
 
-:::{.example}
+:::{.example #sakk name="continued"}
 Adjusting for baseline values with Cox regression in Example \@ref(exm:sakk):
 :::
 
 ```{r ch37, echo = TRUE, results = "asis"}
 model.cox1 <- coxph(Surv(os, death) ~ trt 
                     + sex, data = dat.tmp)
-knitr::kable(tableRegression(model.cox1, latex = FALSE))
+knitr::kable(tableRegression(model.cox1, latex = FALSE, xtable = FALSE))
 ``` 
 
 The adjusted hazard of death (instantaneous death risk) is increased by 
 $`r round((exp(coef(model.cox1)[1])-1)*100)`$\% for RT relative to RT + CT 
 ($p=`r biostatUZH::formatPval(summary(model.cox1)[[7]][1,5])`$). 
-Women have a $`r round(100*(1-exp(coef(model.cox1)[2])))`$\% reduced hazard of death ($p=`r biostatUZH::formatPval(summary(model.cox1)[[7]][2,5])`$) compared to men. However, there is no evidence for both effects.
+Women have a $`r round(100*(1-exp(coef(model.cox1)[2])))`$\% reduced hazard 
+of death ($p=`r biostatUZH::formatPval(summary(model.cox1)[[7]][2,5])`$) 
+compared to men. However, there is no evidence for a difference 
+in both cases as the corresponding $p$-values are large.
 
 
 
 ## Sample size in survival studies
+Both the *number of events* and the *total number of patients* 
+are of interest in a survival study.
 
 ### Total number of events
-There is a simple formula for the required total number of events @collett (Ch. 10),
+There is a simple formula for the required total number of events [@collett, Chapter 10):
 
 \begin{equation*}
 d = \frac{ 4 (u + v)^2}{ \Delta^2},
 \end{equation*}
 
-where
+where $\Delta$ is the log hazard ratio to be detected.
 
-
--  $\Delta$ is the log hazard ratio to be detected with
--  Type I error rate $\alpha$ ($\rightarrow$ $u = z_{1-\alpha/2}$) and
--  power $1-\beta$  ($\rightarrow$ $v = z_{1-\beta}$).
-
-It can be calculated with the biostatUZH package:
-
+The sample size can be calculated with 
+the `R`function `biostatUZH::survEvents`():
 ```{r echo=TRUE}
 library(biostatUZH)
 survEvents(HR = 0.65, power = 0.9, sig.level=0.05)
@@ -901,18 +883,17 @@ The required total number of patients $n$ can be found from
 n = d / \Pr(\mbox{event}),
 \end{equation*}
 
-where $\Pr(\mbox{event})$ is calculated based on the assumed survival functions in the two groups and assumptions on 
-
-
--  the *accrual period* $a$
--  and the *follow-up period* $f$.
+where $\Pr(\mbox{event})$ is calculated based on the assumed survival 
+functions in the two groups and assumptions on 
+the *accrual period* $a$ and the *follow-up period* $f$.
 
 
 :::{.example}
-Survival of females in lung cancer data is shown in Figure \@ref(fig:gglungcancer).
+The survival probability of females in the lung cancer data from 
+@Loprinzi1994 is shown in Figure \@ref(fig:gglungcancer).
 :::
 
-```{r gglungcancer, echo=TRUE, fig.width = 7, fig.height = 4.6, fig.cap="Kaplan-Meier estimate of the survival curve of females in lung cancer data."}
+```{r gglungcancer, echo=TRUE, fig.width = 7, fig.height = 4.6, fig.cap="Kaplan-Meier estimate of the survival curve of females in the lung cancer data from \\@Loprinzi1994."}
 data(cancer, package = "survival")
 cancer.female <- subset(cancer, sex == 2)
 survObj <- Surv(time = cancer.female$time, 
@@ -921,16 +902,9 @@ fit <- survfit(survObj ~ 1)
 ggsurvplot(fit, data = cancer.female)
 ``` 
 
-In the function biostatUZH::sampleSizeSurvival, we need to specify:
-
--  HR: Hazard Ratio
--  power: power
--  sig.level: significance level
-- a.length: length of accrual period
--  f.length: length of follow-up period
--  dist: "nonp" will take Kaplan-Meier survival curve
--  survfit.ref: Kaplan-Meier survival curve
-
+In order to detect a hazard ratio of $0.65$ with power 90\% for 
+accrual and follow-up time period of 400 days, 
+379 patients are required:
 
 ```{r echo=TRUE}
 res <- sampleSizeSurvival(HR = 0.65, power=.9, sig.level=0.05, 
@@ -984,8 +958,8 @@ fit0 <- coxph(Surv(time, status == 2) ~ trt,
               data = pbc, subset = (id <= 312))
 fit1 <- coxph(Surv(time, status == 2) ~ trt + log(bili) + log(protime),
               data = pbc, subset = (id <= 312))
-knitr::kable(tableRegression(fit0, latex = FALSE))
-knitr::kable(tableRegression(fit1, latex = FALSE))
+knitr::kable(tableRegression(fit0, latex = FALSE, xtable = FALSE))
+knitr::kable(tableRegression(fit1, latex = FALSE, xtable = FALSE))
 ```
 
 A time-dependent analysis includes all measurements. First, we need to prepare the data accordingly. The data preparation below is adopted from vignette \code{timedep.pdf} in library \code{survival}.
@@ -1004,7 +978,7 @@ head(pbc2)
 ## time-dependent fit for first 312 patients
 fit2 <- coxph(Surv(tstart, tstop, death == 2) ~ trt + log(bili) + 
                 log(protime), data = pbc2)
-knitr::kable(tableRegression(fit2, latex = FALSE))
+knitr::kable(tableRegression(fit2, latex = FALSE, xtable = FALSE))
 ```
 
 
@@ -1074,7 +1048,7 @@ ggsurvplot(badfit, xlab = "Years post diagnosis", ylab = "Survival",
 
 ```{r echo=TRUE, results="asis"}
 badcoxfit <- coxph(Surv(time/365.25, status) ~ responder, data = lung)
-knitr::kable(tableRegression(badcoxfit, latex = FALSE))
+knitr::kable(tableRegression(badcoxfit, latex = FALSE, xtable = FALSE))
 ```
 
 There appears to be an effect of tumor response on survival, but it should not have an effect as responders were generated randomly. The analysis is flawed as it violates ``Breslow's first rule'' and is subject to *time-dependent bias*. More precisely, the bias is that the probability to be a responder increases with time.
@@ -1099,7 +1073,7 @@ head(newdata)
 
 ```{r echo=TRUE, results="asis"}
 goodcoxfit <- coxph(Surv(tstart, tstop, endpt==2) ~ response, data=newdata)
-knitr::kable(tableRegression(goodcoxfit, latex = FALSE))
+knitr::kable(tableRegression(goodcoxfit, latex = FALSE, xtable = FALSE))
 ```
 
 In the correct analysis, there is no evidence for an effect of tumor response on survival, as it should be for randomly generated responders.
