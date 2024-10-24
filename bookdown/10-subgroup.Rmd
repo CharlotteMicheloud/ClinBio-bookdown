@@ -6,24 +6,29 @@ investigate whether a treatment effect exists only in a certain
 subgroup of patients. Multiplicity issues arise if there are more than
 one subgroup-defining variables.
 
-Multiplicity issues also arise if more than one outcome are considered
-in a randomized trial. Here we distinguish methods that adjust the
-outcome-specific $p$-values from multivariate methods, which combine the different outcomes in a single analyses. 
+In addition, multiplicity issues also arise if more than one outcome
+are considered in a randomized trial. 
+Here we describe methods that adjust the
+outcome-specific $p$-values and multivariate methods
+which combine the different outcomes in a single analysis. 
 
 ## Subgroup analysis
 
-In a subgroup analysis, the question is whether the treatment effect
+In a subgroup analysis, the objective is to determine whether the treatment effect
 is different for different types of patients. Possible subgroups are
 Male vs. Female, Children vs. Adults etc. Subgroups may also be
 disease-related, for example patients with/without diabetes or
 with/without a certain disease or disease status.
 
-Problems that occur with this type of question are:
-
--  RCTs are usually powered to detect an overall difference between the two treatment groups.  Analyses of subgroups will then have less power to detect
-  a significant difference of the treatment effect between subgroups.
--   If subgroups are defined by many variables, the risk of a false positive (significant) finding increases. 
-  -  The choice of subgroups is difficult. Subgroup analyses are more credible if they were  {\it a priori} specified before the data were collected rather than {\it post hoc}.
+However, there are several problems which might arise.
+First, RCTs are usually powered to detect an overall difference between the two 
+treatment groups.  Analyses of subgroups will then have less power to detect
+a significant difference of the treatment effect between subgroups.
+Moreover, if subgroups are defined by many variables, the risk of a false 
+positive (significant) finding increases. 
+Finally, the choice of subgroups is difficult. 
+Subgroup analyses are more credible if the subgroups were *a priori* specified
+(before the data were collected) rather than *post hoc*.
 
 
 ### Comparing subgroups
@@ -42,28 +47,37 @@ se2 <- sqrt(((0.0311^2 * 102 + 0.0189^2 * 285) + (2.408 - 2.195)^2)/(102 + 285))
 
 
 :::{.example}
-The Neonatal Hypocalcemia trial is a placebo-controlled trial of vitamin D supplementation of expectant mothers for the prevention of neonatal hypocalcemia @matthews (Section 9.2). The primary endpoint is serum calcium level of the babies at 1 week of age. Table \@ref(tab:hypocalcemia) shows the summary-level data for the serum calcium levels in the treatment and placebo groups. It shows it separately for the breast-fed and bottle-fed babies as the question is whether the treatment has a different effect in these two subgroups.
+The Neonatal Hypocalcemia trial is a placebo-controlled trial 
+of vitamin D supplementation of expectant mothers for the prevention of 
+neonatal hypocalcemia [@Cockburn1980].
+The primary endpoint is serum calcium level of the babies at 1 week of age. 
+Table \@ref(tab:hypocalcemia) shows the summary-level data for the serum calcium 
+levels in the treatment and placebo groups. It shows it separately for the
+breast-fed and bottle-fed babies as the question is whether the treatment has a 
+different effect in these two subgroups.
 :::
 
 ```{r hypocalcemia, results='asis'}
 library(knitr)
 library(kableExtra)
 
-# Create the data frame with the table data
-df <- data.frame(
-  Group = c("Breast-fed", "Breast-fed", "Bottle-fed", "Bottle-fed"),
-  Type = rep(c("Supplement", "Placebo"), times = 2),
-  n = c(64, 102, 169, 285),
-  Mean = c(2.445, 2.408, 2.300, 2.195),
-  Var = c(0.0853, 0.0987, 0.0752, 0.1018),
-  SE = c(0.0365, 0.0311, 0.0211, 0.0189)
+
+# Create the data frame
+data <- data.frame(
+  Group = c("", "n", "Mean", "Var", "SE"),
+  `Breast-fed Supplement` = c("", 64, 2.445, 0.0853, 0.0365),
+  `Breast-fed Placebo` = c("", 102, 2.408, 0.0987, 0.0311),
+  `Bottle-fed Supplement` = c("", 169, 2.300, 0.0752, 0.0211),
+  `Bottle-fed Placebo` = c("", 285, 2.195, 0.1018, 0.0189)
 )
 
-# Print the table using kable and kableExtra
-kable(df,
-      caption = "Summary-level data for the Neonatal Hypocalcemia Trial [@matthews].",
-      booktabs = TRUE, escape = FALSE, caption.placement = "top") %>%
-  kable_styling(latex_options = "striped", full_width = FALSE)
+# Create the kable table with multi-row headers
+kable(data, booktabs = TRUE, 
+      col.names = c("", "Supplement", "Placebo", "Supplement", "Placebo"),
+      align = 'c', label = NA, 
+      caption = "Summary-level data for the Neonatal Hypocalcemia Trial [@Cockburn1980]") %>%
+  add_header_above(c(" " = 1, "Breast-fed" = 2, "Bottle-fed" = 2)) %>%
+  kable_styling(latex_options = c("hold_position"))
 ```
 
 
