@@ -222,12 +222,13 @@ $T=\widehat \Delta/{\SE(\widehat \Delta)}$ is unknown. Approximate solutions inc
 <!-- \[ -->
 <!-- \frac{(s_T^2/m+s_C^2/n)^2}{\nu} = \frac{(s_T^2/m)^2}{m-1} + \frac{(s_C^2/n)^2}{n-1} -->
 <!-- \] -->
--  *Behrens Test*, another option that can be derived with Bayesian arguments \citep[Sec. 4.3]{ArmitageBerryMatthews} 
-and is implemented in `biostatUZH::behrensTest()`.
+-  *Behrens Test*, another option that can be derived with Bayesian arguments
+and is implemented in `biostatUZH::behrensTest()`. Details are given in  @ArmitageBerryMatthews (Section 4.3) and @BoxTiao1973 (Section 2.5.3). 
 
--  The *Mann-Whitney Test* which gives a $p$-value that is not compatible with 
+-  The *Mann-Whitney Test* is a nonparametric test which gives a $p$-value that is not compatible with 
 the CI for the mean difference. Instead, it provides a CI for the *median*
-of the difference between a sample from X and a sample from Y.
+of the difference between a sample from X and a sample from Y. The Mann-Whitney Test only uses the ranks of the measurements, 
+so carries less assumptions than the $t$-test, but also has less power. 
 
 
 In `R`
@@ -252,7 +253,10 @@ control group ("difference in location"). Here,
 the difference in location is 1.0 with 95% CI from -2.0 to 6.0.
 
 
+### Permutation test
 
+Yet another option is a permutation test based on a randomization model, see @matthews (Section 7.6) and 
+@Ludbrook1998. 
 
 
 ## Analysis of baseline and follow-up measurements {#sec:baseline}
