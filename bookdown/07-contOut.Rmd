@@ -32,7 +32,7 @@ knitr::include_graphics("figures/abstract2.pdf")
 
 ```{r echo=F}
 library(xtable)
-X <- read.table("data/alphorn.dat",header=TRUE,sep="\t")
+X <- read.table("data/alphorn.dat", header=TRUE,sep="\t")
 X$treatment <- abs(X$group-1)
 X$treatment <- ifelse(X$treatment==0, "Control", "Didgeridoo") 
 X$treatment <- factor(X$treatment, labels=c("Control", "Didgeridoo"))
@@ -123,7 +123,7 @@ plot(model1, which=2, pch=19, col=treatment)
 ```
 
 
-### Assumptions of $t$-test {-}
+#### Assumptions of $t$-test {-}
 
 In a $t$-test, data are assumed to be normally distributed, 
 and the measurements in the two groups to be independent: 
@@ -202,9 +202,29 @@ gamma <- 0.95
 (z <- qnorm((1+gamma)/2))
 ```
 
+In the case of unequal variances, $\sigma_T^2$ and $\sigma^2_C$ are assumed to be
+different and the standard error of $\widehat\Delta$ then is
+
+\begin{equation*}
+  \SE(\widehat \Delta) = \sqrt{\frac{s_T^2}{m} + \frac{s_C^2}{n}},
+\end{equation*}
+where $s_T^2$ and $s_C^2$ are estimates of the variances $\sigma_T^2$ and
+$\sigma_C^2$ in the two groups. In this case, the exact null distribution of
+$T=\widehat \Delta/{\SE(\widehat \Delta)}$ is unknown. Approximate solutions include
+
+-  *Welch's Test*, which uses a $t$-distribution with (non-integer) degrees of freedom.
+-  *Behrens Test*, implemented in `biostatUZH::behrensTest()`.
+-  The *Mann-Whitney Test* which is a nonparametric alternative
+- The permutation test, based on a randomization model, see @matthews 
+(Section 7.6) and 
+@Ludbrook1998. 
+
+With all these methods, adjustments for covariates are not standard. 
+
 ### Welch's test
 
-Welch's test can be used in the case of unequal variances:
+In the Didgeridoo example. 
+
 
 
 <!-- In `R` -->
@@ -233,7 +253,6 @@ There is no evidence for a difference in follow-up means ($p = 0.26$)
 <!-- of the difference between a sample from the Didgeridoo and the  -->
 <!-- control group ("difference in location"). Here,  -->
 <!-- the difference in location is 1.0 with 95% CI from -2.0 to 6.0. -->
-
 
 
 
@@ -378,23 +397,8 @@ plot(model2, which=1, pch=19, col=treatment, add.smooth=FALSE)
 plot(model2, which=2, pch=19, col=treatment)
 ```
 
-In the case of unequal variances, $\sigma_T^2$ and $\sigma^2_C$ are assumed to be
-different and the standard error of $\widehat\Delta$ then is
 
-\begin{equation*}
-  \SE(\widehat \Delta) = \sqrt{\frac{s_T^2}{m} + \frac{s_C^2}{n}},
-\end{equation*}
-where $s_T^2$ and $s_C^2$ are estimates of the variances $\sigma_T^2$ and
-$\sigma_C^2$ in the two groups. In this case, the exact null distribution of
-$T=\widehat \Delta/{\SE(\widehat \Delta)}$ is unknown. Approximate solutions include
-
--  *Welch's Test*, which uses a $t$-distribution with (non-integer) degrees of freedom.
--  *Behrens Test*, implemented in `biostatUZH::behrensTest()`.
--  The *Mann-Whitney Test* which is a nonparametric alternative
-- Permutation test 
-
-With all these methods, adjustments for covariates are not standard. 
-In the Didgeridoo example, both Welch's and Behren's test 
+Both Welch's and Behren's test 
 indicate evidence for a difference in mean change score:
 
 ```{r}
