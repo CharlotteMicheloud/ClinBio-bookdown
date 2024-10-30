@@ -11,34 +11,6 @@ and the reported $P$-value should be compatible with the selected confidence
 interval. 
 Binary outcomes are discussed in Chapter \@ref(contOut). 
 
-
-
-
-
-## Reporting results {#sec:reporting}
-The results of a statistical analysis should be reported as follows:
-
--  The recommended format for CIs is "from $a$ to $b$" or "$a$ to $b$",
-  *not* "$(a,b)$", "$[a,b]$" or "$a-b$".
-  
--  The $P$-values should be rounded to two significant digits, 
-e.g. $p = 0.43$ or $p = 0.057$. 
-If $0.001 < p < 0.0001$, $P$-values should be rounded to one significant digit, 
-e.g. $p=0.0004$. 
-$P$-values should not be reported 
-as $p<0.1$ or $p<0.05$ etc., as important information about the actual
-$P$-value is lost. 
-Only very small $P$-values should be reported with the "<" symbol, e.g.
-"$p < 0.0001$".
-
-
-An example a good reporting is:
-
-"The difference in means at follow-up was 2.28 units 
-(95\% CI: $-1.34$ to $5.90$, $p=0.21$)."
-
-
-## Comparison of two groups 
 :::{.example #didgeridoo}
 The Didgeridoo study [@puhan]
 is a randomized controlled trial with simple randomization. Patients 
@@ -74,7 +46,7 @@ epworth <- rbind(x1, y1)
 baseline <- epworth[,1]
 ```
 
-```{r echo = FALSE, eval = F}
+```{r echo = FALSE, eval = T}
 table(treatment)
 ```
 
@@ -120,23 +92,38 @@ f.up <- epworth[,2]
 
 ``` 
 
+## Comparison of follow-up  measurements
+
+### $t$-test
+
 In order to analyze the difference of the follow-up measurements between the two 
 groups, a $t$-test can be performed:
 ```{r echo=T}
 # t-test
-print(res <- t.test(f.up ~ treatment, var.equal=TRUE))
-(DifferenceInMeans <- mean(res$conf.int))  
+print(tTest1 <- t.test(f.up ~ treatment, var.equal=TRUE))
+(DifferenceInMeans <- mean(tTest1$conf.int))  
 ```
 
-The t-test gives identical results as a linear regression analysis:
+The $t$-test gives identical results as a linear regression analysis:
 ```{r echo=T, results="asis"}
 # regression analysis
 library(biostatUZH)
-m1 <- lm(f.up ~ treatment)
-knitr::kable(tableRegression(m1, intercept=FALSE, latex = FALSE, xtable = FALSE))
+model1 <- lm(f.up ~ treatment)
+knitr::kable(tableRegression(model1, intercept=FALSE, latex = FALSE, xtable = FALSE))
+```
+The advantages of the regression analysis are that it can easily be 
+generalized and that the residuals can be checked.
+In the Didgeridoo study, the regression diagnostics indicate a poor 
+model fit, with signs of variance heterogeneity: 
+
+```{r, echo = TRUE}
+par(mfrow=c(1,2), pty="s", las=1)
+plot(model1, which=1, pch=19, col=treatment)
+plot(model1, which=2, pch=19, col=treatment)
 ```
 
-### $t$-test 
+
+### Assumptions of $t$-test {-}
 
 In a $t$-test, data are assumed to be normally distributed, 
 and the measurements in the two groups to be independent: 
@@ -181,23 +168,33 @@ matplot(grid, cbind(normDensity, tDensity), type="l", lty=c(2, 1), lwd=2, xlab="
 legend("topright", lty=c(2, 1), lwd=2, col=c(1,2), legend=c("standard normal", "t with 23 df"))
 ``` 
 
-The exact two-sided $P$-value $p = \P(\abs{T} \geq \abs{t})$
-using the exact $t$-distribution and the approximate normal distribution is: 
-```{r echo=TRUE}
-print(res$statistic)
-## exact p-value based on t-distribution
-unname(2*(1-pt(abs(res$statistic), df=23)))
-## normal approximation
-unname(2*(1-pnorm(abs(res$statistic))))
+Bartlett's test can be used to test the equality of variance, 
+using the `R` function `bartlett.test()`: 
+
+```{r}
+print(bTest <- bartlett.test(f.up ~ treatment))
 ```
 
-The factors $t$ and $z$ used to compute the limits of exact and approximate 95\% confidence intervals 
-${\widehat \Delta} \pm t % t_{(1+\gamma)/2}%(m+n-2) 
-  \cdot \SE(\widehat \Delta)$ resp. ${\widehat \Delta} \pm z % t_{(1+\gamma)/2}%(m+n-2) 
-  \cdot \SE(\widehat \Delta)$ are compared in the 
-  following `R`-code:
+The test indicates strong evidence for variance heterogeneity ($p= 0.003$), 
+which confirms the earlier findings based on regression diagnostics. 
+
+<!-- The exact two-sided $P$-value $p = \P(\abs{T} \geq \abs{t})$ -->
+<!-- using the exact $t$-distribution and the approximate normal distribution is:  -->
+```{r echo=FALSE}
+print(tTest1$statistic)
+## exact p-value based on t-distribution
+unname(2*(1-pt(abs(tTest1$statistic), df=23)))
+## normal approximation
+unname(2*(1-pnorm(abs(tTest1$statistic))))
+```
+
+<!-- The factors $t$ and $z$ used to compute the limits of exact and approximate 95\% confidence intervals  -->
+<!-- ${\widehat \Delta} \pm t % t_{(1+\gamma)/2}%(m+n-2)  -->
+<!--   \cdot \SE(\widehat \Delta)$ resp. ${\widehat \Delta} \pm z % t_{(1+\gamma)/2}%(m+n-2)  -->
+<!--   \cdot \SE(\widehat \Delta)$ are compared in the  -->
+<!--   following `R`-code: -->
   
-```{r echo=TRUE}
+```{r echo=FALSE}
 gamma <- 0.95
 ## Exact factor t based on t-distribution
 (t <- qt((1+gamma)/2, df=23))
@@ -205,37 +202,22 @@ gamma <- 0.95
 (z <- qnorm((1+gamma)/2))
 ```
 
-### Unequal variances 
+### Welch's test
 
-In the case of unequal variances, $\sigma_T^2$ and $\sigma^2_C$ are assumed to be
-different and the standard error of $\widehat\Delta$ then is
-
-\begin{equation*}
-  \SE(\widehat \Delta) = \sqrt{\frac{s_T^2}{m} + \frac{s_C^2}{n}},
-\end{equation*}
-where $s_T^2$ and $s_C^2$ are estimates of the variances $\sigma_T^2$ and 
-$\sigma_C^2$ in the two groups. In this case, the exact null distribution of
-$T=\widehat \Delta/{\SE(\widehat \Delta)}$ is unknown. Approximate solutions include
-
--  *Welch's Test*, which uses a $t$-distribution with (non-integer) degrees of freedom.
-<!-- $\nu$ where $\nu$ is the solution of -->
-<!-- \[ -->
-<!-- \frac{(s_T^2/m+s_C^2/n)^2}{\nu} = \frac{(s_T^2/m)^2}{m-1} + \frac{(s_C^2/n)^2}{n-1} -->
-<!-- \] -->
--  *Behrens Test*, another option that can be derived with Bayesian arguments \citep[Sec. 4.3]{ArmitageBerryMatthews} 
-and is implemented in `biostatUZH::behrensTest()`.
-
--  The *Mann-Whitney Test* which gives a $p$-value that is not compatible with 
-the CI for the mean difference. Instead, it provides a CI for the *median*
-of the difference between a sample from X and a sample from Y.
+Welch's test can be used in the case of unequal variances:
 
 
-In `R`
+<!-- In `R` -->
 
-```{r echo=T, warning = FALSE}
+```{r echo = TRUE, warning = FALSE}
 ## Welch Test
-print(res2 <- t.test(f.up ~ treatment, var.equal=FALSE))
-print(DifferenceInMeans <- mean(res2$conf.int))
+print(WelchTest1 <- t.test(f.up ~ treatment, var.equal=FALSE))
+
+# print(DifferenceInMeans <- mean(WelchTest1$conf.int))
+
+```
+
+```{r, eval = FALSE, echo = FALSE}
 
 
 ## Behrens Test
@@ -243,13 +225,14 @@ library(biostatUZH)
 behrens.test(f.up ~ treatment)
 
 ## Mann-Whitney Test
-wilcox.test(f.up ~ treatment, conf.int=TRUE)
 ```
 
-`wilcox.test()` provides a confidence interval for the median 
-of the difference between a sample from the Didgeridoo and the 
-control group ("difference in location"). Here, 
-the difference in location is 1.0 with 95% CI from -2.0 to 6.0.
+There is no evidence for a difference in follow-up means ($p = 0.26$)
+
+<!-- `wilcox.test()` provides a confidence interval for the median  -->
+<!-- of the difference between a sample from the Didgeridoo and the  -->
+<!-- control group ("difference in location"). Here,  -->
+<!-- the difference in location is 1.0 with 95% CI from -2.0 to 6.0. -->
 
 
 
@@ -343,10 +326,6 @@ legend("topleft", "Mean", col = "black", lwd = 3, bty = "n", cex=1)
 
 f.up <- epworth[,2]
 
-## %% plot(0,0,type="n",xlim=c(0,1),ylim=ylim1,xlab="",xaxt="n",ylab=ylab[1])
-## %% points(rep(0.25,nx),x1[,2],pch=19)
-## %% points(rep(.75,ny),y1[,2],pch=19)
-## %% axis(1, at=c(0.25,.75), labels=names) 
 ```
 
 
@@ -354,43 +333,77 @@ A change score analysis in \code{R} for the Didgeridoo Study yields:
 
 ```{r echo=T}
 change.score <- f.up - baseline
-print(res3 <- t.test(change.score ~ treatment, var.equal=TRUE))
-(DifferenceInMeans <- mean(res3$conf.int))  
+print(tTest2 <- t.test(change.score ~ treatment, var.equal=TRUE))
+(DifferenceInMeans <- mean(tTest2$conf.int))  
 ```
 
-Let us know define some notation. The outcome means 
+<!-- Let us know define some notation. The outcome means  -->
 
-- at Baseline in both groups is $\mu_B$,
-- at Follow-up in the control group is $\mu$, and
-- at Follow-up in the treatment group is $\mu + \Delta$.
+<!-- - at Baseline in both groups is $\mu_B$, -->
+<!-- - at Follow-up in the control group is $\mu$, and -->
+<!-- - at Follow-up in the treatment group is $\mu + \Delta$. -->
 
-The mean difference $\Delta$ is of primary interest. We assume a common 
-variance $\sigma^2$ of all measurements, and $n$ observations in each group.
-The correlation between 
-baseline and follow-up measurements is defined as $\rho$. 
-The estimated difference of mean follow-up measurements is denoted 
-by $\widehat\Delta_1$ and the estimated difference of mean change 
-scores by $\widehat\Delta_2$. Both estimates are unbiased (assuming baseline balance).
+<!-- The mean difference $\Delta$ is of primary interest. We assume a common  -->
+<!-- variance $\sigma^2$ of all measurements, and $n$ observations in each group. -->
+<!-- The correlation between  -->
+<!-- baseline and follow-up measurements is defined as $\rho$.  -->
+<!-- The estimated difference of mean follow-up measurements is denoted  -->
+<!-- by $\widehat\Delta_1$ and the estimated difference of mean change  -->
+<!-- scores by $\widehat\Delta_2$. Both estimates are unbiased (assuming baseline balance). -->
 
-The variance of these estimates is
-$\Var(\widehat\Delta_1) = 2\sigma^2/n$ and 
-$\Var(\widehat\Delta_2) = 4\sigma^2(1 - \rho)/n$, respectively. 
-The estimate $\widehat\Delta_2$ will thus have smaller variance than 
-$\widehat\Delta_1$ for $\rho > 1/2$, 
-and it will produce narrower confidence intervals and 
-more powerful tests. 
-In the Didgeridoo study, the estimated correlation $\hat \rho = 0.72$.
+<!-- The variance of these estimates is -->
+<!-- $\Var(\widehat\Delta_1) = 2\sigma^2/n$ and  -->
+<!-- $\Var(\widehat\Delta_2) = 4\sigma^2(1 - \rho)/n$, respectively.  -->
+<!-- The estimate $\widehat\Delta_2$ will thus have smaller variance than  -->
+<!-- $\widehat\Delta_1$ for $\rho > 1/2$,  -->
+<!-- and it will produce narrower confidence intervals and  -->
+<!-- more powerful tests.  -->
+<!-- In the Didgeridoo study, the estimated correlation $\hat \rho = 0.72$. -->
 
 The change score analysis can also be done with a regression: 
 
 ```{r, echo = TRUE}
 # Change score analysis
-m2 <- lm(f.up ~ treatment + offset(baseline))
-knitr::kable(tableRegression(m2, intercept=FALSE,
+model2 <- lm(f.up ~ treatment + offset(baseline))
+knitr::kable(tableRegression(model2, intercept=FALSE,
                              latex = FALSE, xtable = FALSE))
 ```
 
 The `offset(x)` command fixes the coefficient of `x` at 1.
+
+The regression diagnostics show a somewhat better model fit: 
+```{r}
+par(mfrow=c(1,2), pty="s", las=1)
+plot(model2, which=1, pch=19, col=treatment, add.smooth=FALSE)
+plot(model2, which=2, pch=19, col=treatment)
+```
+
+In the case of unequal variances, $\sigma_T^2$ and $\sigma^2_C$ are assumed to be
+different and the standard error of $\widehat\Delta$ then is
+
+\begin{equation*}
+  \SE(\widehat \Delta) = \sqrt{\frac{s_T^2}{m} + \frac{s_C^2}{n}},
+\end{equation*}
+where $s_T^2$ and $s_C^2$ are estimates of the variances $\sigma_T^2$ and
+$\sigma_C^2$ in the two groups. In this case, the exact null distribution of
+$T=\widehat \Delta/{\SE(\widehat \Delta)}$ is unknown. Approximate solutions include
+
+-  *Welch's Test*, which uses a $t$-distribution with (non-integer) degrees of freedom.
+-  *Behrens Test*, implemented in `biostatUZH::behrensTest()`.
+-  The *Mann-Whitney Test* which is a nonparametric alternative
+- Permutation test 
+
+With all these methods, adjustments for covariates are not standard. 
+In the Didgeridoo example, both Welch's and Behren's test 
+indicate evidence for a difference in mean change score:
+
+```{r}
+(WelchTest2 <- t.test(change.score ~ treatment, var.equal=FALSE))
+(BehrensTest2 <- behrens.test(change.score ~ treatment))
+```
+ 
+
+
 
 ### Analysis of covariance
 
@@ -419,13 +432,13 @@ Comparison of the three different analysis methods in the Didgeridoo study:
 
 ```{r echo=T, results="asis"}
 # Follow-up analysis
-m1 <- lm(f.up ~ treatment)
-knitr::kable(tableRegression(m1, intercept=FALSE, 
+model1 <- lm(f.up ~ treatment)
+knitr::kable(tableRegression(model1, intercept=FALSE, 
                              latex = FALSE, xtable = FALSE))
 
 # Change score analysis
-m2 <- lm(f.up ~ treatment + offset(baseline))
-knitr::kable(tableRegression(m2, intercept=FALSE, 
+model2 <- lm(f.up ~ treatment + offset(baseline))
+knitr::kable(tableRegression(model2, intercept=FALSE, 
                              latex = FALSE, xtable = FALSE))
 
 # ANCOVA
@@ -541,7 +554,7 @@ ANCOVA estimate. Computation is illustrated with the `lsmeans` package
 
 library(lsmeans, quietly=TRUE)
 ## raw means
-print(rawMeans <- ref.grid(m2))
+print(rawMeans <- ref.grid(model2))
 
 ## adjusted LS means
 print(adjMeans <- ref.grid(m3, "baseline"))
