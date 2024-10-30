@@ -9,7 +9,7 @@ evidence against the null hypothesis.
 All three should be reported for each outcome of an RCT 
 and the reported $P$-value should be compatible with the selected confidence 
 interval. 
-Binary outcomes are discussed in Chapter \@ref(contOut). 
+Binary outcomes are discussed in Chapter \@ref(binOut). 
 
 :::{.example #didgeridoo}
 The Didgeridoo study [@puhan]
@@ -46,7 +46,7 @@ epworth <- rbind(x1, y1)
 baseline <- epworth[,1]
 ```
 
-```{r echo = FALSE, eval = T}
+```{r echo = TRUE, eval = T}
 table(treatment)
 ```
 
@@ -93,35 +93,11 @@ f.up <- epworth[,2]
 ``` 
 
 ## Comparison of follow-up  measurements
-
 ### $t$-test
 
-In order to analyze the difference of the follow-up measurements between the two 
-groups, a $t$-test can be performed:
-```{r echo=T}
-# t-test
-print(tTest1 <- t.test(f.up ~ treatment, var.equal=TRUE))
-(DifferenceInMeans <- mean(tTest1$conf.int))  
-```
 
-The $t$-test gives identical results as a linear regression analysis:
-```{r echo=T, results="asis"}
-# regression analysis
-library(biostatUZH)
-model1 <- lm(f.up ~ treatment)
-knitr::kable(tableRegression(model1, intercept=FALSE, latex = FALSE, xtable = FALSE))
-```
-The advantages of the regression analysis are that it can easily be 
-generalized and that the residuals can be checked.
-In the Didgeridoo study, the regression diagnostics indicate a poor 
-model fit, with signs of variance heterogeneity: 
-
-```{r, echo = TRUE}
-par(mfrow=c(1,2), pty="s", las=1)
-plot(model1, which=1, pch=19, col=treatment)
-plot(model1, which=2, pch=19, col=treatment)
-```
-
+In order to compare the follow-up measurements between the two 
+groups, a $t$-test can be performed.
 
 #### Assumptions of $t$-test {-}
 
@@ -152,7 +128,7 @@ where $s^2$ is the pooled estimate of the variance $\sigma^2$:
 $$
 s^2 = \frac{(m - 1)s^2_T + (n-1)s^2_C}{m + n - 2}.
 $$
-
+Here $s^2_T$ and $s^2_C$ are the sample variances in the two groups.
 Under the null hypothesis of no effect, the test statistic 
 T follows a $t$-distribution with $m + n - 2$ degrees of freedom (df). 
 For large degrees of freedom, the $t$-distribution is close to a standard normal distribution,  as illustrated in Figure \@ref(fig:tdistr).
@@ -167,6 +143,34 @@ par(las=1)
 matplot(grid, cbind(normDensity, tDensity), type="l", lty=c(2, 1), lwd=2, xlab="x", ylab="density")
 legend("topright", lty=c(2, 1), lwd=2, col=c(1,2), legend=c("standard normal", "t with 23 df"))
 ``` 
+Let us now apply the $t$-test to the follow-up measurements in
+Example \@ref(exm:didgeridoo).
+```{r echo=T}
+# t-test
+print(tTest1 <- t.test(f.up ~ treatment, var.equal=TRUE))
+(DifferenceInMeans <- mean(tTest1$conf.int))  
+```
+There is no evidence for a difference in follow-up 
+means ($P$-value = `r biostatUZH::formatPval(tTest1$p.value)`). 
+The $t$-test gives identical results as a linear regression analysis:
+```{r echo=T, results="asis"}
+# regression analysis
+library(biostatUZH)
+model1 <- lm(f.up ~ treatment)
+knitr::kable(tableRegression(model1, intercept=FALSE, latex = FALSE, xtable = FALSE))
+```
+The advantages of the regression analysis are that it can easily be 
+generalized and that the residuals can be checked.
+In the Didgeridoo study, the regression diagnostics indicate a poor 
+model fit, with signs of variance heterogeneity: 
+
+```{r, echo = TRUE}
+par(mfrow=c(1,2), pty="s", las=1)
+plot(model1, which=1, pch=19, col=treatment)
+plot(model1, which=2, pch=19, col=treatment)
+```
+
+
 
 Bartlett's test can be used to test the equality of variance, 
 using the `R` function `bartlett.test()`: 
@@ -178,29 +182,7 @@ print(bTest <- bartlett.test(f.up ~ treatment))
 The test indicates strong evidence for variance heterogeneity ($p= 0.003$), 
 which confirms the earlier findings based on regression diagnostics. 
 
-<!-- The exact two-sided $P$-value $p = \P(\abs{T} \geq \abs{t})$ -->
-<!-- using the exact $t$-distribution and the approximate normal distribution is:  -->
-```{r echo=FALSE}
-print(tTest1$statistic)
-## exact p-value based on t-distribution
-unname(2*(1-pt(abs(tTest1$statistic), df=23)))
-## normal approximation
-unname(2*(1-pnorm(abs(tTest1$statistic))))
-```
-
-<!-- The factors $t$ and $z$ used to compute the limits of exact and approximate 95\% confidence intervals  -->
-<!-- ${\widehat \Delta} \pm t % t_{(1+\gamma)/2}%(m+n-2)  -->
-<!--   \cdot \SE(\widehat \Delta)$ resp. ${\widehat \Delta} \pm z % t_{(1+\gamma)/2}%(m+n-2)  -->
-<!--   \cdot \SE(\widehat \Delta)$ are compared in the  -->
-<!--   following `R`-code: -->
-  
-```{r echo=FALSE}
-gamma <- 0.95
-## Exact factor t based on t-distribution
-(t <- qt((1+gamma)/2, df=23))
-## Approximate factor z based on normal distribution
-(z <- qnorm((1+gamma)/2))
-```
+### Welch's test
 
 In the case of unequal variances, $\sigma_T^2$ and $\sigma^2_C$ are assumed to be
 different and the standard error of $\widehat\Delta$ then is
@@ -210,30 +192,25 @@ different and the standard error of $\widehat\Delta$ then is
 \end{equation*}
 where $s_T^2$ and $s_C^2$ are estimates of the variances $\sigma_T^2$ and
 $\sigma_C^2$ in the two groups. In this case, the exact null distribution of
-$T=\widehat \Delta/{\SE(\widehat \Delta)}$ is unknown. Approximate solutions include
+$T=\widehat \Delta/{\SE(\widehat \Delta)}$ is unknown. 
+Welch's test is an appropriate solution, and the default in `t.test()`. 
+This test can have non-integer degrees of freedom. 
 
--  *Welch's Test*, which uses a $t$-distribution with (non-integer) degrees of freedom.
--  *Behrens Test*, implemented in `biostatUZH::behrensTest()`.
--  The *Mann-Whitney Test* which is a nonparametric alternative
-- The permutation test, based on a randomization model, see @matthews 
-(Section 7.6) and 
-@Ludbrook1998. 
+<!-- Approximate solutions include -->
 
-With all these methods, adjustments for covariates are not standard. 
+<!-- -  *Welch's Test*, which uses a $t$-distribution with (non-integer) degrees of freedom. -->
+<!-- -  *Behrens Test*, implemented in `biostatUZH::behrensTest()`. -->
+<!-- -  The *Mann-Whitney Test* which is a nonparametric alternative -->
+<!-- - The permutation test, based on a randomization model, see @matthews  -->
+<!-- (Section 7.6) and @Ludbrook1998.  -->
 
-### Welch's test
-
-In the Didgeridoo example. 
-
+<!-- With all these methods, adjustments for covariates are not standard.  -->
 
 
-<!-- In `R` -->
 
 ```{r echo = TRUE, warning = FALSE}
 ## Welch Test
-print(WelchTest1 <- t.test(f.up ~ treatment, var.equal=FALSE))
-
-# print(DifferenceInMeans <- mean(WelchTest1$conf.int))
+print(WelchTest1 <- t.test(f.up ~ treatment, var.equal = FALSE))
 
 ```
 
@@ -248,13 +225,6 @@ behrens.test(f.up ~ treatment)
 ```
 
 There is no evidence for a difference in follow-up means ($p = 0.26$)
-
-<!-- `wilcox.test()` provides a confidence interval for the median  -->
-<!-- of the difference between a sample from the Didgeridoo and the  -->
-<!-- control group ("difference in location"). Here,  -->
-<!-- the difference in location is 1.0 with 95% CI from -2.0 to 6.0. -->
-
-
 
 
 ## Analysis of baseline and follow-up measurements {#sec:baseline}
@@ -348,7 +318,7 @@ f.up <- epworth[,2]
 ```
 
 
-A change score analysis in \code{R} for the Didgeridoo Study yields:
+A change score analysis for the Didgeridoo study using a $t$-test yields:
 
 ```{r echo=T}
 change.score <- f.up - baseline
@@ -356,30 +326,10 @@ print(tTest2 <- t.test(change.score ~ treatment, var.equal=TRUE))
 (DifferenceInMeans <- mean(tTest2$conf.int))  
 ```
 
-<!-- Let us know define some notation. The outcome means  -->
+There is hence evidence for a difference in mean change score 
+between the two groups ($p = `r biostatUZH::formatPval(tTest2$p.value)`$).
 
-<!-- - at Baseline in both groups is $\mu_B$, -->
-<!-- - at Follow-up in the control group is $\mu$, and -->
-<!-- - at Follow-up in the treatment group is $\mu + \Delta$. -->
-
-<!-- The mean difference $\Delta$ is of primary interest. We assume a common  -->
-<!-- variance $\sigma^2$ of all measurements, and $n$ observations in each group. -->
-<!-- The correlation between  -->
-<!-- baseline and follow-up measurements is defined as $\rho$.  -->
-<!-- The estimated difference of mean follow-up measurements is denoted  -->
-<!-- by $\widehat\Delta_1$ and the estimated difference of mean change  -->
-<!-- scores by $\widehat\Delta_2$. Both estimates are unbiased (assuming baseline balance). -->
-
-<!-- The variance of these estimates is -->
-<!-- $\Var(\widehat\Delta_1) = 2\sigma^2/n$ and  -->
-<!-- $\Var(\widehat\Delta_2) = 4\sigma^2(1 - \rho)/n$, respectively.  -->
-<!-- The estimate $\widehat\Delta_2$ will thus have smaller variance than  -->
-<!-- $\widehat\Delta_1$ for $\rho > 1/2$,  -->
-<!-- and it will produce narrower confidence intervals and  -->
-<!-- more powerful tests.  -->
-<!-- In the Didgeridoo study, the estimated correlation $\hat \rho = 0.72$. -->
-
-The change score analysis can also be done with a regression: 
+The change score analysis can also be done with a regression model: 
 
 ```{r, echo = TRUE}
 # Change score analysis
@@ -397,29 +347,210 @@ plot(model2, which=1, pch=19, col=treatment, add.smooth=FALSE)
 plot(model2, which=2, pch=19, col=treatment)
 ```
 
+As a sensitivity analysis, other tests can be applied: 
 
+- Welch's test,
+- Behren's test, using `biostatUZH::behrens.test()`, which 
+can be derived with Bayesian arguments,
+- Mann Whitney test, a nonparametric alternative,
+- Permutation test, which follows the randomization model approach. 
+
+Adjustments for covariates are not standard with all these methods. 
+
+#### Welch's and Behrens' tests {-}
 Both Welch's and Behren's test 
 indicate evidence for a difference in mean change score:
 
-```{r}
+```{r, echo = TRUE}
 (WelchTest2 <- t.test(change.score ~ treatment, var.equal=FALSE))
 (BehrensTest2 <- behrens.test(change.score ~ treatment))
 ```
- 
+
+#### Mann-Whitney test {-}
+Mann-Whitney test gives a confidence for the median of the 
+difference between a sample from the Didgeridoo and the control 
+group (`difference in location`), which is hard to interpret: 
+
+```{r, echo = TRUE, warning = FALSE}
+(MWTest2 <- wilcox.test(change.score ~ treatment, conf.int=TRUE))
+```
+
+Mann-Whitney test has less assumptions that the $t$-test, but 
+also less power. 
+
+#### Permutation test {-} 
+An alternative method to compute a $p$-value is the permutation test based on 
+the randomisation model. The idea is that, under the null hypothesis 
+$H_0$, the mean difference does not 
+depend on the treatment allocation. The distribution of the mean difference 
+under $H_0$ is derived under all possible permutations of treatment 
+allocation. The comparison with the observed difference then 
+gives a $p$-value. In practice, a Monte Carlo random sample is 
+taken from all possible permutations. This approach can be extended to 
+stratified randomisation, etc. Figure \@ref(fig:permut) illustrated the 
+permutation test for the change score analysis. Not that in total, 
+there are ${25 \choose 14} \approx `r round(choose(25, 14)/1000000, 1)`$ 
+Mio. distinct permutations of treatment allocation.
+
+```{r permut, echo = FALSE, fig.cap = "Mean difference in change score analysis based on 10000 random permutations"}
+
+alphorn   <- read.csv("data/alphorn.csv", sep = ",", as.is = TRUE)
+alphorn$group_alp <- factor(alphorn$group, levels = 0:1, labels = c("Didgeridoo", "Kontrollgruppe"))
+alphorn$sex_f <- factor(alphorn$gender, levels = 0:1, labels = c("Mann", "Frau"))
+dat <- alphorn
 
 
+data1 <- alphorn[alphorn$group_alp == "Didgeridoo", "change_e"]
+data2 <- alphorn[alphorn$group_alp == "Kontrollgruppe", "change_e"]
+d <- c(data1, data2)
+
+n1 <- length(data1)
+n2 <- length(data2)
+n <- n1 + n2
+
+diff <- function(d1, d2){
+  return(mean(d1, na.rm = TRUE) - mean(d2, na.rm = TRUE))
+}
+
+obs.diff <- diff(data1, data2)
+niter <- 9999
+diff.permut <- rep(NA, niter)
+set.seed(03072008)
+
+for(i in 1:niter){
+ s <- sample(n, n1)
+ diff.permut[i] <- diff(d[s], d[-s])
+}
+
+xm <- ceiling(max(-min(diff.permut),max(diff.permut)))
+b <- seq(-xm, xm, by = .5)
+hist(diff.permut, xlab="Mean difference", breaks=b, col="white",
+     border = histborder, las = 1)
+T <- obs.diff
+
+## rechts von -T
+colarea <- colpal4[3]
+ind <- (b >= -T) * c(1:length(b))
+ind <- ind > 0
+h <- hist(diff.permut, breaks = b, plot = FALSE)
+rect(b[ind], 0, c(b[ind][-1], max(b) + 1), h$density[ind], col = colarea)
+rect(-T, 0, min(b[b > -T]), rev(h$density[b <= T])[1], col = colarea)
+lines(c(-T, -T), c(0,0.09), col = colpal4[1], lwd=lwd.lines + 2, lty =1)
+
+## links von T
+ind <- (b <= T) * c(1:length(b))
+ind <- ind > 0
+rect(b[ind], 0, c(b[ind][-1], T), h$density[ind][1:(length(ind) - 1)], col = colarea)
+lines(c(T, T), c(0,0.09), col = colpal4[1], lwd=lwd.lines + 2, lty =1)
+text(obs.diff-0.9, 0.12, adj=0, paste("Observed difference \n = ", as.character(format(obs.diff, nsmall=2, digits=2)), sep=""), col=colpal4[1], cex=1.5)
+text(-obs.diff-0.3, 0.1125, adj=0, paste("", as.character(format(-obs.diff, nsmall=2, digits=2)), sep=""), col=colpal4[1], cex=1.5)
+pPermute <- mean(abs(obs.diff)<abs(diff.permut))
+text(3, 0.2, paste("two-sided\np = ", as.character(round(pPermute,3)), sep=""),
+     adj = 0, font = 2, col=colarea)
+text(3.8, 0.04, paste("p=", as.character(round(mean(-obs.diff < diff.permut),3)), sep=""),
+     adj = 0, font = 2, col=colarea)
+text(-4.7, 0.04, paste("one-sided\np=", as.character(round(mean(obs.diff > diff.permut),3)), sep=""),
+     adj = 0, font = 2, col=colarea)
+
+ptestlower <- quantile(probs=0.025, diff.permut) - obs.diff
+ptestupper <- quantile(probs=0.975, diff.permut) - obs.diff
+
+ptestCI <- c(ptestlower, ptestupper)
+```
+
+#### Summary of sensitivity analysis {-}
+
+```{r}
+library(knitr)
+library(kableExtra)
+
+# Create a data frame with the results
+results <- data.frame(
+  Method = c("t-test",
+             "Welch's test",
+             "Behrens' test",
+             "Mann-Whitney test",
+             "Permutation test"),
+  `p-value` = c(formatPval(tTest2$p.value),
+                 formatPval(WelchTest2$p.value),
+                 formatPval(BehrensTest2$p.value),
+                 formatPval(MWTest2$p.value),
+                 formatPval(pPermute)),
+  `95% confidence interval` = c(
+    paste0(format(tTest2$conf.int[1], digits=2, nsmall=2), " to ", 
+           format(tTest2$conf.int[2], digits=2, nsmall=2)),
+    paste0(format(WelchTest2$conf.int[1], digits=2, nsmall=2), " to ",
+           format(WelchTest2$conf.int[2], digits=2, nsmall=2)),
+    paste0(format(BehrensTest2$conf.int[1], digits=2, nsmall=2), " to ",
+           format(BehrensTest2$conf.int[2], digits=2, nsmall=2)),
+    paste0(round(MWTest2$conf.int[1], digits=2), ".00 to ",
+           format(MWTest2$conf.int[2], digits=2, nsmall=2)),
+    paste0(format(ptestCI[1], digits=2, nsmall=2), " to ",
+           format(ptestCI[2], digits=2, nsmall=2))
+  ), 
+  check.names = FALSE
+)
+
+colnames(results) <- gsub("^X", "", colnames(results))  # Remove 'X' from column names if needed
+# Create a kable
+kable(results, 
+      caption = "Sensitivity analysis",
+      align = "lcc", label = NA) %>%
+  kable_styling("striped", full_width = F)
+```
+
+
+The question now is: which test to chose? The statistical 
+analysis should be pre-specified in the analysis plan, and 
+the other results reported as sensitivity analyses.
+
+#### Comparison of effect estimates {-}
+
+
+Let us know define some notation. The outcome means
+
+- at Baseline in both groups is $\mu_B$,
+- at Follow-up in the control group is $\mu$, and
+- at Follow-up in the treatment group is $\mu + \Delta$.
+
+The mean difference $\Delta$ is of primary interest. We assume a common
+variance $\sigma^2$ of all measurements, and $n$ observations in each group.
+The correlation between
+baseline and follow-up measurements is defined as $\rho$.
+The estimated difference of mean follow-up measurements is denoted
+by $\widehat\Delta_1$ and the estimated difference of mean change
+scores by $\widehat\Delta_2$. Both estimates are unbiased (assuming baseline balance).
+
+The variance of these estimates is
+$\Var(\widehat\Delta_1) = 2\sigma^2/n$ and
+$\Var(\widehat\Delta_2) = 4\sigma^2(1 - \rho)/n$, respectively.
+The estimate $\widehat\Delta_2$ will thus have smaller variance than
+$\widehat\Delta_1$ for $\rho > 1/2$,
+and it will produce narrower confidence intervals and
+more powerful tests.
+In the Didgeridoo study, the estimated correlation $\hat \rho = 0.72$.
 
 ### Analysis of covariance
+
+
 
 *Analysis of covariance* (ANCOVA) is an extension of the change score analysis:
 
 ```{r, echo = TRUE}
-m3 <- lm(f.up ~ treatment + baseline)
-knitr::kable(tableRegression(m3, intercept = FALSE, 
+model3 <- lm(f.up ~ treatment + baseline)
+knitr::kable(tableRegression(model3, intercept = FALSE, 
                              latex = FALSE, xtable = FALSE))
 ```
 
 Now the coefficient of `baseline` is estimated from the data.
+
+The regression diagnostics indicate a good model fit: 
+```{r, echo = TRUE}
+par(mfrow=c(1,2), pty="s", las=1)
+plot(model3, which=1, pch=19, col=treatment, add.smooth=FALSE)
+plot(model3, which=2, pch=19, col=treatment)
+```
+
 
 Let us denote the coefficient of the baseline variable as $\beta$.
 The ANCOVA model reduces to the analysis of follow-up for $\beta = 0$, 
@@ -446,8 +577,8 @@ knitr::kable(tableRegression(model2, intercept=FALSE,
                              latex = FALSE, xtable = FALSE))
 
 # ANCOVA
-m3 <- lm(f.up ~ treatment + baseline)
-knitr::kable(tableRegression(m3, intercept = FALSE, 
+model3 <- lm(f.up ~ treatment + baseline)
+knitr::kable(tableRegression(model3, intercept = FALSE, 
                              latex = FALSE, xtable = FALSE))
 ```
 
@@ -461,7 +592,7 @@ knitr::kable(tableRegression(m3, intercept = FALSE,
 
 
 
-#### Comparison of effect estimates {-}
+#### Conditioning on baseline values {-}
 
 <!-- Let $\bar F_T$ and $\bar F_C$ be the mean follow-up values  -->
 <!-- and $\bar B_T$ and $\bar B_C$ the mean baseline values in the treatment  -->
@@ -500,7 +631,7 @@ which is always smaller than the variances of
 $\widehat \Delta_1$ and $\widehat \Delta_2$. 
 This means that the treatment effect estimate has a smaller standard error. 
 As a result, the required sample size for ANCOVA reduces by the factor 
-$1- \rho^2$ compared to the standard comparison of two groups 
+$\rho^2$ compared to the standard comparison of two groups 
 without baseline adjustments. 
 
 
@@ -561,7 +692,7 @@ library(lsmeans, quietly=TRUE)
 print(rawMeans <- ref.grid(model2))
 
 ## adjusted LS means
-print(adjMeans <- ref.grid(m3, "baseline"))
+print(adjMeans <- ref.grid(model3, "baseline"))
 ```
 
 ```{r lsmeans2, echo = FALSE}
@@ -597,8 +728,8 @@ base.apnoea <- ah1
 ```
 
 ```{r echo=T, results="asis"}
-m4 <- lm(f.up ~ treatment + baseline + weight.change + base.apnoea)
-knitr::kable(tableRegression(m4, intercept = FALSE, latex = FALSE, xtable = FALSE))
+model4 <- lm(f.up ~ treatment + baseline + weight.change + base.apnoea)
+knitr::kable(tableRegression(model4, intercept = FALSE, latex = FALSE, xtable = FALSE))
 ``` 
 
 

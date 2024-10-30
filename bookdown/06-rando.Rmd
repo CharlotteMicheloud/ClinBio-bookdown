@@ -373,6 +373,29 @@ knitr::include_graphics("figures/consort-flow-diagram.png")
 ```
 
 
+## Reporting results {#sec:reporting}
+The results of a statistical analysis should be reported as follows:
+
+-  The recommended format for CIs is "from $a$ to $b$" or "$a$ to $b$",
+  *not* "$(a,b)$", "$[a,b]$" or "$a-b$".
+  
+-  The $P$-values should be rounded to two significant digits, 
+e.g. $p = 0.43$ or $p = 0.057$. 
+If $0.001 < p < 0.0001$, $P$-values should be rounded to one significant digit, 
+e.g. $p=0.0004$. 
+$P$-values should not be reported 
+as $p<0.1$ or $p<0.05$ etc., as important information about the actual
+$P$-value is lost. 
+Only very small $P$-values should be reported with the "<" symbol, e.g.
+"$p < 0.0001$".
+
+
+An example a good reporting is:
+
+"The difference in means at follow-up was 2.28 units 
+(95\% CI: $-1.34$ to $5.90$, $p=0.21$)."
+
+
 
 ## Additional references
  
