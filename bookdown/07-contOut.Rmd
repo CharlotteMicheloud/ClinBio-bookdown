@@ -179,8 +179,13 @@ using the `R` function `bartlett.test()`:
 print(bTest <- bartlett.test(f.up ~ treatment))
 ```
 
-The test indicates strong evidence for variance heterogeneity ($p= 0.003$), 
-which confirms the earlier findings based on regression diagnostics. 
+The test indicates strong evidence for variance heterogeneity ($p=
+0.003$), which confirms the earlier findings based on regression
+diagnostics.  However, it is not recommended to pre-test for equal
+variances and then choose between a $t$-test or Welch's test. Such a
+two-stage procedure fails to control the Type-I error rate and usually
+makes the situation worse, see @Zimmerman2004.
+
 
 ### Welch's test
 
