@@ -46,7 +46,7 @@ se2 <- sqrt(((0.0311^2 * 102 + 0.0189^2 * 285) + (2.408 - 2.195)^2)/(102 + 285))
 
 
 
-:::{.example}
+:::{.example #neonat}
 The Neonatal Hypocalcemia trial is a placebo-controlled trial 
 of vitamin D supplementation of expectant mothers for the prevention of 
 neonatal hypocalcemia [@Cockburn1980].
@@ -90,25 +90,92 @@ se <- sqrt(var/n)
 ```
 
 
-To estimate the treatment effects in these two subgroups, we use the function printWaldCI() from biostatUZH.
+
+
+#### Test for interaction {-}
+
+The correct approach to investigate whether there is a subgroup effect 
+is a *test for interaction*. Suppose we have two subgroups defined by males
+(M) and females (F). To investigate if the treatment effect $\theta$ differs
+between subgroups we consider the
+*subgroup difference*
+     \[
+     \Delta \hat {\theta} = \hat
+     \theta^{\tiny{\mbox{M}}} - \hat \theta^{\tiny{\mbox{F}}},
+     \]
+where $\hat \theta^{\tiny{\mbox{M}}}$ and $\hat \theta^{\tiny{\mbox{F}}}$
+are the estimated treatment effects for males and females, respectively.
+Based on the standard error
+     \[
+     \SE(\Delta \hat {\theta}) = \sqrt{\SE^2(\hat \theta^{\tiny{\mbox{M}}})+
+     \SE^2(\hat \theta^{\tiny{\mbox{F}}})},
+     \]
+tests and confidence intervals can be constructed.
+
+The test for interaction is known in meta-analysis as the
+$Q$-test for heterogeneity and can also be used for more than two groups. 
+Alternatively, a regression model with *interaction* between treatment and
+subgroup could be used, if individual-level data are available.
+
+The test for interaction can be performed with the 
+function `biostatUZH::printWaldCI()`.
+
+:::{.example #neonat name="continued"}
+In the Neonatal Hypocalcemia trial, there is *no evidence* for 
+a different treatment effect in the two subgroups 
+($p=0.22$). Perhaps the study sample size and specifically the
+breast-fed group ($n=`r myn[1]`$) was too small to provide such evidence.
+:::
+
+```{r echo=T}
+# Breast-fed babies:
+theta.breast <- mean[1] - mean[2]
+se.breast <- sqrt(se[1]^2 + se[2]^2)
+
+# Bottle-fed babies:
+theta.bottle <- mean[3] - mean[4]
+se.bottle <- sqrt(se[3]^2 + se[4]^2)
+
+
+theta.diff <- theta.breast - theta.bottle
+se.diff <- sqrt(se.breast^2 + se.bottle^2)
+printWaldCI(theta.diff, se.diff)
+```     
+
+It is tempting to consider the treatment effect separately in each
+subgroup and to assess the existence of a *treatment interaction*
+based on an informal comparison of the $p$-values in each subgroup. As
+shown in Figure \@ref(fig:hypocalcemiafig), for breast-fed and bottle-fed
+babies we obtain $p=0.44$ and $p=0.0002$, respectively, so one may
+argue that the two $p$-values are very different and conclude that
+there is a subgroup difference. However, this constitutes an erroneous
+and flawed reasoning.  This becomes obvious in the following example:
+Suppose the effect estimates in the two groups are identical but the
+sample sizes are different such that one of the subgroups has a
+significant treatment effect whereas the treatment effect is
+non-significant in the other group. The difference in the $p$-values
+is then only a result of different sample sizes, without any difference
+in effect sizes. Indeed, with equal effect sizes in the
+two groups, the test for interaction will return a $p$-value of 1.0,
+so no evidence for a subgroup difference whatsoever. 
+This example clearly illustrates, that we need to
+compare effect sizes and not $p$-values to establish evidence for a
+difference between subgroups [@SN_interaction]. 
+
 
 ```{r echo=TRUE}
 library(biostatUZH)
 
 # Breast-fed babies:
-theta.breast <- mean[1] - mean[2]
-se.breast <- sqrt(se[1]^2 + se[2]^2)
 printWaldCI(theta.breast, se.breast)
 
 # Bottle-fed babies:
-theta.bottle <- mean[3] - mean[4]
-se.bottle <- sqrt(se[3]^2 + se[4]^2)
 printWaldCI(theta.bottle, se.bottle)
 ```
 
 
 
-```{r hypocalcemiafig, fig.cap = "reatment effects and $p$-values for each subgroup in the Neonatal Hypocalcemia Trial", echo=F, warning=FALSE, fig.height=3, fig.width=5.5}
+```{r hypocalcemiafig, fig.cap = "Treatment effects and $p$-values for each subgroup in the Neonatal Hypocalcemia Trial.", echo=F, warning=FALSE, fig.height=3, fig.width=5.5}
 library(gplots)
 
 eff <- c(0.037, 0.105)
@@ -133,65 +200,6 @@ for(i in 1:2){
 }
 ```
 
-The estimated treatment effects are shown in Figure \@ref(fig:hypocalcemiafig) together with confidence intervals and $p$-values.
-
-
-
-#### Test for interaction
-The correct approach to investigate whether there is a subgroup effect 
-is a *test for interaction*. Suppose we have two subgroups defined by males (M) and females (F). To investigate if the treatment effect $\theta$ differs between subgroups we consider the
-%%     truct a *test of interaction* with
-*subgroup difference*
-     \[
-     \Delta \hat {\theta} = \hat
-     \theta^{\tiny{\mbox{M}}} - \hat \theta^{\tiny{\mbox{F}}}
-     \]
-where $\hat \theta^{\tiny{\mbox{M}}}$ and $\hat \theta^{\tiny{\mbox{F}}}$
-are the estimated treatment effects for males and females, respectively.
-Based on the standard error
-     \[
-     \SE(\Delta \hat {\theta}) = \sqrt{\SE^2(\hat \theta^{\tiny{\mbox{M}}})+\SE^2(\hat \theta^{\tiny{\mbox{F}}})},
-     \]
-tests and confidence intervals can be constructed.
-
-The test for interaction is known in meta-analysis as the
-$Q$-test for heterogeneity and can also be used for more than two groups. Alternatively, a regression model with \alert{interaction} between treatment and subgroup could be used, if individual-level data are available.
-
-
-:::{.example}
-The test for interaction can be performed with the 
-function printWaldCI() from biostatUZH.
-:::
-
-```{r echo=T}
-theta.diff <- theta.breast - theta.bottle
-se.diff <- sqrt(se.breast^2 + se.bottle^2)
-printWaldCI(theta.diff, se.diff)
-```     
-
-In the Neonatal Hypocalcemia trial, there is *no evidence* for a different treatment effect in the two subgroups ($p=0.22$). Perhaps the study sample size and specifically the breast-fed group ($n=`r myn[1]`$) was too small to provide such evidence.
-
-
-
-It is tempting to consider the treatment effect separately in each
-subgroup and to assess the existence of a *treatment interaction*
-based on an informal comparison of the $p$-values in each subgroup. As
-shown in Figure \@ref(fig:hypocalcemiafig), for breast-fed and bottle-fed
-babies we obtain $p=0.44$ and $p=0.0002$, respectively, so one may
-argue that the two $p$-values are very different and conclude that
-there is a subgroup difference. However, this constitutes an erroneous
-and flawed reasoning.  This becomes obvious in the following example:
-Suppose the effect estimates in the two groups are identical but the
-sample sizes are different such that one of the subgroups has a
-significant treatment effect whereas the treatment effect is
-non-significant in the other group. The difference in the $p$-values
-is then only a result of different sample sizes, without any difference
-in effect sizes. Indeed, with equal effect sizes in the
-two groups, the test for interaction will return a $p$-value of 1.0,
-so no evidence for a subgroup difference whatsoever. 
-This example clearly illustrates, that we need to
-compare effect sizes and not $p$-values to establish evidence for a
-difference between subgroups [@SN_interaction]. 
 
 
 
@@ -206,28 +214,36 @@ ratios tend to be closer to normal then [@SN_interactionrev].
 
 ### Selecting subgroups
 
-The risk of *false positive findings* increases with increasing number of subgroup comparisons. For example, if we compare treatment effects in 20 different subgroups, then we would expect one of the analyses to yield a significant result (at $\alpha=5\%$), even if the treatment effect is the same in all subgroups ($H_0$).
-%% This result follows from the (approximate) uniform
-%% distribution of a (two-sided) $p$-value under $H_0$ 
-%% and holds even if the $p$-values are dependent. 
-If the subgroups have been selected *before* the data were collected based on biological or clinical reasoning, then positive (significant) findings are more trustworthy than if subgroups have been defined _post hoc_.
+The risk of *false positive findings* increases with increasing number of
+subgroup comparisons. For example, if we compare treatment effects in 20 
+different subgroups, then we would expect one of the analyses to yield a 
+significant result (at $\alpha=5\%$), even if the treatment effect is the 
+same in all subgroups (under the null hypothesis $H_0$).
+If the subgroups have been selected *before* the data were collected based on 
+biological or clinical reasoning, then positive (significant) findings are more 
+trustworthy than if subgroups have been defined _post hoc_.
 
-### Qualitative and quantitative interaction
+### Qualitative and quantitative interaction 
+
 The test for interaction tests the null hypothesis 
 $H_0$: $\theta_1 = \theta_2 = \ldots = \theta_I$ 
 of equal treatment effects $\theta_i$ in $i=1,\ldots,I$ subgroups. 
 This is known as the $Q$-test in meta-analysis. 
-A useful distinction between *quantitative* and *qualitative* interactions (subgroup differences) has been made.
+A useful distinction between *quantitative* and 
+*qualitative* interactions (subgroup differences) has been made.
 
 
 :::{.definition}
-1. For a *quantitative interaction*, the size of the treatment effect $\theta_i$ varies between subgroups $i=1,\ldots,I$, but is always *in the same direction*.
-2.  For a *qualitative interaction*, also the *direction of the treatment effect varies* between subgroups.
+1. For a *quantitative interaction*, the size of the treatment effect 
+$\theta_i$ varies between subgroups $i=1,\ldots,I$, but is always 
+*in the same direction*.
+2.  For a *qualitative interaction*, also the *direction of the 
+treatment effect varies* between subgroups.
 :::
 
 It has been argued that quantitative interactions are not surprising, whereas qualitative interactions are of greater clinical importance.
 
-#### The method of Gail and Simon
+#### The method of Gail and Simon {-}
 
 The *Gail-Simon test* is a modified test for interaction with null hypothesis that there is no *qualitative* interaction [@gailsimon], \ie 
 \[
@@ -247,13 +263,20 @@ Q^+ = \sum_{i: \hat \theta_i \geq 0} T_i^2 & \mbox{ and } &
 Q^- = \sum_{i: \hat \theta_i < 0} T_i^2
 \end{eqnarray*}
 
-with $T_i=\hat \theta_i/\SE(\hat \theta_i)$ being the test statistics in each subgroup $i$. The reference distribution for $T$ is a mixture of $I-1$ $\chi^2$-distributions, so we use statistical software to calculate a $p$-value, as implemented in biostatUZH::gailSimon().
+with $T_i=\hat \theta_i/\SE(\hat \theta_i)$ being the test statistics in each
+subgroup $i$. The reference distribution for $T$ is non-standard, 
+so we use statistical software to calculate a $p$-value, as implemented in `biostatUZH::gailSimon()`.
 
-An alternative method is based on pairwise comparisons of simultaneous confidence intervals [@panwolfe].
 
-
-:::{.example}
-  In the  National Surgical Adjuvant Breast and Bowel Project  Trial @{matthews} (Section 9.2), the outcome was the proportion disease-free survival at 3 years, comparing chemotherapy (PF) only versus chemotherapy plus tamoxifen (PFT) for the treatment of Breast Cancer. The proportion difference $\theta$ is positive if disease free survival is more likely under PF. Four subgroups based on the progesterone receptor status (PR) and age are considered, see Table \@ref(tab:breastcancer) and Figure \@ref(fig:tamoxifen). There appears to be an advantage to PF in one of the four subgroups while PFT seems preferable in the other three subgroups.
+:::{.example #breast}
+In the  National Surgical Adjuvant Breast and Bowel Project Trial [@Fisher1983] 
+(Section 9.2), the outcome was disease-free survival at 3 years,
+comparing chemotherapy (PF) only versus chemotherapy plus tamoxifen (PFT) 
+for the treatment of Breast Cancer. 
+The risk difference $\theta$ is positive if disease free survival is more 
+likely under PF. Four subgroups based on the progesterone receptor status (PR)
+and age are considered, see Table \@ref(tab:breastcancer) and 
+Figure \@ref(fig:tamoxifen).
 :::
 
 ```{r, echo = FALSE}
@@ -272,20 +295,21 @@ p <- formatPval(p)
 # Creating a data frame for the table
 # Create a data frame with the appropriate structure
 df <- data.frame(
-  Metric = c("Difference in proportions $\\widehat{\\theta}$", 
+  Metric = c("Risk difference $\\widehat{\\theta}$", 
              "$\\SE(\\widehat{\\theta})$", 
              "$\\widehat{\\theta}/\\SE(\\widehat{\\theta})$", 
              "$p$-value"),
   "Age < 50" = c(rd[1], se.rd[1], tp[1], p[1]),
   "Age >= 50" = c(rd[2], se.rd[2], tp[2], p[2]),
   "Age < 50" = c(rd[3], se.rd[3], tp[3], p[3]),
-  "Age >= 50" =c(rd[4], se.rd[4], tp[4], p[4])
+  "Age >= 50" =c(rd[4], se.rd[4], tp[4], p[4]), 
+  check.names = FALSE
 )
 
 df <- as.data.frame(df, keep.rownames = TRUE)
 
 kable(df, booktabs = TRUE, escape = FALSE, 
-      caption = "Subgroups by age and progesterone receptor status (PR) in the National Surgical Adjuvant Breast and Bowel Project Trial (Matthews, 2023).") %>%
+      caption = "Subgroups by age and progesterone receptor status (PR) in the National Surgical Adjuvant Breast and Bowel Project Trial [@Fisher1983].", label = NA) %>%
   kable_styling(latex_options = "hold_position") %>%
   add_header_above(c(" " = 1, "PR < 10 fmol" = 2, "PR >= 10 fmol" = 2)) %>%
   column_spec(1, bold = TRUE)
@@ -333,12 +357,12 @@ pQ <- formatPval(mymeta$pval.Q)
 pGS <- gailSimon(thetahat = rd, se = rd.se)
 ``` 
 The standard test for interaction gives $p=`r formatPval(mymeta$pval.Q)`$, as application of
-the function \code{meta::metagen()} shows.
+the function `meta::metagen()` shows.
 For the Gail-Simon test, we obtain 
 $T=`r round(sqrt(pGS["statistic"]), 2)`^2=`r round(pGS["statistic"], 2)`$ and 
 $p=`r formatPval(pGS["p-value"])`$.
-So, there is moderate to strong evidence for a quantitative interaction ($p=`r formatPval(mymeta$pval.Q)`$), but only weak evidence for a qualitative interaction 
-($p=`r formatPval(pGS["p-value"])`$).
+So, there is moderate to strong evidence for a quantitative interaction,
+but only weak evidence for a qualitative interaction.
 
 
 ```{r echo=TRUE}
@@ -357,20 +381,24 @@ print(formatPval(pGS))
 ``` 
 
 
-## Methods for multiple outcomes
+## Multiple outcomes
 
-Many clinical trials measure *numerous outcome variables* (primary and secondary) relevant to the condition studied. This raises *multiplicity* problems similar to those encountered when several subgroups are compared.
+Many clinical trials measure *numerous outcome variables* 
+(primary and secondary) relevant to the condition studied. 
+This raises *multiplicity* problems similar to those encountered 
+when several subgroups are compared.
 
 In what follows we assume that no distinction between primary and
 secondary outcomes has been made. In practice the problem of
 multiplicity is often avoided by selecting just one primary outcome.
 If there is more than one primary outcome, multiplicity adjustments
 need to be applied. Multiplicity adjustments can also be applied to
-secondary outcomes, but this is not always required @ich1999statistical.
+secondary outcomes, but this is not always required [@ich1999statistical].
 
 
-:::{.example}
-Additionally to the primary endpoint (Epworth scale), the Didgeridoo Study (see Example \@ref(exm:didgeridoo)) had also secondary endpoints:
+:::{.example #didgeridoo2}
+Additionally to the primary endpoint (Epworth scale), the Didgeridoo Study 
+(see Example \@ref(exm:didgeridoo)) had also secondary endpoints:
 :::
 
 -  Pittsburgh quality of sleep index (range 0-21)
@@ -378,10 +406,13 @@ Additionally to the primary endpoint (Epworth scale), the Didgeridoo Study (see 
 -  Apnoea-hypopnoea index (range 0-36)
 
 
-Figure \@ref(fig:didgeridooBaselineFU) shows the baseline and follow-up (4 months) measurements for the primary and secondary outcomes, compared between the treatment and control group. Change score analyses (using two-sample $t$-tests) have been performed for each of these outcomes, see Table \@ref(tab:didgeridooeffects) or also the published results in Figure \@ref(fig:didgeridootab2).
+Figure \@ref(fig:didgeridooBaselineFU) shows the baseline and follow-up (4 months) measurements for the primary and secondary outcomes, compared between the treatment and control group. Change score analyses (using two-sample $t$-tests) have been performed for each of these outcomes, see Table \@ref(tab:didgeridooeffects) or also the published results
+[@puhan].
 
 
-@puhan have selected the Epworth index as primary outcome, but in what follows we assume that no distinction between primary and secondary outcomes has been made.
+@puhan have selected the Epworth index as primary outcome, but in what 
+follows we assume that no distinction between primary and secondary outcomes 
+has been made.
 
 ```{r echo=F, warning=FALSE}
 alphorn<-read.table("data/alphorn.dat",header=TRUE,sep="\t")
@@ -553,13 +584,15 @@ myoutput4 <- data.frame(
   Estimate = round(D, 1),
   SE = round(SE * SD, 1),
   `t-value` = round(t, 1),
-  `p-value` = as.character(formatPval(p, digits = 2))
+  `p-value` = as.character(formatPval(p, digits = 2)), 
+  check.names = FALSE
 )
 
 # Print table using kable and kableExtra
 kable(myoutput4, digits = c(1, 1, 1, 1, 2),
       caption = "Treatment effects for primary and secondary endpoints in the Didgeridoo Study using change score analyses.",
-      booktabs = TRUE, escape = FALSE, caption.placement = "top") %>%
+      booktabs = TRUE, escape = FALSE, caption.placement = "top", 
+      label = NA) %>%
   kable_styling(latex_options = "striped", full_width = FALSE)
 
 
@@ -607,12 +640,12 @@ text(8, 0.9, paste("Bonferroni bound"), col=3, lwd=1)
 
 
 
-#### Bonferroni method
+#### Bonferroni method {-}
 
 The *Bonferroni method* compares the $p$-values $p_1, \ldots, p_k$, obtained from different outcomes, not with $\alpha$, but with threshold $\alpha/k$. If at least one of the $p$-values is smaller than $\alpha/k$, then the trial result is considered significant at the $\alpha$ level. This procedure controls FWER at level $\alpha$. An equivalent procedure is to compare the *adjusted $p$-values* $k \, p_i$ with the standard $\alpha$ threshold.
 
 
-:::{.example}
+:::{.example #didgeridoo2 name="continued"}
 In the Didgeridoo Study, there is still evidence for a treatment effect after Bonferroni adjustments:
 :::
 
@@ -633,12 +666,12 @@ printPval(p.adjust(p, method = "bonferroni"))
 
 However, the Bonferroni method is unsatisfactory as it takes only the smallest $p$-value into account, e.g. 
 
--  $p=$ *0.01*, 0.7, 0.8, 0.9 is ``significant'',
--  $p=$ 0.03, 0.04, 0.05, 0.05 is ``not significant''.
+-  $p=$ *0.01*, 0.7, 0.8, 0.9 is "significant",
+-  $p=$ 0.03, 0.04, 0.05, 0.05 is "not significant".
 
 As a result, the Bonferroni method is very conservative and has low power.
 
-#### Holm method
+#### Holm method {-}
 
 The *Holm method* is based on all ordered $p$-values 
 $p_{(1)} \leq \ldots \leq p_{(k)}$.
