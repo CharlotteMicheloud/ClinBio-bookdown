@@ -1,10 +1,11 @@
-# Analysis of binary outcomes {#binOut}
+# Analysis of binary and ordinal outcomes {#binOut}
 
 Binary outcomes are ubiquitous in medical research and the comparison
 of binary outcomes in RCTs is very common.  This chapter discusses
 various statistical quantities that can be calculated for comparing
 binary outcomes. We discuss statistical tests, suitable effect measures and
-methods to adjust for possible baseline variables. 
+methods to adjust for possible baseline variables. Ordinal outcomes 
+are also discussed at the end of this chatper. 
 
 ## Comparison of two proportions
 
@@ -44,7 +45,7 @@ data <- data.frame(
 
 kable(data, caption = "Results of the APSAC Study.", 
       col.names = c("Therapy", "Dead", "Alive", "Total", "Percent Dead", 
-                    "Standard Error", "95% Wilson-CI")) %>%
+                    "Standard Error", "95% Wilson-CI"), label = NA) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),
                 full_width = F, position = "center")
 ```
@@ -841,6 +842,182 @@ $`r format(exp(confint(m3)[2,1]),nsmall=2, digits=2)`$ to
 $`r round(exp(confint(m3)[2,2]),2)`$.
 Logistic regression also quantifies the effect of the variable used for 
 adjustment, here plaque size.
+
+
+## Ordinal outcomes
+
+Many clinical trials yield outcomes on an ordered categorical scale
+such as "very good", "good", "moderate", "poor". Such data can be analysed 
+using proportional odds regression techniques. 
+
+Suppose that we have $k = 1, \ldots K$ categories and defined the odds ratio 
+OR$_k$ at each cut-off point $k = 1, \ldots K - 1$ via 
+$$
+\text{OR}_k = \frac{\P(Y_\text{A} \le k)/\P(Y_\text{A} > k)}
+{\P(Y_\text{B} \le k)/\P(Y_\text{B} > k)},
+$$
+where $Y_\text{A}$ and $Y_\text{B}$ denote the outcomes from treatment group A and B, respectively.
+The *proportional odds logistic regression model* assumes 
+$\text{OR}_k = \text{OR}$ for all $k = 1,\dots, K-1$.
+Sample size methods are available in the `R` function 
+`Hmisc::posamsize()`.
+
+:::{.example #arthritis}
+A clinical trial has been conducted to compare the drug auranofin with 
+placebo for the treatment of rheumatoid arthritis [@Bombardier1986, Lipsitz1994].
+Patients were 
+randomized to one of the two treatments for the entired study. 
+The ordered response is the self-assessment of arthritis classified as 
+(1) poor, (2) fair, or (3) good. Of the 303 randomized patients, 
+299 were observed at both baseline and follow-up. 
+:::
+
+Here is what the data at baseline and at follow-up looks like: 
+
+```{r, echo = FALSE}
+
+arthritis <- read.table("data/arthritis.txt", header=TRUE)
+sel <- which(arthritis$age > 100)
+arthritis <- arthritis[-sel,]
+sel <- which(is.na(arthritis$y1))
+arthritis <- arthritis[-sel,]
+
+
+arthritis$treatment <- ifelse(arthritis$trt == 1, "Placebo", "Auranofin")
+arthritis$treatment <- factor(arthritis$treatment, levels=rev(c("Auranofin", "Placebo")))
+
+arthritis$baseline5 <- as.factor(arthritis$baseline)
+arthritis$followup5 <- factor(arthritis$y1)
+
+arthritis$baseline <- ifelse(arthritis$baseline <= 2, "Poor", ifelse(arthritis$baseline == 3, "Fair", "Good"))
+arthritis$followup <- ifelse(arthritis$y1 <= 2, "Poor", ifelse(arthritis$y1 == 3, "Fair", "Good"))
+arthritis$y2 <- ifelse(arthritis$y2 <= 2, "Poor", ifelse(arthritis$y2 == 3, "Fair", "Good"))
+arthritis$y3 <- ifelse(arthritis$y3 <= 2, "Poor", ifelse(arthritis$y3 == 3, "Fair", "Good"))
+
+arthritis$baseline <- factor(arthritis$baseline, levels=c("Poor", "Fair", "Good"))
+arthritis$followup <- factor(arthritis$followup, levels=c("Poor", "Fair", "Good"))
+
+arthritis$y2 <- factor(arthritis$y2, levels=c("Poor", "Fair", "Good"))
+arthritis$y3 <- factor(arthritis$y3, levels=c("Poor", "Fair", "Good"))
+
+
+library(MASS)
+polr1 <- polr(followup ~ treatment, data=arthritis)
+polr2 <- polr(followup ~ treatment + baseline, data=arthritis)
+polr3 <- polr(followup ~ treatment + baseline + age, data=arthritis)
+```
+
+```{r, echo = TRUE}
+addmargins(table(arthritis$baseline, arthritis$treatment))
+addmargins(table(arthritis$followup, by=arthritis$treatment))
+```
+
+
+The cumulative odds ratios are 
+```{r, echo = TRUE}
+t <- table(arthritis$followup, by=arthritis$treatment)
+x1 <- t[1,]
+n <- apply(t, 2, sum)
+confIntOddsRatio(x=x1, n=n)
+
+x2 <- t[1,] + t[2,]
+n <- apply(t, 2, sum)
+confIntOddsRatio(x=x2, n=n)
+```
+and so, the proportional odds assumption is questionable. 
+
+A proportional odds logistic regression yields: 
+
+```{r, echo = TRUE}
+library(MASS)
+## polr: proportional odds logistic regression
+polr1 <- polr(followup ~ treatment, data=arthritis)
+
+print(s1 <- summary(polr1))
+## odds ratio is exp of coefficient
+CoefTable <-  s1$coefficients
+printWaldCI(theta=CoefTable[1,"Value"], se=CoefTable[1,"Std. Error"], FUN=exp)
+```
+
+Adjusting for baseline gives:
+
+```{r, echo = TRUE}
+library(MASS)
+## polr: proportional odds logistic regression
+polr2 <- polr(followup ~ treatment + baseline, data=arthritis)
+
+print(s2 <- summary(polr2))
+## odds ratio is exp of coefficient
+CoefTable <-  s2$coefficients
+printWaldCI(theta=CoefTable[1,"Value"], se=CoefTable[1,"Std. Error"], FUN=exp)
+```
+
+The second model (`polr2`) has a better model fit than the first (`polr1`): 
+```{r, echo = TRUE}
+anova(polr1, polr2)
+```
+
+
+We can now compare observed and fitted counts for each covariate 
+combination and use a $\chi^2$-goodness-of-fit tests: 
+
+```{r, echo = FALSE}
+library(kableExtra)
+
+t <- table(arthritis$followup, arthritis$treatment, arthritis$baseline)
+## print(t)
+
+names <- matrix(NA, nrow=6, ncol=1)
+expected1 <- expected <- observed <- matrix(NA, nrow=6, ncol=3)
+myfitted1 <- fitted(polr1)
+myfitted2 <- fitted(polr2)
+ii <- 1
+for(treatment in c("Auranofin", "Placebo")){
+    for(baseline in c("Poor", "Fair", "Good")){
+        sel <- ((arthritis$treatment==treatment) & (arthritis$baseline==baseline))
+        names[ii,] <- paste0(treatment, ", ", baseline, " baseline")
+        observed[ii,] <- table(arthritis[sel, "followup"])
+        expected1[ii,] <- apply(myfitted1[sel,], 2, sum)
+        expected[ii,] <- apply(myfitted2[sel,], 2, sum)
+        ii <- ii + 1
+    }
+}
+
+output <- cbind(observed, expected)
+output <- matrix(apply(cbind((observed-expected)^2/(expected)), 1, sum), ncol=1)/2
+output <- cbind((observed-expected)^2/(expected))
+
+
+rownames(output)  <- names
+rownames(observed)  <- rownames(expected) <- names
+colnames(observed) <- c("Obs Poor", "Obs Fair", "Obs Good") 
+colnames(expected) <- c("Exp Poor", "Exp Fair", "Exp Good") 
+colnames(observed) <- c("Observed", "Observed", "Observed") 
+colnames(expected) <- c("Fitted", "Fitted", "Fitted") 
+
+
+D2 <- sum(2*observed*(log(observed/expected)))
+Chi2 <- sum((observed-expected)^2/expected)
+D1 <- sum(2*observed*(log(observed/expected1)))
+Chi1 <- sum((observed-expected1)^2/expected1)
+
+output <- cbind(observed, round(expected, 1))[,c(1,4,2,5,3,6)]
+
+# Generate the table with specified rounding and alignment
+kable(output, digits = c(0, 1, 0, 1, 0, 1), align = "r", booktabs = TRUE) %>%
+  add_header_above(c(" " = 1, "Poor followup" = 2, "Fair followup" = 2, "Good followup" = 2))
+
+Observed <- observed
+Fitted <- expected
+```
+```{r, echo = TRUE}
+Chi2 <- sum((Observed-Fitted)^2/Fitted)
+print(p <- pchisq(Chi2, df=12, lower.tail=FALSE))
+```
+
+
+There is some evidence for poor model fit ($p=`r biostatUZH::formatPval(p)`$).
+
 
 
 
