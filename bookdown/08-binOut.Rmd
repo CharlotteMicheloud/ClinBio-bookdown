@@ -5,14 +5,14 @@ of binary outcomes in RCTs is very common.  This chapter discusses
 various statistical quantities that can be calculated for comparing
 binary outcomes. We discuss statistical tests, suitable effect measures and
 methods to adjust for possible baseline variables. Ordinal outcomes 
-are also discussed at the end of this chatper. 
+are also discussed at the end of this chapter. 
 
 ## Comparison of two proportions
 
 Throughout this section, we will work with the following example.
 
 :::{.example #apsac}
-The APSAC Study is an RCT to compare a new thrombolytikum (APSAC) with the 
+The APSAC study is an RCT comparing a new thrombolytikum (APSAC) with the 
 standard treatment (Heparin) in patients with acute cardiac infarction [@meinertz].
 The outcome is mortality within 28 days of hospital stay. Table \@ref(tab:apsac) 
 summarizes the results of this study, including 95\% Wilson CIs for the 
@@ -43,7 +43,7 @@ data <- data.frame(
                 "")
 )
 
-kable(data, caption = "Results of the APSAC Study.", 
+kable(data, caption = "Results of the APSAC study.", 
       col.names = c("Therapy", "Dead", "Alive", "Total", "Percent Dead", 
                     "Standard Error", "95% Wilson-CI"), label = NA) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),
@@ -135,7 +135,6 @@ print(APSAC.table)
 print(chisq.test(APSAC.table)$expected)
 
 # chi-squared test
-chisq.test(APSAC.table)
 chisq.test(APSAC.table, correct=FALSE)
 
 # Fisher's test
@@ -145,8 +144,9 @@ fisher.test(APSAC.table)
 
 
 
-Note that the function `fisher.test()` also provides an odds ratio (with 95% CI) 
-as effect measure. The output from the $\chi^2$-test can also be used to compute
+Note that the function `fisher.test()` also provides an estimate
+(`conditional MLE`) of the odds ratio (with 95% CI).
+The output from the $\chi^2$-test can also be used to compute
 an estimate of the relative risk based on the observed to expected death ratios:
 
 ```{r echo=TRUE}
@@ -191,7 +191,7 @@ $$\OR = \frac{\pi_1/(1-\pi_1)}{\pi_0/(1-\pi_0)}.$$
 No difference between groups (i.e. $\pi_0 = \pi_1$) corresponds to 
 $\ARR=\RRR=0$ and $\RR=\OR=1$.
 We now discuss each of these effect measures together with their CIs
-using Example \@ref(exm:apsac),
+using Example \@ref(exm:apsac).
 
 #### Absolute Risk Reduction {-}
 
@@ -207,7 +207,7 @@ with standard error
 \]
    
 $\widehat{\ARR}$ and $\SE(\widehat{\ARR})$ can be used to 
-can be used to calculate a Wald CI for the ARR.
+calculate a Wald CI for the ARR.
 An improved Wilson CI for the ARR can be calculated using the 
 *"square-and-add"* approach [@newcombe1998; @Newcombe], 
 see Appendix \@ref(appCI:difference) and the function 
@@ -470,10 +470,9 @@ we can directly calculate the limits of the CI for the RR as
 \widehat{\RR}/\EF_{.95} \text{ and } \widehat{\RR} \cdot \EF_{.95}.
 \end{equation}
 
-:::{.example}
 This calculation is implemented in the `R` function
 `biostatUZH::confIntRiskRatio()`. 
-:::
+
 
 
 ```{r echo=TRUE}
@@ -717,6 +716,7 @@ x <- c(1, 1)
 n <- c(50, 50)
 (ci.or2 <- confIntOddsRatio(x, n))
 ``` 
+What matters is the number of events.
   
 #### Odds Ratios and Relative Risks {-}
 
@@ -761,7 +761,7 @@ formatPval(pvalues)
 The one for OR is called `Asymptotic P-value` in `twoby2()`.
 
 
-#### Absolute and relative effect measures
+#### Absolute and relative effect measures {-}
 
 Let us consider an example of an RCT with 
 \begin{eqnarray*}  
@@ -774,7 +774,7 @@ Then we have $\ARR=0.2\%= 0.002$ and $\NNT=500$, so there is a *very small absol
 We cannot transform absolute to relative effect measures (and vice versa) without knowledge of the underlying risks.
 
 
-## Adjusting for baseline
+## Adjusting for baseline observations
 
 For binary outcomes, adjusting for baseline variables is usually done using *logistic regression* and will produce *adjusted odds ratios*. Alternatively, the *Mantel-Haenszel method* (MH) can be used, which
 gives a *weighted average* of strata-specific odds ratios. The MH method can also be applied to strata-specific risk ratios. However, adjustment for continuous variables using MH is only possible after suitable categorization. 
@@ -841,7 +841,12 @@ with 95\% CI from
 $`r format(exp(confint(m3)[2,1]),nsmall=2, digits=2)`$ to 
 $`r round(exp(confint(m3)[2,2]),2)`$.
 Logistic regression also quantifies the effect of the variable used for 
-adjustment, here plaque size.
+adjustment, here plaque size, and gives a better model fit: 
+
+```{r, echo = TRUE}
+anova(m1, m3)
+```
+
 
 
 ## Ordinal outcomes
@@ -850,7 +855,7 @@ Many clinical trials yield outcomes on an ordered categorical scale
 such as "very good", "good", "moderate", "poor". Such data can be analysed 
 using proportional odds regression techniques. 
 
-Suppose that we have $k = 1, \ldots K$ categories and defined the odds ratio 
+Suppose that we have $k = 1, \ldots K$ categories and define the odds ratio 
 OR$_k$ at each cut-off point $k = 1, \ldots K - 1$ via 
 $$
 \text{OR}_k = \frac{\P(Y_\text{A} \le k)/\P(Y_\text{A} > k)}
@@ -864,9 +869,9 @@ Sample size methods are available in the `R` function
 
 :::{.example #arthritis}
 A clinical trial has been conducted to compare the drug auranofin with 
-placebo for the treatment of rheumatoid arthritis [@Bombardier1986, Lipsitz1994].
+placebo for the treatment of rheumatoid arthritis [@Bombardier1986; @Lipsitz1994].
 Patients were 
-randomized to one of the two treatments for the entired study. 
+randomized to one of the two treatments for the entire study. 
 The ordered response is the self-assessment of arthritis classified as 
 (1) poor, (2) fair, or (3) good. Of the 303 randomized patients, 
 299 were observed at both baseline and follow-up. 
