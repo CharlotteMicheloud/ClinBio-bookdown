@@ -642,7 +642,7 @@ text(8, 0.9, paste("Bonferroni bound"), col=3, lwd=1)
 
 #### Bonferroni method {-}
 
-The *Bonferroni method* compares the $p$-values $p_1, \ldots, p_k$, obtained from different outcomes, not with $\alpha$, but with threshold $\alpha/k$. If at least one of the $p$-values is smaller than $\alpha/k$, then the trial result is considered significant at the $\alpha$ level. This procedure controls FWER at level $\alpha$. An equivalent procedure is to compare the *adjusted $p$-values* $k \, p_i$ with the standard $\alpha$ threshold.
+The *Bonferroni method* compares the $p$-values $p_1, \ldots, p_k$, obtained from different outcomes, not with $\alpha$, but with threshold $\alpha/k$. If at least one of the $p$-values is smaller than $\alpha/k$, then the trial result is considered significant at the $\alpha$ level. This procedure controls FWER at level $\alpha$. An equivalent procedure is to compare the *adjusted $p$-values* $k \cdot p_i$ with the standard $\alpha$ threshold.
 
 
 :::{.example #didgeridoo2 name="continued"}
@@ -677,15 +677,16 @@ The *Holm method* is based on all ordered $p$-values
 $p_{(1)} \leq \ldots \leq p_{(k)}$.
 A significant result is obtained, if 
 \[
-k \, p_{(1)}  \leq  \alpha , \mbox{ or }       
-(k-1) \, p_{(2)}  \leq  \alpha, 
+k \cdot p_{(1)}  \leq  \alpha , \mbox{ or }       
+(k-1) \cdot p_{(2)}  \leq  \alpha, 
   \ldots   \mbox{ or }
 p_{(k)}  \leq  \alpha.
-%p_{(j)} \leq \alpha / (k-j+1)
 \]
 
-:::{.example} 
-In the Didgeridoo Study:
+:::{.example #didgeridoo2 name="continued"} 
+In the Didgeridoo study, there is also
+still evidence for a treatment effect after Holm adjustments, as one 
+adjusted $P$-value is smaller than 0.05: 
 :::
 
 
@@ -696,21 +697,24 @@ printPval(p.adjust(p, method = "holm"))
 
 
 
-#### Simes' method
+#### Simes' method {-}
 
-*Simes' method* [@Simes1986] is also based on the ordered $p$-values $p_{(1)} \leq \ldots \leq p_{(k)}$. A significant result is obtained, if 
+*Simes' method* [@Simes1986] is also based on the ordered $p$-values
+$p_{(1)} \leq \ldots \leq p_{(k)}$. A significant result is obtained, if 
 \[
-k \, p_{(1)} \leq \alpha, \mbox{ or }  k/2 \, p_{(2)} \leq \alpha ,  \ldots 
+k \cdot p_{(1)} \leq \alpha, \mbox{ or }  k/2 \cdot p_{(2)} \leq \alpha ,  \ldots 
 \mbox{ or }
 p_{(k)} \leq \alpha.
-%p_{(j)} \leq \alpha / (k-j+1)
 \]
 
 Variations of it are the @Hochberg1988 and @Hommel1988 method.
 
 
-:::{.example}
-In the Didgeridoo Study:
+:::{.example #didgeridoo2, name="continued"}
+In the Didgeridoo study, there is also
+still evidence for a treatment effect after Simes adjustments 
+(and its variants), as one 
+adjusted $P$-value is smaller than 0.05: 
 :::
 
 
@@ -721,7 +725,7 @@ printPval(p.adjust(p, method = "hochberg"))
 printPval(p.adjust(p, method = "hommel"))
 ``` 
 
-#### Comparison of methods
+#### Comparison of methods {-}
 
 
 ```{r multfactors, fig.cap = "Multiplicative factors for multiplicity-adjustment of `r k` $p$-values.", echo=FALSE}
@@ -756,7 +760,7 @@ To obtain multiplicity-adjusted $p$-values, the ordinary $p$-values are multipli
 -  The **Holm method** also controls FWER, but with a lower decrease of power than the classical Bonferroni method.
 -  If the $p$-values are independent or positively correlated, then
   **Simes' method** also controls FWER.
-  For {positively correlated} $p$-values,
+  For positively correlated $p$-values,
   **Simes' method** is even closer to the nominal $\alpha$
   level than the **Holm method**.
 -  Application of **Holm** and **Simes** requires
@@ -767,14 +771,18 @@ To obtain multiplicity-adjusted $p$-values, the ordinary $p$-values are multipli
 
 ### Multivariate methods
 
-Multiplicity issues can also be avoided by considering the whole $k$-dimensional outcome vector simultaneously rather than separately.
-#### Hotelling's $T$-test
-If all outcomes are continuous, then *Hotelling's $T$-test*, a generalization of the $t$-Test, could be used.
+Multiplicity issues can also be avoided by considering the whole $k$-dimensional 
+outcome vector simultaneously rather than separately.
 
-But this test accepts deviations from the null hypothesis in any direction, so typically lacks power.
+#### Hotelling's $T$-test {-}
+If all outcomes are continuous, then *Hotelling's $T$-test*, a generalization 
+of the $t$-Test, could be used.
 
-:::{.example}
-Hotelling's $T$-test for the Didgeridoo Study:
+But this test accepts deviations from the null hypothesis in any direction, 
+so typically lacks power.
+
+:::{.example #didgeridoo2 name="continued"}
+Hotelling's $T$-test for the Didgeridoo study:
 :::
 
 
@@ -786,15 +794,15 @@ print(hot.test <- hotelling.test(ep + pi + pa + ap ~ group,
 ``` 
  
 
-#### Combining outcomes in a summary score
+#### Combining outcomes in a summary score {-}
 
 Under the assumption that all outcomes are continuous and are orientated in the same direction, the following procedure can be used to combine multiple outcomes into one summary score:
 
 1.  Standardize endpoints separately to a common scale:
 \[
-\mbox{$z$-score} = {(\mbox{Observation} - \mbox{M})}/{\mbox{SD}}
+\mbox{$z$-score} = {(\mbox{Observation} - \mbox{M})}/{\mbox{SD}},
 \]
-Here $\mbox{M}$ and ${\mbox{SD}}$ are mean and standard deviation of
+where $\mbox{M}$ and ${\mbox{SD}}$ are mean and standard deviation of
 the respective endpoint (ignoring group membership).
 2.  Compute a summary score as the average of the different
   $z$-scores for each individual.
@@ -803,12 +811,10 @@ the respective endpoint (ignoring group membership).
 
 
 
-:::{.example}
-
-Summary scores in the Didgeridoo Study are shown in Figure \@ref(fig:summaryscore).
-Below we repeat the analysis. There are slight differences in the results, presumably due to a different handling
-  of missing values (there was one patient with missing partner rating information
-  and another one with missing Pittsburgh index measurement).
+:::{.example #didgeridoo2 name="continued"}
+Figure 4 in @puhan shows the summary scores in the Didgeridoo study.
+Below we repeat the analysis. There are slight differences in the results, presumably due to a different handling of missing values (there was one patient with missing partner rating information
+and another one with missing Pittsburgh index measurement).
 :::
 
 
@@ -827,18 +833,15 @@ print(summary.test <- t.test(z.summary ~ group, var.equal = TRUE))
 print(DifferenceInMeans <- mean(summary.test$conf.int))  
 ```
 
-```{r summaryscore, fig.cap="Summary score analysis combining the $z$-scores of all outcomes. Published figure from the Didgeridoo Study.", fig.align='center', out.width='100%'}
-knitr::include_graphics("figures/figzscore.pdf")
-```
 
 
+#### O'Brien's  rank-based method {-}
 
-#### O'Brien's  rank-based method
 *O'Brien's rank-based method* [@OBrien1984] is useful if some or all outcome variables are not normally distributed, such as non-normal continuous or categorical with a sufficiently large number of categories. 
 The procedure starts by replacing each observation with its *within-outcome rank*. The test is accomplished by performing a $t$-test to compare the *within-patient sums of ranks* between the two treatment groups.
   
-:::{.example}
-O'Brien's rank-based method in the Didgeridoo Study:
+:::{.example #didgeridoo2 name="continued"}
+O'Brien's rank-based method in the Didgeridoo study:
 :::
 
 
