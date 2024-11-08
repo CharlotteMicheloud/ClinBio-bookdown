@@ -3,17 +3,33 @@
 
 ## Monitoring accumulating data
 
-Adequate evidence to settle which treatment is superior may have accumulated long before a clinical trial runs to its planned conclusion. In this case, the ethical issue emerges, that patients may be receiving a treatment that could have been known to be inferior at the time of treatment. A solution is the application of *repeated significance tests* (RST) at several *interim analyses*, where a decision will be made whether or not to stop the trial. For this, the Neyman-Pearson hypothesis test is suitable. However, statistical issues emerge to ensure that the type I error rate $\alpha$ is maintained.
+Adequate evidence to settle which treatment is superior may have accumulated
+long before a clinical trial runs to its planned conclusion. 
+In this case, an ethical issue emerges: patients may 
+be receiving a treatment that could have been known to be inferior at the time
+of treatment. A solution is the application of *repeated significance tests*
+(RST) at several *interim analyses*, where a decision will be made whether 
+or not to stop the trial. For this, the Neyman-Pearson hypothesis test is 
+suitable. However, statistical issues emerge to ensure that the Type I error
+rate $\alpha$ is maintained.
 
 ### Data monitoring committees
-The decision to terminate a trial must take into account many features:
 
--  Efficacy of treatment
--  Worryingly high incidence of side effects
--  Evidence that the new treatment is less efficacious than the existing treatment.
+The decision to terminate a trial can be based on the efficacy of 
+the treatment, the worryingly high incidence of side effects, 
+or the evidence that the new treatment is less efficacious than the
+existing treatment.
 
-A *data (and safety) monitoring committee* (D[S]MC) (with clinicians, statisticians, ...) periodically reviews the evidence currently available from the trial. This is done at a relatively small number of times and may require *unblinded* study information.
-Extensive use of DMCs has led to the widespread use of *group sequential* methods.
+
+A *data (and safety) monitoring committee*
+(D[S]MC) (with clinicians, statisticians, ...) periodically 
+reviews the evidence currently available from the trial. 
+This is done at a relatively small number of times and may require *unblinded*
+study information.
+Extensive use of DMCs has led to the widespread use of 
+*group sequential* methods. Note that in this context, 
+the word "group" no longer refers to treatment group, but 
+to successive groups of patients used at each interim analysis.
 
 ```{r echo=FALSE, cache=TRUE}
 set.seed(15112019)
@@ -56,20 +72,41 @@ TypeIerror2 <- mean(sig2)
 
 ### Group sequential methods {#sec:groupsequential}
 
-"Group sequential" means that the data analysis is conducted in interim analyses after every successive group of $2n$ patients, \eg $2n=20$ or $2n=30$. 
+"Group sequential" means that the data analysis is conducted in interim analyses after every successive group of $2n$ patients, for example $2n=20$ or $2n=30$. 
 Fixing a maximum number of $N$ groups, a trial is stopped at interim if the (two-sided) $P$-value is smaller than a pre-specified *nominal significance level* $\tilde \alpha$, or if $N$ groups of patients have been recruited.
+The nominal significance level $\tilde \alpha$ depends on the Type I error rate $\alpha$
+and the number of groups $N$. Standard adjustments for multiple testing 
+are too conservative, since tests are based on accumulating data with 
+a specific dependence structure. 
 
-#### Nominal significance level
 
-Using the same nominal significance level $\tilde \alpha$ for each test is known as *Pocock stopping rule*. The following example illustrates that with the standard $\alpha = 0.05$, the false positive rate is larger than $5$\% when we have multiple interim analyses.
+#### Pockock stopping rule {-}
+
+Using the same nominal significance level $\tilde \alpha$ for each test 
+is known as *Pocock stopping rule*. 
+The nominal significance level $\tilde \alpha$ depends on the Type I error 
+rate $\alpha$ and the number of groups $N$. Figure \@ref(fig:pocock) shows 
+how the nominal significance level decreases for increasing number of groups, 
+starting with an $\alpha$ of $5$\% for one group. For example, for 10 interim 
+analyses the nominal significance level is $\tilde \alpha = 0.0106$, which 
+corresponds to a $z$-value of `r round(p2z(0.0106),2)`.
+
+
+Standard adjustments for multiple testing are too conservative since those methods are based on accumulating data with a specific dependence structure. For example, the Bonferroni correction would use $\tilde \alpha = 0.05/10 = 0.005$ rather than $\tilde \alpha = 0.0106$.
+
 
 ```{r echo=FALSE}
 maxy <- 20
 ``` 
 
+
 :::{.example #stoppingbiaspocock}
-  Remember the example on stopping bias (Figure \@ref(fig:stoppingbias)) where we had accumulating data generated without a treatment effect. Each simulation is analyzed in `r n` groups of `r 2*m` patients. Figure \@ref(fig:fprate) shows `r maxy` selected profiles of the test statistic values based on the accumulating data and the false positive rate based on all `r format(nsim, scientific=FALSE)` simulations. With the standard significance threshold, the false positive rate is 
-`r round(100*TypeIerror)`\%. The false positive rate is `r round(100*TypeIerror2)`\% with an adjusted significance threshold.
+ Remember the example on stopping bias (Figure \@ref(fig:stoppingbias)) where we 
+ had accumulating data generated without a treatment effect.
+The data is now analyzed in `r n` groups of `r 2*m` patients. 
+ Figure \@ref(fig:fprate) shows `r maxy` selected profiles of the test statistic values based on the accumulating data and the false positive rate based on all 
+ `r format(nsim, scientific=FALSE)` simulations. With the standard significance threshold (top plot), the false positive rate is 
+`r round(100*TypeIerror)`\%. The false positive rate is `r round(100*TypeIerror2)`\% with an adjusted significance threshold (bottom plot) using Pockock rule.
 :::
 
 
@@ -122,7 +159,7 @@ legend("topleft", col=c("black", "grey"), lty=c(1,1), legend=c("significant prof
 text(240, -3, paste(as.character(round(100*TypeIerror)), "% false positive"), col=2, cex=1)
 ``` 
 
-```{r fprate, fig.cap = "`r maxy` selected profiles of the test statistic values based on the accumulating data and the false positive rate based on all `r format(nsim, scientific=FALSE)` simulations, once with the standard significance threshold (top) and once with an adjusted significance threshold (bottom).", echo=FALSE}
+```{r fprate, fig.cap = paste(maxy, " selected profiles of the test statistic values based on the accumulating data and the false positive rate based on all", format(nsim, scientific=FALSE),  "simulations, once with the standard significance threshold (top) and once with an adjusted significance threshold (bottom)."), echo=FALSE}
 myindB <- (apply(abs(myy), 2, max)>threshold)
 mycolB <- ifelse(myindB==TRUE, "black", "grey")
 par(las=1)
@@ -143,9 +180,6 @@ text(240, -3, paste(as.character(round(100*TypeIerror2)), "% false positive"), c
 ```
 
 
-The nominal significance level $\tilde \alpha$ depends on the type I error rate $\alpha$ and the number of groups $N$. For the Pocock stopping rule, Figure \@ref(fig:pocock) shows how the nominal significance level decreases for increasing number of groups, starting with an $\alpha$ of $5$\% for one group. For example, for 10 interim analyses the nominal significance level is $\tilde \alpha = 0.0106$, which corresponds to a $z$-value of `r round(p2z(0.0106),2)`. This is the value we used in Example \@ref(exm:stoppingbiaspocock) and Figure \@ref(fig:fprate). 
-Standard adjustments for multiple testing are too conservative since those methods are based on accumulating data with a specific dependence structure. For example, the Bonferroni correction would use $\tilde \alpha = 0.05/10 = 0.005$ rather than $\tilde \alpha = 0.0106$.
-
 ```{r echo=FALSE}
 ## numbers from Table 8.2 in Matthews
 N <- c(1,2,3,4,5,10,15,20)
@@ -155,11 +189,11 @@ n <- (m^2/d^2)*2
 alphaPrime <- c(0.05, 0.0294, 0.0221, 0.0182, 0.0158, 0.0106, 0.0086, 0.0075)
 T <- 2*round(n)*N
 
-res <- cbind(N, alphaPrime, n, T)
+res <- cbind(N, alphaPrime, ceiling(n), T)
 sel <- c(1,2,5,6)
 resSel <- res[sel,]
-resSel <- resSel[,c(1,2,4,3)]
-colnames(resSel) <- c("$N$", "$\\tilde\\alpha$", "$T$", "$n$")
+resSel <- resSel[,c(1,2,3,4)]
+colnames(resSel) <- c("$N$", "$\\tilde\\alpha$", "$n$", "$T$")
 ``` 
 
 
@@ -208,20 +242,20 @@ box()
 ``` 
 
 
-#### Sample size calculation
-The maximal number $N$ of interim analyses after every successive group of $2n$
-patients affects not only the nominal significance level $\tilde \alpha$ but 
-also the required sample size. Sample size calculation is performed for the
-*maximum* total sample size $T = 2n\cdot N$. Note that the effective sample
-size depends on when the trial stops and can be smaller.
+#### Sample size calculation {-}
+The maximum total sample size T depends on the power to detect 
+the clinically relevant difference and the maximum number of 
+analyses N. In order to maintain a given power, the maximum 
+total sample size T increases with increasing N. However, 
+for $N> 1$, there is always a chance that less than T patients will be needed. 
+
   
 :::{.example}
-  Consider a continuous outcome and fix $\alpha=0.05$. Suppose the goal is to 
-  detect a treatment difference of `r d` standard deviation with power 90\%.
-  Then, $\tilde \alpha$ and $T$ vary as shown in Table \@ref(tab:pococktbl) 
-  depending on different values of $N$. The sample size per interim analysis 
-  is then determined by $N$ and $T$ as $n=T/(2N)$ (also displayed in Table
-  \@ref(tab:pococktbl)).
+Consider a continuous outcome and fix $\alpha=0.05$. Suppose that the goal is to 
+detect a treatment difference of `r d` standard deviation with power 90\%.
+The maximal number $N$ of analyses after every successive group of 
+$2n$ patients affects the nominal significance level $\tilde \alpha$ and the 
+maximum total sample size $T = 2nN$, see \@ref(tab:pococktbl). 
 :::
 
 
@@ -233,15 +267,22 @@ knitr::kable(resSel,
 ```
 
 
-### Stopping rules
-The Pocock stopping rule, where each test uses the same nominal significance level $\tilde \alpha$, has two disadvantages: 
+#### Other stopping rules {-}
+The Pocock stopping rule, where each test uses the same nominal significance level 
+$\tilde \alpha$, has two disadvantages. First, it is not too difficult for 
+a trial to be halted early, which is considered as undesirable and uncompelling 
+by some authors. Second, suppose that the trail terminates at the final analysis 
+with $\tilde \alpha < p < \alpha$. Many clinicians find it difficult to 
+accept that the result of this trial is significant. 
 
-1.  It is not too difficult for a trial to be halted early, which is considered as undesirable and uncompelling by some authors.
-2.  Suppose the trial terminates at the final analysis with 
-$\tilde \alpha < p < \alpha$. Many clinicians find it difficult to accept that the result of this trial is non-significant.
-
-
-It is better to use a stopping rule $a_1, a_2, \ldots, a_N$ where $a_j$ is the significance threshold at the $j$-th interim analysis with $a_1$ very small and $a_j$ gradually increasing to $a_N$ close to $\alpha$. Three such stopping rules are shown in Table \@ref(tab:stoppingrulestbl) Figure \@ref(fig:stoppingrules), next to the Pocock stopping rule which is constant. They all control an overall type I error rate $\alpha=5\%$ with $N=5$ maximal interim analyses, except for the Haybittle-Peto approach which controls it only approximately.
+It is better to use a stopping rule $a_1, a_2, \ldots, a_N$ where $a_j$ is 
+the significance threshold at the $j$-th interim analysis with $a_1$ very 
+small and $a_j$ gradually increasing to $a_N$ close to $\alpha$. Three such
+stopping rules are shown in Table \@ref(tab:stoppingrulestbl) and Figure
+\@ref(fig:stoppingrules). 
+They all control the overall Type I error rate $\alpha=5\%$ with $N=5$ maximal 
+interim analyses, except for the Haybittle-Peto approach which controls it only 
+approximately.
 
 
 ```{r stoppingrulestbl}
@@ -280,7 +321,9 @@ legend("topleft", lty=1, col=c(1:4), legend=c("Haybittle-Peto", "Pocock", "O'Bri
 ``` 
 
 
-These stopping rules are implemented in the R package gsDesign (note that, here for 3 interim analyses, the output Nominal p is the one-sided nominal significance level, which needs to be multiplied by $2$):
+These stopping rules are implemented in the R package `gsDesign` 
+(Note that, here for 3 interim analyses, the output `Nominal p` is 
+the one-sided nominal significance level, which needs to be multiplied by $2$):
 
 ```{r echo=TRUE}
 library(gsDesign)
@@ -292,41 +335,51 @@ gsDesign(k = 3, sfu = "Pocock", test.type = 2)
 gsDesign(k = 3, sfu = "OF", test.type = 2)
 ``` 
 
-There are also other forms of stopping rules. A more flexible approach is based on the Lan-DeMets *alpha spending function* and does not require the maximum number of interim analyses to be specified in advance. Another popular approach to analyze accumulating data is Whitehead's *triangular test* based on the score statistic $Z$ and the Fisher information $V$. Figure \@ref(fig:SRtriangular) shows how this approach is used as a stopping rule in an example.
+There are also other forms of stopping rules. A more flexible
+approach is based on the Lan-DeMets *alpha spending function* and does not
+require the maximum number of interim analyses to be specified in advance. 
+Another popular approach to analyze accumulating data is Whitehead's 
+*triangular test* based on the score statistic $Z$ and the Fisher information
+$V$. Figure \@ref(fig:SRtriangular) shows how this approach is used as 
+a stopping rule in an example.
 
 ```{r SRtriangular, fig.cap="Whitehead's triangular test as a stopping rule: Crossing of green/red line implies positive/negative trial conclusion.", fig.width = 12, echo=FALSE, fig.align='center'}
 knitr::include_graphics("figures/Triangular.png")
 ```
 
-#### Problems of stopping at interim 
-If a trial terminates early, then there are problems with obtaining unbiased treatment effects due to the sequential nature of the trial. If a traditional analysis is performed in a trial that stops at interim because treatment is found to be significantly better than control, then
+### Problems of stopping at interim 
 
-
--  the treatment effect estimate will be too large,
--  the CI will be too narrow,
--  and the $P$-value will be too small,
-
-explained in this video: (https://vimeo.com/231014768). Advanced methods for attempting to correct this bias are available, but rarely used.
-
-:::{.example #attenuated}
-We illustrate the problems of stopping at interim in a simulation example. Suppose that we have two equally sized treatment arms and a continuous outcome. The primary outcome is the difference in means $\theta$. We fix the following analysis parameters:
-:::
-
+If a trial terminates early, then there are problems with obtaining unbiased 
+treatment effects due to the sequential nature of the trial. 
+If a traditional analysis is performed in a trial that stops at 
+interim because treatment is found to be 
+significantly better than control, then
+the treatment effect estimate will be too large,
+the CI will be too narrow,
+and the $P$-value will be too small,
+Advanced methods for attempting to correct this bias are available, but rarely used.
 ```{r setup2, echo=FALSE}
 n <- 10
 m <- 15
 effect <- 0.35
 ```
 
--  $N=`r n`$ interim analyses with Pocock bound $z_P=2.56$ 
-   (nominal significance level $\tilde \alpha = `r formatPval(z2p(resZ[10]))`$)
--  $n=`r m`$ patients per group and treatment arm to achieve a power of 75\% to detect the true treatment effect $\theta=`r effect`$ with standard deviation $\sigma=1$.
-
-Significance at the $k$-th interim analysis implies the following minimum detectable difference (MDD, Compare Section \@ref(tab:samplesizecont)) for the treatment effect estimate:
+:::{.example #attenuated}
+We illustrate the problems of stopping at interim in a simulation example. 
+Suppose that we have two equally sized treatment arms and a continuous outcome. 
+The primary outcome is the difference in means $\theta$.
+We fix the following analysis parameters: $N=`r n`$ interim analyses with 
+Pocock bound $z_P=2.56$ (nominal significance level
+$\tilde \alpha = `r formatPval(z2p(resZ[10]))`$) and $n=`r m`$ 
+patients per group and treatment arm to achieve a power of 75\% to detect the true treatment effect $\theta=`r effect`$ with standard deviation $\sigma=1$.
+Significance at the $k$-th interim analysis implies the following minimum 
+detectable difference (MDD, Compare Section \@ref(tab:samplesizecont)) for the treatment effect estimate:
 
 \begin{equation*}
 \hat \theta \geq z_P \sqrt{2/(k \cdot n)}.
 \end{equation*}
+:::
+
 
 
 ```{r SRsimulation, fig.cap = "Effect sizes in a simulation with the Pocock stopping rule for a maximal number of 10 interim analyses (Example \\@ref(exm:attenuated)).", echo=FALSE, cache=TRUE}
@@ -399,53 +452,67 @@ legend("topright", c("Mean", "Minimum detectable difference"), pch=c(19, 17), co
 
 
 
-Figure \@ref(fig:SRsimulation) shows that, in this simulation, the treatment effect estimate is too large on average if the trial has been stopped at one of the first eight interim analyses. The MDD is larger than the true effect size if the trial has been stopped at one of the first six interim analyses. The mean effect size of all significant trials is `r round(mean(thetahat, na.rm=TRUE),2)`, the mean effect size of 
-all non-significant trials is `r round(mean(thetahat2[,n], na.rm=TRUE),2)`,
-and the mean effect size of all trials is `r round(mean(thetahat2, na.rm=TRUE),2)` while the true effect size is only `r effect`.
+The effect size and minimum detectable difference 
+for each interim analysis are displayed in Figure \@ref(fig:SRsimulation). 
+The mean effect size of all significant trials is $`r round(mean(thetahat, na.rm=TRUE),2)` > `r effect`$, 
+the mean effect size of all non-significant trials is 
+$`r round(mean(thetahat2[,n], na.rm=TRUE),2)` < `r effect`$, and the 
+mean effect size of all trials is $`r round(mean(thetahat2, na.rm=TRUE),2)` > `r effect`$. 
 
 
 ## The trial protocol
 
-The trial protocol serves at least three purposes:
-
--  Outlines the reasons for running a trial
--  Is an operations manual for the trial, e.g.: assessment for eligibility,  treatment allocation, blinding procedure etc.
--  Is the scientific design document for the trial, e.g.: methods for allocation, ways of assessing outcomes etc.
-
+The trial protocol serves at least three purposes. First, it outlines the
+reasons for running a trial. Second, it is an operations manual for the trial,
+e.g.: assessment for eligibility,  treatment allocation, blinding procedure etc.
+Finally, it is the scientific design document for the trial,
+e.g.: methods for allocation, ways of assessing outcomes etc.
 It needs approval by ethics committees, funding bodies, regulatory authorities etc.
 
-### Designing and reporting trials
+### Designing and reporting trials {-}
 
-A convincing report can only result from a convincing study design. Problems should be addressed already in the trial protocol to ensure that choices have not been influenced by the results. These can be for example problems of multiplicity such as:
+A convincing report can only result from a convincing study design. 
+Problems should be addressed already in the trial protocol 
+to ensure that choices have not been influenced by the results.
+These can be for example problems of multiplicity such as which subgroups 
+should be examined, which outcomes are primary and which are secondary, 
+whether outcomes should be compared using baseline information, or 
+whether the outcome variable should be transformed.
 
--  Which subgroups should be examined?
--  Which outcomes are primary and which are secondary?
--  Should outcomes be compared using baseline information?
--  Should the outcome variable be transformed?
 
+### Protocol deviations {-}
+Not all patients may adhere to the protocol, e.g. some may not take the 
+medication in the quantities and at the times specified in the protocol, some 
+may not turn up to the clinic for outcome measurements to be assessed, some may
+assert their right to withdraw from the study. In addition, ineligible patients 
+may enter the trials, and other treatment than the one allocated may be administered. 
 
-### Protocol deviations
-Protocol deviations may happen at different stages:
-
-1.  Not all patients may adhere to the protocol, \eg: some may not take the medication in the quantities and at the times specified in the protocol, some may not turn up to the clinic for outcome measurements to be assessed, some may assert their right to withdraw from the study.
-2.  Ineligible patients may enter the trial.
-3.  Another treatment may be administered than allocated.
-
-See @matthews (Section 10.2) for examples of protocol deviations. They can be dealt with differently in the analysis:
+@matthews (Section 10.2) gives examples of protocol deviations. They can be 
+dealt with differently in the analysis:
 
 :::{.definition}
 
-1.  The **per-protocol** analysis compares groups of patients who were actually treated as specified in the protocol, excluding non-compliant patients.
-2.  The **as-treated** analysis compares groups of patients as they were actually treated. No patients are excluded from this analysis.
-3.  The **intention-to-treat** (ITT) analysis compares groups of patients as they were allocated to treatment.
+1.  The **per-protocol** analysis compares groups of patients who were actually 
+treated as specified in the protocol, excluding non-compliant patients.
+2.  The **as-treated** analysis compares groups of patients as they were 
+actually treated. No patients are excluded from this analysis.
+3.  The **intention-to-treat** (ITT) analysis compares groups of patients as 
+they were allocated to treatment.
 :::
 
 
-The ITT principle states: "Compare the groups as if they were formed by randomization, regardless of what has happened subsequently to the patients" @matthews (Sec. 10.3).
-Any other way of grouping the patients cannot guarantee balance at the start of the treatment. Per-protocol or as-treated analyses are subject to possible confounding, so should be interpreted cautiously. On the other hand, analysis by the ITT principle may lead to attenuated treatment effects.
+The ITT principle states: "Compare the groups as if they were formed by 
+randomization, regardless of what has happened subsequently to the patients" 
+@matthews (Sec. 10.3).
+Any other way of grouping the patients cannot guarantee balance at the start 
+of the treatment. Per-protocol or as-treated analyses are subject to possible
+confounding, so should be interpreted cautiously. On the other hand, analysis
+by the ITT principle may lead to attenuated treatment effects.
 
 :::{.example}
-The Angina Trial is an RCT to compare surgical versus medical treatment for angina. Primary outcome is 2-year mortality. In this trial, not all patients received the treatment they were allocated to.
+The Angina Trial is an RCT comparing surgical versus medical treatment for 
+angina. Primary outcome is 2-year mortality. In this trial, 
+not all patients received the treatment they were allocated to.
 :::
 
 
@@ -468,6 +535,7 @@ library(Epi)
 print(angina)
 ``` 
 
+This trial can be analyzed based on the three different analysis types.
 For the per-protocol analysis, we need to restrict the patients that we analyze.
 
 ```{r echo=TRUE}
@@ -475,8 +543,6 @@ For the per-protocol analysis, we need to restrict the patients that we analyze.
 angina.perProtocol <- angina[Allocated==Received,]
 print(angina.perProtocol)
 ``` 
-
-This trial can be analyzed based on the three different analysis types.
 
 ```{r echo=TRUE}
 ## intention-to-treat analysis
