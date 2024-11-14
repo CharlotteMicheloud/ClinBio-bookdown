@@ -564,7 +564,11 @@ APSAC are $a/b = 9/153$ ($c/d=19/132$ for Heparin). The estimated OR is therefor
   132}{153 \cdot 19} \ = `r round(9*132/(153*19),2)`.
 \]
 This means that the odds of death are 59\% lower under APSAC than under
-Heparin treatment. The formulation $\widehat{\OR}=(a\cdot d) / (b \cdot c)$ 
+Heparin treatment. The rearrangement
+\begin{equation}
+(\#eq:or)
+\widehat{\OR}=(a\cdot d) / (b \cdot c)
+\end{equation}
 motivates the alternative name *cross-product ratio*.
 
 ```{r apsacSurvival, results='asis'}
@@ -696,9 +700,10 @@ over strata is different.
 
 
 As for $\RR$ (see Table \@ref(tab:CIRR)), we calculate the standard error of the OR on the log scale:
-\[
+\begin{equation}
+(\#eq:orse)
   \SE(\color{red}{\log}(\widehat{\OR})) = \sqrt{\frac{1}{a}+\frac{1}{b}+\frac{1}{c}+\frac{1}{d}}.
-  \]
+\end{equation}
 
 A multiplicative Wald CI can be directly calculated using the 95\% error factor 
 
@@ -717,6 +722,25 @@ n <- c(50, 50)
 (ci.or2 <- confIntOddsRatio(x, n))
 ``` 
 What matters is the number of events.
+  
+  
+A problem of the estimate \@ref(eq:or) is that it can become infinite
+if wither $b=0$ or $c=0$. Likewise, the standard error \@ref(eq:orse)
+of the log odds ratio will be infinte if at least one of the entries
+$a$, $b$, $c$ or $d$ is zero. A modification suggested in the
+literature is to add $1/2$ to all entries $a$, $b$, $c$ and $d$. This
+prevents problems with small number of events and also reduces the
+potential bias of the original estimate, so for example
+@spiegelhalter2004, Secrion 2.4.1. Another estimate of the odds ratio
+is the conditional maximum likelihood estimate. This is related to
+Fisher's exact test as it is based on numerically maximizing the
+hypergeometric likelihood, which depends only on the odds ratio and is
+obtained by conditioning on the margins sums. The conditional MLE
+estimate is often reported together with the $p$-value from Fisher's
+exact test, as in the R function fisher.test(). However, it has the
+same problem of the standard (unconditional) MLE \@ref(eq:or) that it
+becomes infinite if either $b$ or $c$ is zero.
+  
   
 #### Odds Ratios and Relative Risks {-}
 
