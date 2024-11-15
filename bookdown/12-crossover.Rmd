@@ -1,16 +1,21 @@
 # Crossover trials 
 
-Up to now, we have considered parallel group design. The contrary of that is a *crossover trial*. Such a trial compares the outcome of a patient when given treatment A to the outcome from the *same patient* when given treatment B, so participants act as their own controls.
-This will hopefully lead to larger precision of the treatment effect. Crossover trials are possible if the aim of therapy is *not* to cure a condition. A typical application of the crossover design is to compare different pain-relieving drugs. The simplest crossover trial design is the **AB/BA design**.
+Up to now, we have considered *parallel group designs*. 
+A *crossover trial* trial compares the outcome of a patient when given 
+treatment A to the outcome from the *same patient* when given treatment B. 
+This means that participants act as their own controls, which leads to
+larger precision of the treatment effect.
+Crossover trials are possible if the aim of therapy is *not* to cure a condition. 
+A typical application of the crossover design is to compare different
+pain-relieving drugs. The simplest crossover trial design is the **AB/BA design**.
 
 
 ## The AB/BA design
 
-The AB/BA design is illustrated in Table \@ref(tab:ABBA). There are two treatment periods. Patients are randomized into two sequence groups where
-
-
--  patients in group AB receive the treatments in the order A-B, 
--  patients in group BA receive the treatments in the order B-A.
+The AB/BA design is illustrated in Table \@ref(tab:ABBA).
+There are two treatment periods, and patients are randomized into two
+sequence groups where patients in group AB receive the treatments in the
+order A-B, and patients in group BA receive the treatments in the order B-A.
 
 This design ensures that *period effects* can be separated from
 *treatment effects*, which would not be the case if all patients
@@ -19,9 +24,7 @@ effect of pain-relieving drugs for headaches, a possible period effect
 may be due to changes in weather conditions in the two periods.  If
 all patients would be treated in the order A-B, then any difference in
 the outcome between A and B may be due to the period effect alone, or
-a combination of the period and treatment effect. Only the crossover
-design ensures that we can disentangle the treatment effect from the
-period effect.
+a combination of the period and treatment effect.
 
 
 
@@ -32,7 +35,8 @@ library(knitr)
 abba_data <- data.frame(
   Group = c("AB", "BA"),
   `Period 1` = c("A", "B"),
-  `Period 2` = c("B", "A")
+  `Period 2` = c("B", "A"), 
+  check.names = FALSE
 )
 
 # Printing the table using kable
@@ -59,14 +63,22 @@ n2 <- sum(enuresis$group=="BA")
 ``` 
 
 :::{.example #enuresisex}
-The Enuresis Trial is a placebo-controlled trial on $n=`r n`$ children suffering from enuresis (bed wetting). In group AB ($n_{AB}=`r n1`$), the drug is given for 14 days and the outcome (number of dry nights) is recorded. Then, a placebo is administered for a fortnight and the same outcome variable is recorded. In group BA ($n_{BA}=`r n2`$), first placebo and then the drug is given. The outcome is treated as a continuous variable, although strictly speaking it is a count variable with values between 0 and 14.
+The Enuresis Trial [@matthews] is a placebo-controlled trial on $n=`r n`$ 
+children suffering from enuresis (bed wetting). In group AB ($n_{AB}=`r n1`$), 
+the drug is given for 14 days and the outcome (number of dry nights) is recorded.
+Then, a placebo is administered for a fortnight and the same outcome variable is
+recorded. In group BA ($n_{BA}=`r n2`$), first placebo and then the drug is given.
+The outcome is treated as a continuous variable, although strictly speaking it
+is a count variable with values between 0 and 14.
 :::
 
 ```{r echo=TRUE}
 head(enuresis, n=3)
 ``` 
 
-Patient-level data for group AB and group BA comparing the outcomes under treatment and under placebo for each patient are shown in Figure \@ref(fig:enuresis) together with the corresponding means.
+Patient-level data for group AB and group BA comparing the outcomes under treatment 
+and under placebo for each patient are shown in Figure \@ref(fig:enuresis)
+together with the corresponding means.
 
 
 ```{r enuresis, fig.cap = "Patient-level data from the Enuresis Trial.", echo=F}
@@ -104,7 +116,7 @@ legend("bottomright", col=4, lty=1,  legend="means", lwd=3, bty="n")
 ``` 
 
 
-### Simple analysis{#sec:simple}
+### Simple analysis {#sec:simple}
 
 First, we set the notation as follows:
 
@@ -113,14 +125,15 @@ First, we set the notation as follows:
 -  $\Delta$ is the treatment effect of the drug relative to placebo, 
 -  $\beta$ is the period effect of period 2 relative to period 1. 
 
-The mean outcomes are therefore modelled as:
+The mean outcomes are therefore modeled as:
 
 ```{r, echo = FALSE}
 # Creating the data frame for the table
 period_data <- data.frame(
   Period = c(1, 2),
   `Group AB` = c("$\\E(x_{i1}) = \\alpha + \\Delta$", "$\\E(x_{i2}) = \\alpha + \\beta$"),
-  `Group BA` = c("$\\E(x_{i1}) = \\alpha$", "$\\E(x_{i2}) = \\alpha + \\Delta + \\beta$")
+  `Group BA` = c("$\\E(x_{i1}) = \\alpha$", "$\\E(x_{i2}) = \\alpha + \\Delta + \\beta$"), 
+  check.names = FALSE
 )
 
 # Printing the table using kable
@@ -138,8 +151,8 @@ Now consider the *within-patient differences* $d_i = x_{i1} - x_{i2}$ and let $\
 
 The null hypothesis of no treatment difference, $\Delta=0$, can hence be investigated with a two-sample $t$-test applied to the two sets of within-patient differences. The treatment effect $\Delta$ is finally estimated as half of the differences in means: $\hat \Delta = (\bar d_{AB} -\bar d_{BA})/2$.
 
-:::{.example}
-Results of the simple analysis in the Enuresis Trial (Example \@ref(exm:enuresisex)):
+:::{.example #enuresisex name="continued"}
+Results of the simple analysis in the Enuresis Trial:
 :::
 
 
@@ -152,7 +165,9 @@ Results of the simple analysis in the Enuresis Trial (Example \@ref(exm:enuresis
 ```
 
 
-Just for illustration, butnot recommended: A simpler analysis of the AB/BA design would be to compare differences $d_i$ of treatment to placebo measurements with a paired $t$-test, ignoring group membership:
+Just for illustration, but *not recommended*: 
+A naive analysis of the AB/BA design would be to compare differences $d_i$ of 
+treatment to placebo measurements with a paired $t$-test, ignoring group membership:
     \[
     d_i = \left\{ \begin{array}{rl}
       x_{i1} - x_{i2} & \mbox{ in group AB} \\
@@ -169,8 +184,8 @@ The estimate from the t-test is confounded by the period effect $\beta$.
 Bias occurs whenever group sizes are unequal ($n_{AB} \neq n_{BA}$) and there is 
 a period effect ($\beta \neq 0$).
 
-:::{.example}
-Results of a paired $t$-test in the Enuresis Trial (Example \@ref(exm:enuresisex)):
+:::{.example #enuresisex name="continued"}
+Results of the non-recommended paired $t$-test in the Enuresis Trialb:
 :::
 
 ```{r echo=TRUE}
@@ -181,7 +196,7 @@ Results of a paired $t$-test in the Enuresis Trial (Example \@ref(exm:enuresisex
 The paired $t$-test gives different results and is **not recommended**.
 
 
-#### Between-patient variation
+#### Between-patient variation {-}
 
 The previously described (recommended) analysis also holds if we allow for *patient-specific effects* $\xi_i$:
 
@@ -192,7 +207,8 @@ period_data <- data.frame(
   `Group AB` = c("$\\E(x_{i1})  =  \\alpha + \\Delta + {\\color{red}\\xi_i}$", 
                  "$\\E(x_{i2})  =  \\alpha + \\beta + {\\color{red}\\xi_i}$"),
   `Group BA` = c("$\\E(x_{i1})  =  \\alpha + {\\color{red}\\xi_i}$", 
-                 "$\\E(x_{i2})  =  \\alpha + \\Delta + \\beta + {\\color{red}\\xi_i}$")
+                 "$\\E(x_{i2})  =  \\alpha + \\Delta + \\beta + {\\color{red}\\xi_i}$"), 
+  check.names = FALSE
 )
 
 # Printing the table using kable
@@ -208,8 +224,8 @@ $d_{i} = x_{i1} - x_{i2}$. This illustrates that between-patient variation is el
 It is also possible to perform an analysis of the original outcomes $x_{ij}$ using a *mixed model* with *patient-specific random effects* $\xi_i$. This will give the same treatment effect (with confidence interval and $p$-value) as the simple analysis based on the $t$-test, but also provides an estimate of the period effect and estimates of within- and between-patient variances. 
 
 
-:::{.example}
-Results in the Enuresis Trial (Example \@ref(exm:enuresisex)):
+:::{.example #enuresisex name="continued"}
+Results in the Enuresis Trial:
 :::
 
 ```{r echo=TRUE, warning=FALSE}
@@ -246,7 +262,14 @@ within-patient standard deviation $\sigma_w = `r round((summary(mixed1)$sigma),2
 ## The issue of carryover
 
 
-The above analysis assumes that there is no *carryover effect*, \ie effects of the treatment given in period 1 do not persist during period 2. We now describe two statistical approaches to test for carryover in a AB/BA crossover trial with continuous outcome. We emphasize that this is generally not recommended due to lack of power and other problems. The recommended approach is not to use a crossover design when there is a possibility of a carryover effect. You should try to use non-statistical arguments, perhaps based on the half-lives of drugs, etc., to decide how long treatment effects are likely to persist and apply appropriate washout periods between the two treatment periods. 
+The above analysis assumes that there is no *carryover effect*, i.e.
+effects of the treatment given in period 1 do not persist during period 2.
+We now describe a statistical approacha to test for carryover 
+in a AB/BA crossover trial with continuous outcome. We emphasize that this is generally not recommended due to lack of power and other problems. 
+The recommended approach is not to use a crossover design when there is a 
+possibility of a carryover effect. 
+You should try to use non-statistical arguments, perhaps based on the half-lives of drugs, etc., to decide how long treatment effects are likely to persist and
+apply appropriate washout periods between the two treatment periods. 
 
 
 
@@ -294,8 +317,8 @@ An alternative approach is to use a mixed model with a carryover effect (treatme
 
 As already mentioned, this procedure is **not recommended**. Instead, non-statistical arguments should be used to decide how long treatment effects are likely to persist.
 
-:::{.example}
-Standard test for carryover in the Enuresis Trial (Example \@ref(exm:enuresisex)):
+:::{.example #enuresisex name="continued"}
+Standard test for carryover in the Enuresis Trial:
 :::
 
  
@@ -374,7 +397,7 @@ $\rho=\sigma_b^2/(\sigma_b^2 + \sigma_w^2)$. The sample size per group for a cro
     n_{\tiny{\mbox CO}} = \frac{2 \sigma_d^2 (u + v)^2}{\Delta_d^2} = \frac{\sigma_w^2 (u + v)^2}{ \Delta^2}. 
     \]
 
-#### Comparison with parallel group design
+#### Comparison with parallel group design {-}
  
 The **total variance** of $x_{ij}$ is
   \[
@@ -629,8 +652,8 @@ se.log.or <- sqrt(1/a+1/b+1/c+1/d)/2
 ### Analysis with generalized linear mixed models
 We may also use a generalized linear mixed model (but results may depend on the choice of the integration parameter \code{nAGQ}).
 
-:::{.example}
-Results in the cerebrovascular deficiency trial (Example \@ref(exm:cerebro)):
+:::{.example #cerebro name="continued"}
+Results in the cerebrovascular deficiency trial:
 :::
 
 ```{r echo=TRUE}
