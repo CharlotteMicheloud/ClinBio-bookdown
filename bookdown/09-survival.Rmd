@@ -292,6 +292,85 @@ Last, the event happens at the time specified. This could be a problem,
 for example, if the event were recurrence of a tumor which would be detected at
 a regular examination (interval censoring).
 
+The results of a survival analysis depend upon the choice of time scale: 
+time since study entry (i.e. randomisation in RCTs), calendar time, or age.
+For example, consider the following dataset: 
+
+```{r, echo = FALSE}
+Subject <- c(1:10)
+Sex <- c("F","M","M","F","M","M","F","M","M","F")
+AgeEntry <- c(29.3,25.2,22.1,32.2,33.1,42.1,35.2,27.0,44.8,51.5)
+AgeExit <- c(53.8,42.4,52.8,54.4,52.6,57.1,50.4,47.2,62.7,70.6)
+DateEntry <- as.Date(c("13/06/1965", "23/10/1972", "03/03/1959", "10/10/1967", "02/01/1960", "09/01/1975", "05/08/1953", "10/10/1969", "02/03/1972", "01/11/1970"), "%d/%m/%Y")
+dummy <- rep("31/12/1989", 10)
+dummy[5] <- "04/07/1979" 
+dummy[7] <- "03/10/1968"
+DateExit <- as.Date(dummy, "%d/%m/%Y")
+Event <- c(0,0,0,0,1,0,1,0,0,0)
+cohort <- data.frame(Subject, Sex, DateEntry, AgeEntry, DateExit, AgeExit, Event)
+
+print(cohort)
+```
+With this dataset, the three time scales look as follows: 
+```{r}
+
+## Funktion zum Plotten von Überlebenszeiten. observed ist Indikator für nicht-zensierte Beob.
+## obsLabels kann Vektor mit y-Labels für die Zeiten sein.
+timesPlot <- function (entry.times, times, observed, obsLabels = NULL, ...){
+  n <- length (times)
+  ## order times
+  timesOrder <- c(1:n)#rev (order (times))     # rev um lange Dauern unten zu haben
+#  entry.times <- entry.times[timesOrder]
+  times <- times[timesOrder]
+  observed <- observed[timesOrder]
+  obsLabels <- obsLabels[timesOrder]
+  ## plot points
+  plot (times, 1:n, pch = ifelse (observed, 4, 19), col = ifelse (observed, 2, 1), cex=1.5, yaxt = "n", ..., xlim=c(min(entry.times), max(times)), lwd=1.5)
+  ## plot corresponding lines
+  for(i in 1:n){
+    if(observed[i]==1)
+      lines(rep(times[i],2),c(0,n+1),col=2, lty=2, lwd=1.5)
+  }
+  
+  segments (entry.times, 1:n, times, 1:n)
+  ## optional labeling
+  axis (side = 2, at = 1:n, labels = 1:n, tick = TRUE)
+}
+par(mar = c(4,4,1,1), las=1)
+
+par (font.lab = 1)
+par(mfrow=c(1,3))
+with(cohort,
+     timesPlot (0, DateExit - DateEntry, xlab = "Time since study entry (in days)", ylab="Patient ID", observed = Event)
+     )
+#legend("topleft", pch=c(4, 1), cex=1.5, legend=c("Dead", "Censored"))
+with(cohort,
+     timesPlot (DateEntry, DateExit, xlab = "Calendar time (in years)", ylab="Patient ID", observed = Event)
+     )
+#legend("topleft", pch=c(4, 1), cex=1.5, legend=c("Dead", "Censored"))
+
+with(cohort,
+     timesPlot (AgeEntry, AgeExit, xlab = "Age", ylab="Patient ID", observed = Event)
+     )
+legend("topleft", pch=c(4, 19), cex=1.25, , col=c(2, 1), legend=c("Event", "Censored"))
+```
+
+| **Time scale**          | **Risk set at first event**                 | **Risk set at second event**             |
+|--------------------------|---------------------------------------------|-------------------------------------------|
+| Time since study entry   | {1, 2, 3, 4, 5, **7**, 8, 9, 10}           | {1, 3, 4, **5**, 8}                       |
+| Calendar time            | {1, 3, 4, 5, **7**}                        | {1, 2, 3, 4, **5**, 6, 8, 9, 10}          |
+| Age                      | {1, 3, 4, 5, 6, **7**, 9}                  | {1, 3, 4, **5**, 6, 9, 10}                |
+
+
+The risk set depends on the time scale. Then how do we select a time scale? 
+Usually, the time scale with the strongest relationship to the event rate 
+is used. In RCTs, survival is usually analysed in relation to the 
+time since randomisation. An additional time scale can be 
+incorporated as a covariate. For example, one can 
+adjust for the age of the subjects by including age at diagnosis (which is 
+fixed for every subject) in a short follow-up, and by including age 
+itself as a time-varying covariate in a long follow-up.
+
 
 :::{.example #sakk name="continued"}
 Figure \@ref(fig:KMlifetable) compares the Kaplan-Meier estimate of

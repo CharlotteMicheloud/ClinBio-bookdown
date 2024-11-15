@@ -710,7 +710,7 @@ p_{(k)} \leq \alpha.
 Variations of it are the @Hochberg1988 and @Hommel1988 method.
 
 
-:::{.example #didgeridoo2, name="continued"}
+:::{.example #didgeridoo2 name="continued"}
 In the Didgeridoo study, there is also
 still evidence for a treatment effect after Simes adjustments 
 (and its variants), as one 
