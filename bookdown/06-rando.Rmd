@@ -348,7 +348,26 @@ is useful to blind a comparison of a treatment given as a tablet with an
 intravenous treatment.
 
 
-## The CONSORT Statement {#sec:consort}
+## Reporting guidelines for Clinical Trials
+
+### The SPIRIT Statement {#sec:spirit}
+
+The SPIRIT
+(**S**tandard **P**rotocol **I**tems: **R**ecommendations for **I**nterventional **T**rials) statement provides evidence-based recommendations for the minimum content of a clinical trial protocol [@spirit; @spiritEE]. SPIRIT is widely endorsed as an international standard for trial protocols.
+The recommendations are outlined in a 33-item *checklist* (see Figures \@ref/fig:SPIRITchecklist_p1 and \@ref/fig:SPIRITchecklist_p2), and *figure* (template of recommended content for the schedule of enrolment, interventions, and assessments). Important details for each checklist item can be found in the Explanation & Elaboration paper [@spiritEE]. The items 14, 20a, 20b and 20c are statistical, and are closely related to, i.e., need to correspond with, items 7, 8, 12 and 16a.
+The current recommendations have been established in 2013, an update will be published soon (see 
+@Hopewell2022 and https://www.consort-spirit.org/).
+
+```{r SPIRITchecklist_p1, fig.cap="The SPIRIT checklist (items 1--17).", fig.align="center", echo=FALSE, eval = TRUE}
+knitr::include_graphics("figures/SpiritCheckList_part1.png")
+```
+
+```{r SPIRITchecklist_p2, fig.cap="The SPIRIT checklist (items 18--33).", fig.align="center", echo=FALSE, eval = TRUE}
+knitr::include_graphics("figures/SpiritCheckList_part2.png")
+```
+
+
+### The CONSORT Statement {#sec:consort}
 
 The CONSORT 
 (**CONS**olidated **S**tandards **O**f **R**eporting **T**rials) statement
