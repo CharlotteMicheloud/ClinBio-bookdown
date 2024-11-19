@@ -137,7 +137,7 @@ period_data <- data.frame(
 )
 
 # Printing the table using kable
-kable(period_data, escape = FALSE, booktabs = TRUE, caption = "Period effects in AB/BA design.")
+kable(period_data, escape = FALSE, booktabs = TRUE)
 ```
 
 
@@ -212,7 +212,7 @@ period_data <- data.frame(
 )
 
 # Printing the table using kable
-kable(period_data, escape = FALSE, booktabs = TRUE, caption = "Period effects in AB/BA design.")
+kable(period_data, escape = FALSE, booktabs = TRUE)
 ```
 
 
@@ -288,7 +288,7 @@ period_data <- data.frame(
 )
 
 # Printing the table using kable
-kable(period_data, escape = FALSE, booktabs = TRUE, caption = "Period effects in AB/BA design.") %>%
+kable(period_data, escape = FALSE, booktabs = TRUE, label = NA) %>%
   kable_styling(latex_options = c("hold_position", "striped"))
 ```
 
@@ -313,7 +313,6 @@ A test for $H_0$: $\gamma = 0$ can be performed using a standard $t$-test compar
 \mbox{ so } \E(\bar s_{AB} - \bar s_{BA} )& = & \gamma 
 \end{eqnarray*}
 
-An alternative approach is to use a mixed model with a carryover effect (treatment $\times$ period interaction). However, both methods are heavily affected by between-patient variation (additional $\xi_i$'s would not cancel in the sum $s_i$), so lack power.
 
 As already mentioned, this procedure is **not recommended**. Instead, non-statistical arguments should be used to decide how long treatment effects are likely to persist.
 
@@ -364,7 +363,7 @@ period_data <- data.frame(
 )
 
 # Printing the table using kable
-kable(period_data, escape = FALSE, booktabs = TRUE, caption = "Period effects in AB/BA design.") %>%
+kable(period_data, escape = FALSE, booktabs = TRUE, label = NA) %>%
   kable_styling(latex_options = c("hold_position", "striped"))
 ```
 
@@ -418,10 +417,10 @@ but note that *two measurements* per patient are required in the crossover trial
 
 ## Binary outcomes
 
-Consider the following illustrating example that will be used throughout this section.
+Consider the following illustrating example that will be used throughout this section:
 
 :::{.example #cerebro}
-In a $2 \times 2$ crossover trial on cerebrovascular deficiency with 67 patients, an active treatment is compared to placebo. The outcome is whether an electrocardiogram was judged normal or abnormal. 
+In a $2 \times 2$ crossover trial on cerebrovascular deficiency with 67 patients, an active treatment is compared to placebo [@Jones2014]. The outcome is whether an electrocardiogram was judged normal or abnormal. 
 :::
 
 ```{r echo=FALSE}
@@ -443,13 +442,19 @@ tail(cerebrovascular)
 ``` 
 
 
-For illustration purposes we start with a separate analysis by period. In period 1, each patient receives either the active treatment or the placebo and the same holds for period 2. So, by considering the two periods separately, all observations are independent as we are used to from a parallel group design. 
+For illustration purposes we start with a separate analysis by period. 
+In period 1, each patient receives either the active treatment or the
+placebo and the same holds for period 2. So, by considering the two
+periods separately, all observations are independent as we are used to
+from a parallel group design. 
 
 ```{r echo = F}
 library(xtable)
 
-tab1 <- table("treatment"=cerebrovascular$treatment[cerebrovascular$time==0], "Period 1"=cerebrovascular$y.f[cerebrovascular$time==0])
-tab2 <- table(cerebrovascular$treatment[cerebrovascular$time==1], cerebrovascular$y.f[cerebrovascular$time==1])
+tab1 <- table("treatment"=cerebrovascular$treatment[cerebrovascular$time==0], 
+              "Period 1"=cerebrovascular$y.f[cerebrovascular$time==0])
+tab2 <- table(cerebrovascular$treatment[cerebrovascular$time==1], 
+              cerebrovascular$y.f[cerebrovascular$time==1])
 
 
 pair <- group <- character()
@@ -483,7 +488,8 @@ Period 1:
 ```{r period1, results='asis', echo=FALSE}
 library(xtable)
 
-kable(tab1, booktabs = TRUE, caption = "Period 1", align = "c") %>%
+kable(tab1, booktabs = TRUE, caption = "Period 1", align = "c", 
+      label = NA) %>%
   kable_styling(latex_options = c("striped", "hold_position"), full_width = FALSE)
 
 ```
@@ -498,14 +504,18 @@ Period 2:
 
 ```{r}
 # Print the contingency table using xtable
-kable(tab2, booktabs = TRUE, caption = "Period 2", align = "c") %>%
+kable(tab2, booktabs = TRUE, caption = "Period 2", align = "c", 
+      label = NA) %>%
   kable_styling(latex_options = c("striped", "hold_position"), full_width = FALSE)
 
 ```
 
 \begin{eqnarray*}
-    \text{OR}_2 &=& \frac{`r tab2[1, 1]` \cdot `r tab2[2, 2]`}{`r tab2[1, 2]` \cdot `r tab2[2, 1]`} \ = \ `r round(est2, 2)` \\
-    \text{se(log(OR$_2$))} &=& \sqrt{\tfrac{1}{`r tab2[1, 1]`} + \tfrac{1}{`r tab2[1, 2]`} + \tfrac{1}{`r tab2[2, 1]`} + \tfrac{1}{`r tab2[2, 2]`}} = `r round(se2, 2)`\\
+    \text{OR}_2 &=& \frac{`r tab2[1, 1]` \cdot `r tab2[2, 2]`}{`r tab2[1, 2]` 
+    \cdot `r tab2[2, 1]`} \ = \ `r round(est2, 2)` \\
+    \text{se(log(OR$_2$))} &=& \sqrt{\tfrac{1}{`r tab2[1, 1]`} + 
+    \tfrac{1}{`r tab2[1, 2]`} + \tfrac{1}{`r tab2[2, 1]`} +
+    \tfrac{1}{`r tab2[2, 2]`}} = `r round(se2, 2)`\\
     \text{95% CI} &=& `r paste("[", round(exp(log(est2) - qnorm(0.975) * se2), 2), ", ", round(exp(log(est2) + qnorm(0.975) * se2), 2), "]", sep = "")`
 \end{eqnarray*}
 
@@ -515,7 +525,8 @@ The confidence intervals for the odds ratios in the two analyses are rather
 wide, providing no evidence for a treatment effect in the two periods. 
 A *combined analysis* has to take into account that responses from the 
 same patient are correlated.
-The results of a crossover trial with binary outcome can be summarized as in the following table.
+The results of a crossover trial with binary outcome can be summarized as in 
+the following table:
 
 ```{r }
 sel1 <- which((cerebrovascular$treatment=="Active" & cerebrovascular$time==0) | (cerebrovascular$treatment=="Placebo" & cerebrovascular$time==1))
@@ -529,24 +540,43 @@ tab2 <- table("period"=group2$time, "response"=group2$y.f)
 ``` 
 
 ```{r}
-# Data preparation (replace with your actual data)
+library(kableExtra)
+# Define variables
+a <- fullTable[1, 2]
+b <- fullTable[1, 3]
+c <- fullTable[2, 2]
+d <- fullTable[2, 3]
 
+# Create the table
+kable(
+  data.frame(
+    Group = c("Active-Placebo", "Placebo-Active"),
+    `No-No` = c(fullTable[1, 1], fullTable[2, 1]),
+    `No-Ab` = c(paste0("**a =** ", a), paste0("**c =** ", c)),
+    `Ab-No` = c(paste0("**b =** ", b), paste0("**d =** ", d)),
+    `Ab-Ab` = c(fullTable[1, 4], fullTable[2, 4])
+  ),
+  col.names = c("Group", "No-No", "No-Ab", "Ab-No", "Ab-Ab"),
+  format = "html", 
+) %>%
+  kable_styling(full_width = FALSE, bootstrap_options = c("striped", "hover")) %>%
+add_header_above(c(" " = 1, "Outcome pair" = 4))
 
-# Print table using kable
-knitr::kable(fullTable, booktabs = TRUE) %>%
-  kableExtra::kable_styling(latex_options = c("striped", "hold_position"))
+# # Print table using kable
+# knitr::kable(fullTable, booktabs = TRUE) %>%
+#   kableExtra::kable_styling(latex_options = c("striped", "hold_position"))
 ```
 
 
 
-Only discordant pairs (in red) contribute to estimates of the
+Only discordant pairs (in bold) contribute to estimates of the
 treatment effect. Group imbalance occurs if $a + b \neq c + d$.
 
-A combined analysis can be done using Mainland-Gart test 
-or a generalized linear mixed model.
+<!-- A combined analysis can be done using Mainland-Gart test  -->
+<!-- or a generalized linear mixed model. -->
 
 
-### Naive analysis using Mc Nemar's test
+### Naive analysis
 
 A naive way to analyse such data would be to compare the treatment 
 groups using Mc Neymar's test for binary paired data, ignoring the 
@@ -558,14 +588,14 @@ vs. unexpected direction
 
 \begin{eqnarray*} 
 
-\widehat{\OR} = \frac{\mbox{\scriptsize \# pairs: normal for Active, abnormal for Placebo}}{\mbox{\scriptsize \# pairs: abnormal for Active, normal for Placebo}} = \frac{a + d}{b + c}
+\widehat{\OR} = \frac{\mbox{ \# pairs: normal for Active, abnormal for Placebo}}{\mbox{ \# pairs: abnormal for Active, normal for Placebo}} = \frac{a + d}{b + c}
 
 \end{eqnarray*}
 
 with standard error
 
 \begin{eqnarray*}
-\SE(\log \widehat{\OR}) = \sqrt{\frac{1}{a+d} + \frac{1}{b+c}}
+\SE(\log \widehat{\OR}) = \sqrt{\frac{1}{a+d} + \frac{1}{b+c}}.
 \end{eqnarray*}
 
 ```{r echo=FALSE}
@@ -584,8 +614,8 @@ printWaldCI(log(or), se.log.or, FUN=exp, digits=2)
 
 ``` 
 
-It is also possible to perform Mc Neymar test using the R function 
-mcnemar.test(): 
+It is also possible to perform Mc Neymar test using the `R` function 
+`mcnemar.test()`: 
 ```{r echo=FALSE}
 
 x <- as.table(matrix(c(39, 10, 3, 15), ncol=2, byrow=TRUE), dnn=)
@@ -650,11 +680,7 @@ se.log.or <- sqrt(1/a+1/b+1/c+1/d)/2
 
 
 ### Analysis with generalized linear mixed models
-We may also use a generalized linear mixed model (but results may depend on the choice of the integration parameter \code{nAGQ}).
-
-:::{.example #cerebro name="continued"}
-Results in the cerebrovascular deficiency trial:
-:::
+We may also use a generalized linear mixed model (but results may depend on the choice of the integration parameter \code{nAGQ}):
 
 ```{r echo=TRUE}
 resCerebro <- glmer(y ~ treatment + time + (1|ID), 
