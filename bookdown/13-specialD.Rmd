@@ -3,29 +3,37 @@
 
 This chapter gives an introduction to some special randomized
 controlled trial designs. Cluster-randomized trials no longer
-randomize on individual (patient) level.  Equivalence/Non-inferiority trials
+randomize on individual (patient) level.  Equivalence and non-inferiority trials
 differ from superiority trials in the sense that the objective of the
 trial is no longer to show that the intervention is better than
-control, but to show that two treatments are equivalent respectively
-one is non-inferior to the other one.
+control, but to show that two treatments are equivalent or
+one is non-inferior to the other one, respectively.
 
 ## Cluster-randomized trials
 
-Up to now, we have seen randomization of patients. *Cluster-randomized trials* allocate groups of patients *en bloc* to the same treatment. For example, @kinmonth1998
-is an intervention study in primary care about whether additional training of nurses and general practitioners (GPs) in a general practice improves the care of patients with newly diagnosed type II diabetes mellitus. In this study, $41$ practices were randomized to the *status quo* or to receive additional training for their staff. 
+Up to now, we have seen randomization of patients. *Cluster-randomized trials* allocate groups of patients *en bloc* to the same treatment. 
+
+:::{.example #gps}
+@kinmonth1998
+is an intervention study in primary care about whether additional training of 
+nurses and general practitioners (GPs) in a general practice improves the 
+care of patients with newly diagnosed type II diabetes mellitus. 
+In this study, $41$ practices were randomized to the *status quo* or to 
+receive additional training for their staff. 
+:::
 
 ### Analysis
 
-Standard methods can no longer be used, as patient responses from the same cluster are dependent. The intraclass correlation coefficient, 
-
-the correlation between outcomes within a cluster, needs to be taken into account. In the following, we discuss two methods of analysis: 
-
-
-1.  A simple approach is to construct a *summary measure* for each cluster and then analyze these summary values.
-2.  To analyze data on patient level, a *mixed model* formulation, a regression model with cluster-specific random effects, is needed. An alternative approach are so-called generalized estimating equations (GEEs). 
-
-
-These methods will be applied to the following example.
+Standard methods can no longer be used, as patient responses from the same cluster are dependent.
+The intraclass correlation coefficient, i.e. 
+the correlation between outcomes within a cluster, needs to be taken into account.
+In the following, we discuss two methods of analysis. First, we consider a simple
+approach, which constists of constructing a
+*summary measure* for each cluster and then analyze these summary values.
+Then, to analyse data on patient level, a *mixed model* formulation, 
+a regression model with cluster-specific random effects, is needed. 
+An alternative approach are so-called generalized estimating equations (GEEs). 
+These methods will be applied to the following example:
 
 :::{.example #radiology}
 @oakeshott_etal1994, see also @SN_clusterAnalysis, report 
@@ -33,8 +41,8 @@ on the effect of guidelines for radiological referral on the referral
 practice of GPs where $17$ practices in the intervention group received
 guidelines and 17 control practices were not sent anything. Outcome 
 measure was the percentage of x-ray examinations requested that conformed 
-to the guidelines. The data of the first 10 practices in the intervention 
-group are shown below:
+to the guidelines. The data from the first 5 practices with and 
+without intervention are shown below:
 :::
 
 ```{r echo=FALSE, warning=FALSE}
@@ -46,22 +54,18 @@ library(Epi)
 ``` 
 
 ```{r echo=TRUE}
-head(CRT, 10)
+head(CRT, 5)
+tail(CRT, 5)
 ``` 
 
 
-#### Summary measure analysis
+#### Summary measure analysis {-}
 
-Summary measure analysis is an analysis on practice level. This avoids the 
-issue of correlated outcomes within a cluster by directly analyzing 
-the percentages
-of x-ray examinations in each practice. For simplicity we follow 
+The analysis on practice level can be performed by applying a 
+$t$-test to compare the percentage of x-ray examination in each practice.
+For simplicity we follow 
 @SN_clusterAnalysis and treat the percentages as a continuous outcome. 
 
-
-:::{.example}
-Results in the study about radiological referral guidelines (Example \@ref(exm:radiology)):
-:::
 
 ```{r echo=TRUE}
 (mytTest <- t.test(Percentage ~ Group, var.equal = TRUE, data = CRT))
@@ -72,25 +76,30 @@ Results in the study about radiological referral guidelines (Example \@ref(exm:r
 CRT$Group <- factor(CRT$Group, levels = c("Control", "Intervention"))
 ``` 
 
-The same results can be obtained with regression analysis, but we can also use the number of referrals as weight. The latter is the preferred analysis on practice level, as it takes into account the different sample sizes in the different practices. 
+The same results can be obtained with regression analysis,
+but we can also use the number of referrals as weight. 
+The latter is the preferred analysis on practice level, 
+as it takes into account the different sample sizes in the different practices. 
 
 ```{r echo=TRUE, results="asis"}
 result <- lm(Percentage ~ Group, data = CRT) 
 result.w <- lm(Percentage ~ Group, data = CRT, weight = Total)
-knitr::kable(tableRegression(result, latex = FALSE))
-knitr::kable(tableRegression(result.w, latex = FALSE))
+knitr::kable(tableRegression(result, xtable = FALSE))
+knitr::kable(tableRegression(result.w, xtable = FALSE))
 ``` 
 
 
 
-#### Mixed model
+#### Logistic regression with random effects {-}
 
-The recommended analysis on patient level for a binary outcome is logistic regression with random effects for practices. The random effects account for possible correlation between patients treated in the same practice. We could in principle analyse the data in a long format, with a row for each patient and a binary outcome reflecting whether the x-ray from that particular patient conformed to the guidelines. However, as in standard logistic regression we can aggregate the data to binomial counts in each practice $\times$ treatment group combination, but keep the random effects on practice level. 
-
-
-:::{.example}
-Results in the study about radiological referral guidelines (Example \@ref(exm:radiology)):
-:::
+The recommended analysis on patient level for a binary outcome is 
+logistic regression with random effects for practices. The random effects 
+account for possible correlation between patients treated in the same practice.
+We could in principle analyse the data in a long format, with a row for each 
+patient and a binary outcome reflecting whether the x-ray from that particular 
+patient conformed to the guidelines. However, as in standard logistic regression 
+we can aggregate the data to binomial counts in each practice $\times$ treatment 
+group combination, but keep the random effects on practice level. 
 
 
 ```{r echo=TRUE, warning=FALSE}
@@ -113,13 +122,9 @@ result.glm <- glm(Outcome ~ Group,
 
 ``` 
 
-
-
-:::{.example}
 Just for illustration, we show an analysis of Example \@ref(exm:radiology)
-on patient level where we
-ignore the clustering and aggregate the data to a 2x2 table. 
-:::
+on patient level where we ignore the clustering and aggregate the data 
+to a 2x2 table (*not recommended*). 
 
 
 ```{r echo=TRUE}
@@ -139,11 +144,17 @@ print(tab)
 twoby2(tab)
 ``` 
 
-This analysis is wrong, as it ignores the cluster structure and acts as if patients had been randomly assigned to treatment groups. This results in confidence intervals which are too narrow and $P$-values which are too small.
+This analysis is wrong, as it ignores the cluster structure and acts as if
+patients had been randomly assigned to treatment groups. This results in 
+confidence intervals which are too narrow and $P$-values which are too small.
 
 
 
-The mixed model formulation for a continuous outcome $X_{ij}$ from patient $j$ in cluster $i$ is
+
+#### Mixed model for continuous outcomes {-}
+
+The mixed model formulation for a continuous outcome $X_{ij}$ from patient
+$j$ in cluster $i$ is
 
 ```{r}
 treatment <- c("A", "B")
@@ -166,43 +177,68 @@ where
 The total variance is then $\Var(X_{ij}) = \sigma^2 = \sigma_b^2 + \sigma_w^2$ and the intraclass/intracluster correlation is $\rho= \sigma_b^2/\sigma^2$.
 The analysis can be performed with the \code{lme4::lmer()}.
 
-### Sample size calculation
+### Sample size calculation 
 
-#### Number of patients
-In addition to a standard sample size calculation, we need the average cluster size $\bar n_c$ and the intraclass correlation $\rho$.
+In addition to a standard sample size calculation, 
+we need the average cluster size $\bar n_c$ and the intraclass correlation $\rho$.
 The total number of patients receiving each treatment should then be
 
 \begin{equation*}
-n = \underbrace{\frac{ 2 \sigma^2 (u+v)^2}{ \Delta^2}}_{\scriptsize \mbox{standard RCT sample size}} \times \quad \underbrace{\alert{(1+ \rho(\bar n_c-1))}}_{\scriptsize \mbox{\alert{design effect $\Deff$}}}.
+n = \underbrace{\frac{ 2 \sigma^2 (u+v)^2}{ \Delta^2}}_{\scriptsize \mbox{standard RCT sample size}} \times \quad \underbrace{(1+ \rho(\bar n_c-1))}_{\scriptsize \mbox{design effect $D_{\mbox{eff}}$}}.
 \end{equation*}
 
-For example, suppose $\bar n_c=7$ and $\rho=0.5$, then $\Deff=4$, so 4-times as many patients are needed than for a standard RCT on patient-level. 
+For example, suppose $\bar n_c=7$ and $\rho=0.5$, then $\Deff=4$, 
+so 4-times as many patients are needed than for a standard RCT on patient-level. 
 
-#### Number of clusters
 If the number of patients
 
-$$n = \frac{ 2 \sigma^2 (u+v)^2}{ \Delta^2} \cdot \mbox{$\Deff$}$$
+$$n = \frac{ 2 \sigma^2 (u+v)^2}{ \Delta^2} \cdot D_{\mbox{eff}}$$
 
-has been calculated, then the *number of clusters* $N_c$ receiving each treatment is $n/\bar n_c$. Alternatively, we could directly calculate
+has been calculated, then the *number of clusters* $N_c$ receiving each
+treatment is $n/\bar n_c$. Alternatively, we could directly calculate
 
 \begin{equation*}
-N_c = \frac{ 2 \alert{(\sigma_b^2 +\sigma_w^2/\bar n_c)} (u+v)^2}{ \Delta^2}.
+N_c = \frac{ 2 (\sigma_b^2 +\sigma_w^2/\bar n_c) (u+v)^2}{ \Delta^2}.
 \end{equation*}
 
 
 ## Equivalence and non-inferiority trials
 
-Up to now, we discussed *superiority* studies. The aim of *equivalence*  trials is not to detect a difference, but to establish equivalence of the two treatments. An equivalence trial needs pre-specification of an *interval of equivalence* $I=(-\delta, \delta)$ for the treatment difference. The *equivalence margin* $\delta$ takes over the role of the minimal clinically relevant difference $\Delta$ in standard superiority trials. If $\delta$ is only specified in one direction, then we have a *non-inferiority* trial with *non-inferiority interval* $I=(-\infty, \delta)$ or $I=(-\delta, \infty)$, depending on the context. Non-inferiority trials are based on one-sided hypothesis tests to check whether one group is almost as good (not much worse) than the other group.
+Up to now, we discussed *superiority* studies. The aim of *equivalence*  trials 
+is not to detect a difference, but to establish equivalence of the two treatments.
+An equivalence trial needs pre-specification of an *interval of equivalence* 
+$I=(-\delta, \delta)$ for the treatment difference. If $\delta$ is only specified in 
+one direction, then we have a *non-inferiority* trial with 
+*non-inferiority interval* $I=(-\infty, \delta)$ or $I=(-\delta, \infty)$, 
+depending on the context. Non-inferiority trials are based on one-sided 
+hypothesis tests to check whether one group is almost as good (not much worse) 
+than the other group.
 
-The following examples illustrate why non-inferiority and equivalence studies can be more suitable than superiority studies in some situations.
+The following scenarios highlight why non-inferiority and equivalence studies
+may be more appropriate than superiority studies in certain cases.
 
-1.  If the intervention to be assessed is similar to standard-of-care w.r.t. the primary endpoint but may have advantages in secondary endpoints, \eg less side effects, lower production costs, more convenient formulation (tablet instead of infusion), less doses, better quality of life.
-2.  Bio-equivalence of drugs with identical active ingredient (different formulations of the same drug, Generics).
+One scenario is when the intervention being evaluated is expected to
+perform similarly to the standard of care with respect to the primary
+endpoint but offers potential advantages in secondary endpoints. These
+advantages could include fewer side effects, reduced production costs,
+more convenient formulations (e.g., tablets instead of infusions), 
+fewer required doses, or improvements in quality of life.
 
-Many diseases have standard-of-care, hence placebo controls are often not possible (anymore). Instead, a new treatment is compared to an active control (standard-of-care).
+Another scenario involves studies assessing the bioequivalence of drugs 
+that share the same active ingredient, such as different formulations of the 
+same medication or generic alternatives.
 
 
-Table \@ref(tab:3designstab) compares superiority to equivalence studies in terms of the underlying test hypotheses for the treatment effect $\Delta$. The *point null hypothesis* in a superiority trial is "too narrow" to be proven. If a superiority trial shows a large $P$-value, then the only implication is that there is no evidence against $H_0$. In contrast, equivalence studies specify an interval of equivalence (through an "equivalence margin") as a composite alternative hypothesis with its complement as the null hypothesis. This construction makes it possible to quantify the evidence for equivalence. Figure \@ref(fig:3designs) illustrates the different design types.
+Table \@ref(tab:3designstab) (second column)
+compares superiority to equivalence studies in 
+terms of the underlying test hypotheses for the treatment effect $\Delta$. 
+The *point null hypothesis* in a superiority trial is "too narrow" to be proven.
+If a superiority trial shows a large $P$-value, then the only implication is
+that there is no evidence against $H_0$. In contrast, equivalence studies 
+specify an interval of equivalence (through an equivalence margin $\delta$) as a 
+composite alternative hypothesis with its complement as the null hypothesis. 
+This construction makes it possible to quantify the evidence for equivalence. 
+Figure \@ref(fig:hypotheses) illustrates the  hypotheses of the different design types.
 
 ```{r 3designstab}
 # Creating a data frame for the table
@@ -210,9 +246,9 @@ design <- c("Superiority", "Equivalence", "Non-inferiority")
 hypotheses <- c("$H_0$: $\\Delta=0$ vs. $H_1$: $\\Delta \\neq 0$", 
                 "$H_0$: $\\abs\\Delta \\geq \\delta$ vs. $H_1$: $\\abs\\Delta \\leq \\delta$", 
                 "$H_0$: $\\Delta \\leq -\\delta$ vs. $H_1$: $\\Delta > -\\delta$")
-sample_size <- c("$n = \\frac{ 2 \\sigma^2 (z_{\\alert{1-\\alpha/2}}+z_{\\alert{1-{\\beta}}})^2}{ \\Delta^2}$",
-                 "$n = \\frac{2 \\sigma^2(z_{\\alert{1-\\alpha}}+z_{\\alert{1-{\\beta/2}}})^2}{\\delta^2}$",
-                 "$n = \\frac{2 \\sigma^2(z_{\\alert{1-\\alpha}}+z_{\\alert{1-{\\beta}}})^2}{\\delta^2}$")
+sample_size <- c("$n = \\frac{ 2 \\sigma^2 (z_{1-\\alpha/2}+z_{1-{\\beta}})^2}{ \\Delta^2}$",
+                 "$n = \\frac{2 \\sigma^2(z_{1-\\alpha}+z_{1-{\\beta/2}})^2}{\\delta^2}$",
+                 "$n = \\frac{2 \\sigma^2(z_{1-\\alpha}+z_{1-{\\beta}})^2}{\\delta^2}$")
 
 table_data <- data.frame(Design = design, Hypotheses = hypotheses, `Sample size` = sample_size)
 
@@ -237,17 +273,17 @@ as shown in Appendix \@ref(equiv).
 
 For $\gamma=90\%$, we have $\alpha\approx 0.05$ and for $\gamma=95\%$, we have  $\alpha\approx 0.025$.
 
-#### The TOST procedure
+#### The TOST procedure {-}
 
 An alternative approach to assess equivalence is the TOST procedure as follows:
-%
 
-1.  Apply **T**wo separate standard **O**ne-**S**ided significance **T**ests (TOST) at level $\alpha$:  
-\begin{itemize}
+
+1.  Apply **T**wo separate standard **O**ne-**S**ided significance **T**ests 
+(TOST) at level $\alpha$:  
 2.  Test 1 for $H_0$: $\Delta \leq - \delta$ vs. $H_1$: $\Delta > - \delta$
 3.  Test 2 for $H_0$: $\Delta \geq \delta$ vs. $H_1$: $\Delta < \delta$
-\end{itemize}
-4.  If both one-sided tests can be rejected, we can conclude equivalence at level $\alpha$. 
+4.  If both one-sided tests can be rejected, we can conclude equivalence at
+level $\alpha$. 
 
 :::{.example #fake}
 Remember Example \@ref(exm:sleep) about a  soporific drugs in terms of increase 
@@ -312,9 +348,11 @@ tost2 <- t.test(extra ~ group, data = sleep, mu = 0.5,
 print(tost2$p.value)
 ``` 
 
-One $p$-value is larger than $\alpha=5\%$, the other one is smaller. Hence, equivalence cannot be established.
+One $p$-value is larger than $\alpha=5\%$, the other one is smaller.
+Hence, equivalence cannot be established.
 
-
+Figure \@ref(fig:3designs) shows different conclusions 
+based on the confidence interval.
 
 
 ```{r 3designs, fig.cap = "Concluding superiority, equivalence or non-inferiority based on a confidence interval for the difference in means.",  echo=FALSE, quiet=TRUE,, fig.height = 6, fig.width = 9}
