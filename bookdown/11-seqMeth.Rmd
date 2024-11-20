@@ -16,9 +16,8 @@ rate $\alpha$ is maintained.
 ### Data monitoring committees
 
 The decision to terminate a trial can be based on the efficacy of 
-the treatment, the worryingly high incidence of side effects, 
-or the evidence that the new treatment is less efficacious than the
-existing treatment.
+the new treatment, the worryingly high incidence of side effects, the evidence that the new treatment is less efficacious than the
+existing treatment, or on futility, which means that there is little chance of showing that the new treatment is better.
 
 
 A *data (and safety) monitoring committee*
@@ -366,8 +365,8 @@ effect <- 0.35
 
 :::{.example #attenuated}
 We illustrate the problems of stopping at interim in a simulation example. 
-Suppose that we have two equally sized treatment arms and a continuous outcome. 
-The primary outcome is the difference in means $\theta$.
+Suppose that we have two equally sized treatment arms and a continuous primary outcome. 
+The difference in means $\theta$ is used as effect size.
 We fix the following analysis parameters: $N=`r n`$ interim analyses with 
 Pocock bound $z_P=2.56$ (nominal significance level
 $\tilde \alpha = `r formatPval(z2p(resZ[10]))`$) and $n=`r m`$ 
