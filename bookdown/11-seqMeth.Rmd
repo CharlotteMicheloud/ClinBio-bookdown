@@ -373,9 +373,7 @@ Pocock bound $z_P=2.56$ (nominal significance level
 $\tilde \alpha = `r formatPval(z2p(resZ[10]))`$) and $n=`r m`$ 
 patients per group and treatment arm to achieve a power of 75\% to detect the true treatment effect $\theta=`r effect`$ with standard deviation $\sigma=1$.
 Significance at the $k$-th interim analysis implies the following minimum 
-detectable difference (MDD, Compare Section \@ref(tab:samplesizecont)) for the treatment effect estimate:
-<!--Steffi, 20.11.2024: I wanted to use the above reference to Section 5.2 (as it shows in the html) to add a reference to SPIRIT in Chapter 6.3.1. But then I saw that the above reference is actually to Table 5.2 (tab:samplesizecont), not Section 5.2. Which is correct?
-
+detectable difference (MDD, Compare Table \@ref(tab:samplesizecont)) for the treatment effect estimate:
 \begin{equation*}
 \hat \theta \geq z_P \sqrt{2/(k \cdot n)}.
 \end{equation*}
