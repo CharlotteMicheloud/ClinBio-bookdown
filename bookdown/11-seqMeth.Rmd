@@ -356,7 +356,9 @@ significantly better than control, then
 the treatment effect estimate will be too large,
 the CI will be too narrow,
 and the $P$-value will be too small,
-Advanced methods for attempting to correct this bias are available, but rarely used.
+Advanced methods for attempting to correct this bias are available, but rarely used, see @robertson_point_2023 and 
+@robertson_confidence_2024 for recent reviews. 
+
 ```{r setup2, echo=FALSE}
 n <- 10
 m <- 15
