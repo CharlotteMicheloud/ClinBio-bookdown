@@ -279,7 +279,7 @@ We can build a Wald CI for $\pi$ as in \@ref(eq:wald). However, for proportions 
 
 \begin{equation}
 (\#eq:wilson)
-\dfrac{x + z_\gamma^2/2}{n + z_\gamma^2} \pm \dfrac{z_\gamma^2 \sqrt{n}}{n + z_\gamma^2} \sqrt{\widehat{\pi}(1-\widehat{\pi}) + \dfrac{z_\gamma^2}{4n}}
+\dfrac{x + z_\gamma^2/2}{n + z_\gamma^2} \pm \dfrac{z_\gamma \sqrt{n}}{n + z_\gamma^2} \sqrt{\widehat{\pi}(1-\widehat{\pi}) + \dfrac{z_\gamma^2}{4n}}
 \end{equation}
 
 
