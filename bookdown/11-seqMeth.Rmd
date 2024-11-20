@@ -91,8 +91,6 @@ analyses the nominal significance level is $\tilde \alpha = 0.0106$, which
 corresponds to a $z$-value of `r round(p2z(0.0106),2)`.
 
 
-Standard adjustments for multiple testing are too conservative since those methods are based on accumulating data with a specific dependence structure. For example, the Bonferroni correction would use $\tilde \alpha = 0.05/10 = 0.005$ rather than $\tilde \alpha = 0.0106$.
-
 
 ```{r echo=FALSE}
 maxy <- 20
