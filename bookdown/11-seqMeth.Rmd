@@ -210,7 +210,8 @@ for(i in 2:length(N)){
     res[i] <- (z2p(resZ[i]))
 }
 
-par(mfrow=c(1,2))
+par(mfrow=c(1,2), 
+    mar = c(5.1, 6, 4.2, 2.1))
 matplot(N, res, type="b", pch=19, lwd=2, ylim=c(0,.05), ylab="nominal significance level (two-sided)", xlab="number of groups", axes=FALSE)
 ## lines(N, 5/N, col=2, type="b", pch=19)
 lines(N, 0.05/N, col=4, type="b", pch=19)
@@ -222,7 +223,7 @@ legend("topright", col=c(1,4), lty=1, lwd=2,
        legend=c("Pocock", "Bonferroni"), bg="white")
 lines(c(1,10), rep(res[10], 2), lty=2, col="red")
 lines(rep(10,2), c(-1, res[10]), lty=2, col="red")
-axis(2, at=res[10], labels=as.character(formatPval(res[10])), col="red", col.axis="red", col.ticks="red", cex.axis=.9)
+axis(2, at=res[10], labels=as.character(round(res[10], 3)), col="red", col.axis="red", col.ticks="red", cex.axis=.8)
 axis(1)
 axis(2, at=c(0,2,3,4,5)/100, as.character(c(0,2,3,4,5)/100), cex.axis=0.9)
 box()
