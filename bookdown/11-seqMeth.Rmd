@@ -204,7 +204,7 @@ library(ReplicationSuccess)
 library(gsDesign)
 library(biostatUZH)
 for(i in 2:length(N)){
-    resZ[i] <- gsDesign(k=N[i], sfu="Pocock", test.type=2)$upper$bound[1]
+    resZ[i] <- gsDesign(k=N[i], sfu="Pocock", test.type=1)$upper$bound[1]
     res[i] <- (z2p(resZ[i]))
 }
 
@@ -328,14 +328,9 @@ library(gsDesign)
 
 ## Pocock stopping rule
 gsDesign(k = 3, alpha=0.025, sfu = "Pocock", test.type = 1)
-# gsDesign(k = 3, sfu = "Pocock", test.type = 2)
-# Steffi, 25.11.2025: I would use test.type=1 in all places, since we are only looking at stopping for efficacy. But I would provide alpha=0.025, although it is default.
-# It does not change the resulting boundaries, but only the upper bound is in the output, and its consistent with slides and klicker quiz for session 11.
-# I didn't change it above in line 207, but it may be changed there too. 
 
 ## O'Brien Fleming stopping rule
 gsDesign(k = 3, alpha=0.025, sfu = "OF", test.type = 1)
-# gsDesign(k = 3, sfu = "OF", test.type = 2)
 ``` 
 
 There are also other forms of stopping rules. A more flexible

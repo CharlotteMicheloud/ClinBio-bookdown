@@ -453,56 +453,75 @@ text(0,-2,"confidence interval for difference in means",cex=1.5,font=2,pos=1)
 
 
 
-#### Sample size calculation for continuous outcomes
-
-:::{.example}
-An example for a sample size calculation for an equivalence 
-trial is @holland2017, see Figure \@ref(fig:holland) 
-for title and abstract of this publication.
-:::
-
-```{r}
-knitr::include_graphics("figures/Holland_etal2016Title.pdf")
-```
-
-```{r holland, fig.cap="Equivalence trial example @holland2017.", fig.align='center', echo=FALSE}
-knitr::include_graphics("figures/Holland_etal2016BackgroundMethods.pdf")
-```
+#### Sample size calculation for continuous outcomes {-}
 
 
-
-Consider the hypotheses $H_0: \abs{\Delta} > \delta$ and 
-$H_1: \abs{\Delta} \leq \delta$. The type I error rate is calculated for $\Delta = \delta$. 
+Consider the hypotheses $H_0: \abs{\Delta} > \delta$ versus
+$H_1: \abs{\Delta} \leq \delta$. The Type I error rate is calculated for $\Delta = \delta$. 
 The power $1-\beta$ is computed at the center $\Delta=0$ of $H_1$.
 Appendix \@ref(equiv) shows that the required sample size in each group then is:
 
-\begin{eqnarray*}
-n &=& \frac{2 \sigma^2(z_{\alert{(1+\gamma)/2}}+z_{\alert{1-{\beta/2}}})^2}{\delta^2} \\
- & \approx & \frac{2 \sigma^2(z_{\alert{1-\alpha}}+z_{\alert{1-{\beta/2}}})^2}{\delta^2},
-\end{eqnarray*}
+\begin{eqnarray}
+n &=& \frac{2 \sigma^2(z_{\color{red}{(1+\gamma)/2}}+z_{\color{red}{1-{\beta/2}}})^2}{\delta^2} \\
+ & \approx & \frac{2 \sigma^2(z_{\color{red}{1-\alpha}}+z_{\color{red}{1-{\beta/2}}})^2}{\delta^2},
+(#eq:nequi)
+\end{eqnarray}
 
 where $z_{\gamma}$ is the $\gamma$-quantile of the standard normal distribution.
 
-Table \@ref(tab:3designstab) compares the sample sizes of the different trial designs. The equivalence margin $\delta$ takes over the role of the clinically relevant difference $\Delta$. In practice, $\delta$ is usually considerably smaller than $\Delta$ in a related but conventional superiority trial. This typically leads to a larger sample size required for equivalence trials. Moreover, $z_{1-\alpha}$ replaces $z_{1 - \alpha/2}$ and $z_{{1-{\beta/2}}}$ replaces $z_{{1-{\beta}}}$. This is a consequence of the null hypothesis, but not the alternative, being two-sided in an equivalence trial.
+Table \@ref(tab:3designstab) (third column) compares the sample sizes of the different trial designs. The equivalence margin $\delta$ takes over the role of the clinically relevant difference $\Delta$. In practice, $\delta$ is usually considerably smaller than $\Delta$ in a related but conventional superiority trial. This typically leads to a larger sample size required for equivalence trials. Moreover, $z_{1-\alpha}$ replaces $z_{1 - \alpha/2}$ and $z_{{1-{\beta/2}}}$ replaces $z_{{1-{\beta}}}$. This is a consequence of the null hypothesis, but not the alternative, being two-sided in an equivalence trial.
+
+
+:::{.example #holland}
+@holland2017 conducted a randomized, controlled equivalence trial to 
+assess whether home-based pulmonary rehabilitation was equivalent to center-based
+pulmonary rehabilitation. The primary outcome was the change in the 6 min walk distance test (6MWD). 
+The paper states: "Sample size calculations indicated that 144 participants were required to be 80% sure that the 95% CI excluded a difference in the change in 
+6MWD of more than the equivalence limit of 25m, [...], assuming an SD of 51m".
+
+```{r, echo = TRUE}
+n_equi <- function(delta, sd, alpha, beta){
+  zalpha <- qnorm(1-alpha)
+zbeta2 <- qnorm(1 - beta/2)
+n <- 2*sd^2*(zalpha + zbeta2)^2/delta^2
+return(n)
+}
+
+# ss per group with alpha = 2.5%
+n <- n_equi(delta = 25, sd = 51, alpha = 0.025, beta = 0.2)
+print(n)
+
+# ss per group with alpha = 5%
+n2 <- n_equi(delta = 25, sd = 51, alpha = 0.05, beta = 0.2)
+print(n2)
+
+```
+
+Using these values in Equation \@ref(eq:nequi) with $\alpha = 2.5\%$ give $n = `r ceiling(n)*2` \neq 144$. 
+The correct sample size is retrieved using $\alpha = 5\%$, so one might 
+wonder if there based their calculation on a 90% CI instead of a 95% CI.
+:::
+
 
 ### Non-inferiority trials
-Non-inferiority trials are useful if a proven active treatment exists and placebo-controls are not acceptable for ethical reasons. They are a special case of equivalence trials, but conducted more often. 
+Non-inferiority trials are useful if a proven active treatment exists and placebo-controls are not acceptable for ethical reasons. They are a special case of equivalence trials, but are conducted more often. 
 
 To assess non-inferiority, just perform one of the two TOST tests, say
 
 $$H_0: \Delta \leq - \delta \mbox{ vs. } H_1: \Delta >  - \delta.$$
 
-A one-sided superiority trial corresponds to $\delta=0$. The alternative procedure based on confidence intervals computes a confidence interval at level $\gamma$ and rejects $H_0$ of inferiority if the upper bound is smaller than $\delta$. The type I error rate is $\alpha = (1-\gamma)/2$.  
+A one-sided superiority trial corresponds to $\delta=0$. The alternative procedure based on confidence intervals computes a confidence interval at level $\gamma$ and rejects $H_0$ of inferiority if the upper bound is smaller than $\delta$. The Type I error rate is $\alpha = (1-\gamma)/2$.  
 
 
 The sample size (per group) is now
 
 \begin{equation*}
-n = \frac{2 \sigma^2(z_{\alert{1-\alpha}}+z_{\alert{1-{\beta}}})^2}{\delta^2}.
+n = \frac{2 \sigma^2(z_{\color{red}{1-\alpha}}+z_{\color{red}{1-{\beta}}})^2}{\delta^2}.
 \end{equation*}
 
 
-Sample sizes of the three designs are compared in Table \@ref(tab:3designstab). Table \@ref(tab:3samplesizes) compares the sample sizes for the three different designs of RCTs in practical examples assuming $\Delta = \delta = \sigma = 1$ and different values for $\alpha$ and $\beta$. As before, the numbers can be adjusted for different values of $\Delta/\sigma$ (respectively $\delta/\sigma$).
+Sample sizes of the three designs are compared in Table \@ref(tab:3designstab)
+(third column). Table \@ref(tab:3samplesizes) compares the sample sizes for the three different designs of RCTs in practical examples assuming $\Delta = \delta = \sigma = 1$ and different values for $\alpha$ and $\beta$. As before, the numbers can be adjusted for different values of $\Delta/\sigma$ (respectively $\delta/\sigma$).
 For example, if $\Delta/\sigma$ or $\delta/\sigma = 1/2$ then the numbers have to be multiplied with 4. 
 
 ```{r echo=FALSE}
@@ -541,33 +560,18 @@ library(knitr)
 
 # Create the table using kable
 tbl <- data.frame(
-  alpha = ab[, 1],
-  beta = ab[, 2],
-  Non_inferiority = mytermNI,
-  Superiority = mytermS,
-  Equivalence = mytermE
+  `$\\alpha$` = ab[, 1],
+  `$\\beta$` = ab[, 2],
+  `Non-inferiority` = mytermNI,
+  `Superiority` = mytermS,
+  `Equivalence` = mytermE, 
+  check.names = FALSE
 )
 
 # Print the table using kable
-kable(tbl, booktabs=TRUE, caption="Comparison of sample sizes for RCTs in an example with $\\Delta = \\delta = \\sigma = 1$ and different values for $\\alpha$ and $\\beta$.", digits=c(2, 2, 1, 1, 1))
+kable(tbl, booktabs=TRUE, caption="Comparison of sample sizes for RCTs in an example with $\\Delta = \\delta = \\sigma = 1$ and different values for $\\alpha$ and $\\beta$.", digits=c(2, 2, 1, 1, 1), align= "c")
 ```
 
-:::{.example}
-Sample size calculations in @holland2017.
-:::
-
-```{r fig_holland2, fig.cap="Sample size.", echo=FALSE, out.width='10.5cm', fig.align='center'}
-knitr::include_graphics("figures/Holland_etal2016SampleSize1.pdf")
-knitr::include_graphics("figures/Holland_etal2016SampleSize2.pdf")
-```
-
-
-\begin{eqnarray*}
-\delta/\sigma &=&  25/51 = 0.49 \\ \alpha=5\% & \rightarrow & n = 17.1 /0.49^2 = `r ceiling(mytermE[1]/0.49^2)` = 144/2\\
-\alpha=2.5\% & \rightarrow & n = 21.0 /0.49^2 = `r ceiling(mytermE[3]/0.49^2)` > 144/2\\
-\end{eqnarray*}
-
-Did they use $\alpha = 5\%$, which corresponds to 90\% CI?
 
 
 
@@ -575,16 +579,19 @@ Did they use $\alpha = 5\%$, which corresponds to 90\% CI?
 More than $50\%$ of acute respiratory tract infections (ARTI) are being 
 treated with antibiotics in primary care practice, despite mainly viral 
 etiology. Procalcitonin (PCT) is a biomarker to diagnose bacterial infections.
+The PARTI trial [@briel2008] compares PCT-guided antibiotics use (decision depends on the value of the measured biomarker) versus standard of care. The hypothesis is that PCT-guided antibiotics are non-inferior to standard of care (non-inferiority trial).
+
+The study cohort consists of 458 patients with ARTI. The primary endpoint was the number of days with restrictions due to ARTI. Patients were interviewed 14 days after randomization and the non-inferiority margin is $\delta = 1$ day. Results
+showed that the mean increase in days with restriction with PCT-guided therapy was
+0.14 , with 95% CI (from - 0.53 to 0.81 days) entirely below the margin $\delta = 1$.
+
+The main secondary endpoint was the proportion of antibiotics prescriptions where the PCT arm is hypothesized to be superior. The results were that 58/232 (`r (100*58/232)`\%) patients with PCT-guided therapy and 219/226 (`r round(100*219/226, 0)`\%) patients with standard therapy received antibiotics. This is a substantial reduction of antibiotics use with PCT-guided therapy of `r round(100*(219/226 - 58/232), 0)`\% (95\% CI: 66\% to 78\%).
 :::
 
-The PARTI trial [@briel2008] compares PCT-guided antibiotics use (decision depends on the value of the measured biomarker) versus standard of care. The hypothesis is that PCT-guided antibiotics are non-inferior to standard of care (non-inferiority trial). Here, non-inferior would mean that patients on PCT-guided antibiotics arm do equally well compared to patients receiving standard of care but receive less antibiotics.
 
-The study cohort consists of 458 patients with ARTI. The primary endpoint is the number of days with restrictions due to ARTI. Results for the primary endpoint are shown in Figure \@ref(fig:parti). Patients are interviewed 14 days after randomization and the non-inferiority margin is $\delta=1$ day. The main secondary endpoint is the proportion of antibiotics prescriptions where the PCT arm is hypothesized to be superior. The results were that 58/232 (`r (100*58/232)`\%) patients with PCT-guided therapy and 219/226 (`r round(100*219/226, 0)`\%) patients with standard therapy received antibiotics. This is a substantial reduction of antibiotics use with PCT-guided therapy of `r round(100*(219/226 - 58/232), 0)`\% (95\% CI: 66\% to 78\%).
+A more recent example if a non-inferiority trial is the study by 
+@Loeb2022.
 
-
-```{r parti, fig.cap="Results for primary endpoint in the PARTI trial (Example \\@ref(exm:partiex)): 95\\% confidence intervals for the difference in days with restricted activities.", echo=FALSE, fig.align='center'}
-knitr::include_graphics("figures/p04_PARTI_results.jpg")
-```
 
 
 ## Additional references
@@ -595,5 +602,5 @@ The Statistics Notes
 @SN_clusterRCTs, @SN_clusterAnalysis, @SN_clusterICC, @SN_clusterSS discuss 
 different aspects of cluster-randomized trials.
 Studies where the special designs from this chapter are used in practice are for 
-example @butler2013, @burgess2005, @lovell2006.
+example @butler2013, @burgess2005, @lovell2006. 
 
