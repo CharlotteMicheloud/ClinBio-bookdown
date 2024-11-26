@@ -13,33 +13,33 @@ a subsequent meta-analysis is not possible.
 
 A *systematic review* aims to identify relevant studies from a
 literature review.  This is usually done with a literature search with
-pre-defined search terms in a database such as MEDLINE. Results from
-unpublished studies may also be included, if available from platforms
-such as clinicaltrials.gov. The goal of a subsequent
+pre-defined search terms in a database such as *MEDLINE*. Results from
+unpublished studies may also be included, if they are available from platforms
+such as *clinicaltrials.gov*. The goal of a subsequent
 meta-analysis is to summarize the results from a number of clinical
-studies on the same research question and to integrate the findings. A
+studies on the same research question. A
 systematic review with subsequent meta-analysis proceeds as follows:
 
--  Systematically review the available evidence.
--  Provide quantitative summaries of the results from each study.
--  Combine these results across studies, if appropriate (meta-analysis).
--  Provide summary effect estimate. 
+1. Systematically review the available evidence.
+2. Provide quantitative summaries of the results from each study.
+3. Combine these results across studies, if appropriate (meta-analysis).
+4. Provide summary effect estimate. 
 
-Meta-analysis is the basis of evidence-based medicine (EBM).
-
-The studies entering a systematic review should be sufficiently
+This is the basis of evidence-based medicine (EBM).
+The studies included in a systematic review should be sufficiently
 homogeneous regarding in- and exclusion criteria and should use the
 same effect measure. Typical effect measures are the (standardized)
 difference in means $\theta$ between treatment groups for continuous
 outcomes. For binary/time to event outcomes, relative treatment
-effects are preferred such as relative risk $\RR$, odds ratio $\OR$
+effects are preferred, such as relative risk $\RR$, odds ratio $\OR$
 and hazard ratio $\HR$. These are usually considered on a log-scale,
 so the relevant effect estimate is $\theta=\log(\RR)$,
 $\theta=\log(\OR)$, $\theta=\log(\HR)$.
 
 :::{.example #preeclampsia}
-Consider nine RCTs about incidence of preeclampsia. The reported effect
-measure is an odds ratio for diuretic vs. control, 
+Consider nine RCTs studying the incidence of preeclampsia in 
+patients treated with diuretic versus a control treatment.
+The reported effect measure is an odds ratio (diuretic vs. control), 
 see Table \@ref(tab:preeclampsia).
 :::
 
@@ -54,7 +54,7 @@ kable(
   ),
   caption = "Results of nine RCTs about incidence of preeclampsia comparing diuretic vs. control.",
   col.names = c("Study", "Diuretic", "Control", "OR"),
-  booktabs = TRUE
+  booktabs = TRUE, align = "l"
 )
 ```
 
@@ -162,14 +162,14 @@ print (randomEffectsCiPlot)
 
 ## Meta-analysis
 
-We set the following notation for a *meta-analysis* over $i=1,\ldots, n$ trials:
+We set the following notation for a *meta-analysis* ovf $i=1,\ldots, n$ trials:
 
--  $\theta_i$, $\hat \theta_i$ are the true and estimated study-specific treatment effects,
+-  $\theta_i$, $\hat \theta_i$ are the true and estimated study-specific treatment effect,
 -  $s_i = \se(\hat \theta_i)$ is the standard error of $\hat \theta_i$,
 -  $v_i = s_i^2$ is the variance of $\hat \theta_i$ and
 -  $w_i=1/v_i$ is the (estimated) precision of $\hat \theta_i$.
 
-There are two different types of analyses.
+There are two different types of analyses: fixed and random effects model.
 
 ### Fixed effect model
 
@@ -204,10 +204,10 @@ d <- controlTot
 
 
 
-The overall effect is usually presented in the forest plot as in
+The overall effect is usually displayed in the forest plot, as in
 Figure \@ref(fig:preeclampsiaMA) for the preeclampsia
 Example \@ref(exm:preeclampsia). This figure is generated with the following 
-R code:
+`R` code:
 ```{r ch4b.0, echo = TRUE, fig.show='hide'}
 library(meta)
 meta1 <- metabin(event.e = treatedPre, n.e = treatedTot, 
@@ -240,7 +240,7 @@ ci.random <- c(or.lower, or.upper)
 
 
 
-### Cochran's test for heterogeneity
+#### Cochran's test for heterogeneity {-}
 Under the homogeneity assumption, we have
 
 \begin{equation*}
@@ -248,15 +248,14 @@ Q = \sum w_i (\hat \theta_i - \hat \theta)^2 \sima \chi^2_{n-1}
 \end{equation*}
 
 This can be used to calculate the $p$-value of 
-*Cochran's test for heterogeneity*. But the test "lacks power" 
-and its usefulness in the context of meta-analysis is limited.
+*Cochran's test for heterogeneity*.
 
-:::{.example}
-For the preeclampsia data (Example \@ref(exm:preeclampsia)), this test yields 
+:::{.example #preeclampsia name="continued"}
+For the preeclampsia data, this test yields 
 $Q = `r round(t.homo, 1)`$ at $n-1=8$ degrees of freedom
 ($p=`r formatPval(p.homo,digits=1)`$). 
-There is strong evidence for heterogeneity between studies. 
-A fixed effect model is questionable.
+There is strong evidence for heterogeneity between studies, so
+a fixed effect model is questionable.
 :::
 
 
@@ -289,14 +288,14 @@ Compared to the fixed effect model, the CIs for the overall effect will become
 wider and large studies will obtain less weight.
 
 
-#### Estimate of heterogeneity variance and Higgins' $I^2$
+#### Estimate of heterogeneity variance and Higgins' $I^2$ {-}
 
 The *moment estimator* of the heterogeneity variance compares the 
 $Q$-statistic to its expectation $n-1$ under homogeneity.
 Truncation at zero and appropriate scaling gives 
 
 \begin{equation*}
-  \hat \tau^2 = \left\{Q-(n-1)\right\}_{+} / \left\{\textstyle\sum w_i - \textstyle\sum w_i^2/\textstyle\sum w_i\right\}
+  \hat \tau^2 = \left\{Q-(n-1)\right\}_{+} / \left\{\textstyle\sum w_i - \textstyle\sum w_i^2/\textstyle\sum w_i\right\}.
 \end{equation*}
 
 The standard **DerSimonian-Laird** approach plugs $\hat \tau^2$
@@ -322,10 +321,9 @@ is attributable to study heterogeneity.  The value of $I^2$ will somewhat
 depend on the method used to estimate $\tau^2$, although in practice this
 aspect can be neglected. 
 
-Figure \@ref(fig:preeclampsiaMA) shows also the results of a random 
+Figure \@ref(fig:preeclampsiaMA) also shows the results of a random 
 effects analysis, together with the estimated Higgins' $I^2$ and 
-heterogeneity variance $\tau^2$, in the preeclampsia 
-Example \@ref(exm:preeclampsia).
+heterogeneity variance $\tau^2$.
 
 
 
@@ -333,18 +331,17 @@ Example \@ref(exm:preeclampsia).
 ## Reporting Bias
 
 Reporting bias occurs when the publication of research results depends on their
-nature and direction. Sources of reporting bias are:
+nature and direction.
+Sources of reporting bias include publication bias (where studies with negative or null findings may not be published due to decisions by researchers, referees, editors, or journals), language bias, citation bias, time lag bias, and outcome reporting bias (where outcomes are selectively reported, often due to changes in the research plan). These biases can lead to false conclusions and potentially harm patients.
 
-
--  Publication bias: Failure to publish due to negative or null findings (on the side of the researchers or referees/editors/journals).
--  Outcome reporting bias: Selective reporting of outcomes (\eg due to changes in research plan).
--  Selective citation of positive results.
-
-Consequently, there is danger of false conclusions and patient harm.
 
 ### Funnel plot
-A funnel plot is a scatter plot of a measure of study size, usually the (reversed) standard error, against the estimated treatment effects from individual studies. See the funnel plot for the preeclampsia data as an example in Figure \@ref(fig:preeclampsiaFunnel). The smaller the study size, the wider the spread of the treatment effects and vice versa. If there is no bias, the point cloud has the form of a funnel (symmetrical). If there is bias, it is asymmetrical. However, it is an explorative tool and there is no quantitative information on the amount or the source of the bias.
-Funnel plots and tools for meta-analysis in R are provided by packages meta and rmeta.
+
+A funnel plot is a scatter plot of a measure of study size, usually the (reversed) standard error, against the estimated treatment effects from individual studies. The funnel plot for the preeclampsia data is shown in Figure \@ref(fig:preeclampsiaFunnel). 
+
+The smaller the study size, the wider the spread of the treatment effects and vice versa. If there is no bias, the point cloud has the form of a funnel (symmetrical). In contrast, it is asymmetrical 
+if there is bias. However, it is an explorative tool and there is no quantitative information on the amount or the source of the bias.
+Funnel plots and tools for meta-analysis in `R` are provided by the packages `meta` and `rmeta`.
 
 
 
@@ -355,8 +352,8 @@ funnel(meta1)
 
 
 
-:::{.example}
-Passive smoking: Consider a meta-analysis of 37 studies of the effect of environmental tobacco smoke on the risk of lung cancer in lifetime non-smokers [@hackshaw1998]. Spouses of smokers and non-smokers have been compared in terms of log relative risk. Are the results shown in a funnel plot in Figure \@ref(fig:smokingFunnel) affected by publication bias?
+:::{.example #tobacco}
+@hackshaw1998 conducted a meta-analysis of 37 studies of the effect of environmental tobacco smoke on the risk of lung cancer in lifetime non-smokers. Spouses of smokers and non-smokers have been compared in terms of log relative risk. Are the results shown in a funnel plot in Figure \@ref(fig:smokingFunnel) affected by publication bias?
 :::
 
 
@@ -369,20 +366,14 @@ par(las=1)
 funnel(mymeta, xlab="log odds ratio")
 ``` 
 
-
-
-Smaller studies tend to show greater effects, so there is some asymmetry.
-However, only visual inspection is not enough to decide if it is real bias or chance.
+Smaller studies tend to show greater effects, so there is some asymmetry. However, only visual inspection is not enough to decide if it is real bias or due to chance.
 
 
 ### The trim-and-fill method
 
-Based on key assumptions that
-  
--  publication bias is the reason of funnel plot asymmetry and
--  studies with negative findings are suppressed,
-
-the idea of the trim-and-fill method is to:
+The trim-and-fill method is based on the key assumptions that
+publication bias is the reason of funnel plot asymmetry and that the studies with negative findings are suppressed,
+The idea of this method is to:
 
 1.  Trim-off the "asymmetric" side of a funnel plot, after estimating the number of studies in this group.
 2.  Use the symmetric remainder to estimate the "true center".
@@ -391,12 +382,11 @@ the idea of the trim-and-fill method is to:
 
 
 :::{.example #stroke}
-Figure \@ref(fig:trimfillStroke) illustrates the trim-and-fill method for 
-11 studies of the effect of using gangliosides in reducing case fatality and disability in acute ischaemic stroke.
+Figure \@ref(fig:trimfillStroke) illustrates the trim-and-fill method for 11 studies of the effect of using gangliosides in reducing case fatality and disability in acute ischaemic stroke.
 :::
 
 
-```{r trimfillStroke, echo=FALSE, fig.cap="Trim-and-fill method in Example \\@ref(exm:stroke). The black circles represent the 11 observed studies whereas the red studies on the left are imputed, based on symmetrically 'mirroring' the trimmed studies on the right."}
+```{r trimfillStroke, echo=FALSE, fig.cap="Trim-and-fill method in Example \\@ref(exm:stroke). The black circles represent the 11 observed studies whereas the red studies on the left are imputed, based on symmetrically mirroring the trimmed studies on the right."}
 knitr::include_graphics("figures/fig-trimfill05.pdf")
 ```
 
@@ -447,7 +437,7 @@ gs <- xtable(gs, digits=c(0,rep(2,3),0, 2,0,2,0,2,2))
 
 
 
-Trim-and-fill with R:
+Trim-and-fill with `R`:
 
 ```{r ch10, echo=TRUE}
 library(meta) # load the library
@@ -487,13 +477,13 @@ plotCI(sum_trim_d$random$TE, -0.5, ui=sum_trim_d$random$upper, li=sum_trim_d$ran
     ylab="", sfrac=0.03, gap=0.8, add=TRUE, pt.bg=2, col=2) 
 ```
 
-:::{.example #smoking}
+:::{.example #tobacco name="continued"}
 Data from the passive smoking example is illustrated in Figure \@ref(fig:smokingFunnel2).
 Results from the trim-and-fill method are shown in Figure \@ref(fig:trimfillSmoking). The summary effect with (in red) and without (in black) the results from the imputed studies is shown at the bottom.
 :::
 
 
-```{r smokingFunnel2, fig.cap = "Funnel plot in the passive smoking Example \\@ref(exm:smoking).", echo=FALSE, warning=FALSE}
+```{r smokingFunnel2, fig.cap = "Funnel plot in the passive smoking Example \\@ref(exm:tobacco).", echo=FALSE, warning=FALSE}
 library(meta)
 ps <- read.table("data/passive_smoking.txt", header = TRUE) 
 funnel(ps$lnRR,ps$selnRR,level=0.95, comb.fixed=TRUE, pch=19, 
@@ -508,7 +498,7 @@ library(dplyr)
 
 # Assuming meta_d, sum_meta_d, and trim_d are already defined in the R environment
 data <- data.frame(
-  Model = c("Observed", "{\\color{red} Filled}"),
+  Model = c("Observed", "Filled"),
   `Number of studies` = c(meta_d$k, trim_d$k),
   OR = c(round(exp(sum_meta_d$random$TE), 2), round(exp(sum_trim_d$random$TE), 2)),
   `95% CI` = c(
@@ -521,12 +511,12 @@ kable(
   data,
   col.names = c("Model", "Number of studies", "OR", "95% CI"),
   escape = FALSE,
-  booktabs = TRUE
+  booktabs = TRUE, align = "l"
 )
 ```
 
 
-```{r trimfillSmoking, echo=FALSE, fig.cap="Trim-and-fill method in the passive smoking Example \\@ref(exm:smoking).", fig.align='center'}
+```{r trimfillSmoking, echo=FALSE, fig.cap="Trim-and-fill method in the passive smoking Example \\@ref(exm:tobacco).", fig.align='center'}
 knitr::include_graphics("figures/fig-trimfill07.pdf")
 ```
 
@@ -535,9 +525,9 @@ knitr::include_graphics("figures/fig-trimfill07.pdf")
 ### Tests for funnel plot asymmetry
 
 If visual inspection of a funnel plot is not enough, perform a statistical test. 
-Popular methods are: Rank correlation method or Egger's test (weighted regression).
+Popular methods are Begg's rank correlation method or Egger's test (weighted regression).
 
-#### Begg's rank correlation test
+#### Begg's rank correlation test {-}
 Begg's rank correlation test computes standardized treatment estimates
 
 \begin{equation*}
@@ -550,9 +540,7 @@ Then, it tests the null hypothesis that *Kendell's rank correlation*
 (Kendell's $\tau$) between $\theta_i^*$ and $v_i^*$ is zero. This test 
 may have low power if the number of studies is small.
 
-:::.{example}
-A rank correlation test can be performed using R as shown below for the passive smoking example:
-:::
+A rank correlation test can be performed using `R` as shown below for Example \@ref(exm:tobacco).
 
 ```{r ch14a, echo=TRUE, results='markup'}
 head(ps)
@@ -561,7 +549,7 @@ metabias(ps$lnRR, ps$selnRR, method="Begg")
 
   
 
-#### Egger's weighted regression 
+#### Egger's weighted regression {-}
 
 The idea is to perform weighted regression of $\hat \theta_i$ on $s_i$,
 
@@ -569,10 +557,10 @@ The idea is to perform weighted regression of $\hat \theta_i$ on $s_i$,
 \hat \theta_i= a + b \cdot s_i + \mbox{error},
 \end{equation*}
 
-with weights $w_i$. The slope $b$ is a measure of bias.
+with weights $w_i = 1/s_i^2$. The slope $b$ is a measure of bias.
 
-:::{.example}
-Egger's weighted regression can be performed using R as shown below for the passive smoking example:
+:::{.example #tobacco name="continued"}
+Egger's weighted regression can be performed in `R` as shown below for the passive smoking example:
 :::
 
 ```{r ch15, echo=TRUE, results='markup'}
@@ -583,7 +571,7 @@ egger1 <- lm(theta ~ s, weights = 1/s^2)
 
 ```{r results="asis"}
 library(biostatUZH)
-knitr::kable(tableRegression(egger1, latex = FALSE))
+knitr::kable(tableRegression(egger1, latex = FALSE, xtable = FALSE))
 ``` 
 
 Figure \@ref(fig:smokingEgger) shows a visualization of Egger's weighted regression in the passive smoking example.
@@ -601,7 +589,7 @@ legend("topleft", col=c(2,2,3), lty=c(1,2,1), legend=c("Fit", "95%-CI", "Fixed e
 ``` 
 
 
-Egger's test in R:
+Egger's test in `R`:
 
 ```{r ch14, echo=TRUE, results='markup'}
 metabias(ps$lnRR, ps$selnRR, method="Egger")
@@ -609,15 +597,15 @@ metabias(ps$lnRR, ps$selnRR, method="Egger")
 
  
 
-#### Limit meta-analysis
+#### Limit meta-analysis {-}
 
 The aim of a limit meta-analysis is to compute a bias-adjusted overall 
 effect estimate by extrapolating the weighted regression to 
 $s_i \to 0$. 
-\begin{example}
 
-A limit meta-analysis can be performed in R
-using the function limitmeta() from the package metasens: 
+A limit meta-analysis can be performed in `R`
+using the function `metasens::limitmeta()`. 
+For Example \@ref(exm:tobacco), this gives:
 ```{r echo = TRUE}
 psMeta <- metagen(TE=ps$lnRR, seTE=ps$selnRR)
 library(metasens)
