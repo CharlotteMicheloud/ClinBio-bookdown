@@ -3,7 +3,7 @@
 
 ## Diagnostic accuracy studies
 
-A binary *diagnostic test* categorizes individuals
+A *binary diagnostic test* categorizes individuals
 as either diseased or non-diseased. Examples of diagnostic 
 tests include mammography for the diagnosis of breast cancer, 
 pap smear screening for the diagnosis of cervical cancer, and 
@@ -21,7 +21,8 @@ In a *cohort design*, a diagnostic test is applied to a sample of subjects
 from the population of interest, and the true disease status
 is also ascertained using a reference test, the *gold standard*. 
 
-The design of studies comparing two diagnostic tests is also important. In an
+Moreover, studies comparing two tests can have an unpaired 
+or a paired design. In an
 *unpaired design*, each study subject is tested with only one of the two tests. 
 In contrast, each study subject is tested with both tests in a *paired design*.
 
@@ -113,7 +114,6 @@ must not know the test result.
     ## LRpos.print <- round(LRpos[[1]], digits = digits)
     ## LRneg.print <- round(LRneg[[1]], digits = digits)
 
-    const <- 100
 
     format.bigmark <- function(...)
       {
@@ -124,7 +124,7 @@ must not know the test result.
 ::: {.example #mws}
 The *Million Women Study* (MW Study) is a cohort study of women’s health
 analysing data from more than one million women aged 50 and over [@MWS].
-`r format.bigmark(sum(c(tp, fp, fn, tn)))` `r const` women between 50 and
+`r format.bigmark(sum(c(tp, fp, fn, tn)))` women between 50 and
 64 years underwent a mammography and have been followed-up for a year to
 determine whether or not they have been diagnosed with breast cancer,
 confirmed via histology (the gold standard). The results are summarized in Table \@ref(tab:MWS).
@@ -268,7 +268,7 @@ kable(table_data,
 
 
 A perfect test ($J=1$) must have both Sens $=$ 1 and Spec  $=$ 1.
-A useless test ($J=0$) has Sens  = 1 - Spec, 
+A useless test ($J=0$) has Sens  $=$ 1 $-$ Spec, 
 so the probability of a positive test is the same for  diseased and 
 non-diseased individuals:
 \begin{eqnarray*}
@@ -457,7 +457,7 @@ Useful tests have $\mbox{LR}^+ > 1$ and
 $\mbox{LR}^- < 1$.
 Likelihood ratios above 10 and below 0.1 are considered to
 provide strong evidence to rule in or rule out
-diagnoses, respectively [@SN_LR].
+diagnoses [@SN_LR], respectively.
 
 
 In the MW study (Example \@ref(exm:mws)) we obtain:
@@ -683,7 +683,7 @@ from study design, conduct, or analysis.
 
 There are different methods to compute a CI for proportions 
 (e.g. sensitivity, specificity) and ratios (e.g. likelihood ratios).
-Details how to construct confidence intervals  can be found in Appendix
+Details on how to construct confidence intervals  can be found in Appendix
 \@ref(confint).
  
 ### Proportions
@@ -695,7 +695,7 @@ for screening for depression in 15 general practices in New Zealand.
 They report $tp = 28$ true positives, $fp = 129$ false positives, 
 $tn = 263$ true negatives and $fn = 1$ false negative among $n=421$ 
 patients in primary care. Overall, 37\% (157/421) of the patients screened 
-positive for depression while only 7\% (29/421) acually had the disease, 
+positive for depression while only 7\% (29/421) actually had the disease, 
 according to a subsequent computerised composite international diagnostic 
 interview considered to be the gold standard. 
 
@@ -727,7 +727,7 @@ knitr::include_graphics("figures/diabetes-meta.png")
 ```
 
 
-#### Wald confidence interval
+#### Wald confidence interval {-}
 
 The *standard error* of a proportion $p=x/n$ is
     \[
@@ -754,7 +754,7 @@ qnorm((1 + level)/2) # factor
 ```
 
 
-#### Wilson confidence interval
+#### Wilson confidence interval {-}
 It is usually better to use the *Wilson* confidence interval, in particular 
 if $n$ is small or $p$ is close to 0 or 1.
 The Wilson interval has better *empirical coverage* than the Wald interval,
@@ -831,7 +831,7 @@ wilson(x = 763, n = 763 + 25, conf.level = 0.95)
 The limits of the Wald confidence interval are -- by construction -- symmetric around the observed proportion. The limits of the Wilson interval are shifted slightly to the left. 
 
 
-#### Other confidence intervals
+#### Other confidence intervals {-}
 Other types of confidence intervals can be calculated, for example Agresti, 
 Jeffreys or Clopper-Pearson. Here we compute the different confidence intervals for 
 the sensitivity in Example \@ref(exm:depression) (screening for depression) based on both questions. 
@@ -1081,8 +1081,8 @@ Hence
   = `r round(4844/(4844+34)/(4765/(4765+111)),2)`.
   \end{eqnarray*}
 We see that the sensitivity of EA is `r round(100*(116/(116+6)/(111/(111+13))-1))`\% larger than the sensitivity of
-CSV. The specificity of EA is `r round(100*(4844/(4844+34)/(4765/(4765+111))-1))`\% increased compared to
-CSV. 
+CVS. The specificity of EA is `r round(100*(4844/(4844+34)/(4765/(4765+111))-1))`\% increased compared to
+CVS. 
 
 ```{r echo=F}
   sens.ea <- 116/(116+6)
