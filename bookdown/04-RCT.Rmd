@@ -40,7 +40,7 @@ experiment died of"
 
 A.B. Hill also advocated for randomization [@Hill1937] and was the
 trial statistician in one of the very first RCTs among humans: the MRC
-Strepromycin trial. In 1835, more than 100 years before the MRC Streptomycin Trial,
+Strepromycin trial. However, this trial is not the first study using randomization and double blinding.  In 1835, more than 100 years before the MRC Streptomycin Trial,
 the `Nuremberg salt test' was performed, using randomization and double blinding
 to evaluate the efficacy of homeopathy. @Stolberg2006 summarized and
 commented on 
@@ -66,18 +66,13 @@ Today, Streptomycin, in combination with penicillin, is used in
 a standard antibiotic
 cocktail to prevent bacterial infection in cell culture.
 
-This trial is considered the first RCT, double-blind and placebo-controlled.
-However, this trial is not the first study using randomization and 
-double blinding. 
-
 
 
 #### The Salk Polio Vaccine Trial {-}
 Polio was a major public health problem worldwide
 in the late 19th and early 20th centuries. 
 Over 500,000 cases of polio were reported every year by the mid-20th century
-(source:
-(https://www.who.int/news-room/spotlight/history-of-vaccination/history-of-polio-vaccination)).
+(https://www.who.int/news-room/spotlight/history-of-vaccination/history-of-polio-vaccination).
 
 By 1953, several potential vaccines had been developed. One of the more promising
 was an inactivated virus vaccine developed by Jonas Salk at the University of 
@@ -96,7 +91,7 @@ library(kableExtra)
 
 # Create the data frame
 data <- data.frame(
-  Vaccine = c("Yes", "No"),
+  Vaccine = c("**Yes**", "**No**"),
   Polio_Yes = c(82, 162),
   Polio_No = c(200663, 201067),
   Infection_r = c("0.041%", "0.081%")
@@ -121,7 +116,7 @@ that the vaccine was indeed effective.
 ### Ethical issues of RCTs
 
 There are important ethical aspects to consider when planning and 
-conducting an RCTs. 
+conducting an RCT. 
 First, a patient must never be given a treatment that is known to be
 inferior. Moreover, patients must be fully informed about
 possible adverse reactions, side-effects etc. They must give 
@@ -279,7 +274,7 @@ data <- data.frame(
 # Create the table using kable
 kable(data, 
       col.names = c("", "Yes", "No", "Total"), 
-      caption = "Results from an observational study about two different treatments for renal calculi [@charig], overall and in two sub-groups.",
+      caption = "Results from an observational study about two different treatments for renal calculi [@charig].",
       label = NA,
       booktabs = TRUE) %>%
   add_header_above(c(" " = 1, "Success" = 2, " " = 1)) %>%
@@ -314,11 +309,11 @@ The odds ratio in the subgroups of patients with small kidney stones is
 
 \[ \mbox{OR} = \frac{81 \cdot 36}{6 \cdot 234} = {2.10} \]
 
-and the odd ratio in the subgroup of patient with large kidney stones is 
+and the odds ratio in the subgroup of patient with large kidney stones is 
 \[\mbox{OR} = \frac{192 \cdot 25}{71 \cdot 55} = {1.23}.\]
 
-This sub-group analysis hence reveals that Therapy A is more successful than Therapy B 
-*in both sub-groups*. This is an example of *Simpson's paradox*.
+This subgroup analysis hence reveals that Therapy A is more successful than Therapy B 
+*in both subgroups*. This is an example of *Simpson's paradox*.
 The success rate was on average higher for small kidney stones 
 (seem to be easier to cure) and because patients receiving therapy B included 
 a much larger proportion of patients with small kidney stones, this therapy 
@@ -333,7 +328,7 @@ success rate, we could not see this before.
 
 We will now discuss in detail the five types of biases that may occur 
 in RCTs as described in @matthews. There are many more types of biases, 
-see for example \url{https://catalogofbias.org/}.
+see for example https://catalogofbias.org/.
  
 
 
