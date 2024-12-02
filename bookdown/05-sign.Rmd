@@ -112,6 +112,7 @@ significance does not mean that the effect is real. This is
 illustrated in Figure \@ref(fig:reppower), which 
 shows the replication power, i.e. the probability to obtain 
 a significant result in an identically designed replication study. 
+
 The two methods are fundamentally different approaches
 to statistical inference as illustrated in 
 Figure \@ref(fig:strengthofevidence).
@@ -256,7 +257,7 @@ The test statistic
 \begin{eqnarray*}
 z = \frac{\mbox{Estimate}}{\mbox{Standard error of the estimate}}
 \end{eqnarray*}
-quantifies how many standard errors the estimate 
+quantifies how many standard errors the estimate of $\Delta$
 is away from the null. 
 Most test statistics follow approximately a known *reference distribution* 
 under the null hypothesis. Typical  reference distributions include 
@@ -315,7 +316,14 @@ illustrated in Figure \@ref(fig:pvalregion).
 The two-sided $P$-value is the area of the two blue regions 
 of the standard normal density, i.e. $p = \Pr(\abs{Z} > \abs{z}) = 
 0.62$, where $Z \sim \Nor(0, 1)$. In a two-sided test, only the 
-size of the effect matters, not its direction. 
+size of the effect matters, not its direction. In `R`, this can 
+be calculated with 
+
+```{r, echo = TRUE}
+round(p <- 2 * pnorm(0.49, lower.tail = FALSE), 2)
+
+```
+
 
 
 <!-- If the reference distribution is a $t$-distribution,  -->
@@ -583,8 +591,9 @@ Both quantities should be reported.
 Error rates
 
 -  The *Type-I error rate* $\alpha$ is the probability of a significant 
-finding if the *null hypothesis* $H_0$ is true. The Type-I error rate $\alpha$
-is *controlled*, if we reject $H_0$ if and only if $p \leq \alpha$.
+finding if the *null hypothesis* $H_0$ is true. The Type-I error rate
+is *controlled* at level $\alpha$,
+if we reject $H_0$ if and only if $p \leq \alpha$.
 -  The *Type-II error rate* $\beta$ is the probability of a 
 non-significant finding if the *alternative hypothesis* $H_1$ is true.
 The *power* of a study is $1-\beta$.
@@ -822,7 +831,7 @@ statistical evidence for a treatment effect and
 that the number of patient treated with inferior 
 treatment is not unnecessarily large. 
 
-Sample size calculations requires the specification of 
+Sample size calculations require the specification of 
 the *primary outcome variable* (*"primary endpoint"*). 
 A (minimal) *clinically relevant treatment effect* $\Delta$
 (*"clinically relevant difference"*) for the primary outcome
@@ -859,9 +868,8 @@ four quantities are required:
 
 -  Clinically relevant difference $\Delta = \mu_1 - \mu_0$
 - Common standard deviation $\sigma$ (measurement error)
-- Type-I error rate $\alpha \rightarrow u = z_{1 - \alpha/2}$
-- Power $1 - \beta \rightarrow v = z_{1 - \beta}$
-    where $z_x =$ `qnorm(x)`.
+- Type-I error rate $\alpha \rightarrow u = z_{1 - \alpha/2}$,  where $z_x =$ `qnorm(x)`
+- Power $1 - \beta \rightarrow v = z_{1 - \beta}$.
 
 <!-- one needs to start with the *power* -->
 <!-- $1 - \beta$  -->
@@ -1034,7 +1042,7 @@ The exact statement in the paper reads:
 "A  sample  size  of  194  in  each  group  was  needed  to  detect  a  mean  difference  in  area under  the  curve of 0.33 standard deviations derived from the SF-36 bodily pain domain with 90% power and a 5% (two sided $\alpha$)  significance level."
  
 
-#### Minimum detectable difference
+#### Minimum detectable difference {-}
 
 :::{.definition}
 The *minimum detectable difference* (MDD) is the smallest difference that will lead to a significant result:
@@ -1048,7 +1056,7 @@ The *minimum detectable difference* (MDD) is the smallest difference that will l
 The MDD and the clinically relevant difference $\Delta$ are different 
 concepts which should not be mixed up. The MDD relates to the 
 statistical significance, hence depends on power (via the sample size),
-while $\Delta$ relates to the clinical relevant and 
+while $\Delta$ relates to the clinical relevance and 
 does not depend on the power.
 Suppose that the sample size $n$ is calculated to detect $\Delta$ with a certain power
 using Equation \@ref(eq:nZtest).
@@ -1077,7 +1085,7 @@ arrows(76, 0.8, 74, 0.75, angle=20, col=1)
 ### Binary outcomes
 
 In order to calculate the sample size for a binary outcome, 
-the outcome probabilities $\pi_1$ and $\pi_2$ in the two groups 
+the outcome probabilities $\pi_1$ and $\pi_0$ in the two groups 
 are needed. The clinically relevant difference
 $\Delta = \pi_1 - \pi_0$ is then implicit. No standard deviation 
 is required. 
@@ -1252,7 +1260,7 @@ It has been argued in @bland2009 that sample size calculations should
 be based on *precision*, i.e. the *width of the confidence interval* of the treatment effect.
 
 
-#### Difference between two means
+#### Difference between two means {-}
 
 Specify the *width* $w \approx 4 \cdot \SE(\hat \Delta)$ of
 the 95\% confidence interval for the mean difference $\Delta$. Both groups are assumed to have sample size $n$.
@@ -1272,7 +1280,7 @@ myn <- ceiling((p1*(1-p1)+p0*(1-p0))/(seDelta^2))
 ``` 
 
 
-#### Difference between two proportions
+#### Difference between two proportions {-}
 If $\Delta=\pi_1-\pi_o$ is the difference between two proportions $\pi_1$ and $\pi_0$
 with unit variance 
 $$
