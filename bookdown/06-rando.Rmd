@@ -84,7 +84,7 @@ For example, for $n=15$, $\Pr(N_{\max} \geq 20) = 0.10$. So, there is a substant
 <!-- \mbox{ Power } = \Phi\left(\sqrt{({n_A n_B})/({n_A+n_B})} - z_{1-\alpha/2}\right) \, , -->
 <!-- \] -->
 Unequal group sizes lead to a *loss in power*.
-For example, for Cohen's $d=1$, total sample size $n_A+n_B=30$ and $\alpha=0.05$ 
+For example, for Cohen's $d=1$, total sample size $n_A+n_B=30$ and $\alpha=0.05$, 
 the loss in power is illustrated in Figure \@ref(fig:powerloss).
 
 
@@ -181,7 +181,7 @@ getAllSeq(obj4)
 :::{.example #ulcers}
 An RCT was conducted to examine the use of cold atmosperic plasma 
 as a method to treat diabetic foot ulcers [@Mirpour2020].
-The Methods section states that the patients were randomly assiged to 
+The Methods section states that the patients were randomly assigned to 
 the two treatment groups using block randomization with mixing block sizes 
 of $4$. 
 :::
@@ -290,9 +290,8 @@ follows (with some $p>1/2$):
 
 The minimization is deterministic if $p = 1$ and $D \neq 0$.
 
-## Blinding and placebos
+## Blinding
 
-### Single and double blindness
 Blinding is used to avoid assessment bias. We distinguish between
 *single-blind* and *double-blind* trials. In a single-blind trialm the patient 
 is unaware of the treatment being given, while in a 
@@ -316,7 +315,7 @@ to the study groups.
 :::
 
 
-### Placebos
+## Placebos
 
 Placebos are treatments that look similar to the true treatment but
 contain no active ingredient.

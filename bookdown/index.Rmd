@@ -11,6 +11,7 @@ link-citations: yes
 github-repo: rstudio/bookdown-demo
 description: "Based on the lecture notes from STA404: Clinical Biostatistics."
 always_allow_html: yes
+csl: data-science-journal.csl
 ---
 
 \newcommand{\eg}{\abk{\latin{e.\,g}}} 
