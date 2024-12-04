@@ -448,6 +448,7 @@ from a parallel group design.
 
 ```{r echo = F}
 library(xtable)
+library(teachingUZH)
 
 tab1 <- table("treatment"=cerebrovascular$treatment[cerebrovascular$time==0], 
               "Period 1"=cerebrovascular$y.f[cerebrovascular$time==0])
