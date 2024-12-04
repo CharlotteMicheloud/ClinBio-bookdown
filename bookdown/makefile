@@ -21,5 +21,13 @@ refresh:
 		echo "No existing tab to close."; \
 	fi; \
 	$(BROWSER) $(BOOK_FILE) > /dev/null 2>&1 &  # Run in the background
+	
 
+publishL:
+	Rscript -e "rsconnect::deploySite(appMode = 'static', server = 'bookdown.org', appId = '14572', account = 'held_leonhard_uzh')"
+	
+publishC:
+	Rscript -e "rsconnect::deploySite(appMode = 'static', server = 'bookdown.org', appId = '14572', account = 'charlotte_micheloud93')"
+	
+	
 all: build refresh	
