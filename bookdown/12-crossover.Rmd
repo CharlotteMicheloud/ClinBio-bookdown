@@ -264,8 +264,8 @@ within-patient standard deviation $\sigma_w = `r round((summary(mixed1)$sigma),2
 
 The above analysis assumes that there is no *carryover effect*, i.e.
 effects of the treatment given in period 1 do not persist during period 2.
-We now describe a statistical approacha to test for carryover 
-in a AB/BA crossover trial with continuous outcome. We emphasize that this is generally not recommended due to lack of power and other problems. 
+A statistical approach to handle carryover which has been suggested is to 1. test for carryover, and 2. If significant then compare only data from period 1,
+otherwise analyse data from period 1 and 2 jointly assuming there is no carryover effect. We emphasize that this is generally not recommended due to lack of power and other problems. 
 The recommended approach is not to use a crossover design when there is a 
 possibility of a carryover effect. 
 You should try to use non-statistical arguments, perhaps based on the half-lives of drugs, etc., to decide how long treatment effects are likely to persist and
