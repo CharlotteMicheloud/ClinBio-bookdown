@@ -98,9 +98,6 @@ f.up <- epworth[,2]
 
 In order to compare the follow-up measurements between the two 
 groups, a $t$-test can be performed.
-
-#### Assumptions of $t$-test {-}
-
 In a $t$-test, data are assumed to be normally distributed, 
 and the measurements in the two groups to be independent: 
 with mean $\mu_T$, variance $\sigma^2_T$ and sample size $m$
@@ -157,7 +154,8 @@ The $t$-test gives identical results as a linear regression analysis:
 # regression analysis
 library(biostatUZH)
 model1 <- lm(f.up ~ treatment)
-knitr::kable(tableRegression(model1, intercept=FALSE, latex = FALSE, xtable = FALSE))
+knitr::kable(tableRegression(model1, intercept=FALSE, 
+                             latex = FALSE, xtable = FALSE))
 ```
 The advantages of the regression analysis are that it can easily be 
 generalized and that the residuals can be checked.
@@ -198,7 +196,8 @@ different and the standard error of $\widehat\Delta$ then is
 where $s_T^2$ and $s_C^2$ are estimates of the variances $\sigma_T^2$ and
 $\sigma_C^2$ in the two groups. In this case, the exact null distribution of
 $T=\widehat \Delta/{\SE(\widehat \Delta)}$ is unknown. 
-Welch's test is an appropriate solution, and the default in `t.test()`. 
+Welch's test is an appropriate solution, and the default in `t.test()`, 
+since it is not recommended to pre-test for equal variances and then choose between a t-test or Welch’s test (two-stage procedure).
 This test can have non-integer degrees of freedom. 
 
 <!-- Approximate solutions include -->
@@ -215,7 +214,7 @@ This test can have non-integer degrees of freedom.
 
 ```{r echo = TRUE, warning = FALSE}
 ## Welch Test
-print(WelchTest1 <- t.test(f.up ~ treatment, var.equal = FALSE))
+print(WelchTest1 <- t.test(f.up ~ treatment))
 
 ```
 
@@ -429,8 +428,7 @@ for(i in 1:niter){
 
 xm <- ceiling(max(-min(diff.permut),max(diff.permut)))
 b <- seq(-xm, xm, by = .5)
-hist(diff.permut, xlab="Mean difference", breaks=b, col="white",
-     border = histborder, las = 1)
+truehist(diff.permut, xlab="Mean difference", breaks=b, col="white", border = histborder, las = 1, cex.lab=1.5, cex.axis=1.5)
 T <- obs.diff
 
 ## rechts von -T
@@ -447,15 +445,12 @@ ind <- (b <= T) * c(1:length(b))
 ind <- ind > 0
 rect(b[ind], 0, c(b[ind][-1], T), h$density[ind][1:(length(ind) - 1)], col = colarea)
 lines(c(T, T), c(0,0.09), col = colpal4[1], lwd=lwd.lines + 2, lty =1)
-text(obs.diff-0.9, 0.12, adj=0, paste("Observed difference \n = ", as.character(format(obs.diff, nsmall=2, digits=2)), sep=""), col=colpal4[1], cex=1.5)
-text(-obs.diff-0.3, 0.1125, adj=0, paste("", as.character(format(-obs.diff, nsmall=2, digits=2)), sep=""), col=colpal4[1], cex=1.5)
+text(obs.diff-0.9, 0.12, adj=0, paste("Observed difference \n = ", as.character(format(obs.diff, nsmall=2, digits=2)), sep=""), col=colpal4[1], cex=1.2)
+text(-obs.diff-0.3, 0.1125, adj=0, paste("", as.character(format(-obs.diff, nsmall=2, digits=2)), sep=""), col=colpal4[1], cex=1.2)
 pPermute <- mean(abs(obs.diff)<abs(diff.permut))
-text(3, 0.2, paste("two-sided\np = ", as.character(round(pPermute,3)), sep=""),
-     adj = 0, font = 2, col=colarea)
-text(3.8, 0.04, paste("p=", as.character(round(mean(-obs.diff < diff.permut),3)), sep=""),
-     adj = 0, font = 2, col=colarea)
-text(-4.7, 0.04, paste("one-sided\np=", as.character(round(mean(obs.diff > diff.permut),3)), sep=""),
-     adj = 0, font = 2, col=colarea)
+text(3, 0.2, paste("two-sided\np = ", as.character(round(pPermute,3)), sep=""), cex=1.2, adj = 0, font = 2, col=colarea)
+text(3.8, 0.04, paste("p=", as.character(round(mean(-obs.diff < diff.permut),3)), sep=""), cex=1.2, adj = 0, font = 2, col=colarea)
+text(-4.7, 0.04, paste("one-sided\np=", as.character(round(mean(obs.diff > diff.permut),3)), sep=""), cex=1.2, adj = 0, font = 2, col=colarea)
 
 ptestlower <- quantile(probs=0.025, diff.permut) - obs.diff
 ptestupper <- quantile(probs=0.975, diff.permut) - obs.diff
@@ -476,11 +471,11 @@ results <- data.frame(
              "Behrens' test",
              "Mann-Whitney test",
              "Permutation test"),
-  `p-value` = c(formatPval(tTest2$p.value),
-                 formatPval(WelchTest2$p.value),
-                 formatPval(BehrensTest2$p.value),
-                 formatPval(MWTest2$p.value),
-                 formatPval(pPermute)),
+  `p-value` = c(biostatUZH::formatPval(tTest2$p.value),
+                 biostatUZH::formatPval(WelchTest2$p.value),
+                 biostatUZH::formatPval(BehrensTest2$p.value),
+                 biostatUZH::formatPval(MWTest2$p.value),
+                 biostatUZH::formatPval(pPermute)),
   `95% confidence interval` = c(
     paste0(format(tTest2$conf.int[1], digits=2, nsmall=2), " to ", 
            format(tTest2$conf.int[2], digits=2, nsmall=2)),
@@ -531,7 +526,7 @@ $\Var(\widehat\Delta_1) = 2\sigma^2/n$ and
 $\Var(\widehat\Delta_2) = 4\sigma^2(1 - \rho)/n$, respectively.
 The estimate $\widehat\Delta_2$ will thus have smaller variance than
 $\widehat\Delta_1$ for $\rho > 1/2$,
-and it will produce narrower confidence intervals and
+so it will produce narrower confidence intervals and
 more powerful tests.
 In the Didgeridoo study, the estimated correlation $\hat \rho = 0.72$.
 
@@ -560,8 +555,6 @@ plot(model3, which=2, pch=19, col=treatment)
 Let us denote the coefficient of the baseline variable as $\beta$.
 The ANCOVA model reduces to the analysis of follow-up for $\beta = 0$, 
 and to the analysis of change scores for $\beta = 1$.
-
-
 The ANCOVA model estimates $\beta$ and the mean difference $\Delta$ jointly 
 with *multiple regression*. The estimate $\hat\beta$ is usually close to the 
 correlation $\rho$.
@@ -647,7 +640,7 @@ without baseline adjustments.
 
 <!-- on the other hand is an unbiased estimate of the mean difference $\Delta$ (see proof in the exercises). -->
 
-The variances of the effect estimates in the three models can be compared by the corresponding variance factors (derived in the exercises):
+The variances of the effect estimates in the three models can be compared by the corresponding variance factors:
 
 
 $$
