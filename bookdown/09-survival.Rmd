@@ -172,7 +172,7 @@ library(kableExtra)
 # Create the table
 kable(sakk.tab[, 1:8], align = "lcccc", 
       caption = "Data from selected patients in the Chemotherapy study. OS is the overall survival time, a $+$ indicates censoring, LK are the lymph nodes and PS the performance status.", 
-      booktabs = TRUE, escape = FALSE, caption.placement = "top", label = NA) %>%
+      booktabs = TRUE, escape = FALSE, caption.placement = "top", label = NA, row.names = FALSE) %>%
   kable_styling(latex_options = c("striped", "hold_position"), full_width = FALSE)
 ```
 
@@ -278,8 +278,6 @@ estimate, a step function with  jumps of relative size
 at the time of each event. 
 
 There are some critical assumptions in Kaplan-Meier estimation [@SN_KMcurves]: 
-
-
 First, at any time, patients who are censored have the same survival
 prospects as those who continue to be followed.
 If censoring is related to survival for some patients,
@@ -425,7 +423,7 @@ excluded, and they cannot be treated as non-censored.
 Doing so would lead to biased estimation of the survival function as 
 illustrated in Figure \@ref(fig:KMbiased). 
 Excluding censored observations means losing data on patients without events, 
-so will underestimate the survival curve.
+so will *underestimate* the survival curve.
 Treating them as non-censored, i.e. as death events, 
 also leads to *underestimation* of the survival curve.
 
@@ -605,7 +603,7 @@ leads to biased estimates of the survival distributions, invalid statistical
 tests, and misleading conclusions. 
 This bias results from the fact that responders must live long enough
 for response to be observed; there is no such requirement for 
-non-responders [@Anderson1983, Anderson2008].
+non-responders [@Anderson1983, @Anderson2008].
 Another example where Breslow's rule is violated is a study reporting that
 Oscar winners live longer [@oscarwinners]. As other scientists have noticed,
 this study was subject to *survival bias* or *immortal time bias*
@@ -614,8 +612,7 @@ this study was subject to *survival bias* or *immortal time bias*
 
 
 We now discuss how survival curves can be compared between groups. 
-For example, the survival curves of the RT and RT+CT groups shown in Figure
-\@ref(fig:sakkTwoGroups). Later, we show how to generate 
+For example, the survival curves of the RT and RT+CT groups are shown in Figure \@ref(fig:sakkTwoGroups). Later, we show how to generate 
 such a plot with the `R`function `ggminer::ggsurvplot`.
 
 ```{r sakkTwoGroups, fig.cap = "Kaplan-Meier curves for both groups in Example \\@ref(exm:sakk).", echo = FALSE}
@@ -682,7 +679,7 @@ The hazard function and the survival function have a one-to-one relationship:
 S(t) = \exp\left(- \int_0^t h(u) du \right).
 \end{equation*}
 
-Figure \@ref(fig:survhazard) shows the  hazard and survival functions for a constant hazard rate ($HR = 2$, top) and once for an increasing hazard rate (bottom).
+Figure \@ref(fig:survhazard) shows the  hazard and survival functions for a constant hazard rate ($HR = 2$, top) and for an increasing hazard rate (bottom).
 
 
 ```{r survhazard, fig.cap = "Survival function and hazard ratio (HR) for different hazard rates: constant (top) and non-linearly increasing (bottom)", echo = FALSE}
@@ -862,7 +859,7 @@ printWaldCI(log(HR), SElogHR, FUN = exp)
 ``` 
 
 
-#### The Cox model
+#### The Cox model {-}
 The (semiparametric) *Cox model* assumes that the hazard function $h_i(t)$ of individual $i$ with explanatory variables $\boldsymbol{ x}_i$ has the form
 
 \begin{equation*}
@@ -891,7 +888,7 @@ knitr::kable(tableRegression(model.cox0, latex = FALSE, xtable = FALSE))
 ``` 
 The comparison RT vs. RT+CT gives $\mbox{HR}=1.23$ with relatively large confidence interval. There is no evidence for a treatment effect ($p=0.19$).
 
-#### Adjusting in survival analysis
+#### Adjusting in survival analysis {-}
 
 ```{r }
 sakk$treat2 <- factor(sakk$trt, labels = c("RT + CT", "RT"))
@@ -939,15 +936,14 @@ Both the *number of events* and the *total number of patients*
 are of interest in a survival study.
 
 ### Total number of events
-There is a simple formula for the required total number of events [@collett, Chapter 10):
+There is a simple formula for the required total number of events [@collett, Chapter 10)]:
 
 \begin{equation*}
 d = \frac{ 4 (u + v)^2}{ \Delta^2},
 \end{equation*}
-
 where $\Delta$ is the log hazard ratio to be detected.
 
-The sample size can be calculated with 
+The number of events can be calculated with 
 the `R`function `biostatUZH::survEvents`():
 ```{r echo=TRUE}
 library(biostatUZH)
@@ -972,7 +968,7 @@ The survival probability of females in the lung cancer data from
 @Loprinzi1994 is shown in Figure \@ref(fig:gglungcancer).
 :::
 
-```{r gglungcancer, echo=TRUE, fig.width = 7, fig.height = 4.6, fig.cap="Kaplan-Meier estimate of the survival curve of females in the lung cancer data from \\@Loprinzi1994."}
+```{r gglungcancer, echo=TRUE, fig.width = 7, fig.height = 4.6, fig.cap="Kaplan-Meier estimate of the survival curve of females in the lung cancer data from @Loprinzi1994."}
 data(cancer, package = "survival")
 cancer.female <- subset(cancer, sex == 2)
 survObj <- Surv(time = cancer.female$time, 
@@ -1010,7 +1006,7 @@ This approach requires allowance for late entries and is valid if changes in exp
 
 
 :::{.example}
-The PBC study is about treatment of primary biliary cirrhosis (PBC) of the liver. We will use the first 312 cases in this data set from the \code{survival} package since they participated in the randomized trial and contain largely complete data. The \code{status} at endpoint can be 0 = censored, 1 = transplant or 2 = dead.
+The PBC study is about treatment of primary biliary cirrhosis (PBC) of the liver. We will use the first 312 cases in this dataset from the `survival` package since they participated in the randomized trial and contain largely complete data. The `status` at endpoint can be 0 = censored, 1 = transplant or 2 = dead.
 :::
 
 ```{r echo=TRUE}
@@ -1041,7 +1037,7 @@ knitr::kable(tableRegression(fit0, latex = FALSE, xtable = FALSE))
 knitr::kable(tableRegression(fit1, latex = FALSE, xtable = FALSE))
 ```
 
-A time-dependent analysis includes all measurements. First, we need to prepare the data accordingly. The data preparation below is adopted from vignette \code{timedep.pdf} in library \code{survival}.
+A time-dependent analysis includes all measurements. First, we need to prepare the data accordingly. The data preparation below is adopted from vignette `timedep.pdf` in package `survival`.
 
 ```{r echo=TRUE}
 temp <- subset(pbc, id <= 312, select = c(id:sex, stage)) # baseline
