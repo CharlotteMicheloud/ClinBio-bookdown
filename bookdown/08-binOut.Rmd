@@ -54,10 +54,10 @@ kable(data, caption = "Results of the APSAC study.",
 A visual comparison for the two separate CIs in Figure \@ref(fig:apsacfig) 
 shows that they overlap. However, overlapping CIs are not necessarily an
 indication for a non-significant treatment effect. Instead, we should rather 
-look at CIs for combined effect measures such as the ones defined in Definition \@ref(def:twoprops).
+look at CIs for combined effect measures such as the ones presented in Definition \@ref(def:twoprops).
 
 
-```{r apsacfig, fig.cap = "95\\% Wilson confidence intervals for the death risks in the APSAC Study.", echo=F, warning=FALSE, fig.height=2}
+```{r apsacfig, fig.cap = "95\\% Wilson confidence intervals for the death risks in the APSAC study.", echo=F, warning=FALSE, fig.height=2}
 par(las=1)
 alpha <- 0.05
 za <- qnorm(1 - alpha / 2)
@@ -166,7 +166,7 @@ printWaldCI(log(RR), SElogRR, FUN = exp)
 
 ### Effect measures and confidence intervals
 
-Let $\pi_0$ and $\pi_1$ be the "true" risks of death in the control and intervention
+Let $\pi_0$ and $\pi_1$ denote the true risks of death in the control and intervention
 group, respectively, with $\pi_0 \geq \pi_1$.
 
 :::{.definition #twoprops}
@@ -203,7 +203,7 @@ $$\widehat{\ARR} \ = \ 12.6\%-5.6\%=7\%$$
 with standard error
 
 \[
-\SE(\widehat{\ARR}) = \sqrt{\frac{\hat \pi_0 (1-\hat \pi_0)}{n_0}+\frac{\hat \pi_1 (1-\hat \pi_1)}{n_1}}= 3.2\%
+\SE(\widehat{\ARR}) = \sqrt{\frac{\hat \pi_0 (1-\hat \pi_0)}{n_0}+\frac{\hat \pi_1 (1-\hat \pi_1)}{n_1}}= 3.2\%.
 \]
    
 $\widehat{\ARR}$ and $\SE(\widehat{\ARR})$ can be used to 
@@ -290,7 +290,7 @@ lines(rep(0,2), c(0,3), lty=2)
 
 
 
-```{r APSACartCIs, fig.cap= "Wald and Wilson CIs for the ARR in the APSAC Study (upper plot) and in an example with artifical data illustrating overshoot (lower plot).", echo=F, warning=FALSE, fig.height=2.5}
+```{r APSACartCIs, fig.cap= "Wald and Wilson CIs for the ARR in the APSAC study (upper plot) and in an example with artifical data illustrating overshoot (lower plot).", echo=F, warning=FALSE, fig.height=2.5}
 library(gplots)
 
 ci.rd.art <- confIntRiskDiff(x.art, n.art)
@@ -344,7 +344,7 @@ colnames(ci.ntt) <- c("lower", "upper")
 print(round(ci.ntt, 1))
 ``` 
 
-The CI for $\NNT$ in the APSAC Study is: $1 / `r round(abs(arr.upper.w),3)`$ to $1 / `r round(abs(arr.lower.w),3)`$ \ = \ $`r round(abs(nnt.upper.w),1)`$  to $`r round(abs(nnt.lower.w),1)`$.
+The CI for $\NNT$ in the APSAC study is: $1 / `r round(abs(arr.upper.w),3)`$ to $1 / `r round(abs(arr.lower.w),3)`$ \ = \ $`r round(abs(nnt.upper.w),1)`$  to $`r round(abs(nnt.lower.w),1)`$.
 
 Note that the CI for $\NNT$ is not well-defined if the CI for 
 $\ARR$ contains 0. In that case, the confidence interval is actually
@@ -360,7 +360,7 @@ where an overall number needed to benefit is calculated from a
 meta-analysis of data from 
 randomized trials comparing bypass surgery with coronary angioplasty in 
 relation to angina in one year [@Pocock1995].
-For three studies (CABRI, RITA, EAST) the 95% confidence interval for NNT is a
+For three studies (CABRI, RITA, EAST), the 95% confidence interval for NNT is a
 regular interval and includes only values that indicate a benefit of therapy. 
 However, for two other entries (GABI and Other) the confidence region for NNT 
 splits into two intervals. For example, for GABI the two intervals are 7.5 to 
@@ -480,8 +480,7 @@ x <- rev(x)
 n <- rev(n)
 (ci.rr <- confIntRiskRatio(x, n))
 ``` 
-We can see that the data are compatible with a relative risk between
-`r round(ci.rr[1], 2)` and `r round(ci.rr[3], 2)`.
+
 
 
 ```{r CIRR, echo = FALSE}
@@ -551,7 +550,7 @@ data <- data.frame(
 )
 
 # Create the table
-kable(data, escape = FALSE, booktabs = TRUE, col.names = c("", "Yes", "No", "Total"), caption = "$2\\times 2$ table for the APSAC Study.", 
+kable(data, escape = FALSE, booktabs = TRUE, col.names = c("", "Yes", "No", "Total"), caption = "$2\\times 2$ table for the APSAC study.", 
       label = NA) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"), full_width = F, position = "center") %>%
   add_header_above(c("", "Dead" = 2, ""))
@@ -588,7 +587,7 @@ data <- data.frame(
 )
 
 # Create the table
-kable(data, escape = FALSE, booktabs = TRUE, col.names = c("", "Dead", "Alive", "Total", "Percent Alive", "Standard Error", "95% CI"), caption = "Survival probability in the APSAC Study.", 
+kable(data, escape = FALSE, booktabs = TRUE, col.names = c("", "Dead", "Alive", "Total", "Percent Alive", "Standard Error", "95% CI"), caption = "Survival probability in the APSAC study.", 
       label = NA) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"), full_width = F, position = "center")
 ```
@@ -614,7 +613,7 @@ Such a relationship does not hold for relative risks:
  
 A disadvantage of the ORs is their noncollapsibility [@Senn2]. 
 Consider a hypothetical example with two therapies 
-and two stata. Table \@ref(tab:strat) presents a contingency table 
+and two strata. Table \@ref(tab:strat) presents a contingency table 
 stratified by strata, while Table \@ref(tab:collapsed) present the collapsed 
 contingency table. 
 ```{r }
@@ -737,7 +736,7 @@ Fisher's exact test as it is based on numerically maximizing the
 hypergeometric likelihood, which depends only on the odds ratio and is
 obtained by conditioning on the margins sums. The conditional MLE
 estimate is often reported together with the $p$-value from Fisher's
-exact test, as in the R function fisher.test(). However, it has the
+exact test, as in the `R` function `fisher.test()`. However, it has the
 same problem as the standard (unconditional) MLE \@ref(eq:or) that it
 becomes infinite if either $b$ or $c$ is zero.
   
@@ -779,7 +778,7 @@ z2p <- function(z) return(2*(1-pnorm(abs(z))))
 z <- c(arr/se.arr, log(rr)/se.log.rr, log(or)/se.log.or)
 names(z) <- c("risk difference", "log relative risk", "log odds ratio")
 pvalues <- z2p(z)
-formatPval(pvalues)
+biostatUZH::formatPval(pvalues)
 ```
 
 The one for OR is called `Asymptotic P-value` in `twoby2()`.
@@ -978,7 +977,8 @@ polr2 <- polr(followup ~ treatment + baseline, data=arthritis)
 print(s2 <- summary(polr2))
 ## odds ratio is exp of coefficient
 CoefTable <-  s2$coefficients
-printWaldCI(theta=CoefTable[1,"Value"], se=CoefTable[1,"Std. Error"], FUN=exp)
+printWaldCI(theta=CoefTable[1,"Value"], 
+            se=CoefTable[1,"Std. Error"], FUN=exp)
 ```
 
 The second model (`polr2`) has a better model fit than the first (`polr1`): 
