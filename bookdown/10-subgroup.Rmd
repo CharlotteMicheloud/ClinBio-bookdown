@@ -158,7 +158,7 @@ is then only a result of different sample sizes, without any difference
 in effect sizes. Indeed, with equal effect sizes in the
 two groups, the test for interaction will return a $p$-value of 1.0,
 so no evidence for a subgroup difference whatsoever. 
-This example clearly illustrates, that we need to
+This example clearly illustrates that we need to
 compare effect sizes and not $p$-values to establish evidence for a
 difference between subgroups [@SN_interaction]. 
 
@@ -208,7 +208,7 @@ effect estimates $\hat \theta^{\tiny{\mbox{M}}}$ and
 $\hat \theta^{\tiny{\mbox{F}}}$. If we have binary outcomes and want
 to compare relative risks or odds ratios, the test for interaction
 should be performed on the log scale because the distributions of log
-ratios tend to be closer to normal then [@SN_interactionrev].
+ratios tend to be closer to normal [@SN_interactionrev].
 
 
 
@@ -259,18 +259,18 @@ T = \min\{Q^+,Q^{-}\},
 where
 
 \begin{eqnarray*}
-Q^+ = \sum_{i: \hat \theta_i \geq 0} T_i^2 & \mbox{ and } & 
-Q^- = \sum_{i: \hat \theta_i < 0} T_i^2
+Q^+ = \sum_{i: \hat \theta_i \geq 0} Z_i^2 & \mbox{ and } & 
+Q^- = \sum_{i: \hat \theta_i < 0} Z_i^2
 \end{eqnarray*}
 
-with $T_i=\hat \theta_i/\SE(\hat \theta_i)$ being the test statistics in each
+with $Z_i=\hat \theta_i/\SE(\hat \theta_i)$ being the test statistics in each
 subgroup $i$. The reference distribution for $T$ is non-standard, 
 so we use statistical software to calculate a $p$-value, as implemented in `biostatUZH::gailSimon()`.
 
 
 :::{.example #breast}
-In the  National Surgical Adjuvant Breast and Bowel Project Trial [@Fisher1983] 
-(Section 9.2), the outcome was disease-free survival at 3 years,
+In the  National Surgical Adjuvant Breast and Bowel Project Trial [@Fisher1983, Section 9.2],
+the outcome was disease-free survival at 3 years,
 comparing chemotherapy (PF) only versus chemotherapy plus tamoxifen (PFT) 
 for the treatment of Breast Cancer. 
 The risk difference $\theta$ is positive if disease free survival is more 
@@ -286,7 +286,7 @@ t <- rd/se.rd
 tp <- round(t, 2)
 p <- 2*pnorm(abs(t), lower.tail=FALSE)
 library(biostatUZH)
-p <- formatPval(p)
+p <- biostatUZH::formatPval(p)
 ```   
 
 
@@ -309,7 +309,7 @@ df <- data.frame(
 df <- as.data.frame(df, keep.rownames = TRUE)
 
 kable(df, booktabs = TRUE, escape = FALSE, 
-      caption = "Subgroups by age and progesterone receptor status (PR) in the National Surgical Adjuvant Breast and Bowel Project Trial [@Fisher1983].", label = NA) %>%
+      caption = "Subgroups by age and progesterone receptor status (PR) in the National Surgical Adjuvant Breast and Bowel Project Trial.", label = NA) %>%
   kable_styling(latex_options = "hold_position") %>%
   add_header_above(c(" " = 1, "PR < 10 fmol" = 2, "PR >= 10 fmol" = 2)) %>%
   column_spec(1, bold = TRUE)
@@ -319,7 +319,7 @@ kable(df, booktabs = TRUE, escape = FALSE,
 
 
 
-```{r tamoxifen, fig.cap = "Treatment effects with confidence intervals and (two-sided) $p$-values for each subgroup in the National Surgical Adjuvant Breast and Bowel Project Trial [@matthews].", echo=F, warning=FALSE, fig.height=3, fig.width=5.5}
+```{r tamoxifen, fig.cap = "Treatment effects with confidence intervals for each subgroup in the National Surgical Adjuvant Breast and Bowel Project Trial.", echo=F, warning=FALSE, fig.height=3, fig.width=5.5}
 library(gplots) 
 
 eff <- rd
@@ -360,7 +360,7 @@ The standard test for interaction gives $p=`r formatPval(mymeta$pval.Q)`$, as ap
 the function `meta::metagen()` shows.
 For the Gail-Simon test, we obtain 
 $T=`r round(sqrt(pGS["statistic"]), 2)`^2=`r round(pGS["statistic"], 2)`$ and 
-$p=`r formatPval(pGS["p-value"])`$.
+$p=`r biostatUZH::formatPval(pGS["p-value"])`$.
 So, there is moderate to strong evidence for a quantitative interaction,
 but only weak evidence for a qualitative interaction.
 
@@ -373,11 +373,11 @@ rd.se <- c(0.0788, 0.0689, 0.0614, 0.0547)
 ## Q-test for interaction
 library(meta)
 mymeta <- metagen(TE=rd, seTE=rd.se)
-print(formatPval(mymeta$pval.Q))
+print(biostatUZH::formatPval(mymeta$pval.Q))
 
 ## Gail and Simon test
 pGS <- gailSimon(thetahat = rd, se = rd.se)
-print(formatPval(pGS))
+print(biostatUZH::formatPval(pGS[1]))
 ``` 
 
 
@@ -599,13 +599,15 @@ kable(myoutput4, digits = c(1, 1, 1, 1, 2),
 ``` 
 
 
-The next subsections explain two different approaches how to prevent multiplicity problems: $p$-value adjustments and multivariate methods. 
+The next subsections explain two different approaches to prevent multiplicity problems: $p$-value adjustments and multivariate methods. 
 
 
 
 ### Adjusting for multiplicity
 
-The problem with multiple outcomes is that the chance that at least one of them will provide a siginficant result will be larger than the nominal $\alpha$ level. Several adjustments for this are described in the following. 
+The problem with multiple outcomes is that the chance that at least one of them 
+will provide a false significant result will be larger than the nominal 
+$\alpha$ level. Several adjustments for this are described in the following. 
 
 :::{.definition}
 The *family-wise error rate* (FWER) is the probability of at least one false significant result.
@@ -675,7 +677,7 @@ As a result, the Bonferroni method is very conservative and has low power.
 
 The *Holm method* is based on all ordered $p$-values 
 $p_{(1)} \leq \ldots \leq p_{(k)}$.
-A significant result is obtained, if 
+A significant result is obtained if 
 \[
 k \cdot p_{(1)}  \leq  \alpha , \mbox{ or }       
 (k-1) \cdot p_{(2)}  \leq  \alpha, 
@@ -775,9 +777,9 @@ Multiplicity issues can also be avoided by considering the whole $k$-dimensional
 outcome vector simultaneously rather than separately.
 
 #### Hotelling's $T$-test {-}
+
 If all outcomes are continuous, then *Hotelling's $T$-test*, a generalization 
 of the $t$-Test, could be used.
-
 But this test accepts deviations from the null hypothesis in any direction, 
 so typically lacks power.
 
