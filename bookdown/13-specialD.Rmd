@@ -78,8 +78,8 @@ CRT$Group <- factor(CRT$Group, levels = c("Control", "Intervention"))
 
 The same results can be obtained with regression analysis,
 but we can also use the number of referrals as weight. 
-The latter is the preferred analysis on practice level, 
-as it takes into account the different sample sizes in the different practices. 
+The latter is the preferred analysis on practice level, as it takes into account 
+the different cluster sizes (number of patients included per practice).
 
 ```{r echo=TRUE, results="asis"}
 result <- lm(Percentage ~ Group, data = CRT) 
@@ -174,8 +174,9 @@ where
 -  $\xi_i$ is a cluster-specific random effect with variance $\sigma_b^2$,
 -  the errors $\epsilon_{ij}$ have variance $\sigma_w^2$.
 
-The total variance is then $\Var(X_{ij}) = \sigma^2 = \sigma_b^2 + \sigma_w^2$ and the intraclass/intracluster correlation is $\rho= \sigma_b^2/\sigma^2$.
-The analysis can be performed with the \code{lme4::lmer()}.
+The total variance is then $\Var(X_{ij}) = \sigma^2 = \sigma_b^2 + \sigma_w^2$ and 
+the intraclass/intracluster correlation coefficient is $\rho= \sigma_b^2/\sigma^2$.
+The analysis can be performed with `lme4::lmer()`.
 
 ### Sample size calculation 
 
@@ -187,7 +188,7 @@ The total number of patients receiving each treatment should then be
 n = \underbrace{\frac{ 2 \sigma^2 (u+v)^2}{ \Delta^2}}_{\scriptsize \mbox{standard RCT sample size}} \times \quad \underbrace{(1+ \rho(\bar n_c-1))}_{\scriptsize \mbox{design effect $D_{\mbox{eff}}$}}.
 \end{equation*}
 
-For example, suppose $\bar n_c=7$ and $\rho=0.5$, then $\Deff=4$, 
+For example, suppose $\bar n_c=7$ and $\rho=0.5$, then $D_{\mbox{eff}} = 4$, 
 so 4-times as many patients are needed than for a standard RCT on patient-level. 
 
 If the number of patients
@@ -499,7 +500,7 @@ print(n2)
 
 Using these values in Equation \@ref(eq:nequi) with $\alpha = 2.5\%$ give $n = `r ceiling(n)*2` \neq 144$. 
 The correct sample size is retrieved using $\alpha = 5\%$, so one might 
-wonder if there based their calculation on a 90% CI instead of a 95% CI.
+wonder if they based their calculation on a 90% CI instead of a 95% CI.
 :::
 
 
