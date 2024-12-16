@@ -29,5 +29,8 @@ publishL:
 publishC:
 	Rscript -e "rsconnect::deploySite(appMode = 'static', server = 'bookdown.org', appId = '14572', account = 'charlotte_micheloud93')"
 	
+publishS:
+	Rscript -e "rsconnect::deploySite(appMode = 'static', server = 'bookdown.org', appId = '14572', account = 'stefanie_vonfelten')"
+	
 	
 all: build refresh	

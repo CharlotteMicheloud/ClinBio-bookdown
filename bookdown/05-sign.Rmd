@@ -367,13 +367,13 @@ plot(0, 0,
          xlab="",
          xaxt = "n", las = 1, lwd = lwds, main = "")
 points(extra ~ group, data = sleep, 
-       col = alpha("black", 0.8), 
+       col = scales::alpha("black", 0.8), 
        pch=16, cex=1.2)
 
 sleep$ID <- as.numeric(sleep$ID)
 
 for(i in c(min(sleep$ID):max(sleep$ID)))
-    lines(c(1,2), c(sleep$extra[sleep$group==1 & sleep$ID==i],sleep$extra[sleep$group==2 & sleep$ID==i]), col= alpha("black", 0.5))
+    lines(c(1,2), c(sleep$extra[sleep$group==1 & sleep$ID==i],sleep$extra[sleep$group==2 & sleep$ID==i]), col= scales::alpha("black", 0.5))
 axis(1, c(1, 2), c("Drug 1", "Drug 2"), padj = 0.5)
 ``` 
 

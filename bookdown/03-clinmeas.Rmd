@@ -899,7 +899,7 @@ agreement. We can see that expected $\kappa$ drops for extreme proportions close
 
 
 In Table \@ref(tab:kappa-extreme),
-$\kappa = `r round(Kappa(mat0)$Unweighted[1], 2)`$
+$\kappa = `r round(vcd::Kappa(mat0)$Unweighted[1], 2)`$
 although $\pobs = `r mat0[1,1] + mat0[2,2]`$/$`r sum(mat0)`$ = $`r round((mat0[1,1] + mat0[2,2])/sum(mat0), 2)`$.
 The problem is that the observed proportion of "positive" subjects is very low
 (5/94 resp. 6/94).
