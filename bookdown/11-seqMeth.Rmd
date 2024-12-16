@@ -186,7 +186,7 @@ n <- (m^2/d^2)*2
 alphaPrime <- c(0.05, 0.0294, 0.0221, 0.0182, 0.0158, 0.0106, 0.0086, 0.0075)
 T <- 2*round(n)*N
 
-res <- cbind(N, alphaPrime, ceiling(n), T)
+res <- cbind(N, alphaPrime, round(n), T)
 sel <- c(1,2,5,6)
 resSel <- res[sel,]
 resSel <- resSel[,c(1,2,3,4)]
@@ -253,7 +253,7 @@ Consider a continuous outcome and fix $\alpha=0.05$. Suppose that the goal is to
 detect a treatment difference of `r d` standard deviation with power 90\%.
 The maximal number $N$ of analyses after every successive group of 
 $2n$ patients affects the nominal significance level $\tilde \alpha$ and the 
-maximum total sample size $T = 2nN$, see \@ref(tab:pococktbl). 
+maximum total sample size $T = 2nN$, see Table \@ref(tab:pococktbl). 
 :::
 
 
@@ -269,9 +269,9 @@ knitr::kable(resSel,
 The Pocock stopping rule, where each test uses the same nominal significance level 
 $\tilde \alpha$, has two disadvantages. First, it is not too difficult for 
 a trial to be halted early, which is considered as undesirable and uncompelling 
-by some authors. Second, suppose that the trail terminates at the final analysis 
+by some authors. Second, suppose that the trial terminates at the final analysis 
 with $\tilde \alpha < p < \alpha$. Many clinicians find it difficult to 
-accept that the result of this trial is significant. 
+accept that the result of this trial is non-significant. 
 
 It is better to use a stopping rule $a_1, a_2, \ldots, a_N$ where $a_j$ is 
 the significance threshold at the $j$-th interim analysis with $a_1$ very 
@@ -288,17 +288,18 @@ library(kableExtra)
 # Data for the table
 stopping_rules <- data.frame(
   Method = c("Haybittle-Peto (1971)", "Pocock (1977)", "O'Brien-Fleming (1979)", "Fleming et al. (1984)"),
-  Interim1 = c(0.001, 0.0158, 5e-6, 0.0038),
-  Interim2 = c(0.001, 0.0158, 0.0013, 0.0048),
-  Interim3 = c(0.001, 0.0158, 0.0085, 0.0053),
-  Interim4 = c(0.001, 0.0158, 0.0228, 0.0064),
-  Interim5 = c(0.05, 0.0158, 0.0417, 0.0432)
+  Interim1 = c("0.001", "0.0158", "5e-6", "0.0038"),
+  Interim2 = c("0.001", "0.0158", "0.0013", "0.0048"),
+  Interim3 = c("0.001", "0.0158", "0.0085", "0.0053"),
+  Interim4 = c("0.001", "0.0158", "0.0228", "0.0064"),
+  Interim5 = c("0.05", "0.0158", "0.0417", "0.0432")
 )
 
 # Create the table using kable
 kable(stopping_rules,
       col.names = c("Method", "1", "2", "3", "4", "5"), 
       caption = "Nominal significance levels of different stopping rules for 5 interim analyses.",
+      label = NA,
       booktabs = TRUE, escape = FALSE) %>%
   add_header_above(c("", "Interim analysis" = 5))
 ```
@@ -319,15 +320,20 @@ legend("topleft", lty=1, col=c(1:4), legend=c("Haybittle-Peto", "Pocock", "O'Bri
 ``` 
 
 
-These stopping rules are implemented in the R package `gsDesign` 
-(Note that, here for 3 interim analyses, the output `Nominal p` is 
-the one-sided nominal significance level, which needs to be multiplied by $2$):
+These stopping rules are implemented in the R package `gsDesign`. 
+The argument `alpha` is the **one-sided** significance level, 
+and the argument `test.type` is usually set to `1` (one-sided), i.e., 
+we  have no interest in stopping early for futility (lower bound). 
+Here we only use `gsDesign`for relatively simple designs, 
+but many more things are possible. An alternative is the `R` package 
+`rpact`. 
 
 ```{r echo=TRUE}
 library(gsDesign)
 
 ## Pocock stopping rule
-gsDesign(k = 3, alpha=0.025, sfu = "Pocock", test.type = 1)
+gsDesign(k = 3, alpha=0.025, 
+         sfu = "Pocock", test.type = 1)
 
 ## O'Brien Fleming stopping rule
 gsDesign(k = 3, alpha=0.025, sfu = "OF", test.type = 1)
@@ -338,12 +344,7 @@ approach is based on the Lan-DeMets *alpha spending function* and does not
 require the maximum number of interim analyses to be specified in advance. 
 Another popular approach to analyze accumulating data is Whitehead's 
 *triangular test* based on the score statistic $Z$ and the Fisher information
-$V$. Figure \@ref(fig:SRtriangular) shows how this approach is used as 
-a stopping rule in an example.
-
-```{r SRtriangular, fig.cap="Whitehead's triangular test as a stopping rule: Crossing of green/red line implies positive/negative trial conclusion.", fig.width = 12, echo=FALSE, fig.align='center'}
-knitr::include_graphics("figures/Triangular.png")
-```
+$V$.
 
 ### Problems of stopping at interim 
 
@@ -354,7 +355,7 @@ interim because treatment is found to be
 significantly better than control, then
 the treatment effect estimate will be too large,
 the CI will be too narrow,
-and the $P$-value will be too small,
+and the $P$-value will be too small.
 Advanced methods for attempting to correct this bias are available, but rarely used, see @robertson_point_2023 and 
 @robertson_confidence_2024 for recent reviews. 
 
@@ -370,7 +371,7 @@ Suppose that we have two equally sized treatment arms and a continuous primary o
 The difference in means $\theta$ is used as effect size.
 We fix the following analysis parameters: $N=`r n`$ interim analyses with 
 Pocock bound $z_P=2.56$ (nominal significance level
-$\tilde \alpha = `r formatPval(z2p(resZ[10]))`$) and $n=`r m`$ 
+$\tilde \alpha = `r biostatUZH::formatPval(z2p(resZ[10]))`$) and $n=`r m`$ 
 patients per group and treatment arm to achieve a power of 75\% to detect the true treatment effect $\theta=`r effect`$ with standard deviation $\sigma=1$.
 Significance at the $k$-th interim analysis implies the following minimum 
 detectable difference (MDD, Compare Table \@ref(tab:samplesizecont)) for the treatment effect estimate:
@@ -463,15 +464,15 @@ mean effect size of all trials is $`r round(mean(thetahat2, na.rm=TRUE),2)` > `r
 
 The trial protocol serves at least three purposes. First, it outlines the
 reasons for running a trial. Second, it is an operations manual for the trial,
-e.g.: assessment for eligibility,  treatment allocation, blinding procedure etc.
+e.g.: assessment for eligibility,  treatment allocation, blinding procedure, etc.
 Finally, it is the scientific design document for the trial,
 e.g.: methods for allocation, ways of assessing outcomes etc.
-It needs approval by ethics committees, funding bodies, regulatory authorities etc.
+The trial protocol needs approval by ethics committees, funding bodies, regulatory authorities etc.
 
 ### Designing and reporting trials {-}
 
 A convincing report can only result from a convincing study design. 
-Problems should be addressed already in the trial protocol 
+Potential problems should be addressed already in the trial protocol 
 to ensure that choices have not been influenced by the results.
 These can be for example problems of multiplicity such as which subgroups 
 should be examined, which outcomes are primary and which are secondary, 
@@ -504,7 +505,7 @@ they were allocated to treatment.
 
 The ITT principle states: "Compare the groups as if they were formed by 
 randomization, regardless of what has happened subsequently to the patients" 
-@matthews (Sec. 10.3).
+[@matthews, Section 10.3].
 Any other way of grouping the patients cannot guarantee balance at the start 
 of the treatment. Per-protocol or as-treated analyses are subject to possible
 confounding, so should be interpreted cautiously. On the other hand, analysis
