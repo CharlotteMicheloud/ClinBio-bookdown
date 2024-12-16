@@ -580,14 +580,14 @@ treatment effect. Group imbalance occurs if $a + b \neq c + d$.
 A naive way to analyse such data would be to compare the treatment 
 groups using Mc Neymar's test for binary paired data, ignoring the 
 group membership. This approach assumes that there is 
-no period effect nor group imbalance.\todo{CM: in slides: balance?}
+no period effect nor group imbalance.
 The estimate of the odds ratio OR (Active vs. Placebo) 
 is based on the number of discordant pairs in the expected 
 vs. unexpected direction 
 
 \begin{eqnarray*} 
 
-\widehat{\OR} = \frac{\mbox{ \# pairs: normal for Active, abnormal for Placebo}}{\mbox{ \# pairs: abnormal for Active, normal for Placebo}} = \frac{a + d}{b + c}
+\widehat{\OR} = \frac{\mbox{ # pairs: normal for Active, abnormal for Placebo}}{\mbox{ # pairs: abnormal for Active, normal for Placebo}} = \frac{a + d}{b + c}
 
 \end{eqnarray*}
 
@@ -706,7 +706,7 @@ printWaldCI(glmmTable[2,1], glmmTable[2,2], FUN=exp, digits=2)
 
 You can find more about crossover trials in @bland  (Ch. 2.7) and in @matthews 
 (Ch. 11).
-Practical examples of crossover trials discussed in the lab are 
+Practical examples of crossover trials are 
 @frank2008 and @allan2001. More details on crossover trials are given in 
 @Senn as well as in @Senn2 (Chapter 17). 
 
