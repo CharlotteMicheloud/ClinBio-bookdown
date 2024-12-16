@@ -424,7 +424,7 @@ In a $2 \times 2$ crossover trial on cerebrovascular deficiency with 67 patients
 :::
 
 ```{r echo=FALSE}
-library(teachingUZH)
+# library(teachingUZH) # We omitted this package, since it only contains the data.
 data(cerebrovascular)
 ## for didactical reasons
 ## change response for ID=22 to avoid zero counts
