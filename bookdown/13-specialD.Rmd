@@ -15,7 +15,7 @@ Up to now, we have seen randomization of patients. *Cluster-randomized trials* a
 
 :::{.example #gps}
 @kinmonth1998
-is an intervention study in primary care about whether additional training of 
+conducted an intervention study in primary care about whether additional training of 
 nurses and general practitioners (GPs) in a general practice improves the 
 care of patients with newly diagnosed type II diabetes mellitus. 
 In this study, $41$ practices were randomized to the *status quo* or to 
@@ -77,7 +77,7 @@ CRT$Group <- factor(CRT$Group, levels = c("Control", "Intervention"))
 ``` 
 
 The same results can be obtained with regression analysis,
-but we can also use the number of referrals as weight. 
+where we can also use the number of referrals as weight. 
 The latter is the preferred analysis on practice level, as it takes into account 
 the different cluster sizes (number of patients included per practice).
 
@@ -217,14 +217,12 @@ than the other group.
 
 The following scenarios highlight why non-inferiority and equivalence studies
 may be more appropriate than superiority studies in certain cases.
-
 One scenario is when the intervention being evaluated is expected to
 perform similarly to the standard of care with respect to the primary
 endpoint but offers potential advantages in secondary endpoints. These
 advantages could include fewer side effects, reduced production costs,
 more convenient formulations (e.g., tablets instead of infusions), 
 fewer required doses, or improvements in quality of life.
-
 Another scenario involves studies assessing the bioequivalence of drugs 
 that share the same active ingredient, such as different formulations of the 
 same medication or generic alternatives.
@@ -251,7 +249,8 @@ sample_size <- c("$n = \\frac{ 2 \\sigma^2 (z_{1-\\alpha/2}+z_{1-{\\beta}})^2}{ 
                  "$n = \\frac{2 \\sigma^2(z_{1-\\alpha}+z_{1-{\\beta/2}})^2}{\\delta^2}$",
                  "$n = \\frac{2 \\sigma^2(z_{1-\\alpha}+z_{1-{\\beta}})^2}{\\delta^2}$")
 
-table_data <- data.frame(Design = design, Hypotheses = hypotheses, `Sample size` = sample_size)
+table_data <- data.frame(Design = design, Hypotheses = hypotheses, `Sample size` = sample_size, 
+                         check.names = FALSE)
 
 # Print the table using kable
 knitr::kable(table_data, format = "markdown", align = c("l", "l", "l"),
@@ -281,9 +280,9 @@ An alternative approach to assess equivalence is the TOST procedure as follows:
 
 1.  Apply **T**wo separate standard **O**ne-**S**ided significance **T**ests 
 (TOST) at level $\alpha$:  
-2.  Test 1 for $H_0$: $\Delta < - \delta$ vs. $H_1$: $\Delta \geq - \delta$
-3.  Test 2 for $H_0$: $\Delta > \delta$ vs. $H_1$: $\Delta \leq \delta$
-4.  If both one-sided tests can be rejected, we can conclude equivalence at
+    - Test 1 for $H_0$: $\Delta < - \delta$ vs. $H_1$: $\Delta \geq - \delta$
+    - Test 2 for $H_0$: $\Delta > \delta$ vs. $H_1$: $\Delta \leq \delta$
+2.  If both one-sided tests can be rejected, we can conclude equivalence at
 level $\alpha$. 
 
 :::{.example #fake}
@@ -333,7 +332,7 @@ axis(1, c(1, 2), c("Drug 1", "Drug 2"), padj = 0.5)
 
 ```{r echo=TRUE}
 ## solution 1: confidence interval
-res <- t.test(extra ~ group, data = sleep, conf.level = 0.9)
+res <- t.test(extra ~ group, data = sleep, conf.level = 0.9, paired = TRUE)
 print(res$conf.int)
 ``` 
 
@@ -342,10 +341,12 @@ The limits of the $90$\% CI do not lie within the interval of equivalence (-0.5h
 ```{r echo=TRUE}
 ## solution 2: TOST procedure
 tost1 <- t.test(extra ~ group, data = sleep, mu = -0.5, 
-                alternative = "greater", sig.level = 0.05)
+                alternative = "greater", sig.level = 0.05, 
+                paired = TRUE)
 print(tost1$p.value)
 tost2 <- t.test(extra ~ group, data = sleep, mu = 0.5, 
-                alternative = "less", sig.level = 0.05)
+                alternative = "less", sig.level = 0.05, 
+                paired = TRUE)
 print(tost2$p.value)
 ``` 
 
@@ -498,7 +499,7 @@ print(n2)
 
 ```
 
-Using these values in Equation \@ref(eq:nequi) with $\alpha = 2.5\%$ give $n = `r ceiling(n)*2` \neq 144$. 
+Using these values in Equation \@ref(eq:nequi) with $\alpha = 2.5\%$ gives $n = `r ceiling(n)*2` \neq 144$. 
 The correct sample size is retrieved using $\alpha = 5\%$, so one might 
 wonder if they based their calculation on a 90% CI instead of a 95% CI.
 :::
@@ -506,7 +507,6 @@ wonder if they based their calculation on a 90% CI instead of a 95% CI.
 
 ### Non-inferiority trials
 Non-inferiority trials are useful if a proven active treatment exists and placebo-controls are not acceptable for ethical reasons. They are a special case of equivalence trials, but are conducted more often. 
-
 To assess non-inferiority, just perform one of the two TOST tests, say
 
 $$H_0: \Delta < - \delta \mbox{ vs. } H_1: \Delta \geq  - \delta.$$
@@ -561,8 +561,8 @@ library(knitr)
 
 # Create the table using kable
 tbl <- data.frame(
-  `$\\alpha$` = ab[, 1],
-  `$\\beta$` = ab[, 2],
+  `$\\alpha$` = paste0(ab[, 1]*100, "%"),
+  `$\\beta$` = paste0(ab[, 2]*100, "%"),
   `Non-inferiority` = mytermNI,
   `Superiority` = mytermS,
   `Equivalence` = mytermE, 
@@ -590,7 +590,7 @@ The main secondary endpoint was the proportion of antibiotics prescriptions wher
 :::
 
 
-A more recent example if a non-inferiority trial is the study by 
+A more recent example of a non-inferiority trial is the study by 
 @Loeb2022.
 
 
