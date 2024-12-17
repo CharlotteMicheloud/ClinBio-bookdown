@@ -28,9 +28,10 @@ systematic review with subsequent meta-analysis proceeds as follows:
 This is the basis of evidence-based medicine (EBM).
 The studies included in a systematic review should be sufficiently
 homogeneous regarding in- and exclusion criteria and should use the
-same effect measure. Typical effect measures are the (standardized)
-difference in means $\theta$ between treatment groups for continuous
-outcomes. For binary/time to event outcomes, relative treatment
+same effect measure. A typical effect measure for continuous
+outcomes is the (standardized)
+difference in means $\theta$ between treatment groups.
+For binary/time to event outcomes, relative treatment
 effects are preferred, such as relative risk $\RR$, odds ratio $\OR$
 and hazard ratio $\HR$. These are usually considered on a log-scale,
 so the relevant effect estimate is $\theta=\log(\RR)$,
@@ -162,12 +163,11 @@ print (randomEffectsCiPlot)
 
 ## Meta-analysis
 
-We set the following notation for a *meta-analysis* ovf $i=1,\ldots, n$ trials:
+We set the following notation for a *meta-analysis* of $i=1,\ldots, n$ trials:
 
 -  $\theta_i$, $\hat \theta_i$ are the true and estimated study-specific treatment effect,
 -  $s_i = \se(\hat \theta_i)$ is the standard error of $\hat \theta_i$,
 -  $v_i = s_i^2$ is the variance of $\hat \theta_i$ and
--  $w_i=1/v_i$ is the (estimated) precision of $\hat \theta_i$.
 
 There are two different types of analyses: fixed and random effects model.
 
@@ -326,9 +326,67 @@ effects analysis, together with the estimated Higgins' $I^2$ and
 heterogeneity variance $\tau^2$.
 
 
+### Cumulative meta-analysis
+
+A cumulative meta-analysis plot shows how evidence has accumulated 
+over time. The $i$-th line in a cumulative meta-analysis plot 
+is the summary produced by a meta-analysis of the 
+first $i$-trials. 
+
+```{r}
+library(metadat)
+```
+
+:::{.example #bcg}
+The dataset `dat.bcg`from the `R`package `metadat`
+gives the results from 13 studies examining the effectiveness
+of the Bacillus Calmette-Guerin (BCG) vaccine
+against tuberculosis. 
+:::
+The meta-analysis can be performed with the function 
+`meta::metabin()`: 
+
+```{r, fig.height=7.5, fig.width=11, echo = TRUE}
+meta1 <- metabin(event.e = tpos, n.e = tpos + tneg,
+event.c = cpos, n.c = cpos + cneg, data=dat.bcg, sm = "RR",
+method = "Inverse", studlab = paste(author, year))
+### Forest plot
+forest(meta1)
+```
+The cumulative meta-analysis can be performed with the function 
+`meta::metacum()`: 
+
+```{r, fig.height=7.5, fig.width=11, echo = TRUE}
+forest(metacum(meta1, pooled="random"))
+```
 
 
-## Reporting Bias
+### Meta-regression
+A meta-regression tries to explain heterogeneity with study-specific 
+covariates. The visualisation can be done with bubble plots. 
+
+:::{.example #bcg name="continued"}
+In the `dat.bcg` dataset, the covariable `ablat` gives the absolute 
+latitude of the study location (in degrees), and can possibly be
+a relevant moderator of the effectiveness of the vaccine. 
+:::
+
+The meta-regression can be performed with the function 
+`meta::metareg()`: 
+```{r, echo = TRUE}
+print(mr1 <- metareg(x=meta1, formula="ablat"))
+```
+
+The function `meta::bubble()` produces the bubble plot. 
+
+```{r, echo = TRUE}
+par(las=1)
+bubble(mr1, lwd = 2, col.line = "blue", studlab=TRUE, xlim=c(-5, 60), cex.studlab=0.7, ylim=c(0.15, 1.8))
+```
+
+
+
+## Reporting bias
 
 Reporting bias occurs when the publication of research results depends on their
 nature and direction.
@@ -372,7 +430,7 @@ Smaller studies tend to show greater effects, so there is some asymmetry. Howeve
 ### The trim-and-fill method
 
 The trim-and-fill method is based on the key assumptions that
-publication bias is the reason of funnel plot asymmetry and that the studies with negative findings are suppressed,
+publication bias is the reason of funnel plot asymmetry and that the studies with negative findings are suppressed.
 The idea of this method is to:
 
 1.  Trim-off the "asymmetric" side of a funnel plot, after estimating the number of studies in this group.
@@ -386,7 +444,7 @@ Figure \@ref(fig:trimfillStroke) illustrates the trim-and-fill method for 11 stu
 :::
 
 
-```{r trimfillStroke, echo=FALSE, fig.cap="Trim-and-fill method in Example \\@ref(exm:stroke). The black circles represent the 11 observed studies whereas the red studies on the left are imputed, based on symmetrically mirroring the trimmed studies on the right."}
+```{r trimfillStroke, echo=FALSE, fig.cap="Trim-and-fill method in Example \\@ref(exm:stroke). The black circles represent the 11 observed studies whereas the red studies on the left are imputed, based on symmetrically mirroring the trimmed studies on the right.", out.width='\\textwidth'}
 knitr::include_graphics("figures/fig-trimfill05.pdf")
 ```
 
@@ -447,7 +505,7 @@ tf_gs <- trimfill(x = gs[,1], seTE = gs[,2],
 ```     
         
 ```{r ch11, echo=TRUE}
-summary(tf_gs)
+print(tf_gs)
 ```
 
 
@@ -516,7 +574,7 @@ kable(
 ```
 
 
-```{r trimfillSmoking, echo=FALSE, fig.cap="Trim-and-fill method in the passive smoking Example \\@ref(exm:tobacco).", fig.align='center'}
+```{r trimfillSmoking, echo=FALSE, fig.cap="Trim-and-fill method in the passive smoking Example \\@ref(exm:tobacco).", fig.align='center', out.width='\\textwidth'}
 knitr::include_graphics("figures/fig-trimfill07.pdf")
 ```
 
@@ -524,7 +582,8 @@ knitr::include_graphics("figures/fig-trimfill07.pdf")
 
 ### Tests for funnel plot asymmetry
 
-If visual inspection of a funnel plot is not enough, perform a statistical test. 
+If visual inspection of a funnel plot is not enough, statistical tests can be 
+performed. 
 Popular methods are Begg's rank correlation method or Egger's test (weighted regression).
 
 #### Begg's rank correlation test {-}
@@ -616,7 +675,7 @@ limitmeta(psMeta)
 
 ## Additional references
 
-@bland (Chapter 17) and @matthews(Chapter 12)
+See @bland (Chapter 17) and @matthews (Chapter 12).
 
 
 
