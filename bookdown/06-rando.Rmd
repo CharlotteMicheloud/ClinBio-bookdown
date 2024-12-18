@@ -293,7 +293,7 @@ The minimization is deterministic if $p = 1$ and $D \neq 0$.
 ## Blinding
 
 Blinding is used to avoid assessment bias. We distinguish between
-*single-blind* and *double-blind* trials. In a single-blind trialm the patient 
+*single-blind* and *double-blind* trials. In a single-blind trial the patient 
 is unaware of the treatment being given, while in a 
 double-blind trial, neither the doctor nor the patient knows what treatment 
 is being given.
