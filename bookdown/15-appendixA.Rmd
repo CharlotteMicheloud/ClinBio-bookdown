@@ -12,7 +12,7 @@ Repeating the same experiment over and over would give us a range of estimates.
 The standard error $\SE(\widehat \theta)$ of $\widehat \theta$ is an estimate
 of the standard deviation of $\widehat \theta$ in repeated random samples. 
 It is very important to understand that the terms
-"standard error" and "standard deviation" are different things [@SN_SDvsSE]. 
+"standard error" and "standard deviation" are different concepts [@SN_SDvsSE]. 
 
 ### Confidence interval
 The point estimate and the standard error can be used to compute a 
@@ -50,14 +50,14 @@ For small sample size $n$, an approximate $t$-distribution with $n-1$ degrees of
 
 ### Delta method
 Suppose we know the standard error of an estimator $\widehat{\theta}$. Then, a standard error of the transformed estimator $h(\widehat{\theta})$ is given by
-%
+
 \begin{equation}
 (\#eq:delta)
 \SE\bigr(h(\widehat{\theta})\bigr) = \SE(\widehat{\theta}) \cdot \Bigr| \dfrac{dh(\widehat{\theta})}{d\theta} \Bigr|
 \end{equation}
-%
+
 if $\widehat{\theta}$ is a consistent estimator of $\theta$ and 
-$\dfrac{dh(\theta)}{d\theta}\neq 0$. This is called the *delta method* \citep[Section 3.2.4, p.~63]{held}.
+$\dfrac{dh(\theta)}{d\theta}\neq 0$. This is called the *delta method* [@held, Section.Section 3.2.4, p.63].
 
 
 ### Difference{#appCI:difference}
@@ -84,7 +84,7 @@ $\widehat{\theta}_1 - \widehat{\theta}_2$ using these limits as follows:
 
 When the limits of Wald CIs for $\theta_1$ and $\theta_2$ are used, then the square-and-add method results in the Wald CI for the difference. This is how this method was originally discovered. However, it is recommended to use the limits of Wilson CIs instead to improve the properties of the CI (also called Newcombe's method described in 
 @newcombe1998 or @altman (Section 6, p.49).
-For example, this CI preserves the property of the Wilson CIs to be 
+This CI preserves the property of the Wilson CIs to be 
 boundary-respecting (no overshoot).
 
 A more complicated variant of the square-and-add method (with Wilson CIs) 
@@ -117,7 +117,7 @@ denotes the $95$\% error factor.
 
 The substitution method can also be useful with other transformations such as
 the logit transformation or Fisher's $z$-transformation. While transformations
-of the parameter to estimate also transform the CI, the $p$-value is not
+of the parameter to estimate also transform the CI, the $P$-value is not
 affected by transformations but the reference value from the corresponding 
 hypothesis test is transformed too.
 
@@ -146,7 +146,8 @@ In the following, we discuss commonly used CIs for continuous outcomes.
 ### One group
 
 :::{.example #pima} 
-The data {PimaIndiansDiabetes2 contains diastolic blood pressure levels
+The data `PimaIndiansDiabetes2`from the package `mlbench`
+contains diastolic blood pressure levels
 from $n=252$ diabetic women and $m=481$ non-diabetic women (missing values 
 excluded). We are interested in mean blood pressure $\mu_D$ in the diabetic 
 group. Denote the observations in this group by $x_1,\ldots, x_n$. Suppose
@@ -157,7 +158,7 @@ $s_D^2$ is the sample variance of $x_1,\ldots, x_n$. Then:
 -  $\SE(\widehat{\mu}_D) = \dfrac{s_D}{\sqrt{n}}$
 
 
-We build a Wald CI for $\mu_D$ as in \@ref(eq:wald):
+We build a Wald CI for $\mu_D$ as in Equation \@ref(eq:wald):
 
 $$\widehat{\mu}_D - z_\gamma\cdot \SE(\widehat{\mu}_D)\;\;\; \text{to}\;\;\; \widehat{\mu}_D + z_\gamma\cdot \SE(\widehat{\mu}_D)$$
 
@@ -214,7 +215,7 @@ We build a symmetric CI for $\Delta$ using the $t$-distribution with $m+n-2$ deg
 $$\widehat{\Delta} - t_\gamma\cdot \SE(\widehat{\Delta})\;\;\; \text{to}\;\;\; \widehat{\Delta} + t_\gamma\cdot \SE(\widehat{\Delta})$$
 
 
-In R, such a CI is reported in a two sample $t$-test where we need to specify the argument `var.equal = TRUE` (the default value is {\tt FALSE}):
+In`R`,such a CI is reported in a two sample $t$-test where we need to specify the argument `var.equal = TRUE` (the default value is `FALSE`):
 
 ```{r echo=TRUE}
 ## Check ordering of groups
@@ -245,7 +246,7 @@ If the variances in the two groups are unequal, the standard error of the differ
 A Welch-Satterthwaite test using the $t$-distribution with adjusted degrees of freedom should be used.
 
 :::{.example}
-In R, again in Example \@ref(exm:pima), we can use `t.test` with the default argument `var.equal = FALSE` to compute the CI:
+In`R`,again in Example \@ref(exm:pima), we can use `t.test` with the default argument `var.equal = FALSE` to compute the CI:
 
 ```{r echo=TRUE}
 t.test(pressure ~ diabetes, data = pima,
@@ -283,7 +284,7 @@ We can build a Wald CI for $\pi$ as in \@ref(eq:wald). However, for proportions 
 \end{equation}
 
 
-This formula is complicated. In practice, we use the library biostatUZH 
+This formula is complicated. In practice, we use the library `biostatUZH` 
 where both Wald and Wilson CIs for proportions are implemented.
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
@@ -298,7 +299,7 @@ wilson(x, n, conf.level = 0.95)
 ```
 
 
-Note that when the Wald CI overshoots, the function `wald` returns a CI that is truncated such that the limits lie between $0$ and $1$.
+Note that when the Wald CI overshoots, the function `wald ()` returns a CI that is truncated such that the limits lie between $0$ and $1$.
 
 Also the function `prop.test` computes the Wilson CI: 
 ```{r echo=TRUE}
@@ -315,7 +316,7 @@ $63$ out of $93$ patients randomised to active treatment survived to one
 year compared with $38$ out of $92$ infants who received conventional
 management. Let $\pi_1$ and $\pi_2$ be the probabilities to survive up
 to one year in the two groups.
-
+:::
 The two groups can be compared using different effect measures such as the 
 absolute risk reduction (or risk difference or probability difference), 
 the relative risk reduction (or risk ratio or relative risk) and the (sample) 
@@ -344,8 +345,8 @@ For the absolute risk reduction $\ARR = \pi_1 - \pi_2$, we have:
 
 The standard error is computed using equation \@ref(eq:diff1) for the difference.
 
-Wald and Wilson CIs can be computed in R using the library 
-biostatUZH. A Wald CI uses the above standard error.
+Wald and Wilson CIs can be computed in`R`using the library 
+`biostatUZH`. A Wald CI uses the above standard error.
 A Wilson CI uses the square-and-add method with Wilson CIs 
 for $\pi_1$ and $\pi_2$. Also here, Wilson CIs have better properties.
 
@@ -399,7 +400,7 @@ For the odds ratio $\OR=\dfrac{\pi_1/(1-\pi_1)}{\pi_2/(1-\pi_2)}$, we have:
 -  $\SE\bigr(\log(\widehat{\OR})\bigr) = \sqrt{\dfrac{1}{a} + \dfrac{1}{b} + \dfrac{1}{c} + \dfrac{1}{d}}$
 
 
-The standard error is computed using equation \eqref{diff1} for the difference of two log odds. The standard error of the log odds can be computed from the standard error of a proportion and the delta method:
+The standard error is computed using equation \@ref(eq:diff1) for the difference of two log odds. The standard error of the log odds can be computed from the standard error of a proportion and the delta method:
 
 
 -  $\SE\bigr(\log(\widehat{\pi_1}(1-\widehat{\pi_1}))\bigr) = \sqrt{\dfrac{1}{a} + \dfrac{1}{b}}$
@@ -418,7 +419,7 @@ which is the same as
 $$\widehat{\OR}/\text{EF}_{.95}\;\;\; \text{to}\;\;\; \widehat{\OR}\cdot \text{EF}_{.95}$$
 
 
-In R, Wald CIs for OR and RR and a Wilson CI for ARR can be computed using the function `twoby2` from the library {\tt Epi}.
+In`R`,Wald CIs for OR and RR and a Wilson CI for ARR can be computed using the function `twoby2()` from the library `Epi`.
 
 ```{r echo=TRUE}
 library(Epi)
@@ -431,26 +432,30 @@ twoby2(tabRespiratory, alpha = 0.05)
 :::{.example #ischemia}
 In a reliability exercise carried out as part of the Multicenter Study of Silent Myocardial Ischemia, $41$ patients were randomly selected from those who had undergone a thallium-$201$ stress test. The $41$ sets of images were classified as normal or ischemic by the core thallium laboratory and, independently, by clinical investigators from different centers who had participated in training sessions to support standardization.
 
-This is a paired design. The results for one of the participating clinical investigators compared to the core laboratory are presented in a contingency table showing the frequency distribution of these two variables:\bigskip
+This is a paired design. The results for one of the participating clinical investigators compared to the core laboratory are presented in a contingency table showing the frequency distribution of these two variables:
 
 ```{r echo=FALSE, results='asis'}
+library(knitr)
+library(kableExtra)
+# Create the data frame
 m <- as.data.frame(matrix(c("$14$", "$0$", "$14$", 
                             "$5$", "$22$", "$27$", 
                             "$19$", "$22$", "$n=41$"), nrow = 3))
 rownames(m) <- c("Ischemic", "Normal", "Total")
 colnames(m) <- c("Ischemic", "Normal", "Total")
 
-xtab <- xtable(m, digits = c(0, 0, 0, 0))
-addtorow <- list()
-addtorow$pos <- list(0, 0)
-addtorow$command <- c("& \\multicolumn{3}{c}{Core laboratory} \\\\\n",
-                      "Clinical investigator & Ischemic & Normal & Total \\\\\n")
-align(xtab) <- "lrrr"
-print.xtable(xtab, sanitize.text.function = function(x) {x},
-             add.to.row = addtorow, include.colnames = FALSE)
+# Add custom header rows with LaTeX formatting
+header <- "\\multicolumn{4}{c}{Core laboratory} \\\\ \\hline
+Clinical investigator & Ischemic & Normal & Total \\\\"
+
+# Create the table with kable
+knitr::kable(m, format = "latex", booktabs = TRUE, escape = FALSE, align = "r",
+             col.names = NULL) %>%
+  kableExtra::add_header_above(header = c(" " = 1, "Core laboratory" = 3)) %>%
+  kableExtra::row_spec(0, bold = TRUE, align = "c")
 ```
 
-The square-and-add method for paired data can be used to compute a Newcombe CI. This method is implemented in the library biostatUZH where the CI is computed from the contingency table for "Ischemic vs. Normal":
+The square-and-add method for paired data can be used to compute a Newcombe CI. This method is implemented in the package `biostatUZH` where the CI is computed from the contingency table for "Ischemic vs. Normal":
 
 ```{r echo=TRUE}
 ## Data
@@ -515,17 +520,17 @@ within-subject standard deviation $s_w$ (Section \@ref(measErr))
 and the limits of agreements in a Bland-Altman plot (Section \@ref(CIloa)),
 for example. 
 
-# Statistical tests and $p$-values {#Pvalues}
+# Statistical tests and $P$-values {#Pvalues}
 
 ## Concepts
 
 ### $P$-value
-The $p$-value $p$ is a value between $0$ and $1$ which can be used for
+The $P$-value $p$ is a value between $0$ and $1$ which can be used for
 hypothesis testing or for significance testing. We test for evidence 
 against a point null hypothesis H$_0$ which is given by a reference value,
 usually $0$. For example, H$_0$ could be the hypothesis that there is no 
 treatment effect.
-The $p$-value is correctly interpreted as the probability, under the 
+The $P$-value is correctly interpreted as the probability, under the 
 assumption of the null hypothesis H$_0$, of obtaining a result equal 
 to or more extreme than what was actually observed.
 
@@ -533,16 +538,16 @@ to or more extreme than what was actually observed.
 The type I error rate $\alpha$ is the probability of rejecting $H_0$ 
 although $H_0$ is true. Hypothesis testing wants to control the probability
 for this type of error by keeping it small, usually $\alpha = 0.05$. 
-In practice, the $p$-value is compared to the threshold $\alpha$ and 
+In practice, the $P$-value is compared to the threshold $\alpha$ and 
 rejects $H_0$ if and only if $p\leq \alpha$.
 
 #### Relation to confidence interval
 A $\gamma\cdot 100$\% confidence interval (CI) can be used to carry 
 out a hypothesis test with $\alpha= 1-\gamma$ by rejecting H$_0$ if
 and only if the CI does not contain the reference value. If the reference
-value lies just on the boundary of the CI, then the $p$-value is $1-\gamma$.
-Below, we show how to compute a $p$-value from a CI in case of a $z$-test or
-a $t$-test, see also \citet{altman1,altman2}.
+value lies just on the boundary of the CI, then the $P$-value is $1-\gamma$.
+Below, we show how to compute a $P$-value from a CI in case of a $z$-test or
+a $t$-test, see also @altman1, @altman2.
 
 Suppose we know the estimate $\widehat{\theta}$ and the lower and upper 
 limits $l$ and $u$ of the $\gamma\cdot 100$\% Wald CI. Using the definition 
@@ -555,23 +560,23 @@ of the Wald CI, we can compute the standard error:
 
 
 From this, we can compute what was observed for the test statistic to compute
-the $p$-value:
+the $P$-value:
 
 \begin{equation*}
 p = 2\bigr(1-\text{pnorm}(\widehat{\theta}/\SE(\widehat{\theta}))\bigr)
 \end{equation*}
 
 The same can be done if we know the symmetric CI based on the $t$-distribution
-by exchanging $z_\gamma$ and "pnorm()" with $t_\gamma$ and "pt()" using the
+by exchanging $z_\gamma$ and `pnorm()` with $t_\gamma$ and `pt()` using the
 correct degrees of freedom for the $t$-distribution.
 
-While the $p$-value quantifies the strength of evidence in one number,
+While the $P$-value quantifies the strength of evidence in one number,
 the CI shows the effect size and the amount of uncertainty. This is different 
-information, hence both $p$-value and CI should be reported.
+information, hence both $P$-value and CI should be reported.
 
 ### Significance testing 
 
-Significance testing uses the $p$-value to quantify the strength of evidence 
+Significance testing uses the $P$-value to quantify the strength of evidence 
 against the null hypothesis. Instead of a strict threshold, the interval from 
 $0$ to $1$ is divided into regions of "weak evidence", "strong evidence" etc. 
 (see Figure \@ref(fig:strengthofevidence)).
@@ -585,10 +590,8 @@ large. Otherwise, the $t$-test is more appropriate.
 
 ### $z$-test {#sec:ztest}
 
-The $p$-value is the probability that under the null hypothesis,
-we would obtain a certain result for our test statistic. 
 If we know the reference distribution of the test statistic under 
-the null hypothesis, it can be used to compute the $p$-value. We consider 
+the null hypothesis, it can be used to compute the $P$-value. We consider 
 the estimated test statistic
 
 $$Z=\widehat{\theta}/\SE(\widehat{\theta}),$$
@@ -603,7 +606,7 @@ $Z$ follows approximately a standard normal distribution ($z$-test or also Wald 
 
 :::{.example #pima2}
 In Example \@ref(exm:pima), let the null hypothesis be $H_0$: $\mu_D = 73$.
-Two-sided or one-sided $p$-values from a $z$-test can be computed as follows:
+Two-sided or one-sided $P$-values from a $z$-test can be computed as follows:
 
 ```{r warning=FALSE, message=FALSE, echo=TRUE}
 ## Data
@@ -672,20 +675,15 @@ $$T = \frac{\widehat \Delta}{\SE(\widehat \Delta)}.$$
 
 Assuming $H_0$ is true, the test statistic $T$ follows a 
 $t$-distribution with $m+n-2$ "degrees of freedom" (df). 
-In case of only one group of size n (no difference),
+In case of only one group of size n,
 it is a $t$-distribution with $n-1$ degrees of freedom.
 
-#### Application in two unpaired groups
-See Example \@ref(exm:didgeridoo) and Section~\@ref(sec:equalvariance).
-
-#### Application in two paired groups
-See Example \@ref(exm:sleep).
 
 
 ## Binary outcome
 
 For binary outcomes, Wald CIs are often not appropriate.
-However, $p$-values cannot be easily computed from CIs other than Wald or 
+However, $P$-values cannot be easily computed from CIs other than Wald or 
 $t$-test CIs. In these cases, it is common to use the $\chi^2$-test, Fisher's 
 exact test for small samples or McNemar's test for paired data. These tests 
 generally test the null hypothesis that the events of an investigated factor 
@@ -709,7 +707,7 @@ apsac_data <- data.frame(
 
 # Display the table using kable
 kable(apsac_data, col.names = c("Therapy", "Dead", "Alive", "Total"),
-      caption = "Results of the APSAC Study from Example", 
+      caption = "Results of the APSAC Study from Example \\@ref(exm:apsac)", 
        align = c("l", "l", "l", "l"))
 
 
@@ -717,19 +715,6 @@ kable(apsac_data, col.names = c("Therapy", "Dead", "Alive", "Total"),
 
 
 
-#### Application in one group
-
-:::{.example}
-The $p$-value from a $t$-test can be read from the t.test output, 
-here also in Example \@ref(exm:pima2). The argument mu = 73 shifts the
-reference value from $0$ (the default value) to $73$.
-The argument alternative can be set to two-sided or less/greater for one-sided.
-
-```{r echo=TRUE}
-t.test(diab_bp, mu = 73, alternative = "two.sided", 
-       conf.level = 0.95)
-```
-:::
 
 
 The expected number of cases in a particular cell are defined as the product 
@@ -756,7 +741,7 @@ of cases $y_i$ based on the test statistic
 \]
 This test statistic follows a $\chi^2$-distribution with 1 degree of
 freedom under the null hypothesis of no difference between the two
-groups, so a $p$-value can be easily calculated. Note that it is a two-sided
+groups, so a $P$-value can be easily calculated. Note that it is a two-sided
 test due to the quadratic differences where it does not matter whether $y_i<e_i$ or $e_i<y_i$.
 
 The $\chi^2$-test with *continuity correction* is based on the modified
@@ -766,10 +751,6 @@ test statistic
 \]
 here $x_+ = \max\{x, 0\}$. What we illustrated here for $2 \times 2$ tables can also be generalized to more categories.
 
-
-#### Application in two unpaired groups
-See Example \@ref(exm:apsactest). The default of the chisq.test 
-is with continuity correction.
 
 
 
@@ -802,13 +783,11 @@ with the observed row and column totals under the null hypothesis of
 no difference between the groups. It is a two-sided test, there are three 
 different versions and it can also be generalized to more categories.
 
-#### Application in two unpaired groups
-See Example \@ref(exm:apsactest). The fisher.test also provides an odds ratio with CI.
 
 
 ## Survival outcome
 For survival outcomes, the log-rank test can be used to compare two treatment 
-groups. The log-rank test gives a $p$-value based on the expected number of 
+groups. The log-rank test gives a $P$-value based on the expected number of 
 events under the null hypothesis of no difference between the two groups. 
 An estimate of the hazard ratio with CI can be derived from the observed and 
 expected number of events in the two groups. 
@@ -995,7 +974,7 @@ in \@ref(eq:eq2App)
 \Phi\left(z_{(1+\gamma)/2} - \frac{2 \delta}{\lambda \, \sigma}\right) = \Phi(z_{(1+\gamma)/2} - 2 \, (z_{(1+\gamma)/2} + z_{1-\beta/2})) = \Phi(-z_{(1+\gamma)/2} - 2 \, z_{1-\beta/2})
 \]
 
-is then very close to zero. Note that \@ref(eq:eq3App)  is in contrast to
+is then very close to zero. Note that \@ref(eq:eq3App)  differents that in 
 superiority trials, where $\alpha = 1-\gamma$.
 
 

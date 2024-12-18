@@ -51,9 +51,7 @@ csl: data-science-journal.csl
 \DeclareMathOperator{\Bin}{Bin} % Binomial
 
 \newcommand{\partials}[3][]{
-  \ifthenelse{\isempty{#1}}
   {\frac{d\,#2}{d\,#3}}
-  {\frac{d^{#1} #2}{d\,#3^{#1}}}
 } 
 
 \def\PE{\mbox{PE}}

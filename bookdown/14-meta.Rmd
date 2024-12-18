@@ -381,7 +381,8 @@ The function `meta::bubble()` produces the bubble plot.
 
 ```{r, echo = TRUE}
 par(las=1)
-bubble(mr1, lwd = 2, col.line = "blue", studlab=TRUE, xlim=c(-5, 60), cex.studlab=0.7, ylim=c(0.15, 1.8))
+bubble(mr1, lwd = 2, col.line = "blue", studlab=TRUE, xlim=c(-5, 60),
+       cex.studlab=0.7, ylim=c(0.15, 1.8))
 ```
 
 
