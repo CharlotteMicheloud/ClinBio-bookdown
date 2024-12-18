@@ -274,7 +274,7 @@ text(4.5, 1.8,
 Spearman's rank correlation coefficient
 in the PEFR example  ($\rho_S = `r round(ctest_pefr$estimate, 2)`$)
 is larger than in the sodium example ($\rho_S = `r round(ctest_sod$estimate, 4)`$), 
-but the $p$-value for the correlation test is large in both cases ($p=`r formatPval(ctest_pefr$p.value)`$ and 
+but the $P$-value for the correlation test is large in both cases ($p=`r formatPval(ctest_pefr$p.value)`$ and 
 $p=`r formatPval(ctest_sod$p.value)`$, respectively). Hence
 there is no evidence for 
 an association between the mean measurement and the absolute difference of

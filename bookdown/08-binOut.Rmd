@@ -735,7 +735,7 @@ is the conditional maximum likelihood estimate. This is related to
 Fisher's exact test as it is based on numerically maximizing the
 hypergeometric likelihood, which depends only on the odds ratio and is
 obtained by conditioning on the margins sums. The conditional MLE
-estimate is often reported together with the $p$-value from Fisher's
+estimate is often reported together with the $P$-value from Fisher's
 exact test, as in the `R` function `fisher.test()`. However, it has the
 same problem as the standard (unconditional) MLE \@ref(eq:or) that it
 becomes infinite if either $b$ or $c$ is zero.
@@ -769,7 +769,7 @@ library(Epi)
 twoby2(APSAC.table)
 ```
 
-Compatible $p$-values can be obtained for each of these effect estimates and the corresponding standard error. They will be similar, but not identical:
+Compatible $P$-values can be obtained for each of these effect estimates and the corresponding standard error. They will be similar, but not identical:
 
 ```{r echo=TRUE}
 ## transform normal test statistic z to two-sided p-value

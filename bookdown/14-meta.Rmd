@@ -247,7 +247,7 @@ Under the homogeneity assumption, we have
 Q = \sum w_i (\hat \theta_i - \hat \theta)^2 \sima \chi^2_{n-1}
 \end{equation*}
 
-This can be used to calculate the $p$-value of 
+This can be used to calculate the $P$-value of 
 *Cochran's test for heterogeneity*.
 
 :::{.example #preeclampsia name="continued"}

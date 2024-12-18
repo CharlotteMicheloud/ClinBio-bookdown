@@ -229,7 +229,7 @@ $d_{i} = x_{i1} - x_{i2}$. This illustrates that between-patient variation is el
 
 It is also possible to perform an analysis of the original outcomes $x_{ij}$ 
 using a *mixed model* with *patient-specific random effects* $\xi_i$. 
-This will give the same treatment effect (with confidence interval and $p$-value) 
+This will give the same treatment effect (with confidence interval and $P$-value) 
 as the simple analysis based on the unpaired $t$-test, 
 but also provides an estimate of the period effect and estimates of within- 
 and between-patient variances. 

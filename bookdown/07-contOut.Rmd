@@ -383,13 +383,13 @@ Mann-Whitney test has less assumptions that the $t$-test, but
 also less power. 
 
 #### Permutation test {-} 
-An alternative method to compute a $p$-value is the permutation test based on 
+An alternative method to compute a $P$-value is the permutation test based on 
 the randomisation model. The idea is that, under the null hypothesis 
 $H_0$, the mean difference does not 
 depend on the treatment allocation. The distribution of the mean difference 
 under $H_0$ is derived under all possible permutations of treatment 
 allocation. The comparison with the observed difference then 
-gives a $p$-value. In practice, a Monte Carlo random sample is 
+gives a $P$-value. In practice, a Monte Carlo random sample is 
 taken from all possible permutations. This approach can be extended to 
 stratified randomisation, etc. Figure \@ref(fig:permut) illustrated the 
 permutation test for the change score analysis. Not that in total, 

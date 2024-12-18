@@ -218,7 +218,7 @@ The survival function is then estimated as
 (1 - \hat r_1) \times \ldots \times (1 - \hat r_i).
 \end{equation*}
 
-Wald confidence intervals can be calculated for $S(i)$, $\log \hat S(i)$ or 
+Wald confidence intervals can be calculated for $\hat S(i)$, $\log \hat S(i)$ or 
 $\log \{-\log \hat S(i)\}$ with appropriate back-transformation. The corresponding standard errors can be found in textbooks,
 e.g. @collett (Section 2.2).
 
@@ -636,7 +636,7 @@ pwert2 <- signif(1-pchisq(test2$chisq, df = 1), 2)
 The *log-rank test*, also called *Mantel-Cox test*, 
 quantifies the evidence against the null hypothesis of
 equal survival curves $S_A(t) = S_B(t)$ , in groups A and B,
-for all times $t$ with a $p$-value. The method compares 
+for all times $t$ with a $P$-value. The method compares 
 the *observed number* of events with the corresponding
 *expected number* of events (under the null hypothesis $H_0$) in each group.
 
@@ -783,7 +783,7 @@ Let $h_A(t)$ and $h_B(t)$ denote the hazard functions in groups A and B. The *pr
 The hazard ratio can be interpreted as
 
 
-1.  relative risk at any given time $t$:
+1. (instantaneous) relative risk at any given time $t$:
 
 \begin{equation*}
 \mbox{HR} = \frac{h_A(t)}{h_B(t)}\approx 
@@ -927,7 +927,7 @@ $`r round((exp(coef(model.cox1)[1])-1)*100)`$\% for RT relative to RT + CT
 Women have a $`r round(100*(1-exp(coef(model.cox1)[2])))`$\% reduced hazard 
 of death ($p=`r biostatUZH::formatPval(summary(model.cox1)[[7]][2,5])`$) 
 compared to men. However, there is no evidence for a difference 
-in both cases as the corresponding $p$-values are large.
+in both cases as the corresponding $P$-values are large.
 
 
 
@@ -944,7 +944,7 @@ d = \frac{ 4 (u + v)^2}{ \Delta^2},
 where $\Delta$ is the log hazard ratio to be detected.
 
 The number of events can be calculated with 
-the `R`function `biostatUZH::survEvents`():
+the `R`function `biostatUZH::survEvents()`:
 ```{r echo=TRUE}
 library(biostatUZH)
 survEvents(HR = 0.65, power = 0.9, sig.level=0.05)
@@ -1126,7 +1126,7 @@ badcoxfit <- coxph(Surv(time/365.25, status) ~ responder, data = lung)
 knitr::kable(tableRegression(badcoxfit, latex = FALSE, xtable = FALSE))
 ```
 
-There appears to be an effect of tumor response on survival, but it should not have an effect as responders were generated randomly. The analysis is flawed as it violates ``Breslow's first rule'' and is subject to *time-dependent bias*. More precisely, the bias is that the probability to be a responder increases with time.
+There appears to be an effect of tumor response on survival, but it should not have an effect as responders were generated randomly. The analysis is flawed as it violates "Breslow's first rule" and is subject to *time-dependent bias*. More precisely, the bias is that the probability to be a responder increases with time.
 
 At the beginning, we do not know who becomes a responder. We should therefore treat it as a time-dependent covariate. For the correct analysis with time-dependent covariate, we need to split the data by responder status. This augmented data set looks as follows:
 

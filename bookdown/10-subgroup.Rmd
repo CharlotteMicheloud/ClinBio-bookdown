@@ -9,7 +9,7 @@ one subgroup-defining variables.
 In addition, multiplicity issues also arise if more than one outcome
 are considered in a randomized trial. 
 Here we describe methods that adjust the
-outcome-specific $p$-values and multivariate methods
+outcome-specific $P$-values and multivariate methods
 which combine the different outcomes in a single analysis. 
 
 ## Subgroup analysis
@@ -144,22 +144,22 @@ printWaldCI(theta.diff, se.diff)
 
 It is tempting to consider the treatment effect separately in each
 subgroup and to assess the existence of a *treatment interaction*
-based on an informal comparison of the $p$-values in each subgroup. As
+based on an informal comparison of the $P$-values in each subgroup. As
 shown in Figure \@ref(fig:hypocalcemiafig), for breast-fed and bottle-fed
 babies we obtain $p=0.44$ and $p=0.0002$, respectively, so one may
-argue that the two $p$-values are very different and conclude that
+argue that the two $P$-values are very different and conclude that
 there is a subgroup difference. However, this constitutes an erroneous
 and flawed reasoning.  This becomes obvious in the following example:
 Suppose the effect estimates in the two groups are identical but the
 sample sizes are different such that one of the subgroups has a
 significant treatment effect whereas the treatment effect is
-non-significant in the other group. The difference in the $p$-values
+non-significant in the other group. The difference in the $P$-values
 is then only a result of different sample sizes, without any difference
 in effect sizes. Indeed, with equal effect sizes in the
-two groups, the test for interaction will return a $p$-value of 1.0,
+two groups, the test for interaction will return a $P$-value of 1.0,
 so no evidence for a subgroup difference whatsoever. 
 This example clearly illustrates that we need to
-compare effect sizes and not $p$-values to establish evidence for a
+compare effect sizes and not $P$-values to establish evidence for a
 difference between subgroups [@SN_interaction]. 
 
 
@@ -175,7 +175,7 @@ printWaldCI(theta.bottle, se.bottle)
 
 
 
-```{r hypocalcemiafig, fig.cap = "Treatment effects and $p$-values for each subgroup in the Neonatal Hypocalcemia Trial.", echo=F, warning=FALSE, fig.height=3, fig.width=5.5}
+```{r hypocalcemiafig, fig.cap = "Treatment effects and $P$-values for each subgroup in the Neonatal Hypocalcemia Trial.", echo=F, warning=FALSE, fig.height=3, fig.width=5.5}
 library(gplots)
 
 eff <- c(0.037, 0.105)
@@ -265,7 +265,7 @@ Q^- = \sum_{i: \hat \theta_i < 0} Z_i^2
 
 with $Z_i=\hat \theta_i/\SE(\hat \theta_i)$ being the test statistics in each
 subgroup $i$. The reference distribution for $T$ is non-standard, 
-so we use statistical software to calculate a $p$-value, as implemented in `biostatUZH::gailSimon()`.
+so we use statistical software to calculate a $P$-value, as implemented in `biostatUZH::gailSimon()`.
 
 
 :::{.example #breast}
@@ -298,7 +298,7 @@ df <- data.frame(
   Metric = c("Risk difference $\\widehat{\\theta}$", 
              "$\\SE(\\widehat{\\theta})$", 
              "$\\widehat{\\theta}/\\SE(\\widehat{\\theta})$", 
-             "$p$-value"),
+             "$P$-value"),
   "Age < 50" = c(rd[1], se.rd[1], tp[1], p[1]),
   "Age >= 50" = c(rd[2], se.rd[2], tp[2], p[2]),
   "Age < 50" = c(rd[3], se.rd[3], tp[3], p[3]),
@@ -599,7 +599,7 @@ kable(myoutput4, digits = c(1, 1, 1, 1, 2),
 ``` 
 
 
-The next subsections explain two different approaches to prevent multiplicity problems: $p$-value adjustments and multivariate methods. 
+The next subsections explain two different approaches to prevent multiplicity problems: $P$-value adjustments and multivariate methods. 
 
 
 
@@ -644,7 +644,7 @@ text(8, 0.9, paste("Bonferroni bound"), col=3, lwd=1)
 
 #### Bonferroni method {-}
 
-The *Bonferroni method* compares the $p$-values $p_1, \ldots, p_k$, obtained from different outcomes, not with $\alpha$, but with threshold $\alpha/k$. If at least one of the $p$-values is smaller than $\alpha/k$, then the trial result is considered significant at the $\alpha$ level. This procedure controls FWER at level $\alpha$. An equivalent procedure is to compare the *adjusted $p$-values* $k \cdot p_i$ with the standard $\alpha$ threshold.
+The *Bonferroni method* compares the $P$-values $p_1, \ldots, p_k$, obtained from different outcomes, not with $\alpha$, but with threshold $\alpha/k$. If at least one of the $P$-values is smaller than $\alpha/k$, then the trial result is considered significant at the $\alpha$ level. This procedure controls FWER at level $\alpha$. An equivalent procedure is to compare the *adjusted $P$-values* $k \cdot p_i$ with the standard $\alpha$ threshold.
 
 
 :::{.example #didgeridoo2 name="continued"}
@@ -666,7 +666,7 @@ printPval(p.adjust(p, method = "bonferroni"))
 ``` 
 
 
-However, the Bonferroni method is unsatisfactory as it takes only the smallest $p$-value into account, e.g. 
+However, the Bonferroni method is unsatisfactory as it takes only the smallest $P$-value into account, e.g. 
 
 -  $p=$ *0.01*, 0.7, 0.8, 0.9 is "significant",
 -  $p=$ 0.03, 0.04, 0.05, 0.05 is "not significant".
@@ -675,7 +675,7 @@ As a result, the Bonferroni method is very conservative and has low power.
 
 #### Holm method {-}
 
-The *Holm method* is based on all ordered $p$-values 
+The *Holm method* is based on all ordered $P$-values 
 $p_{(1)} \leq \ldots \leq p_{(k)}$.
 A significant result is obtained if 
 \[
@@ -701,7 +701,7 @@ printPval(p.adjust(p, method = "holm"))
 
 #### Simes' method {-}
 
-*Simes' method* [@Simes1986] is also based on the ordered $p$-values
+*Simes' method* [@Simes1986] is also based on the ordered $P$-values
 $p_{(1)} \leq \ldots \leq p_{(k)}$. A significant result is obtained, if 
 \[
 k \cdot p_{(1)} \leq \alpha, \mbox{ or }  k/2 \cdot p_{(2)} \leq \alpha ,  \ldots 
@@ -730,7 +730,7 @@ printPval(p.adjust(p, method = "hommel"))
 #### Comparison of methods {-}
 
 
-```{r multfactors, fig.cap = "Multiplicative factors for multiplicity-adjustment of `r k` $p$-values.", echo=FALSE}
+```{r multfactors, fig.cap = "Multiplicative factors for multiplicity-adjustment of 15 $P$-values.", echo=FALSE}
 k <- 15
 rank <- c(1:k)
 bonferroni <- rep(k, k)
@@ -755,19 +755,19 @@ legend(k-4, k-2, lty=1, col=c(1:3), lwd=2, legend=c("Bonferroni", "Holm", "Simes
 
 
 
-To obtain multiplicity-adjusted $p$-values, the ordinary $p$-values are multiplied with a factor, with subsequent truncation at 1 if necessary. The multiplicative factors for `r k` $p$-values are compared in Figure \@ref(fig:multfactors) between the Bonferroni, Holm and Simes' methods. Important differences between the three methods are the following:
+To obtain multiplicity-adjusted $P$-values, the ordinary $P$-values are multiplied with a factor, with subsequent truncation at 1 if necessary. The multiplicative factors for `r k` $P$-values are compared in Figure \@ref(fig:multfactors) between the Bonferroni, Holm and Simes' methods. Important differences between the three methods are the following:
 
 
 -  The **Bonferroni method** controls FWER, but has low power. 
 -  The **Holm method** also controls FWER, but with a lower decrease of power than the classical Bonferroni method.
--  If the $p$-values are independent or positively correlated, then
+-  If the $P$-values are independent or positively correlated, then
   **Simes' method** also controls FWER.
-  For positively correlated $p$-values,
+  For positively correlated $P$-values,
   **Simes' method** is even closer to the nominal $\alpha$
   level than the **Holm method**.
 -  Application of **Holm** and **Simes** requires
-  knowledge of the $p$-value rank, whereas the **Bonferroni method** requires
-  only knowledge of the number of $p$-values.
+  knowledge of the $P$-value rank, whereas the **Bonferroni method** requires
+  only knowledge of the number of $P$-values.
 
 
 
@@ -866,7 +866,7 @@ for all outcomes.  We can see a difference in the distribution with
 tendency for smaller ranks respectively rank sums in the Didgeridoo
 group. The $t$-test above identifies evidence for a difference in the
 mean rank sums ($p=`r formatPval(obrian.test$p.value)`$), very similar to the
-$p$-value from the summary score analysis ($p=`r formatPval(summary.test$p.value)`$).
+$P$-value from the summary score analysis ($p=`r formatPval(summary.test$p.value)`$).
 
 
 

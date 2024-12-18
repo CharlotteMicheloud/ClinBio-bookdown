@@ -522,7 +522,7 @@ The 95\% confidence interval for the difference in mean baby birthweight
 between non-smoking and smoking mothers is 
 $[`r round(res.baby$conf.int[1], 2)`, 
 `r round(res.baby$conf.int[2], 2)`]$. 
-The two-sided $p$-value can be retrieved using:
+The two-sided $P$-value can be retrieved using:
 :::
 
 ```{r echo = TRUE}
