@@ -678,7 +678,7 @@ legend("topright", legend=c("Follow-up analysis", "Change score analysis", "ANCO
 
 We have seen in the previous section that the ANCOVA estimate is
 different from the difference of the raw mean change scores. This may
-cause confusion tables reporting results from RCTs, if both raw means
+cause confusion in tables reporting results from RCTs, if both raw means
 of change are reported together with the ANOVA estimate of the
 difference.  An alternative is to report adjusted least-squares (LS)
 means via fitted values in both groups, which are compatible with the
