@@ -465,7 +465,7 @@ investigators if the outcome of the trial was positive.
 
 Some attempts have been made to address this problem,
 e.g. *mandatory registration* of clinical trials before the study
-is conducted: (http://clinicaltrials.gov/). Today, trial results
+is conducted (http://clinicaltrials.gov/). Today, trial results
 are required to be published on this website within one year after the trial
 has finished.
 

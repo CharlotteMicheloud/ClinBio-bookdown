@@ -530,7 +530,7 @@ library(biostatUZH)
 l <- 72.76
 u <- 494.80
 gamma <- 0.95
-t_gamma <-  qt(p = (1 - gamma)/2, df = nrow(birthwt), lower.tail = FALSE)
+t_gamma <-  qt(p = (1 - gamma)/2, df = nrow(birthwt) - 2, lower.tail = FALSE)
 
 estimate <- (u + l)/2; print(estimate)
 se <- (u - l)/(2*t_gamma); print(se)
@@ -997,7 +997,7 @@ df <- data.frame(
   "$\\beta$" = beta,
   "$u$" = c(u1, u1, u2, u2),
   "$v$" = c(v1, v2, v1, v2),
-  "$(u + v)^2$" = c(uv_squared, (u1 + v2)^2, (u2 + v1)^2, (u2 + v2)^2),
+  "$(u + v)^2$" = round(c(uv_squared, (u1 + v2)^2, (u2 + v1)^2, (u2 + v2)^2), 1),
   `Group sample size $n$` = sample_size, 
   check.names = FALSE
 )

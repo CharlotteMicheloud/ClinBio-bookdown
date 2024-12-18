@@ -32,7 +32,7 @@ df <- data.frame(
 
 # Print the table using kable
 kable(df, caption = "Precision of reported measurements depends on the number of significant figures.", 
-      align = "c")
+      align = "r")
 ```
 
 
@@ -311,7 +311,7 @@ ctest_logcot <- cor.test(logx, logy, method="spearman")
 
 There is a strong correlation between the absolute value of the difference 
 of the two measurements and the mean of the two measurements 
-($\rho_S$ = `r round(ctest_cot$estimate, 2)`, $p$ = `r biostatUZH::formatPval(ctest_cot$p.value)`).
+($\rho_S$ = `r round(ctest_cot$estimate, 2)`, $p$ `r biostatUZH::formatPval(ctest_cot$p.value)`).
 This correlation becomes small when log measurements are used 
 ($\rho_S$ = `r round(ctest_logcot$estimate, 2)`, $p$ = `r biostatUZH::formatPval(ctest_logcot$p.value)`), 
 see Figure \@ref(fig:log).
@@ -659,7 +659,7 @@ Under normality, $\bar{d}$ and $s_d$ are independent.
 The variance of $\bar d$
 is estimated by $s_d^2/n$, with $n$ the sample size.
 The variance of $s_d$ can be approximately estimated 
-by $s_d^2/2n$ [see @BlandAltman1986; @Bland1999 and Appendix \@ref(CIvar)].
+by $s_d^2/2n$ [see @BlandAltman1986; @Bland1999; Appendix \@ref(CIvar)].
 Hence, the standard error of the limits of agreement is estimated by
 \begin{eqnarray*}
   \SE(\LOAlow)   =  &\SE(\LOAup) \\
