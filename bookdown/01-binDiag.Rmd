@@ -989,7 +989,7 @@ a pre-specified prevalence. This approach is based on the following steps:
      (resp. $\mbox{LR}^-$) are computed as described in Section
       \@ref(sec:CIforLR).
 2.  Multiplication with ${\mbox{Prev}}/({1-\mbox{Prev}})$ gives the limits of
-      a confidence interval for ${\mbox{PPV}/(1-\mbox{PPV})}$ resp. ${(1-\mbox{NPV})/\mbox{NPV}}$ according to  equation \@ref(eq:PPVBayes), resp. \@ref(eq:NPVBayes)
+      a confidence interval for ${\mbox{PPV}/(1-\mbox{PPV})}$ resp. ${(1-\mbox{NPV})/\mbox{NPV}}$ according to  equation \@ref(eq:PPVBayes), resp. \@ref(eq:NPVBayes).
       
 3.  Confidence intervals for $\mbox{PPV}$ resp. $\mbox{NPV}$ can be obtained by the usual transformation of the limits obtained in step 2. to the  probability scale.
 
@@ -1165,9 +1165,7 @@ discussed in @SN_LR.  A comprehensive account of statistical
 aspects of binary diagnostic tests can be found in @pepe (Chapter 2).
 @altman discuss the relevant confidence intervals
 in Chapter 6 and 10.
-
 @glas_etal2003 discuss properties of the diagnostic odds ratio in detail. 
-
 @arroll is an example of a study where the methods from this chapter are used 
 in practice. The "Statistics Notes" by Douglas G. Altman and Martin Bland, 
 and sometimes also other co-authors, discuss these methods in a concise and 

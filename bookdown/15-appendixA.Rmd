@@ -974,7 +974,7 @@ in \@ref(eq:eq2App)
 \Phi\left(z_{(1+\gamma)/2} - \frac{2 \delta}{\lambda \, \sigma}\right) = \Phi(z_{(1+\gamma)/2} - 2 \, (z_{(1+\gamma)/2} + z_{1-\beta/2})) = \Phi(-z_{(1+\gamma)/2} - 2 \, z_{1-\beta/2})
 \]
 
-is then very close to zero. Note that \@ref(eq:eq3App)  differents that in 
+is then very close to zero. Note that \@ref(eq:eq3App)  differs from
 superiority trials, where $\alpha = 1-\gamma$.
 
 
