@@ -332,7 +332,9 @@ axis(1, c(1, 2), c("Drug 1", "Drug 2"), padj = 0.5)
 
 ```{r echo=TRUE}
 ## solution 1: confidence interval
-res <- t.test(extra ~ group, data = sleep, conf.level = 0.9, paired = TRUE)
+extra1 <- sleep$extra[sleep$group==1]
+extra2 <- sleep$extra[sleep$group==2]
+res <- t.test(x=extra1, y=extra2, paired=TRUE, conf.level=0.9)
 print(res$conf.int)
 ``` 
 
@@ -340,13 +342,11 @@ The limits of the $90$\% CI do not lie within the interval of equivalence (-0.5h
 
 ```{r echo=TRUE}
 ## solution 2: TOST procedure
-tost1 <- t.test(extra ~ group, data = sleep, mu = -0.5, 
-                alternative = "greater", sig.level = 0.05, 
-                paired = TRUE)
+tost1 <- t.test(x=extra1, y=extra2, paired=TRUE, mu=-0.5,
+                alternative="greater", sig.level=0.05)
 print(tost1$p.value)
-tost2 <- t.test(extra ~ group, data = sleep, mu = 0.5, 
-                alternative = "less", sig.level = 0.05, 
-                paired = TRUE)
+tost2 <- t.test(x=extra1, y=extra2, paired=TRUE, mu=0.5,
+                alternative="less", sig.level=0.05)
 print(tost2$p.value)
 ``` 
 
