@@ -167,7 +167,7 @@ We set the following notation for a *meta-analysis* of $i=1,\ldots, n$ trials:
 
 -  $\theta_i$, $\hat \theta_i$ are the true and estimated study-specific treatment effect,
 -  $s_i = \se(\hat \theta_i)$ is the standard error of $\hat \theta_i$,
--  $v_i = s_i^2$ is the variance of $\hat \theta_i$ and
+-  $v_i = s_i^2$ is the variance of $\hat \theta_i$.
 
 There are two different types of analyses: fixed and random effects model.
 
@@ -331,11 +331,16 @@ heterogeneity variance $\tau^2$.
 A cumulative meta-analysis plot shows how evidence has accumulated 
 over time. The $i$-th line in a cumulative meta-analysis plot 
 is the summary produced by a meta-analysis of the 
-first $i$-trials. 
+first $i$ trials. 
 
 ```{r}
 library(metadat)
+o <- order(dat.bcg$year)
+dat.bcg <- dat.bcg[o,]
+dat.bcg <- dat.bcg[,-1]
+rownames(dat.bcg) <- c(1:nrow(dat.bcg))
 ```
+
 
 :::{.example #bcg}
 The dataset `dat.bcg`from the `R`package `metadat`
