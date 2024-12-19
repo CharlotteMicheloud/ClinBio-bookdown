@@ -86,7 +86,7 @@ is known as *Pocock stopping rule*.
 The nominal significance level $\tilde \alpha$ depends on the Type I error 
 rate $\alpha$ and the number of groups $N$. Figure \@ref(fig:pocock) shows 
 how the nominal significance level decreases for increasing number of groups, 
-starting with an $\alpha$ of $5$\% for one group. For example, for 10 interim 
+starting with an $\tilde \alpha$ of $5$\% for one group. For example, for 10 interim 
 analyses the nominal significance level is $\tilde \alpha = 0.0106$, which 
 corresponds to a $z$-value of `r round(p2z(0.0106),2)`.
 
@@ -240,7 +240,7 @@ box()
 ``` 
 
 
-#### Sample size calculation {-}
+
 The maximum total sample size T depends on the power to detect 
 the clinically relevant difference and the maximum number of 
 analyses N. In order to maintain a given power, the maximum 
@@ -567,5 +567,9 @@ twoby2(tab.asTreated)
 
 ## Additional references
 
-You can find more about RSTs and sequential methods in @bland (Ch. 9.11) and in @todd2001, about ITT in @bland (Ch. 2.6), about monitoring accumulating data in @matthews (Ch. 8) and about protocols and protocol deviations in @matthews (Ch. 10). Studies where the methods from this chapter are used in practice are for example @acre2009, @durancantolla2010, @burgess2005
+More information about RSTs and sequential methods can be found in @bland
+(Ch. 9.11) and in @todd2001, about ITT in @bland (Ch. 2.6), about monitoring 
+accumulating data in @matthews (Ch. 8) and about protocols and protocol 
+deviations in @matthews (Ch. 10). Studies where the methods from this chapter 
+are used in practice are for example @acre2009, @durancantolla2010, @burgess2005
 
