@@ -284,7 +284,7 @@ We can build a Wald CI for $\pi$ as in \@ref(eq:wald). However, for proportions 
 \end{equation}
 
 
-This formula is complicated. In practice, we use the library `biostatUZH` 
+This formula is complicated. In practice, we use the package `biostatUZH` 
 where both Wald and Wilson CIs for proportions are implemented.
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
@@ -301,7 +301,7 @@ wilson(x, n, conf.level = 0.95)
 
 Note that when the Wald CI overshoots, the function `wald ()` returns a CI that is truncated such that the limits lie between $0$ and $1$.
 
-Also the function `prop.test` computes the Wilson CI: 
+Also the function `prop.test()` computes the Wilson CI: 
 ```{r echo=TRUE}
 prop.test(x, n, conf.level = 0.95, correct = FALSE)
 ``` 
@@ -345,7 +345,7 @@ For the absolute risk reduction $\ARR = \pi_1 - \pi_2$, we have:
 
 The standard error is computed using equation \@ref(eq:diff1) for the difference.
 
-Wald and Wilson CIs can be computed in`R`using the library 
+Wald and Wilson CIs can be computed in`R`using the package 
 `biostatUZH`. A Wald CI uses the above standard error.
 A Wilson CI uses the square-and-add method with Wilson CIs 
 for $\pi_1$ and $\pi_2$. Also here, Wilson CIs have better properties.
@@ -419,7 +419,7 @@ which is the same as
 $$\widehat{\OR}/\text{EF}_{.95}\;\;\; \text{to}\;\;\; \widehat{\OR}\cdot \text{EF}_{.95}$$
 
 
-In`R`,Wald CIs for OR and RR and a Wilson CI for ARR can be computed using the function `twoby2()` from the library `Epi`.
+In`R`,Wald CIs for OR and RR and a Wilson CI for ARR can be computed using the function `twoby2()` from package `Epi`.
 
 ```{r echo=TRUE}
 library(Epi)

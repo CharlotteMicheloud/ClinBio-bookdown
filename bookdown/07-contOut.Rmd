@@ -500,7 +500,7 @@ kable(results,
 ```
 
 
-The question now is: which test to chose? The statistical 
+The question now is: which test to choose? The statistical 
 analysis should be pre-specified in the analysis plan, and 
 the other results reported as sensitivity analyses.
 
