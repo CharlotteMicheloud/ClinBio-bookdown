@@ -28,7 +28,7 @@ Standard methods can no longer be used, as patient responses from the same clust
 The intraclass correlation coefficient, i.e. 
 the correlation between outcomes within a cluster, needs to be taken into account.
 In the following, we discuss two methods of analysis. First, we consider a simple
-approach, which constists of constructing a
+approach, which consists of constructing a
 *summary measure* for each cluster and then analyze these summary values.
 Then, to analyse data on patient level, a *mixed model* formulation, 
 a regression model with cluster-specific random effects, is needed. 
