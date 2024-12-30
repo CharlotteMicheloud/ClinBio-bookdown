@@ -76,19 +76,22 @@ William Osler (1849-1919).
 </div>
 
 Biostatistics is a fundamental discipline at the core of modern health
-data science [@lee_biostatistics_2019]. It is the science of
-managing medical uncertainty and biostatistical methods play a key
-role in the scientific assessment of the main areas of medical
-practice:
+data science [@lee_biostatistics_2019]. As the science of
+managing medical uncertainty, biostatistical methods play a key
+role in the scientific assessment of all areas of medical
+practice: from aetilogy to diagnosis and from treatment to prognosis. 
 
-- Diagnosis
-- Aetiology
-- Treatment
-- Prognosis
+This script is based on a series of lectures in Clinical Biostatistics
+that I gave at the University of Zurich for Master Students in
+Biostatistics and PhD students in Clinical Science and related
+subjects. It is a living document and we intend to update and extend
+the contents on a regular basis. Please report any errors or comments
+you might have to leonhard.held@uzh.ch. 
+
 
 
 <div style="text-align: right;">
-  Leonhard Held
+  Leonhard Held, December 2024
   
   `r Sys.Date()`
 </div>
