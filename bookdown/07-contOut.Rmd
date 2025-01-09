@@ -737,7 +737,9 @@ Relevant references are Chapter 10 "Comparing the Means of Small Samples"
 and Chapter 15 "Multifactorial Methods" in @bland as well as Chapter 6
 "Analysis of Results" in @matthews. 
 Analysing controlled trials with baseline and follow up measurements
-is discussed in the Statistics Note from @SN_baselineFU. Studies where the 
+is discussed in the Statistics Note from @SN_baselineFU. Permutation tests 
+in biomedical research are described in @Ludbrook1998. 
+Studies where the 
 methods from this chapter are used in practice are for example @ravaud, @porto,
 @james.
 
