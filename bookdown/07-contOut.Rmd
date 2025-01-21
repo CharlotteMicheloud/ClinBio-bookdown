@@ -433,6 +433,7 @@ for(i in 1:niter){
  diff.permut[i] <- diff(d[s], d[-s])
 }
 
+h <- hist(diff.permut, breaks = b, plot = FALSE)
 library(MASS)
 xm <- ceiling(max(-min(diff.permut),max(diff.permut)))
 b <- seq(-xm, xm, by = .5)
@@ -443,7 +444,6 @@ T <- obs.diff
 colarea <- colpal4[3]
 ind <- (b >= -T) * c(1:length(b))
 ind <- ind > 0
-h <- hist(diff.permut, breaks = b, plot = FALSE)
 rect(b[ind], 0, c(b[ind][-1], max(b) + 1), h$density[ind], col = colarea)
 rect(-T, 0, min(b[b > -T]), rev(h$density[b <= T])[1], col = colarea)
 lines(c(-T, -T), c(0,0.09), col = colpal4[1], lwd=lwd.lines + 2, lty =1)
