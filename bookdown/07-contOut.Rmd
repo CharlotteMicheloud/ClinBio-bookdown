@@ -433,10 +433,10 @@ for(i in 1:niter){
  diff.permut[i] <- diff(d[s], d[-s])
 }
 
-h <- hist(diff.permut, breaks = b, plot = FALSE)
 library(MASS)
 xm <- ceiling(max(-min(diff.permut),max(diff.permut)))
 b <- seq(-xm, xm, by = .5)
+h <- hist(diff.permut, breaks = b, plot = FALSE)
 MASS::truehist(diff.permut, xlab="Mean difference", breaks=b, col="white", border = histborder, las = 1, cex.lab=1.5, cex.axis=1.5)
 T <- obs.diff
 
