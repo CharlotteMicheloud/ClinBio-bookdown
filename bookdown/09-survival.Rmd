@@ -580,7 +580,7 @@ The difference in median survival time is `r round(d,1)` years
 (95\%-CI: from $`r round(dl,1)`$ to $`r round(du,1)`$ years) and is 
 computed with the `R` function `biostatUZH::confIntSquareAdd()`:
 
-```{r}
+```{r, echo=TRUE}
 biostatUZH::confIntSquareAdd(theta1 = 3.9, lower1 = 2.2, upper1 = 6, 
                              theta2 = 2.4, lower2 = 1.8, upper2 = 3.8)
 ```
@@ -650,8 +650,7 @@ see Figure \@ref(fig:ggch21):
 
 
 ```{r ggch21, echo = TRUE, fig.height=5.5, fig.cap="Kaplan-Meier curves for both groups in Example \\@ref(exm:sakk) obtained with ggsurvplot."}
-sakk.surv1 <- survfit(Surv(time, death) ~ treat, data = sakk, 
-                      conf.type = "log-log")
+sakk.surv1 <- survfit(Surv(time, death) ~ treat, data = sakk, conf.type = "log-log")
 ggsurvplot(sakk.surv1, risk.table = TRUE, conf.int = TRUE, pval = TRUE)
 ``` 
 
@@ -678,11 +677,17 @@ The hazard function and the survival function have a one-to-one relationship:
 \begin{equation*}
 S(t) = \exp\left(- \int_0^t h(u) du \right).
 \end{equation*}
+This implies that the *cumulative hazard function* $H(t)$ is directly related to the survival function:
+\begin{equation*}
+H(t) = \int_0^t h(u) du = - \log S(t).
+\end{equation*}
 
-Figure \@ref(fig:survhazard) shows the  hazard and survival functions for a constant hazard rate ($HR = 2$, top) and for an increasing hazard rate (bottom).
 
 
-```{r survhazard, fig.cap = "Survival function and hazard ratio (HR) for different hazard rates: constant (top) and non-linearly increasing (bottom)", echo = FALSE}
+Figure \@ref(fig:survhazard) shows the survival and hazard functions for a constant hazard rate ($\mbox{HR} = 2$, top) and for an increasing hazard rate (bottom).
+
+
+```{r survhazard, fig.cap = "Survival function and hazard function: constant hazard (top) and non-linearly increasing (bottom)", echo = FALSE}
 shapes <- c(1, 1)
 scales <- c(1, 2)
 
@@ -783,7 +788,7 @@ Let $h_A(t)$ and $h_B(t)$ denote the hazard functions in groups A and B. The *pr
 The hazard ratio can be interpreted as
 
 
-1. (instantaneous) relative risk at any given time $t$:
+1. (instantaneous) relative risk at any time $t>0$:
 
 \begin{equation*}
 \mbox{HR} = \frac{h_A(t)}{h_B(t)}\approx 
@@ -791,11 +796,18 @@ The hazard ratio can be interpreted as
 \equiv \frac{{\P(t < T_A < t+h \given T_A>t)}}{{\P(t < T_B < t+h \given T_B>t)}}
 \end{equation*}
 
-2.  power transformation of the survival function at any time $t$:
+2.  ratio of the cumulative hazard functions at any time $t>0$:
 
+\begin{equation*}
+\mbox{HR} = \frac{H_A(t)}{H_B(t)} = \frac{\log S_A(t)}{\log S_B(t)}
+\end{equation*}
+so the survival function in group A is the survival function in group B to the power of HR: 
 \begin{equation*}
 S_A(t) = S_B(t)^{\scriptsize \mbox{HR}}.
 \end{equation*}
+
+
+
 
 <!-- Figure \@ref(fig:survhazard) shows two different settings of hazard functions  -->
 <!-- (constant and non-constant) that both have the same hazard ratio of 2. -->
@@ -844,20 +856,23 @@ model.cox1 <- coxph(Surv(os, death) ~ trt2 + sex, data = dat.tmp)
 model.cox2 <- coxph(Surv(os, death) ~ trt2 + sex + age, data = dat.tmp)
 ``` 
 
-The hazard ratio can be calculated from the output of the log-rank test. 
-Only the observed and expected number of cases are required. 
+The hazard ratio can be calculated from the output of the log-rank
+test as the ratio of the relative event rates (observed/expected) in
+the two groups.  Only the observed and expected number of cases are
+required. This simple estimate is know as the Pike hazard ratio
+estimate and has been shown to slightly underestimate larger effects.
+It has only little bias for hazard rates typically observed in clinical trials. 
 
 ```{r echo=TRUE}
 lrTest <- survdiff(Surv(time, death) ~ treat, data = sakk)
-observed <- lrTest$obs
-expected <- lrTest$exp
-ratio <- observed/expected
-HR <- ratio[2]/ratio[1]
+(observed <- lrTest$obs)
+(expected <- lrTest$exp)
+(EventRates <- observed/expected)
+HR <- EventRates[2]/EventRates[1]
 SElogHR <- sqrt(sum(1/expected))
-
 printWaldCI(log(HR), SElogHR, FUN = exp)
 ``` 
-
+In the example the hazard ratio turns out to be $\mbox{HR}=`r round(HR,3)`$. 
 
 #### The Cox model {-}
 The (semiparametric) *Cox model* assumes that the hazard function $h_i(t)$ of individual $i$ with explanatory variables $\boldsymbol{ x}_i$ has the form
@@ -886,7 +901,7 @@ Cox regression in Example \@ref(exm:sakk):
 model.cox0 <- coxph(Surv(os, death) ~ trt2, data = dat.tmp)
 knitr::kable(tableRegression(model.cox0, latex = FALSE, xtable = FALSE))
 ``` 
-The comparison RT vs. RT+CT gives $\mbox{HR}=1.23$ with relatively large confidence interval. There is no evidence for a treatment effect ($p=0.19$).
+The comparison RT vs. RT+CT gives $\mbox{HR}=`r round(exp(coef(model.cox0)),2)`$ with relatively large confidence interval, very close to the one obtained with Pike's method based on the log-rank test. There is no evidence for a treatment effect ($p=0.19$).
 
 #### Adjusting in survival analysis {-}
 
@@ -1157,4 +1172,4 @@ In the correct analysis, there is no evidence for an effect of tumor response on
 
 ## Additional references
 
-Additional references are @bland (Ch. 16 Time to Event Data),  @matthews (Sec. 7.5 Survival Analysis) and @collett. Studies where the methods from this chapter are applied in practice are for example @blue2001, @colorectal2000, @zar2007.
+Additional references are @bland (Ch. 16 Time to Event Data),  @matthews (Sec. 7.5 Survival Analysis) and @collett. The Pike hazard ratio estimate based on the output from the log-rank test is described in @berry1991. Studies where the methods from this chapter are applied in practice are for example @blue2001, @colorectal2000, @zar2007.
