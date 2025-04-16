@@ -147,7 +147,9 @@ fisher.test(APSAC.table)
 Note that the function `fisher.test()` also provides an estimate
 (`conditional MLE`) of the odds ratio (with 95% CI).
 The output from the $\chi^2$-test can also be used to compute
-an estimate of the relative risk based on the observed to expected death ratios:
+an estimate of the relative risk based on the observed to expected death ratios. 
+An approximate standard error of the log relative risk can be computed from the expected counts, so
+a confidence interval for the relative risk can be calculated: 
 
 ```{r echo=TRUE}
 mytest <- chisq.test(APSAC.table)
@@ -156,15 +158,19 @@ e <- mytest$expected[,"dead"]
 print(ratio <- (o/e))
 ## relative risk
 print(RR <- ratio[1]/ratio[2])
+## standard error of log relative risk
+print(SElogRR <- sqrt(sum(1/e)))
 ``` 
 
-```{r echo=FALSE, eval=FALSE}
-SElogRR <- sqrt(sum(1/e))
+
+```{r echo=FALSE, eval=TRUE}
 printWaldCI(log(RR), SElogRR, FUN = exp)
 ``` 
 
+The formula for the standard error given below in Section \@ref(sec:effectMeasures) is slightly more accurate and usually the preferred one. 
 
-### Effect measures and confidence intervals
+
+### Effect measures and confidence intervals{#sec:effectMeasures}
 
 Let $\pi_0$ and $\pi_1$ denote the true risks of death in the control and intervention
 group, respectively, with $\pi_0 \geq \pi_1$.
@@ -202,9 +208,10 @@ $$\widehat{\ARR} \ = \ 12.6\%-5.6\%=7\%$$
 
 with standard error
 
-\[
+\begin{equation}
+(\#eq:arr.se)
 \SE(\widehat{\ARR}) = \sqrt{\frac{\hat \pi_0 (1-\hat \pi_0)}{n_0}+\frac{\hat \pi_1 (1-\hat \pi_1)}{n_1}}= 3.2\%.
-\]
+\end{equation}
    
 $\widehat{\ARR}$ and $\SE(\widehat{\ARR})$ can be used to 
 calculate a Wald CI for the ARR.
@@ -772,16 +779,22 @@ twoby2(APSAC.table)
 Compatible $P$-values can be obtained for each of these effect estimates and the corresponding standard error. They will be similar, but not identical:
 
 ```{r echo=TRUE}
-## transform normal test statistic z to two-sided p-value
-z2p <- function(z) return(2*(1-pnorm(abs(z))))
 
 z <- c(arr/se.arr, log(rr)/se.log.rr, log(or)/se.log.or)
 names(z) <- c("risk difference", "log relative risk", "log odds ratio")
-pvalues <- z2p(z)
+## transform normal test statistics z to two-sided p-values
+pvalues <- biostatUZH::z2p(z)
 biostatUZH::formatPval(pvalues)
 ```
 
-The one for OR is called `Asymptotic P-value` in `twoby2()`.
+<!-- The one for OR is called `Asymptotic P-value` in `twoby2()`. -->
+<!-- The one for ARR is based on the standard error \@ref(eq:arr.se). The alternative standard error -->
+<!-- \begin{equation} -->
+<!-- (\#eq:arr.se2) -->
+<!-- \SE(\widehat{\ARR}) = \sqrt{p (1-p) \left(\frac{1}{n_0}+\frac{1}{n_1}\right)} -->
+<!-- \end{equation} -->
+<!-- where $p = (x_0 + x_1)/(n_0 + n_1)$ is an estimate of the common risk, assuming the null hypothesis of no difference between the two groups is true, can also be used for testing. The squared test statistic $\widehat{\ARR}^2/\SE(\widehat{\ARR})^2$ with standard error \@ref(eq:arr.se2} turns out to be identical to the test statistic from the $\chi^2$-test (without continuity correction), so the (two-sided) $P$-values will be identical.  -->
+
 
 
 #### Absolute and relative effect measures {-}
