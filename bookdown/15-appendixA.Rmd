@@ -991,3 +991,231 @@ n &=& \frac{2 \sigma^2 (z_{(1+\gamma)/2} + z_{1-\beta/2})^2}{\delta^2} \\
 
 as the required sample size in each group for Type I error rate $\alpha$
 and power $1-\beta$.
+
+
+# Expectation, Variance, Covariance and Correlation
+This section describes fundamental summaries of the distribution of random variables, namely their expectation and variance. For multivariate random variables, the association between the components is summarised by their covariance or correlation. Moreover we list some useful inequalities.
+
+## Expectation {#sec:expectation}
+
+For a continuous random variable $X$ with density function $\p(x)$, the **expectation** or **mean value** of $X$ is the real number
+
+\begin{equation}
+\E (X) = \int x \p(x) \, dx
+(\#eq:expectation)
+\end{equation}
+
+The expectation of a function $h(X)$ of $X$ is
+
+$$
+\E \{h(X)\} = \int h(x) \p(x) \, dx
+(\#eq:expectation2)
+$$
+
+Note that the expectation of a random variable not necessarily exists. If the integral exists then $X$ has **finite expectation**; otherwise, we say $X$ has **infinite expectation**.
+
+For a discrete random variable $X$ with probability mass function $\p(x)$, the integral in \@ref(eq:expectation) and \@ref(eq:expectation2) is replaced with a sum over the support of $X$.
+
+For any real numbers $a$ and $b$:
+
+$$
+\E(a \cdot X + b) = a \cdot \E(X) + b
+$$
+
+For any two random variables $X$ and $Y$:
+
+$$
+\E(X + Y) = \E(X) + \E(Y)
+$$
+
+If $X$ and $Y$ are independent:
+
+$$
+\E(X \cdot Y) = \E(X) \cdot \E(Y)
+$$
+
+The expectation of a $p$-dimensional random variable $\boldsymbol{X} = (X_1, \dotsc, X_p)^{\top}$ is:
+
+$$
+\E(\boldsymbol{X}) = (\E(X_1), \dotsc, \E(X_p))^{\top}
+$$
+
+The expectation of a real-valued function $h(\boldsymbol{X})$ of a $p$-dimensional random variable $\boldsymbol{X} = (X_1, \dotsc, X_p)^{\top}$ is
+
+$$
+\E \{h(\boldsymbol{X})\} = \int h(\boldsymbol{X}) \p(\boldsymbol{X}) \, d\boldsymbol{x}
+(\#eq:expectation3)
+$$
+
+## Variance
+
+The **variance** of a random variable $X$ is
+
+$$
+\Var (X) = \E \{X - \E(X)\}^{2}
+$$
+
+It can also be expressed as
+
+$$
+\Var (X) = \E (X^{2}) - \E(X)^{2}
+$$
+
+and
+
+$$
+\Var (X) = \frac{1}{2}\E\left\{(X_1 - X_2)^2 \right\}
+$$
+
+where $X_1$ and $X_2$ are independent copies of $X$. The square root $\sqrt{\Var(X)}$ is called the **standard deviation**.
+
+For real numbers $a$ and $b$:
+
+$$
+\Var(a \cdot X + b) = a^2 \cdot \Var(X)
+$$
+
+## Moments {#sec:moments}
+
+Let $k$ be a positive integer. The **$k$-th moment** $m_k$ of a random variable $X$ is
+
+$$
+m_k = \E(X^k)
+$$
+
+The **$k$-th central moment** is
+
+$$
+c_k = \E \{(X - m_1)^k\}
+$$
+
+The expectation is the first moment, and the variance is the second central moment.
+
+## Conditional Expectation and Variance {#sec:conditionalexpectationUndVariance}
+
+For continuous random variables, the **conditional expectation** of $Y$ given $X = x$ is
+
+$$
+\E (Y\mid X = x) = \int y \p(y\mid x) \, dy
+(\#eq:conditionalexpectation)
+$$
+
+For discrete variables, the integral becomes a sum. The **conditional variance** of $Y$ given $X = x$ is
+
+$$
+\Var (Y\mid X = x) = \E \left[ \{Y - \E (Y\mid X = x)\}^{2}\mid X = x\right]
+(\#eq:conditionalVariance)
+$$
+
+If we treat $x$ as unknown, then $g(X) = \E(Y\mid X)$ and $h(X) = \Var(Y\mid X)$ become random variables themselves.
+
+Two key results:
+
+**Law of total expectation**:
+
+$$
+\E (Y) = \E\{\E (Y\mid X)\}
+(\#eq:iterierterEwert)
+$$
+
+**Law of total variance**:
+
+$$
+\Var (Y) = \E\{\Var (Y\mid X)\} + \Var\{\E (Y\mid X)\}
+(\#eq:variancezerlegungssatz)
+$$
+
+These are useful when conditional moments are known.
+
+## Covariance {#sec:covariance}
+
+Let $(X, Y)^{\top}$ be a bivariate random variable. The **covariance** is
+
+$$
+\Cov(X,Y) = \E\bigl[\{X-\E(X)\}\{Y-\E(Y)\}\bigr] = \E(XY)-\E(X)\E(Y)
+$$
+
+See \@ref(eq:expectation3). Note: $\Cov (X, X)= \Var (X)$ and $\Cov (X, Y)= 0$ if $X$ and $Y$ are independent.
+
+For real $a$, $b$, $c$, $d$:
+
+$$
+\Cov(a X + b, c Y + d) = a c \Cov(X,Y)
+$$
+
+For $\boldsymbol{X} = (X_1, \dotsc, X_p)^{\top}$:
+
+$$
+\Cov(\boldsymbol{X}) = \E\left[\{\boldsymbol{X}- \E(\boldsymbol{X})\}\{\boldsymbol{X}- \E(\boldsymbol{X})\}^{\top} \right]
+$$
+
+Also:
+
+$$
+\Cov(\boldsymbol{X}) = \E(\boldsymbol{X} \boldsymbol{X}^{\top}) - \E(\boldsymbol{X}) \E(\boldsymbol{X})^{\top}
+$$
+
+For a matrix $\boldsymbol{A}$:
+
+$$
+\Cov(\boldsymbol{A} \boldsymbol{X}) = \boldsymbol{A} \Cov(\boldsymbol{X}) \boldsymbol{A}^{\top}
+$$
+
+In particular:
+
+$$
+\Var(X+Y) = \Var(X) + \Var(Y) + 2 \Cov(X,Y)
+$$
+
+If $X$ and $Y$ are independent:
+
+$$
+\Var(X+Y) = \Var(X) + \Var(Y)
+$$
+
+$$
+\Var(XY) = \E(X)^2 \Var(Y) + \E(Y)^2 \Var(X) + \Var(X) \Var(Y)
+$$
+
+## Correlation {#korrCauchySchwarz}
+
+The **correlation** of $X$ and $Y$ is
+
+$$
+\Corr(X,Y) = \frac{\Cov(X,Y)}{\sqrt{\Var(X)\Var(Y)}}
+$$
+
+as long as variances are positive.
+
+An important inequality:
+
+$$
+\left|\Corr(X,Y)\right| \leq 1
+(\#eq:korrUngleichung)
+$$
+
+This follows from the **Cauchy--Schwarz inequality**:
+
+$$
+\E(XY)^2 \leq \E(X^2)\E(Y^2)
+(\#eq:CauchySchwarz)
+$$
+
+Apply \@ref(eq:CauchySchwarz) to $X-\E(X)$ and $Y-\E(Y)$ to get \@ref(eq:korrUngleichung).
+
+If $Y = aX + b$ with $a > 0$, then $\Corr(X, Y) = 1$; if $a < 0$, then $\Corr(X, Y) = -1$.
+
+Let $\boldsymbol{\Sigma}$ be the covariance matrix. The **correlation matrix** $\boldsymbol{R}$ is:
+
+$$
+\boldsymbol{R} = \boldsymbol{S}^{-1}\boldsymbol{\Sigma}\boldsymbol{S}^{-1}
+$$
+
+where $\boldsymbol{S}$ is diagonal with entries $\sqrt{\Var(X_i)}$. The diagonal of $\boldsymbol{R}$ contains all ones.
+
+# The Linear Model
+
+
+## Concepts
+
+### Standard error
