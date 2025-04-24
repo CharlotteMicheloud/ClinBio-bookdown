@@ -344,7 +344,7 @@ in the APSAC study is the following:
 To avoid one death, we need to treat
 $\widehat{\NNT} = `r round(abs(nnt),1)`$ patients with APSAC rather than
 with Heparin. A confidence interval for $\NNT$ can be obtained by inverting the limits
-$\mbox{L}_{\mbox{ARR}}$ and $\mbox{U}_{\mbox{ARR}}$
+$\mbox{L}_{\mbox{\tiny ARR}}$ and $\mbox{U}_{\mbox{ARR}}$
 of the CI for $\ARR$:
 
 ```{r echo=TRUE}
