@@ -110,31 +110,23 @@ points(p2*100, 1.3, col=2, pch=19)
 Commonly used tests to compare two proportions are the *$\chi^2$-test*
 and *Fisher's "exact" test* for small samples.  The null hypothesis in
 these tests is that there is no difference between groups.  Both
-methods give a $P$-value, but no effect measure. The $\chi^2$-test$
-computes the expected number of cases in each cell of the $2 \times 2$ table \@ref(tab:apsac) under the
-null hypothesis of no difference. The test statistic is
-\begin{eqnarray*}
-    \chi^2 &=& \sum_{\mbox{{\scriptsize all
-          cells}}}\frac{(\mbox{{\color{blue}observed counts} $-$ {\color{magenta}expected counts}})^2}{\mbox{{\color{magenta}expected counts}}} \label{eq:chianteile}.
-\end{eqnarray*}
+methods give a $P$-value, but no effect measure. The $\chi^2$-test
+computes the expected number of cases in each cell of the $2 \times 2$ table \@ref(tab:apsac) under the null hypothesis of no difference. The test statistic is
+$$    \chi^2 = \sum_{\text{all cells}} \frac{(\color{black}{\text{observed counts}} - {\color{black}{\text{expected counts}}})^2}{\color{black}{\text{expected counts}}}. $$
 The value of the test statistic is compared to a $\chi^2$-distribution with one degree of freedom to obtain a $P$-value.
-There is a second
-version of the $\chi^2$-test which uses a *continuity correction* to remove some bias in small samples:
-\begin{eqnarray*}
-    \chi^2 &=& \sum_{\mbox{{\scriptsize all
-          cells}}}\frac{(\abs{\mbox{{\color{blue}observed counts} $-$ {\color{magenta}expected counts}}} - \frac{1}{2})^2}{\mbox{{\color{magenta}expected counts}}} \label{eq:chianteile}.
-\end{eqnarray*}
+There is a second version of the $\chi^2$-test which uses a *continuity correction* to remove some bias in small samples:
+$$    \chi^2 = \sum_{\text{all cells}} \frac{(\abs{\color{black}{\text{observed counts}} - \color{black}{\text{expected counts}}} - \frac{1}{2})^2}{\color{black}{\text{expected counts}}}.$$
 It will give a slightly smaller value of $\chi^2$ and hence a slightly larger $P$-value.
 There are also at least *three* different versions to calculate the *two-sided* $P$-value
 for Fisher's "exact" test (see the `R` package `exact2x2` for details).
 
 :::{.example #apsac name="continued"}
-The $\chi^2$-test and Fisher's exact test are applied to the APSAC study in the 
+The $\chi^2$-test and Fisher's exact test are applied to the APSAC study in the
  following `R` code:
 :::
 
 ```{r echo=F}
-APSAC.table <- matrix(c(9,153,19,132), ncol=2, byrow=T, 
+APSAC.table <- matrix(c(9,153,19,132), ncol=2, byrow=T,
                       dimnames = list(c("APSAC", "Heparin"),
                                     c("dead", "alive")))
 ```
@@ -174,11 +166,11 @@ print(SElogRR <- sqrt(sum(1/e)))
 ```
 
 
-```{r echo=FALSE, eval=TRUE}
+```{r echo=TRUE, eval=TRUE}
 printWaldCI(log(RR), SElogRR, FUN = exp)
 ```
 
-The formula for the standard error given below in Section \@ref(sec:effectMeasures) is slightly more accurate and usually the preferred one.
+The formula for the standard error of the log relative risk given below in Section \@ref(sec:effectMeasures) is slightly more accurate and usually the preferred one.
 
 
 ### Effect measures and confidence intervals{#sec:effectMeasures}
@@ -187,7 +179,7 @@ Let $\pi_0$ and $\pi_1$ denote the true risks of death in the control and interv
 group, respectively, with $\pi_0 \geq \pi_1$.
 
 :::{.definition #twoprops}
-The following quantities are used to compare $\pi_0$ and $\pi_1$: 
+The following quantities are used to compare $\pi_0$ and $\pi_1$:
 
 - The *absolute risk reduction*
 $$\ARR  = \pi_0-\pi_1.$$
@@ -205,14 +197,14 @@ $$\OR = \frac{\pi_1/(1-\pi_1)}{\pi_0/(1-\pi_0)}.$$
 :::
 
 
-No difference between groups (i.e. $\pi_0 = \pi_1$) corresponds to 
+No difference between groups (i.e. $\pi_0 = \pi_1$) corresponds to
 $\ARR=\RRR=0$ and $\RR=\OR=1$.
 We now discuss each of these effect measures together with their CIs
 using Example \@ref(exm:apsac).
 
 #### Absolute Risk Reduction {-}
 
-The ARR is also called *risk difference* ($\RD$) or *probability difference*. 
+The ARR is also called *risk difference* ($\RD$) or *probability difference*.
 The estimated ARR
 
 $$\widehat{\ARR} \ = \ 12.6\%-5.6\%=7\%$$
@@ -220,15 +212,15 @@ $$\widehat{\ARR} \ = \ 12.6\%-5.6\%=7\%$$
 with standard error
 
 \begin{equation}
-(\#eq:arr.se)
+(\#eq:arrse)
 \SE(\widehat{\ARR}) = \sqrt{\frac{\hat \pi_0 (1-\hat \pi_0)}{n_0}+\frac{\hat \pi_1 (1-\hat \pi_1)}{n_1}}= 3.2\%.
 \end{equation}
    
-$\widehat{\ARR}$ and $\SE(\widehat{\ARR})$ can be used to 
+$\widehat{\ARR}$ and $\SE(\widehat{\ARR})$ can be used to
 calculate a Wald CI for the ARR.
-An improved Wilson CI for the ARR can be calculated using the 
-*"square-and-add"* approach [@newcombe1998; @Newcombe], 
-see Appendix \@ref(appCI:difference) and the function 
+An improved Wilson CI for the ARR can be calculated using the
+*"square-and-add"* approach [@newcombe1998; @Newcombe],
+see Appendix \@ref(appCI:difference) and the function
 `biostatUZH::confIntSquareAdd()` for details.
 
 ```{r echo=F}
@@ -246,7 +238,7 @@ arr.upper <- arr + 1.96*arr.se
 nnt.upper <- 1/arr.upper
 nnt.lower <- 1/arr.lower
 nnt <- 1/abs(arr)
-``` 
+```
 
 
 The following R code provides both Wald and Wilson CIs for
@@ -262,21 +254,21 @@ library(biostatUZH)
 x <- c(19, 9)
 n <- c(151, 162)
 print(confIntRiskDiff(x, n))
-``` 
+```
 
 ```{r echo=F}
 res <- confIntRiskDiff(x, n)$CIs
 arr.lower.w <- res[2,2]
 arr.upper.w <- res[2,3]
 
-nnt.lower.w <- 1/arr.lower.w 
-nnt.upper.w <- 1/arr.upper.w 
-``` 
+nnt.lower.w <- 1/arr.lower.w
+nnt.upper.w <- 1/arr.upper.w
+```
 
 
-Using articifial data, 
-the lower plot in Figure \@ref(fig:APSACartCIs) highlights the distinct advantage 
-of the Wilson confidence interval: its ability to prevent *overshoot*. 
+Using articifial data,
+the lower plot in Figure \@ref(fig:APSACartCIs) highlights the distinct advantage
+of the Wilson confidence interval: its ability to prevent *overshoot*.
 Indeed, the upper limit of the Wald confidence
 interval for the risk difference is larger than 1 whereas this is not
 the case for the Wilson interval.
@@ -329,14 +321,14 @@ text(115, 1, "Overshoot!", col="red")
 #### Number Needed to Treat {-}
 
 
-Suppose we have $n$ patients in each treatment group. 
+Suppose we have $n$ patients in each treatment group.
 The expected number of deaths in the control and intervention group are:
 \begin{eqnarray*}
 N_0 & = & n \, \pi_0, \\
 N_1 & = & n \, \pi_1.
 \end{eqnarray*}
 The expected difference is therefore $N_0-N_1 = n \, (\pi_0-\pi_1)$.
-Suppose we want the difference $N_0 - N_1$ to be one patient. 
+Suppose we want the difference $N_0 - N_1$ to be one patient.
 The required sample size $n$ to achieve this is
 \[
 n = 1/(\pi_0-\pi_1) = 1/\ARR.
@@ -345,46 +337,46 @@ This is the *number needed to treat*, the required number of patients to be trea
 
 The interpretation of the estimated $\NNT$
 
-$$\quad \widehat{\NNT} \ = \ 1/\widehat{\ARR} \ = 
+$$\quad \widehat{\NNT} \ = \ 1/\widehat{\ARR} \ =
 \ 1 / `r round(abs(arr), 2)` \ = \ `r round(nnt, 1)`$$
 
-in the APSAC study is the following: 
+in the APSAC study is the following:
 To avoid one death, we need to treat
 $\widehat{\NNT} = `r round(abs(nnt),1)`$ patients with APSAC rather than
-with Heparin. A confidence interval for $\NNT$ can be obtained by inverting the limits 
-$\mbox{L}_{\mbox{ARR}}$ and $\mbox{U}_{\mbox{ARR}}$ 
-of the CI for $\ARR$: 
+with Heparin. A confidence interval for $\NNT$ can be obtained by inverting the limits
+$\mbox{L}_{\mbox{ARR}}$ and $\mbox{U}_{\mbox{ARR}}$
+of the CI for $\ARR$:
 
 ```{r echo=TRUE}
 (ci.arr <- confIntRiskDiff(x, n)$CIs[2,])
 ci.ntt <- 1/ci.arr[c(3,2)]
 colnames(ci.ntt) <- c("lower", "upper")
 print(round(ci.ntt, 1))
-``` 
+```
 
 The CI for $\NNT$ in the APSAC study is: $1 / `r round(abs(arr.upper.w),3)`$ to $1 / `r round(abs(arr.lower.w),3)`$ \ = \ $`r round(abs(nnt.upper.w),1)`$  to $`r round(abs(nnt.lower.w),1)`$.
 
-Note that the CI for $\NNT$ is not well-defined if the CI for 
+Note that the CI for $\NNT$ is not well-defined if the CI for
 $\ARR$ contains 0. In that case, the confidence interval is actually
-a confidence region, comprising two different intervals depending on the 
+a confidence region, comprising two different intervals depending on the
 direction of the treatment effect [@altman1998].
 This problem can be circumvented by plotting the number needed to treat on
-the absolute risk reduction scale, as illustrated in the following example. 
+the absolute risk reduction scale, as illustrated in the following example.
 
 :::{.example}
 
 Figure \@ref(fig:NNTforest) shows a forest plot reproduced from @altman1998
-where an overall number needed to benefit is calculated from a 
-meta-analysis of data from 
-randomized trials comparing bypass surgery with coronary angioplasty in 
+where an overall number needed to benefit is calculated from a
+meta-analysis of data from
+randomized trials comparing bypass surgery with coronary angioplasty in
 relation to angina in one year [@Pocock1995].
 For three studies (CABRI, RITA, EAST), the 95% confidence interval for NNT is a
-regular interval and includes only values that indicate a benefit of therapy. 
-However, for two other entries (GABI and Other) the confidence region for NNT 
-splits into two intervals. For example, for GABI the two intervals are 7.5 to 
-infinity for benefit and 14.5 to infinity for harm. This indicates that this 
+regular interval and includes only values that indicate a benefit of therapy.
+However, for two other entries (GABI and Other) the confidence region for NNT
+splits into two intervals. For example, for GABI the two intervals are 7.5 to
+infinity for benefit and 14.5 to infinity for harm. This indicates that this
 trial is inconclusive regarding the direction of the treatment effect with
-large uncertainty regarding the actual value of NNT. 
+large uncertainty regarding the actual value of NNT.
 :::
 
 ```{r NNTforest, fig.cap="Forest plot for NNT (benefit = NNTB, harm = NNTH) in a meta-analysis. Figure reproduced from Figure 3 in @altman1998.", fig.align="center", fig.width = 9.5, echo = FALSE}
@@ -412,7 +404,7 @@ stud_names <- c("CABRI", "RITA", "EAST", "GABI", "Other", "Overall")
 
 plot(NA,
      xlim = c(0.17, -0.2),
-     ylim = c(1, 7.5),
+     ylim = c(0, 7.5),
      xaxt = "n",
      yaxt = "n",
      xlab = "",
@@ -463,23 +455,23 @@ mtext("NNT (Harm)", side = 1, line = 3, cex = 1.2, adj = 1)
 
 The relative risk (RR) is also called *risk ratio*. The estimated death risks in both treatment groups from Example \@ref(exm:apsac) are
 
--  $x_1/n_1=9/162=5.6\%$ for APSAC and 
+-  $x_1/n_1=9/162=5.6\%$ for APSAC and
 -  $x_0/n_0=19/151=12.6\%$ for Heparin.
 
 The estimated RR is therefore
 
 $$\widehat{\RR} = \frac{5.6\%}{12.6\%} = 0.44.$$
 
-The calculation of a CI for the RR is based on the logRR as explained in Table \@ref(tab:CIRR). With the standard error of the log RR
+The calculation of a CI for the RR is based on the log RR as explained in Table \@ref(tab:CIRR). With the standard error of the log RR
 
 \[
-\SE(\color{red}{\log}(\widehat{\RR})) = 
+\SE(\color{black}{\log}(\widehat{\RR})) =
 \sqrt{\frac{1}{x_1}-\frac{1}{n_1}+\frac{1}{x_0}-\frac{1}{n_0}}
 \]
 
-and the corresponding \emph{95\% error factor} 
+and the corresponding \emph{95\% error factor}
 \[
-  \EF_{.95} = \exp\left\{1.96 \cdot \SE(\color{red}{\log}(\widehat{\RR}))\right\},
+  \EF_{.95} = \exp\left\{1.96 \cdot \SE(\color{black}{\log}(\widehat{\RR}))\right\},
 \]
 we can directly calculate the limits of the CI for the RR as
 
@@ -489,7 +481,7 @@ we can directly calculate the limits of the CI for the RR as
 \end{equation}
 
 This calculation is implemented in the `R` function
-`biostatUZH::confIntRiskRatio()`. 
+`biostatUZH::confIntRiskRatio()`.
 
 
 
@@ -497,7 +489,7 @@ This calculation is implemented in the `R` function
 x <- rev(x)
 n <- rev(n)
 (ci.rr <- confIntRiskRatio(x, n))
-``` 
+```
 
 
 
@@ -506,50 +498,50 @@ n <- rev(n)
 # Define the data frame
 data <- data.frame(
   Quantity = c("RR", "", "log RR"),
-  Estimate = c("0.44", "<span style='color:red;'>&darr; log &darr;</span>", "-0.82"),
+  Estimate = c("0.44", "<span style='color:red;'>&darr; log(.) &darr;</span>", "-0.82"),
   Standard_Error = c("-", "", "0.39"),
-  CI = c("0.21 to 0.95", "<span style='color:red;'>&uarr; exp &uarr;</span>", "-1.58 to -0.06")
+  CI = c("0.21 to 0.95", "<span style='color:red;'>&uarr; exp(.) &uarr;</span>", "-1.58 to -0.06")
 )
 
 # Create the table using knitr::kable
-kable(data, escape = FALSE, format = "html", table.attr = "class='table table-striped table-hover'", 
-      col.names = c("Quantity", "Estimate", "Standard Error", "95%-confidence interval"), 
+kable(data, escape = FALSE, format = "html", table.attr = "class='table table-striped table-hover'",
+      col.names = c("Quantity", "Estimate", "Standard Error", "95%-confidence interval"),
       caption = "Calculation of a CI for the RR based on the log RR.")
 
 
 # data <- data.frame(
 #   Quantity = c("RR", "", "\\log RR"),
-#   Estimate = c("0.44", "\\color{red}{\\downarrow} \\color{red}{\\log} \\color{red}{\\downarrow}", "-0.82"),
+#   Estimate = c("0.44", "\\color{black}{\\downarrow} \\color{black}{\\log} \\color{black}{\\downarrow}", "-0.82"),
 #   Standard_Error = c("-", "", "0.39"),
-#   CI = c("0.21 to 0.95", "\\color{red}{\\uparrow} \\color{red}{\\exp} \\color{red}{\\uparrow}", "-1.58 to -0.06")
+#   CI = c("0.21 to 0.95", "\\color{black}{\\uparrow} \\color{black}{\\exp} \\color{black}{\\uparrow}", "-1.58 to -0.06")
 # )
-# 
+#
 # # Create the table
 # kable(data, escape = FALSE, booktabs = TRUE, col.names = c("Quantity", "Estimate", "Standard Error", "95%-confidence interval"), caption = "Calculation of a CI for the RR based on the log RR.") %>%
 #   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"), full_width = F, position = "center")
 ```
 
 
-The square-and-add method can also be applied to ratio measures such as the risk ratio [@Newcombe, Section 7.3.4], but this is rarely used in practice. One reason might be that the simple approach \@ref(eq:rrci) based on error factors is -- by construction -- not prone to overshoot below zero. 
+The square-and-add method can also be applied to ratio measures such as the risk ratio [@Newcombe, Section 7.3.4], but this is rarely used in practice. One reason might be that the simple approach \@ref(eq:rrci) based on error factors is -- by construction -- not prone to overshoot below zero.
 
 
 #### Relative Risk Reduction {-}
 
-Either $\ARR$ or $\RR$ can be used to estimate $\RRR$: 
+Either $\ARR$ or $\RR$ can be used to estimate $\RRR$:
 \begin{eqnarray*}
 \widehat{\RRR} & = & \frac{\widehat{\ARR}}{\widehat{\pi}_0} \ = \ \frac{`r round(ci.rd$rd, 2)`}{`r round(p2, 3)`} \ = \ `r round(rrr*100, 0)`\% \mbox{ or} \\
-\widehat{\RRR} & = & 1-\widehat{\RR} \ = \ 1 - `r round(rr, 2)` \ = \ `r round(rrr*100, 0)`\%. 
+\widehat{\RRR} & = & 1-\widehat{\RR} \ = \ 1 - `r round(rr, 2)` \ = \ `r round(rrr*100, 0)`\%.
 \end{eqnarray*}
 A CI for $\RRR$ can be obtained based on the limits
-$\mbox{L}_{\mbox{RR}}$ and $\mbox{U}_{\mbox{RR}}$ of the CI for $\RR$: 
+$\mbox{L}_{\mbox{RR}}$ and $\mbox{U}_{\mbox{RR}}$ of the CI for $\RR$:
 
 \begin{eqnarray*}
-    (1 - \mbox{U}_{\mbox{RR}}) \mbox{ to } (1 - \mbox{L}_{\mbox{RR}}) & = & 
-    (1 - 0.95) \mbox{ to } (1 - 0.21) \\ & = & 0.05 \mbox{ to } 0.79 
+    (1 - \mbox{U}_{\mbox{RR}}) \mbox{ to } (1 - \mbox{L}_{\mbox{RR}}) & = &
+    (1 - 0.95) \mbox{ to } (1 - 0.21) \\ & = & 0.05 \mbox{ to } 0.79
 \end{eqnarray*}
 
 So, the risk of death with APSAC has been reduced by
-`r round(rrr*100, 0)`\% (95\% CI: 5\% to 79\%) compared to Heparin. 
+`r round(rrr*100, 0)`\% (95\% CI: 5\% to 79\%) compared to Heparin.
 
 
 #### Odds Ratio {-}
@@ -568,13 +560,13 @@ data <- data.frame(
 )
 
 # Create the table
-kable(data, escape = FALSE, booktabs = TRUE, col.names = c("", "Yes", "No", "Total"), caption = "$2\\times 2$ table for the APSAC study.", 
+kable(data, escape = FALSE, booktabs = TRUE, col.names = c("", "Yes", "No", "Total"), caption = "$2\\times 2$ table for the APSAC study.",
       label = NA) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"), full_width = F, position = "center") %>%
   add_header_above(c("", "Dead" = 2, ""))
 ```
 
-From Table \@ref(tab:2x2apsac), we can read that the estimated odds of death for 
+From Table \@ref(tab:2x2apsac), we can read that the estimated odds of death for
 APSAC are $a/b = 9/153$ ($c/d=19/132$ for Heparin). The estimated OR is therefore
 \[
 \widehat{\OR} = \frac{a / b}{c / d} = \frac{9 / 153}{19 / 132} = \frac{9 \cdot
@@ -605,7 +597,7 @@ data <- data.frame(
 )
 
 # Create the table
-kable(data, escape = FALSE, booktabs = TRUE, col.names = c("", "Dead", "Alive", "Total", "Percent Alive", "Standard Error", "95% CI"), caption = "Survival probability in the APSAC study.", 
+kable(data, escape = FALSE, booktabs = TRUE, col.names = c("", "Dead", "Alive", "Total", "Percent Alive", "Standard Error", "95% CI"), caption = "Survival probability in the APSAC study.",
       label = NA) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"), full_width = F, position = "center")
 ```
@@ -613,7 +605,7 @@ kable(data, escape = FALSE, booktabs = TRUE, col.names = c("", "Dead", "Alive", 
 
 ```{r echo=F}
 my.OR <- 9*132/(153*19)
-``` 
+```
 
 An advantage of the ORs is that they can be inverted for complementary events. If we consider the *survival probability* rather than the *death risk* as in Table \@ref(tab:apsacSurvival), we can see that:
 
@@ -629,11 +621,11 @@ Such a relationship does not hold for relative risks:
  1/\RR = 1/0.44 = 2.25,  \mbox{ but } 94.4\%/87.4\% = 1.08.
  \]
  
-A disadvantage of the ORs is their noncollapsibility [@Senn2]. 
-Consider a hypothetical example with two therapies 
-and two strata. Table \@ref(tab:strat) presents a contingency table 
-stratified by strata, while Table \@ref(tab:collapsed) present the collapsed 
-contingency table. 
+A disadvantage of the ORs is their noncollapsibility [@Senn2].
+Consider a hypothetical example with two therapies
+and two strata. Table \@ref(tab:strat) presents a contingency table
+stratified by strata, while Table \@ref(tab:collapsed) present the collapsed
+contingency table.
 ```{r }
 a1 <- 80
 b1 <- 20
@@ -653,9 +645,7 @@ b <- b1+b2
 c <- c1+c2
 d <- d1+d2
 or <- a*d/(b*c)
-
-
-``` 
+```
 
 ```{r strat, echo = FALSE}
 
@@ -691,7 +681,7 @@ data <- data.frame(
 )
 
 # Create the table
-kable(data, escape = FALSE, booktabs = TRUE, col.names = c("", "Yes", "No", "Total"), caption = "Collapsed contingency table", 
+kable(data, escape = FALSE, booktabs = TRUE, col.names = c("", "Yes", "No", "Total"), caption = "Collapsed contingency table",
       label = NA) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"), full_width = F, position = "center")
 ```
@@ -700,18 +690,18 @@ kable(data, escape = FALSE, booktabs = TRUE, col.names = c("", "Yes", "No", "Tot
 
 
 
--  The OR for Stratum 1 is $\mbox{OR} = \frac{`r a1` \cdot 
-`r d1`}{`r b1` \cdot `r c1`} = 
+-  The odds ratio in stratum 1 is $\mbox{OR} = \frac{`r a1` \cdot
+`r d1`}{`r b1` \cdot `r c1`} =
 `r format(or1, digits=2, nsmall=2)`$
 
--  The OR for Stratum 2 is $\mbox{OR} = \frac{`r a2` \cdot 
-`r d2`}{`r b2` \cdot `r c2`} = 
+-  The odds ratio in stratum 2 is $\mbox{OR} = \frac{`r a2` \cdot
+`r d2`}{`r b2` \cdot `r c2`} =
 `r format(or2, digits=2, nsmall=2)`$
--  The OR from the collapsed analysis is 
-$\mbox{OR} = \frac{`r a` \cdot `r d`}{`r b` \cdot `r c`} 
+-  The odds ratio from a collapsed analysis is
+$\mbox{OR} = \frac{`r a` \cdot `r d`}{`r b` \cdot `r c`}
 = `r format(or, digits=2, nsmall=2)`$
 
-$\rightarrow$ The ORs are the same in both strata, but the OR collapsed 
+Although the odds ratios are the same in both strata, the odds ratio collapsed
 over strata is different.
 
 
@@ -719,13 +709,13 @@ over strata is different.
 As for $\RR$ (see Table \@ref(tab:CIRR)), we calculate the standard error of the OR on the log scale:
 \begin{equation}
 (\#eq:orse)
-  \SE(\color{red}{\log}(\widehat{\OR})) = \sqrt{\frac{1}{a}+\frac{1}{b}+\frac{1}{c}+\frac{1}{d}}.
+  \SE(\color{black}{\log}(\widehat{\OR})) = \sqrt{\frac{1}{a}+\frac{1}{b}+\frac{1}{c}+\frac{1}{d}}.
 \end{equation}
 
-A multiplicative Wald CI can be directly calculated using the 95\% error factor 
+A multiplicative Wald CI can be directly calculated using the 95\% error factor
 
 \[
-  \EF_{.95} = \exp\left\{1.96 \cdot \SE(\color{red}{\log}(\widehat{\OR}))\right\}.
+  \EF_{.95} = \exp\left\{1.96 \cdot \SE(\color{black}{\log}(\widehat{\OR}))\right\}.
 \]
 Note that CIs for odds ratios may differ even if group sample sizes remain the same:
 
@@ -737,7 +727,7 @@ n <- c(50, 50)
 x <- c(1, 1)
 n <- c(50, 50)
 (ci.or2 <- confIntOddsRatio(x, n))
-``` 
+```
 What matters is the number of events.
   
   
@@ -762,30 +752,32 @@ becomes infinite if either $b$ or $c$ is zero.
 #### Odds Ratios and Relative Risks {-}
 
 
-There are the following relations between the OR and the RR. 
+There are the following relations between the OR and the RR:
+
 -  If $\pi_0=\pi_1$ then $\OR = \RR = 1$.
--  OR and RR always go in the same direction ($<1$ or $>1$).
+-  If $\pi_0 \neq \pi_1$ then the odds ratio and relative risk always go in the same direction ($\OR, \RR <1$ or $\OR, \RR >1$).
 -  If $<1$, then $\OR < \RR$.
 -  If $>1$, then $\OR > \RR$.
--  Rare disease assumption: 
-If disease risks $\pi_0$ and $\pi_1$ are small, then
-  $\OR \approx \RR$.    
+-  If the disease risks $\pi_0$ and $\pi_1$ are small, then
+  $\OR \approx \RR$.
+
+
 
 
 In words, the relative risk is always in the same effect direction
 than the odds ratio, but always closer to the reference value 1 then
 the odds ratio (except for the case where the risks are the same). The
-two are close to each other for small risks in both groups, in which
+two are close to each other for small risks in both groups ("rare disease assumption"), in which
 case the odds ratio can be interpreted as a relative risk.
 
 
-The function `Epi::twoby2()` computes the RR, OR (in two versions) 
+The function `Epi::twoby2()` computes the RR, OR (in two versions)
 and ARR (probability difference).
-The second version of the odds ratio is the conditional Maximum Likelihood 
+The second version of the odds ratio is the conditional Maximum Likelihood
 estimate under a hypergeometric likelihood function.
 There is no closed-form expression for this estimate, which
-may explain why it is rarely used, but it is compatible to the 
-$P$-value from Fisher's exact test (denoted here as `Exact P-value`). 
+may explain why it is rarely used, but it is compatible to the
+$P$-value from Fisher's exact test (denoted here as `Exact P-value`).
 
 
   
@@ -806,84 +798,84 @@ biostatUZH::formatPval(pvalues)
 ```
 
 The one for OR is called `Asymptotic P-value` in `twoby2()`.
-The one for ARR is based on the standard error \@ref(eq:arr.se). The alternative standard error
+The one for ARR is based on the standard error \@ref(eq:arrse). The alternative standard error
 \begin{equation}
-(\#eq:arr.se2)
+(\#eq:arrse2)
 \SE(\widehat{\ARR}) = \sqrt{p (1-p) \left(\frac{1}{n_0}+\frac{1}{n_1}\right)}
 \end{equation}
-where $p = (x_0 + x_1)/(n_0 + n_1)$ is an estimate of the common risk, assuming the null hypothesis of no difference between the two groups is true, can also be used for testing. The squared test statistic $\widehat{\ARR}^2/\SE(\widehat{\ARR})^2$ with standard error \@ref(eq:arr.se2} turns out to be identical to the test statistic from the $\chi^2$-test (without continuity correction), so the (two-sided) $P$-values will be identical.
+where $p = (x_0 + x_1)/(n_0 + n_1)$ is an estimate of the common risk, assuming the null hypothesis of no difference between the two groups is true, can also be used for testing. The squared test statistic $\widehat{\ARR}^2/\SE(\widehat{\ARR})^2$ with standard error \@ref(eq:arrse2) turns out to be identical to the test statistic from the $\chi^2$-test (without continuity correction), so the (two-sided) $P$-values will be identical.
 
 
 
 #### Absolute and relative effect measures {-}
 
-Let us consider an example of an RCT with 
-\begin{eqnarray*}  
-    \mbox{death risk} &= & \left\{ \begin{array}{rl} 0.3\% & \mbox{in 
-  the placebo group} \\ 
-    0.1\% & \mbox{in the treatment group} 
-    \end{array} \right. 
+Let us consider an example of an RCT with
+\begin{eqnarray*}
+    \mbox{death risk} &= & \left\{ \begin{array}{rl} 0.3\% & \mbox{in
+  the placebo group} \\
+    0.1\% & \mbox{in the treatment group}
+    \end{array} \right.
 \end{eqnarray*}
-Then we have $\ARR=0.2\%= 0.002$ and $\NNT=500$, so there is a *very small absolute effect* of treatment. However, we have $\RR=1/3$ and $\RRR = 2/3 = 67\%$, so there is a *large relative effect* of treatment. 
+Then we have $\ARR=0.2\%= 0.002$ and $\NNT=500$, so there is a *very small absolute effect* of treatment. However, we have $\RR=1/3$ and $\RRR = 2/3 = 67\%$, so there is a *large relative effect* of treatment.
 We cannot transform absolute to relative effect measures (and vice versa) without knowledge of the underlying risks.
 
 
 ## Adjusting for baseline observations
 
 For binary outcomes, adjusting for baseline variables is usually done using *logistic regression* and will produce *adjusted odds ratios*. Alternatively, the *Mantel-Haenszel method* (MH) can be used, which
-gives a *weighted average* of strata-specific odds ratios. The MH method can also be applied to strata-specific risk ratios. However, adjustment for continuous variables using MH is only possible after suitable categorization. 
+gives a *weighted average* of strata-specific odds ratios. The MH method can also be applied to strata-specific risk ratios. However, adjustment for continuous variables using MH is only possible after suitable categorization.
 
 
 ### Logistic regression
 
 ```{r echo=F}
 puva <- read.table("data/puva.txt", header=TRUE)
-puva$treatment <- factor(puva$treatment, 
+puva$treatment <- factor(puva$treatment,
                          levels=c("PUVA","TL-01"))
-puva$plaqueSize <- factor(puva$plaqueSize, 
+puva$plaqueSize <- factor(puva$plaqueSize,
                        levels=c("Small","Large"))
 puva <- puva[c(1,3,2,4),]
 puva <- puva[,c(2,1,3,4)]
 t <- puva$total
-``` 
+```
 
 :::{.example #puva}
-The PUVA trial [@Gordon1999] compares PUVA 
+The PUVA trial [@Gordon1999] compares PUVA
 (oral methoxsalen followed by UVA exposure) versus TL-01 lamp therapy for treatment of
 psoriasis. The primary outcome is clearance of psoriasis (yes/no)
-at or before the end of the treatment.  
-The treatment allocation used RPBs stratified according to whether predominant 
-plaque size was large or small. This ensures a balanced distribution 
+at or before the end of the treatment.
+The treatment allocation used RPBs stratified according to whether predominant
+plaque size was large or small. This ensures a balanced distribution
 in treatment arms (`r t[1]`:`r t[3]` vs. `r t[2]`:`r t[4]`).
 :::
 
 
 ```{r echo=T}
 print(puva)
-``` 
+```
 
-The unadjusted analyis can be performed as follows: 
+The unadjusted analyis can be performed as follows:
 ```{r echo=T, results="asis"}
-m1 <- glm(cbind(cleared, total-cleared) ~ treatment, 
+m1 <- glm(cbind(cleared, total-cleared) ~ treatment,
           data=puva, family=binomial)
 ## tableRegression gives profile confidence intervals
 knitr::kable(tableRegression(m1, latex = FALSE, xtable = FALSE))
-``` 
+```
 
 
 The strata-specific estimates are obtained using:
 ```{r echo=T, results="asis"}
-m2Small <- glm(cbind(cleared, total-cleared) ~ treatment, 
+m2Small <- glm(cbind(cleared, total-cleared) ~ treatment,
           subset=(plaqueSize=="Small"), data=puva, family=binomial)
 knitr::kable(tableRegression(m2Small, latex = FALSE, xtable = FALSE))
-m2Large <- glm(cbind(cleared, total-cleared) ~ treatment, 
+m2Large <- glm(cbind(cleared, total-cleared) ~ treatment,
           subset=(plaqueSize=="Large"), data=puva, family=binomial)
 knitr::kable(tableRegression(m2Large, latex = FALSE, xtable = FALSE))
-``` 
+```
 
 Finally,  the adjusted analysis with logistic regression is:
 ```{r echo=T, results="asis"}
-m3 <- glm(cbind(cleared, total-cleared) ~ treatment + plaqueSize, 
+m3 <- glm(cbind(cleared, total-cleared) ~ treatment + plaqueSize,
           data=puva, family=binomial)
 knitr::kable(tableRegression(m3, latex = FALSE, xtable = FALSE))
 ```
@@ -891,11 +883,11 @@ knitr::kable(tableRegression(m3, latex = FALSE, xtable = FALSE))
 
 The adjusted treatment effect is
 $\widehat{\OR} = `r format(exp(coef(m3)[2]),nsmall=2, digits=2)`$
-with 95\% CI from 
-$`r format(exp(confint(m3)[2,1]),nsmall=2, digits=2)`$ to 
+with 95\% CI from
+$`r format(exp(confint(m3)[2,1]),nsmall=2, digits=2)`$ to
 $`r round(exp(confint(m3)[2,2]),2)`$.
-Logistic regression also quantifies the effect of the variable used for 
-adjustment, here plaque size, and gives a better model fit: 
+Logistic regression also quantifies the effect of the variable used for
+adjustment, here plaque size, and gives a better model fit:
 
 ```{r, echo = TRUE}
 anova(m1, m3)
@@ -906,32 +898,32 @@ anova(m1, m3)
 ## Ordinal outcomes
 
 Many clinical trials yield outcomes on an ordered categorical scale
-such as "very good", "good", "moderate", "poor". Such data can be analysed 
-using proportional odds regression techniques. 
+such as "very good", "good", "moderate", "poor". Such data can be analysed
+using proportional odds regression techniques.
 
-Suppose that we have $k = 1, \ldots K$ categories and define the odds ratio 
-OR$_k$ at each cut-off point $k = 1, \ldots K - 1$ via 
+Suppose that we have $k = 1, \ldots K$ categories and define the odds ratio
+OR$_k$ at each cut-off point $k = 1, \ldots K - 1$ via
 $$
 \text{OR}_k = \frac{\P(Y_\text{A} \le k)/\P(Y_\text{A} > k)}
 {\P(Y_\text{B} \le k)/\P(Y_\text{B} > k)},
 $$
 where $Y_\text{A}$ and $Y_\text{B}$ denote the outcomes from treatment group A and B, respectively.
-The *proportional odds logistic regression model* assumes 
+The *proportional odds logistic regression model* assumes
 $\text{OR}_k = \text{OR}$ for all $k = 1,\dots, K-1$.
-Sample size methods are available in the `R` function 
+Sample size methods are available in the `R` function
 `Hmisc::posamsize()`.
 
 :::{.example #arthritis}
-A clinical trial has been conducted to compare the drug auranofin with 
+A clinical trial has been conducted to compare the drug auranofin with
 placebo for the treatment of rheumatoid arthritis [@Bombardier1986; @Lipsitz1994].
-Patients were 
-randomized to one of the two treatments for the entire study. 
-The ordered response is the self-assessment of arthritis classified as 
-(1) poor, (2) fair, or (3) good. Of the 303 randomized patients, 
-299 were observed at both baseline and follow-up. 
+Patients were
+randomized to one of the two treatments for the entire study.
+The ordered response is the self-assessment of arthritis classified as
+(1) poor, (2) fair, or (3) good. Of the 303 randomized patients,
+299 were observed at both baseline and follow-up.
 :::
 
-Here is what the data at baseline and at follow-up looks like: 
+Here is what the data at baseline and at follow-up looks like:
 
 ```{r, echo = FALSE}
 
@@ -972,7 +964,7 @@ addmargins(table(arthritis$followup, by=arthritis$treatment))
 ```
 
 
-The cumulative odds ratios are 
+The cumulative odds ratios are
 ```{r, echo = TRUE}
 t <- table(arthritis$followup, by=arthritis$treatment)
 x1 <- t[1,]
@@ -983,9 +975,9 @@ x2 <- t[1,] + t[2,]
 n <- apply(t, 2, sum)
 confIntOddsRatio(x=x2, n=n)
 ```
-and so, the proportional odds assumption is questionable. 
+and so, the proportional odds assumption is questionable.
 
-A proportional odds logistic regression yields: 
+A proportional odds logistic regression yields:
 
 ```{r, echo = TRUE}
 library(MASS)
@@ -1008,18 +1000,18 @@ polr2 <- polr(followup ~ treatment + baseline, data=arthritis)
 print(s2 <- summary(polr2))
 ## odds ratio is exp of coefficient
 CoefTable <-  s2$coefficients
-printWaldCI(theta=CoefTable[1,"Value"], 
+printWaldCI(theta=CoefTable[1,"Value"],
             se=CoefTable[1,"Std. Error"], FUN=exp)
 ```
 
-The second model (`polr2`) has a better model fit than the first (`polr1`): 
+The second model (`polr2`) has a better model fit than the first (`polr1`):
 ```{r, echo = TRUE}
 anova(polr1, polr2)
 ```
 
 
-We can now compare observed and fitted counts for each covariate 
-combination and use a $\chi^2$-goodness-of-fit tests: 
+We can now compare observed and fitted counts for each covariate
+combination and use a $\chi^2$-goodness-of-fit tests:
 
 ```{r, echo = FALSE}
 library(kableExtra)
@@ -1050,10 +1042,10 @@ output <- cbind((observed-expected)^2/(expected))
 
 rownames(output)  <- names
 rownames(observed)  <- rownames(expected) <- names
-colnames(observed) <- c("Obs Poor", "Obs Fair", "Obs Good") 
-colnames(expected) <- c("Exp Poor", "Exp Fair", "Exp Good") 
-colnames(observed) <- c("Observed", "Observed", "Observed") 
-colnames(expected) <- c("Fitted", "Fitted", "Fitted") 
+colnames(observed) <- c("Obs Poor", "Obs Fair", "Obs Good")
+colnames(expected) <- c("Exp Poor", "Exp Fair", "Exp Good")
+colnames(observed) <- c("Observed", "Observed", "Observed")
+colnames(expected) <- c("Fitted", "Fitted", "Fitted")
 
 
 D2 <- sum(2*observed*(log(observed/expected)))
@@ -1086,7 +1078,7 @@ There is some evidence for poor model fit ($p=`r biostatUZH::formatPval(p)`$).
 Relevant references for this chapter are in particular Chapters 13
 "The Analysis of Cross-Tabulations" and 15.10 "Logistic Regression"
 in @bland as well as Chapter 7.1--7.4 "Further Analysis: Binary Data" in @matthews.
-Details on the statistical tests for $2 \times 2$ tables are given in @altman, Section 2.7.
+Details on the statistical tests for $2 \times 2$ tables are given in @altmanBook, Section 2.7.
 The use of odds ratios is discussed in @altmansackett1996 and
 @altmandeeks1998. Studies where the methods from this chapter are used in
 practice are for example @heal, @fagerstroem and @vadillo.
