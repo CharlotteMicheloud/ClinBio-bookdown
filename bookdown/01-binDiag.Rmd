@@ -456,12 +456,12 @@ prevalence.
 Useful tests have $\mbox{LR}^+ > 1$. It then follows that 
 $\mbox{LR}^- < 1$, because
 \begin{eqnarray*}
-\mbox{LR}^+ &>& 1 \\
-\Leftrightarrow \frac{\mbox{Sens}}{1-\mbox{Spec}} &>& 1 \\
-\Leftrightarrow {\mbox{Sens}} & > & {1-\mbox{Spec}} \\
-\Leftrightarrow {\mbox{Spec}} & > & {1-\mbox{Sens}} \\
-\Leftrightarrow  1 & > & \frac{1-\mbox{Sens}}{\mbox{Spec}} \\
-\Leftrightarrow \mbox{LR}^- & < & 1.
+&& \mbox{LR}^+ > 1 \\
+& \Leftrightarrow & \frac{\mbox{Sens}}{1-\mbox{Spec}} > 1 \\
+& \Leftrightarrow & {\mbox{Sens}}  >  {1-\mbox{Spec}} \\
+& \Leftrightarrow & {\mbox{Spec}}  >  {1-\mbox{Sens}} \\
+& \Leftrightarrow & 1  >  \frac{1-\mbox{Sens}}{\mbox{Spec}} \\
+& \Leftrightarrow & \mbox{LR}^-  <  1.
 \end{eqnarray*}
 Likelihood ratios above 10 and below 0.1 are considered to
 provide strong evidence to rule in or rule out
@@ -490,8 +490,9 @@ positive or negative test result:
 \frac{1-\mbox{NPV}}{\mbox{NPV}} & = & \mbox{LR}^- \,  \cdot \, \frac{\mbox{Prev}}{1-\mbox{Prev}} \\[.3cm]
 \mbox{ Posterior odds}  & = & \mbox{ Likelihood ratio} \, \cdot \, \mbox{Prior odds}. \nonumber
 \end{eqnarray}
-
-The odds on the left-hand side can be easily back-transformed to probabilities as
+So Bayesian updating with odds (rather than probabilities) is particularly simple: We only have to multiply the prior odds
+with the relevant likelihood ratio to obtain posterior odds. 
+The posterior odds can be easily back-transformed to probabilities as
 \[
  \mbox{Odds } \omega = \frac{\pi}{1-\pi} \qquad \mbox{ Probability } \pi=\frac{\omega}{1+\omega} .
 \]
@@ -519,7 +520,7 @@ postOddsn <- LRn * prev / (1 - prev)
 
 
 Figure \@ref(fig:updating) gives an example of Bayesian updating with likelihood ratios. The prior odds of 1 to 21 correspond to a prevalence of 4.5\%.
-A positive test results in posterior odds
+A positive test results in posterior odds of
 \[
   \frac{1}{21} \cdot  \frac{27}{1} =   \frac{27}{21} .
 \]
@@ -680,7 +681,7 @@ points(0.7, 0.9, pch=19)
 ```
 
 So far, we have estimated population parameters using corresponding
-sample quantities. For instance, *sample proportions* (p) are used to estimate *probabilities*
+sample quantities. For instance, *sample proportions* ($p$) are used to estimate *probabilities*
 ($\pi$).
 These estimates should be reported with a confidence interval 
 (CI) to account for the sample size of the study. 
@@ -749,8 +750,7 @@ at level 95\%  then  has limits
     p - \mbox{ET}_{95} \mbox{ and } p + \mbox{ET}_{95}.
     \]
     
-This confidence interval
-follows the "add/subtract" construction, because the error term is
+The Wald confidence interval is of *additive* form, because the error term is
 added to, respectively subtracted from, the estimate $p$.
 The factor 1.96 has to be replaced by
 the appropriate standard normal quantile for other confidence levels. 
@@ -763,10 +763,10 @@ qnorm((1 + level)/2) # factor
 
 
 #### Wilson confidence interval {-}
-It is usually better to use the *Wilson* confidence interval, in particular 
+It is usually better to use the *Wilson* confidence interval for a proportion, in particular 
 if $n$ is small or $p$ is close to 0 or 1.
 The Wilson interval has better *empirical coverage* than the Wald interval,
-as shown in Figure \@ref(fig:coverage). 
+as shown in Figure \@ref(fig:coverage) for $n=50$. 
 Additionally, the Wilson confidence interval does not have overshoot issues:
 its limits are always within the unit interval, eliminating the need for truncation.
 
@@ -823,7 +823,7 @@ wilson(x=629, n=726, conf.level = 0.95)
 ```
 
 The `R` function `prop.test()` without continuity correction also 
-produces a Wilson CI:
+computes a Wilson CI:
 ```{r echo=TRUE}
 
 prop.test(x=629, n=726, correct=FALSE, conf.level = 0.95)$conf.int
@@ -840,7 +840,7 @@ The limits of the Wald confidence interval are -- by construction -- symmetric a
 
 
 #### Other confidence intervals {-}
-Other types of confidence intervals can be calculated, for example Agresti, 
+Other types of confidence intervals for proportions are available, for example Agresti, 
 Jeffreys or Clopper-Pearson. Here we compute the different confidence intervals for 
 the sensitivity in Example \@ref(exm:depression) (screening for depression) based on both questions. 
 
@@ -857,7 +857,7 @@ of the Wald confidence interval is actually larger than 1 ("overshoot"):
 p + \mbox{ET}_{95} = `r res$p` + 1.96 \cdot \sqrt{(`r res$p` \cdot (1-`r res$p`) / 29} = `r round(res$p + 1.96*sqrt(res$p*(1-res$p)/29),3)`
 \]
 and in the output truncated to 1.
-The upper limit of Agresti's method is also 1. The other methods have an upper limit smaller than one. The method by Clopper-Pearson produces the widest confidence interval. It is often called "exact", but this is misleading, as it is known to be conservative with too large coverage, see Figure  \@ref(fig:coverage2). 
+The upper limit of Agresti's method is also 1. The other methods have an upper limit smaller than one. The method by Clopper-Pearson produces the widest confidence interval. It is often called "exact", but this is misleading, as it is known to be conservative with too large coverage, see Figure  \@ref(fig:coverage2), again for $n=50$. 
 
 
 ```{r coverage2, echo = FALSE, fig.cap = "Empirical coverage of Clopper-Pearson confidence intervals with nominal confidence level $95\\%$ and sample size $n=50$ (grey line). The solid line is a local average of the coverage, computed as described in @held", echo = FALSE, message = FALSE }
@@ -915,13 +915,13 @@ The upper limit of Agresti's method is also 1. The other methods have an upper l
   The exact procedure to calculate a 95\% confidence interval for a
   likelihood ratio is as follows, see Table \@ref(tab:notation) for notation:
 
-  1.  Calculate standard error on the log scale:
+  1.  Calculate the standard error on the log scale:
   \begin{eqnarray*}
   \SE(\log {\mbox{LR}}^+) & = & \sqrt{\frac{1}{{fp}}-\frac{1}{n_0} +\frac{1}{{tp}}-\frac{1}{n_1}} \\
   \SE(\log {\mbox{LR}}^-) & = & \sqrt{\frac{1}{{tn}}-\frac{1}{n_0} +\frac{1}{{fn}}-\frac{1}{n_1}} \\
   \end{eqnarray*}
   
-  2.  Compute 95\% *error factor* (EF)
+  2.  Compute the 95\% *error factor* (EF)
   
   3.  The 95\% confidence interval for ${\mbox{LR}}^+$ then has limits
   $${\mbox{LR}}^+/\EF_{.95} \mbox{ and } {\mbox{LR}}^+ \cdot \EF_{.95}$$
@@ -999,7 +999,7 @@ a pre-specified prevalence. This approach is based on the following steps:
 2.  Multiplication with ${\mbox{Prev}}/({1-\mbox{Prev}})$ gives the limits of
       a confidence interval for ${\mbox{PPV}/(1-\mbox{PPV})}$ resp. ${(1-\mbox{NPV})/\mbox{NPV}}$ according to  equation \@ref(eq:PPVBayes), resp. \@ref(eq:NPVBayes).
       
-3.  Confidence intervals for $\mbox{PPV}$ resp. $\mbox{NPV}$ can be obtained by the usual transformation of the limits obtained in step 2. to the  probability scale.
+3.  Confidence intervals for $\mbox{PPV}$ resp. $\mbox{NPV}$ can be obtained by the usual transformation of the limits obtained in step 2 to the  probability scale.
 
 
 
