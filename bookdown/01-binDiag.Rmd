@@ -21,7 +21,7 @@ In a *cohort design*, a diagnostic test is applied to a sample of subjects
 from the population of interest, and the true disease status
 is also ascertained using a reference test, the *gold standard*. 
 
-Moreover, studies comparing two tests can have an unpaired 
+Studies comparing two diagnostic tests can have an unpaired 
 or a paired design. In an
 *unpaired design*, each study subject is tested with only one of the two tests. 
 In contrast, each study subject is tested with both tests in a *paired design*.
@@ -210,7 +210,7 @@ The *sensitivity* of a binary test is defined as
 \end{equation}
 
 that is, the probability of correctly identifying study subjects 
-*with* a specific disease. 
+*with* the disease in question. 
 
 The *specificity* of a binary test is defined as
 
@@ -219,7 +219,7 @@ The *specificity* of a binary test is defined as
 \end{equation*}
 
 that is, the probability of correctly identifying study subjects 
-*without* a specific disease. 
+*without* the disease in question. 
 
 :::
 
@@ -227,7 +227,7 @@ that is, the probability of correctly identifying study subjects
 
 
 In the MW Study (Example \@ref(exm:mws)), the following estimates
-for the sensitivity and specificity are obtained 
+for sensitivity and specificity are obtained 
 from Table \@ref(tab:MWS):
 
 \begin{eqnarray}
@@ -355,7 +355,7 @@ MW study shown in Example \@ref(exm:mws):
   \mbox{PPV} &=& \displaystyle\frac{{tp}}{{tp}+{fp}} = 629/`r format.bigmark(4514)` = `r round(629/4514*100, 1)`\% \mbox{ and} \\
   \mbox{NPV} &=& \displaystyle\frac{{tn}}{{tn}+{fn}} = `r format.bigmark(117744)`/`r format.bigmark(117841)` = `r round(117744/117841*100, 1)`\%.
 \end{eqnarray*}
-The negative predictive value NPV is close to 100\%, which means that a women with a negative mammogram is very likely not to have breast cancer. However, the positive predictive value is only `r round(629/4514*100, 1)`\%, so a women with a positive mammogram still has a fairly small probability to have breast cancer. 
+The negative predictive value NPV is close to 100\%, which means that a women with a negative mammogram is very likely not to have breast cancer. However, the positive predictive value is only `r round(629/4514*100, 1)`\%, so a women with a positive mammogram still has a fairly small probability to actually have breast cancer. 
 
 This simple calculation assumes that the observed *disease prevalence*
 
@@ -369,12 +369,12 @@ in the study sample is representative for the underlying population.
 Predictive values can also be calculated for other values of the prevalence with Bayes' theorem:
 
 \begin{eqnarray*}
-\mbox{PPV} & = & \frac{\mbox{Sens} \cdot \mbox{Prev}}{\mbox{Sens} \cdot \mbox{Prev} + (1-\mbox{Spec}) \cdot (1-\mbox{Prev})} \mbox{ and} \\
-\mbox{NPV} & = & \frac{\mbox{Spec} \cdot (1-\mbox{Prev})}{\mbox{Spec} \cdot (1-\mbox{Prev}) + (1-\mbox{Sens}) \cdot \mbox{Prev}}
+  \mbox{PPV} & = & \frac{\mbox{Sens} \cdot \mbox{Prev}}{\mbox{Sens} \cdot \mbox{Prev} + (1-\mbox{Spec}) \cdot (1-\mbox{Prev})}, \\
+\mbox{NPV} & = & \frac{\mbox{Spec} \cdot (1-\mbox{Prev})}{\mbox{Spec} \cdot (1-\mbox{Prev}) + (1-\mbox{Sens}) \cdot \mbox{Prev}}.
 \end{eqnarray*}
 
-as the transition from *pre-test probability* of disease (the prevalence) 
-to *post-test probabilities* of disease ($\mbox{PPV}$ and $\mbox{NPV}$) 
+This is best understood as *Bayesian updating*, the transition from the *pre-test probability* of disease (the prevalence) 
+to the *post-test probability* of disease ($\mbox{PPV}$ and $1-\mbox{NPV}$) 
 after observing a positive, or negative test result.
 Table  \@ref(tab:MWS-predvalues) gives predictive values in the MW study
 also for other values of the prevalence. 
@@ -453,8 +453,16 @@ study subjects without the disease.
 In contrast to predictive values, they do not depend on disease
 prevalence.  
 
-Useful tests have $\mbox{LR}^+ > 1$ and
-$\mbox{LR}^- < 1$.
+Useful tests have $\mbox{LR}^+ > 1$. It then follows that 
+$\mbox{LR}^- < 1$, because
+\begin{eqnarray*}
+\mbox{LR}^+ &>& 1 \\
+\Leftrightarrow \frac{\mbox{Sens}}{1-\mbox{Spec}} &>& 1 \\
+\Leftrightarrow {\mbox{Sens}} & > & {1-\mbox{Spec}} \\
+\Leftrightarrow {\mbox{Spec}} & > & {1-\mbox{Sens}} \\
+\Leftrightarrow  1 & > & \frac{1-\mbox{Sens}}{\mbox{Spec}} \\
+\Leftrightarrow \mbox{LR}^- & < & 1.
+\end{eqnarray*}
 Likelihood ratios above 10 and below 0.1 are considered to
 provide strong evidence to rule in or rule out
 diagnoses [@SN_LR], respectively.
