@@ -1,7 +1,30 @@
 # Statistical significance and sample size calculations 
 
+It is now well understood by most statisticians that different
+research questions require different statistical techniques see
+@GoodmanRoyall1988, @Royall, and @Goodman2016 for a general discussion. This is
+also the case in clinical trials, where the following questions often
+emerge:
 
-## Statistical significance
+- How much does the drug reduce the risk of disease?
+- Is there an effect of the drug at all?
+- Is there enough evidence on efficacy of a drug to authorize marketing?
+
+The first question requires computation of the effect size and its
+precision, usually represented by a confidence (or credible)
+interval. There has been an important movement in medical statistics over the last decades to focus on estimation
+of effect sizes together with information on the inherent imprecision due to sampling variability, see @altman. 
+The second question requires to quantify the strength of
+evidence for an effect.  This is commonly done with $P$-values, but
+other measures of evidence exist such as likelihood ratios and Bayes
+factors.  The third question requires a decision-theoretic
+perspectives, where error rates play a prominent role. The concepts of a
+*null hypothesis* and *statistical significance* play a crucial rule to answer the second
+and third queston, but is often misunderstood. This is reflected by 
+the fundamental difference between significance and
+hypothesis tests, described in the next section.
+
+## The null hypothesis and statistical significance
 
 When conducting a clinical trial,
 the primary aim is often to know whether 
