@@ -84,10 +84,10 @@ subject <- as.factor(rep(1:n,2))
 
 
 
-```{r PEFR, fig.cap = "Repeated measurements of peak expiratory flow rate [@bland]", echo = F, fig.width=4.0}
+```{r PEFR, fig.cap = "Two repeated measurements of peak expiratory flow rate of the same patients [@bland]", echo = F, fig.width=4.0}
 my.range <- range(c(First,Second))
 par(pty="s", las=1)
-plot(First, Second, xlab = "First", ylab = "Second", pty = "s", pch = 19, col = 2, ylim=my.range, xlim=my.range, cex=0.7)
+plot(First, Second, xlab = "First measurement", ylab = "Second measurement", pty = "s", pch = 19, col = 2, ylim=my.range, xlim=my.range, cex=0.7)
 segments(100, 100, 700, 700, lty = 2, col = 4)
 
 cc <- confIntCorrelation(First, Second, method = "pearson", type = "z")
@@ -107,13 +107,13 @@ are available. The two sodium intake measurements are displayed in Figure
 \@ref(fig:sodium).
 :::
 
-```{r sodium, fig.cap="Repeated measurements of urinary sodium intake [@Nab2021]."}
+```{r sodium, fig.cap="Two repeated measurements of urinary sodium intake from the same patients [@Nab2021]."}
 library(mecor)
 data(sodium)
 sodium_f <- sodium[!is.na(sodium$urinary1) & !is.na(sodium$urinary2), ]
 par(pty="s", las=1)
 plot(sodium_f$urinary1, sodium_f$urinary2, 
-     xlab = "First", ylab = "Second", pty = "s", pch = 19, 
+     xlab = "First measurement", ylab = "Second measurement", pty = "s", pch = 19, 
      col = 2, cex = 0.7, 
      xlim = c(2.5, 6), ylim = c(2.5, 6))
 
@@ -153,7 +153,7 @@ subject_sod <- rep(1:nrow(sodium_f), times = 2)
 aov_sod <- aov(measurement_sod ~ subject_sod)
 (sigmaw_sod <- sqrt(summary(aov_sod)[[1]][2,3]))
 ```
-and so $s_w = `r round(sigmaw_sod,1)`$ mg.
+and so $s_w = `r round(sigmaw_sod,2)`$ mg.
 
 It is also possible to calculate a confidence interval for the within-subject
 standard deviation $s_w$ using the following `R` function:
@@ -253,11 +253,11 @@ plot(x_sod, y_sod, xlab = "Mean of measurements",
      pty = "s", 
      pch = 19, 
      col = 2, 
-     cex = 0.9, 
+     cex = 0.7, 
      main = "Sodium")
 
 abline(coef(lm(y_sod ~ x_sod)), lty=2, col=4)
-text(4.5, 1.8, 
+text(4.4, 1.8, 
      paste("Spearman correlation =", format(cor(x_sod, y_sod, method = "spearman"), 
                                             digits = 2, nsmall = 2)), 
      cex = 0.9)
@@ -274,7 +274,7 @@ text(4.5, 1.8,
 Spearman's rank correlation coefficient
 in the PEFR example  ($\rho_S = `r round(ctest_pefr$estimate, 2)`$)
 is larger than in the sodium example ($\rho_S = `r round(ctest_sod$estimate, 4)`$), 
-but the $P$-value for the correlation test is large in both cases ($p=`r formatPval(ctest_pefr$p.value)`$ and 
+but the $P$-values from the correlation test are large in both cases ($p=`r formatPval(ctest_pefr$p.value)`$ and 
 $p=`r formatPval(ctest_sod$p.value)`$, respectively). Hence
 there is no evidence for 
 an association between the mean measurement and the absolute difference of
@@ -285,12 +285,12 @@ the measurements, so no transformation is required.
 of 20 Scottish schoolchildren, see Figure \@ref(fig:cotinine).
 :::
 
-```{r cotinine, fig.cap = "Measurement 1 versus Measurement 2 for the 20 schoolchildren in Example \\@ref(exm:cotinine)."}
+```{r cotinine, fig.cap = "First versus second measurement for the 20 schoolchildren in Example \\@ref(exm:cotinine)."}
 SC <- read.table("data/SalivaryCotinine.txt", header = TRUE)
 
 par(las = 1, pty = "s")
-plot(SC$Measurement1, SC$Measurement2, pch = 19, xlab = "Measurement 1 (ng/ml)",
-     ylab = "Measurement 2 (ng/ml)", cex = 0.8, 
+plot(SC$Measurement1, SC$Measurement2, pch = 19, xlab = "First measurement (ng/ml)",
+     ylab = "Second measurement (ng/ml)", cex = 0.8, 
      col = 2)
 abline(0, 1, lty = 2, col = 4)
 
