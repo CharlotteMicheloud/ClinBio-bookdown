@@ -892,7 +892,7 @@ The upper limit of Agresti's method is also 1. The other methods have an upper l
   \log {\mbox{LR}}^+ - 1.96 \cdot \SE(\log {\mbox{LR}}^+) \mbox{ and } \log {\mbox{LR}}^+ + 1.96 \cdot \SE(\log {\mbox{LR}}^+).
   \]
   Note that log always refers to the natural logarithm in this document.
-  Back-transformation to the original scale gives a 95\% (multiplicative)
+  Back-transformation to the original scale gives a 95\% *multiplicative*
   Wald confidence
   interval for the positive likelihood ratio ${\mbox{LR}}^+$ with limits
   \[
@@ -901,11 +901,10 @@ The upper limit of Agresti's method is also 1. The other methods have an upper l
   where
   
   $$\EF_{.95} =\exp\left\{1.96 \cdot \SE(\log {\mbox{LR}}^+)\right\}$$
-  is called the 95\% *error factor* (EF). This confidence interval
-  follows the "multiply/divide" construction, as the estimate is
+  is called the 95\% *error factor* (EF). This Wald confidence interval
+  is of multiplicative form, as the estimate (the likelihood ratio) is
   multiplied, respectively divided, by the error factor. There are many
-  other confidence intervals in biostatistics that are of the
-  "multiply/divide" type, for example confidence intervals for risk ratios,
+  other confidence intervals in biostatistics that are of multiplicative form, for example confidence intervals for risk ratios,
   odds ratios and
   hazard ratios.
 
@@ -948,8 +947,7 @@ A 95\% confidence interval for ${\mbox{LR}}^-$ is computed accordingly using the
 
 ### Diagnostic odds ratio
 
-  The confidence interval for the diagnostic odds ratio is also of the
-  "multiply/divide" type, again see Table \@ref(tab:notation) for
+  The confidence interval for the diagnostic odds ratio is also of multiplicative form, again see Table \@ref(tab:notation) for
   notation. The steps are: 
 
   1. Calculate the standard error on the log scale:
