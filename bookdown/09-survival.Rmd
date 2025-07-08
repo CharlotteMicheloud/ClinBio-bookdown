@@ -414,6 +414,10 @@ table can be obtained as shown in Figure \@ref(fig:ggsurvplot).
 library(survminer)
 ggsurvplot(sakk.surv, risk.table = TRUE)
 ``` 
+Based on the Kaplan-Meier curve we can now compute survival probabilities with confidence interval, for example at 5 years: 
+```{r survprob, echo = TRUE}
+summary(sakk.surv, times = 5)
+``` 
 
 
 
