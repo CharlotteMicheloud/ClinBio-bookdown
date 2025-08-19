@@ -303,8 +303,7 @@ For example, decisions like whether to transform the outcome variable,
 whether to compute risk differences, risk ratios or odds ratios for binary 
 outcomes, or whether to include a covariate in the analysis all 
 involve a degree of subjectivity.
-A precise statistical analysis plan helps in any case.
-
+A precise statistical analysis plan helps in any case. 
 
 :::{.example #ulcers name="continued"}
 In the RCT from @Mirpour2020, the patient were blinded, and 

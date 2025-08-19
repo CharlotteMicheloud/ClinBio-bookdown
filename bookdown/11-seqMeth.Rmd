@@ -462,12 +462,18 @@ mean effect size of all trials is $`r round(mean(thetahat2, na.rm=TRUE),2)` > `r
 
 ## The trial protocol
 
-The trial protocol serves at least three purposes. First, it outlines the
-reasons for running a trial. Second, it is an operations manual for the trial,
-e.g.: assessment for eligibility,  treatment allocation, blinding procedure, etc.
-Finally, it is the scientific design document for the trial,
-e.g.: methods for allocation, ways of assessing outcomes etc.
-The trial protocol needs approval by ethics committees, funding bodies, regulatory authorities etc.
+The trial protocol serves at least three purposes. First, it outlines
+the reasons for running a trial. Second, it is an operations manual
+for the trial, e.g.: assessment for eligibility, treatment allocation,
+blinding procedure, etc.  Finally, it is the scientific design
+document for the trial, e.g.: methods for allocation, ways of
+assessing outcomes etc.  The trial protocol needs approval by ethics
+committees, funding bodies, regulatory authorities etc.  A **statistical
+analysis plan** (SAP) complements a trial protocol with more details on
+the methods planned to analyse the trial data. See @Gamble_etal2017
+and @Stevens_etal2023 for guidelines and templates, respectively, for
+statistical analysis plans (SAPs).
+
 
 ### Designing and reporting trials {-}
 

@@ -1,0 +1,762 @@
+# Analysis of longitudinal outcomes
+
+This chapter discusses the analysis of longitudinal outcomes in randomized clinical trials. 
+Relevant references in this chapter can be found in @Diggle,  @Fitzmaurice, @Hedeker, @Cook2008 and @Twisk. 
+
+Different from a cross-sectional study, in a longitudinal study
+participants are followed *over time* and *repeated measurements* at
+different time points are made from each participant.  This is
+different from survival analysis, where the time to a certain event is
+the primary focus.  Here we observe and analyze *changes in response
+over time* for a sample of individuals. To compare treatment groups,
+we may employ a **parallel group design**, where every participant is
+member of a certain treatment group, or a **cross-over design**, where
+every participant serves as their own control, so changes treatment
+over time. We separate *longitudinal* from *cross-sectional* effects
+of predictor variables: longitudinal studies can distinguish changes
+over time within individuals (ageing effects) from differences among
+people in baseline levels (cohort effects).
+
+As in cross-sectional studies there are two types of longitudinal
+study designs: observational and experimental. Here we focus on the latter
+and consider the analysis of designs of RCTs with longitudinal outcomes. 
+Analyzing longitudinal data, we need to consider both the effect of 
+predictors on response and association among repeated responses over 
+time. This means we need to account for correlation within one individual.
+
+## Continuous longitudinal outcomes
+We use an example from @Fitzmaurice about the treatment of lead-exposed children 
+(TLC) to illustrate different methods for the analysis of continuous longitudinal outcomes. 
+
+:::{.example #TLC}
+
+```{r TLC1,echo=FALSE}
+data(tlc, package = "teachingUZH")
+```
+
+A placebo-controlled, randomized trial has been conducted to study the effect of an orally 
+administered chelating agent, succimer, in children with confirmed blood lead levels of 20-44 
+$\mu$g/dl. The outcome of interest is the blood lead level at week 0 (baseline), 1, 4 and 6. 
+We consider a balanced subsample of $n=100$ children from the original dataset, $50$ children in each group. 
+:::
+
+The dataset \(\texttt{tlc}\) in the R package \(\texttt{lead.0}\) contains the data in wide and long formats. The wide format records the repeated measurements of the same individual in columns \(\texttt{lead.0, lead.1, lead.4}\) and \(\texttt{lead.6}\). As in Table \@ref(tab:tlctable), \(\texttt{id}\) identifies each child in the study, and \(\texttt{treat}\) was levels A (active) and P (placebo). A new column \(\texttt{Treatment}\) is created from \(\texttt{treat}\) for readability. Columns \(\texttt{lead.0, lead.1, lead.4, lead.6}\) contain numeric blood lead levels at the four different time points of measurement (week 0, 1, 4 and 6). 
+```{r tlctable, echo=FALSE}
+tlc$Treatment <- factor(tlc$treat, levels = c("P", "A"),
+                        labels = c("Placebo", "Active"))
+library(knitr)
+kable(
+  head(tlc),
+  caption = "First 6 rows of the tlc dataset",
+  booktabs = TRUE, align = "l"
+) 
+```
+Different from the above wide format, \(\texttt{tlclong}\) presents data in a long format, because for each \(\texttt{id}\) there are multiple rows to record the lead levels measured at different time points. We transform the week number to a factor variable \(\texttt{fweek}\) (see Table \@ref(tab:tlctablelong)).
+
+```{r tlctablelong, echo=FALSE}
+## week as factor variable 
+tlclong$fweek <- as.factor(tlclong$week)
+tlclong$Treatment <- factor(tlclong$treat, levels = c("P", "A"),
+                        labels = c("Placebo", "Active"))
+knitr::kable(
+  head(tlclong),
+  caption = "First 6 rows of the tlclong dataset",
+  booktabs = TRUE, align = "l"
+)
+```
+
+It is sometimes useful to separate out the baseline values for analysis. So we restructure \(\texttt{tlclong}\) to a long format with 3 rows per patient and the baseline measurement \(\texttt{lead.0}\) as another variable. We call this data \(\texttt{tlclong2}\), which is shown in Table \@ref(tab:tlclong2). 
+
+```{r TLC4, echo=FALSE, warning=FALSE, message=FALSE}
+tlclong2 <- subset(tlclong, fweek != 0) ## remove level 0
+tlclong2$fweek <- tlclong2$fweek[drop=TRUE]
+tlclong2$lead.0 <- tlc$lead.0[match(tlclong2$id, tlc$id)] ## add baseline lead column
+```
+
+```{r tlclong2, echo=FALSE, warning=FALSE, message=FALSE}
+kable(
+  head(tlclong2),
+  caption = "First 6 rows of the tlclong2 dataset",
+  booktabs = TRUE, align = "l"
+)
+```
+
+Figure \@ref(fig:TLC2) gives the individual and mean response profiles in the two treatment groups. The mean response profiles in the two 
+treatment groups are given in with bold lines.
+
+```{r TLC2, echo=FALSE, fig.cap = "Visualization of blood lead levels in the treatment and control group.", warning=FALSE, message=FALSE}
+meanprofiles <- aggregate(tlc[3:6], tlc["Treatment"], mean)
+par(mar=c(6,5,1,1), las=1)
+matplot(c(0,1,4,6), t(tlc[3:6]), col=rgb(0+(tlc$Treatment=="Active"),0,0,0.2), type="b",
+        lty=1, xlab="week", xaxt="n", pch=19, ylim=c(0, 65), 
+        ylab=expression(paste("blood lead level [",mu*g/dl,"]")))
+axis(1, at=c(0,1,4,6))
+matlines(c(0,1,4,6), t(meanprofiles[,-1]), type="b", lty=1,col=1:2,lwd=2,pch=19)
+legend("topleft", col=1:2, lty=1, lwd=2, legend=c("Placebo", "Active"))
+```
+
+At baseline, the mean blood lead levels are nearly the same in the two
+groups. At week 1 there is a substantial drop in blood lead
+levels among the children treated with succimer. However, this is
+followed by a rebound in blood lead levels, as lead stored in the
+bones and tissues is mobilized and a new equilibrium is achieved. In
+contrast, for the children treated with placebo, the trend in the mean
+response over time is relatively flat. The mean in the treatment group
+remains below the mean in placebo group, but the difference between
+the two is decreasing over time. 
+
+
+### Summary measure analysis
+Summary measure analysis uses a (scalar-valued) function of each longitudinal profile, a *derived variable*, as outcome variable. Typical derived variables are the **mean**, the **slope** of a linear regression, or the **area under the curve** (the integral over the longitudinal profile).
+
+:::{.example #TLC name="continued"} 
+Here we present an example of
+using the area
+under the curve (AUC) to analyze TLC data. AUC is defined as the integral of each
+longitudinal profile and subsequent division by 6, so AUC represents the mean lead blood level per week.
+It can be computed as a weighted average of lead concentration across
+multiple time points and provides a single number that reflects 
+the magnitude of the outcome across the study period.  A
+higher AUC means more total lead exposure over
+time.
+:::
+```{r TLC_AUC, echo=TRUE, warning=FALSE, message=FALSE}
+tlc$AUC <-with(tlc,
+               ((lead.1 + lead.0)/2*(1 - 0) +
+                  (lead.4 + lead.1)/2*(4 - 1) +
+                  (lead.6 + lead.4)/2*(6 - 4))/6)
+```
+Figure \@ref(fig:AUCplot) shows the boxplots of the AUCs calculated. We can see that the AUCs are different between the two treatment groups.
+The Active group shows more values clustered around the lower end, suggesting a potential treatment effect lowering AUC.
+```{r AUCplot, echo=FALSE, fig.cap = "Boxplots of Area Under the Curve for tlc dataset", warning=FALSE, message=FALSE}
+boxplot(AUC ~ Treatment, data = tlc, las = 1)
+stripchart(AUC ~ Treatment, data = tlc, vertical = TRUE, add = TRUE, pch = 19,
+           method = "jitter", jitter = 0.3, col=c(1,2))
+```
+
+Then we perform a t-test to check whether the mean AUC differs between treatment groups.
+```{r, echo=TRUE}
+t.test(AUC ~ Treatment, data = tlc, var.equal=TRUE)
+```
+
+```{r, echo=FALSE}
+tt <- t.test(AUC ~ Treatment, data = tlc, var.equal=TRUE)
+```
+There is an observed difference of $`r round(tt$estimate[1],1)` - `r round(tt$estimate[2],1)` = `r round(tt$estimate[1]-tt$estimate[2],1)`$$\mu$g/dl
+in mean AUC between treatment groups. The small p-value suggests a strong evidence that the mean AUC differs between treatments. 
+
+We can also use the Bartlett test for the equal-variance assumption.
+```{r, echo=TRUE}
+bartlett.test(AUC ~ Treatment, data = tlc)
+```
+The Bartlett test suggests no significant difference in variances, supporting the use of the t-test with the equal-variance assumption.
+
+### Generalized change score analysis and extended ANCOVA
+
+In Chapter \@ref(contOut), we discussed change score analysis and ANCOVA for analyzing baseline and one follow-up. In longitudinal data, there are often more than one follow-up measurements, which means we need to consider the correlation between the follow-up measurements as well. We can handle the baseline values by generalizing the discussed methods. We can either subtract the baseline value from all remaining post-baseline responses (change score analysis), or use the baseline as a covariate in the analysis of post-baseline responses (extended ANCOVA).
+
+#### Correlation structure
+These statistical analyses must be adjusted for residual correlation between measurements from the same individual. Hence we introduce three common **correlation structures** between observations with their illustrative examples in 3 $\times$ 3 matrices. More discussions and practical examples will be given in the later sections.
+
+\(\texttt{exchangeable}\): It assumes equal correlations for every pair of observations made from the same individual, no matter how large the distance is. It is also called a "compound symmetry" correlation structure. 
+
+$$
+\begin{pmatrix}
+1 & \rho & \rho \\
+\rho & 1 & \rho \\
+\rho & \rho & 1 
+\end{pmatrix}
+$$
+
+\(\texttt{AR-1}\): It is an autoregressive process of order 1. 
+The correlation structure is the autocorrelation of an AR(1) progress.
+$$
+\begin{pmatrix}
+1 & \rho & \rho^2 \\
+\rho & 1 & \rho \\
+\rho^2 & \rho & 1 
+\end{pmatrix}
+$$
+
+\(\texttt{unstructured}\): It assumes different correlations for every pair of observations made from the same individual.
+
+$$
+\begin{pmatrix}
+1 & \rho_1 & \rho_2 \\
+\rho_1 & 1 & \rho_3 \\
+\rho_2 & \rho_3 & 1 
+\end{pmatrix}
+$$
+
+#### Saturated model {#saturated}
+In general, a saturated model is a model that has as many parameters as there are values to be fitted. For an example, see Section \@ref(testcarryover). Similarly, the saturated model for balanced longitudinal data
+fits separate parameter for each time point. It places no structure on the means over time and most easily implemented
+with a factor variable for time (see example in the next section).
+
+### Generalized estimating equations
+**Generalized Estimating Equations (GEE)** extend generalized linear models to accommodate correlated data by modeling the marginal expectation of the outcomes and specifying a "working" correlation structure. For how the GEE's model works, see Appendix \@ref(GEE).
+
+```{r wald.test}
+## model: output from function gee() in library("gee")
+## indexList: the indices of the regression coefficient beta to be tested
+wald.test <- function(model, indexList)
+  {
+  require(biostatUZH)
+  cov.beta <- model$robust.variance
+  beta <- as.matrix(coef(model), ncol=1)
+  Q <- diag(length(beta))[indexList,]
+  top <- Q%*%beta
+  middle <- solve(Q%*%cov.beta%*%t(Q))
+  T.squared <- t(top)%*%middle%*%top
+  df <- nrow(Q)
+  p <- formatPval(pchisq(T.squared, df=df, lower.tail = FALSE))
+  return(t(list(T=T.squared, df=df, p=p)))
+}
+```
+
+:::{.example #TLC name="continued"}
+Using the TLC dataset, we look at an example applying \(\texttt{geeglm()}\) function to analyse RCTs with one baseline and more than one follow-up measurements. 
+:::
+
+**Approach 1: Analysis of change scores**
+
+Using the variable \(\texttt{lead}\) as outcome and the baseline variable \(\texttt{lead.0}\) as offset is equivalent to a Change Score (CS) approach.
+We fit a saturated model as a null model, where the mean response is allowed to be different in each week (see \@ref(saturated)). But it is unrealistic to assume a time-constant effect of lead, so we include an interaction effect between treatment and week. The full model includes an additional treatment effect which is allowed to change over time.
+
+```{r, echo=TRUE}
+CSNull <- lead ~ offset(lead.0) + fweek
+CSFull <- lead ~ offset(lead.0) + Treatment*fweek
+```
+
+Assuming independence working correlation, we fit the null and the full model for comparison. 
+
+```{r TLC5, echo=TRUE, size="tiny", results = FALSE, message=FALSE, warning=FALSE}
+library(geepack)
+geeInCSNull <- geeglm(CSNull, id=id, data = tlclong2,
+                      corstr = "independence")
+geeInCS <- geeglm(CSFull, id=id, data = tlclong2,
+                  corstr = "independence")
+```
+
+Table \@ref(tab:geeInCS) shows the estimates and their confidence intervals and p-values from the full model. 
+```{r geeInCS, echo=FALSE, size='tiny', results='asis', message=FALSE}
+library(xtable)
+library(biostatUZH)
+knitr::kable(tableRegression(geeInCS, intercept = F, latex = FALSE, xtable = FALSE),
+             caption = "Model fit results from the full model",
+             booktabs = TRUE, align = "l")
+```
+
+In the output, \(\texttt{treatA}\) is the main effect for treatment, but to test for an overall
+treatment effect, we need to test whether all three treatment
+parameters are different from zero using the function \(\texttt{anova()}\).
+
+```{r, echo=TRUE, eval=FALSE}
+anova(geeInCSNull, geeInCS)
+```
+
+There is strong evidence for treatment effects in week 1, 4 and 6,
+since the comparison of the full with the null model with
+\(\texttt{anova()}\) results in a very small $p$-value.  
+
+**Approach 2: Extended ANCOVA model**
+
+Again, we compare a null with the full model. The null model contains only the baseline lead and week as variables, while the full model includes an interaction between treatment and week to explore whether there is an treatment effect.
+```{r, echo=TRUE}
+ANCOVANull <- lead ~ lead.0 + fweek
+ANCOVAFull <- lead ~ lead.0 + Treatment*fweek
+```
+
+<!-- ```{r, echo=TRUE, message=FALSE} -->
+<!-- # centering the data -->
+<!-- tlclong2$lead.0.cent <- tlclong2$lead.0 - mean(tlc$lead.0) -->
+<!-- head(tlclong2) -->
+<!-- ``` -->
+
+Assuming an unstructured working correlation structure, we fit the two models.
+```{r, echo=TRUE, size="tiny", results = FALSE, message=FALSE}
+geeUnANCOVANull <- geeglm(ANCOVANull, id=id, data = tlclong2,
+                          corstr = "unstructured")
+geeUnANCOVAFull <- geeglm(ANCOVAFull, id=id, data = tlclong2,
+                          corstr = "unstructured")
+```
+Table \@ref(tab:geeUnANCOVAFull) summarizes the estimates, confidence intervals, and p-values of the full model. 
+```{r geeUnANCOVAFull, echo=FALSE, size="tiny", results="asis"}
+knitr::kable(tableRegression(geeUnANCOVAFull, intercept = FALSE, latex = FALSE, xtable = FALSE),
+             caption = "Model fit results from the full model",
+             booktabs = TRUE, align = "l")
+```
+Using \(\texttt{anova()}\) again, we can see strong evidence for a treatment effect since the p-value is very small.
+```{r, echo=TRUE, size="tiny", results='hide'}
+anova(geeUnANCOVANull, geeUnANCOVAFull)
+```
+
+The baseline variable \(\texttt{lead.0}\) has coefficient $`r round(coef(geeUnANCOVAFull)[2],2)`$. According to Chapter \@ref(contOut), in ANCOVA, this coefficient represents the correlation between baseline and follow-up measurements and can be expected to be between 0 and 1. When it is 1, ANCOVA is the same as the change score analysis. 
+
+### Generalized Least Squares
+Generalized Least Squares (GLS) is a parametric method for estimating regression parameters when errors are correlated. Different from GEE, GLS uses Maximum Likelihood (\(\texttt{ML}\)) or Restricted Maximum Likelihood (\(\texttt{REML}\)). GLS is more powerful for unbalanced data.
+
+:::{.example #TLC name="continued"}
+Now we study the application of \(\texttt{gls()}\) to the TLC dataset based on an ANCOVA formulation. The data we use here is \(\texttt{tlclong2}\), which is in a long format and has an additional column for baseline \(\texttt{lead.0}\), see Table \@ref(tab:tlclong2). Five attempts using different assumptions on the correlation structures are given below.
+:::
+
+```{r, warning=FALSE, message=FALSE, echo=TRUE}
+library(nlme)
+ANCOVAFull <- lead ~ lead.0 + Treatment*fweek
+
+# no correlation
+m0 <- gls(ANCOVAFull, data = tlclong2, method = "ML")
+# compound symmetry
+m1 <- gls(ANCOVAFull, data = tlclong2, method = "ML",
+          correlation = corCompSymm(form = ~ 1 | id))
+# exponential correlation
+m2 <- gls(ANCOVAFull, data = tlclong2, method = "ML",
+          correlation = corExp(form = ~ week | id))
+# continuous time AR-1 
+m3 <- gls(ANCOVAFull, data = tlclong2, method = "ML",
+          correlation = corCAR1(form = ~ week | id))
+# unstructured correlation matrix
+m4 <- gls(ANCOVAFull, data = tlclong2, method = "ML",
+          correlation = corSymm(form = ~1 | id))
+```
+
+Model \(\texttt{m0}\) is equivalent to a linear model with independence assumption. Model \(\texttt{m1}\) is a uniform correlation model, and the estimate of its correlation parameter $\rho$ is given in the output. 
+```{r echo=TRUE}
+summary(m1$modelStruct)
+```
+
+Model \(\texttt{m2}\) is the exponential correlation model, and the estimate of the range parameter $1/\phi$ can be found in the output. The range parameter is estimated to be around `r round(exp(coef(m2$modelStruct)),2)`, which means that for distance between measurements greater than `r round(exp(coef(m2$modelStruct)),2)`, the correlation is considered "small". 
+```{r, echo=TRUE}
+summary(m2$modelStruct)
+```
+
+Model \(\texttt{m3}\) is a continuous AR(1) model, where the estimated parameter \(\texttt{Phi}\) in the output corresponds to $\exp(-\phi)=\alpha$ in our version of notation. 
+```{r, echo=TRUE}
+summary(m3$modelStruct)
+```
+
+Model \(\texttt{m4}\) is the unstructured correlation model, which allows for a different correlation for every pair of observations made from the same individual. Since the correlation matrix only requires symmetry, the model estimates every off-diagonal correlation parameters.
+```{r, echo=TRUE}
+summary(m4$modelStruct)
+```
+
+**Obtaining treatment estimates**
+
+We can obtain the effect estimates, confidence intervals, and p-values from the models by using the \(\texttt{printWaldCI()}\) function in the \(\texttt{R}\) package \(\texttt{biostatUZH}\). 
+<!-- For example for model \(\texttt{m1}\), -->
+```{r, echo=FALSE, eval=FALSE}
+library(biostatUZH)
+printWaldCI(theta=coef(m1)["TreatmentActive"], 
+            se.theta=summary(m1)$tTable["TreatmentActive","Std.Error"])
+```
+
+**Compare models**
+
+We can compare the models using \(\texttt{anova()}\). By comparing the AIC and BIC, and performing a likelihood ratio test, in Table \@ref(tab:anova2), we see that the model \(\texttt{m4}\) fits the best. We notice that the log-likelihood, AIC and BIC values are identical in model \(\texttt{m2}\) and \(\texttt{m3}\) because the two models are equivalent. 
+```{r, echo=TRUE, results='hide'}
+anova(m0,m1,m2,m3,m4)
+```
+
+```{r anova2, echo=FALSE}
+anova_result <- anova(m0, m1, m2, m3, m4)
+anova_result_df <- as.data.frame(anova_result)[-1]
+num_cols <- sapply(anova_result_df, is.numeric)
+num_cols[length(num_cols)] <- FALSE
+anova_result_df[ , num_cols] <- round(anova_result_df[ , num_cols], 1)
+knitr::kable(anova_result_df, 
+             caption = "ANOVA table for model comparison among m0, m1, m2, m3, and m4.")
+```
+
+<!-- **Extended ANCOVA (Approach 4) with unstructured correlation matrix** -->
+<!-- ```{r, echo=TRUE} -->
+<!-- gls4 <- gls(lead ~ lead.0 + treat*fweek, data = tlclong2, -->
+<!--           method = "ML", correlation = corSymm(form = ~ 1 | id)) -->
+<!-- ## reference model without treatment effect -->
+<!-- gls4.0 <- gls(lead ~ lead.0 + fweek, data = tlclong2, -->
+<!--           method = "ML", correlation = corSymm(form = ~ 1 | id)) -->
+
+<!-- ## effect estimates -->
+<!-- print(xtable(summary(gls4)$tTable)) -->
+
+<!-- ## investigate evidence for treatment effect -->
+<!-- anova(gls4.0, gls4) -->
+<!-- ``` -->
+<!-- We can see `gls4` is better, so there is strong evidence for a treatment effect. -->
+
+**Residual analysis**
+
+There are different types of residuals that can be calculated from a fitted general linear model. 
+The **raw residuals** (\(\texttt{type="response"}\)) are calculated using $r_{ij} = y_{ij} - \boldsymbol{x_{ij}^\top \hat{\beta}}$. The **standardized residuals** (\(\texttt{type="pearson"}\)) are obtained by dividing the raw residuals by an estimate of the standard deviation, $\tilde{r}_{ij} = r_{ij} / \hat{\sigma}$. The **normalized residuals** (\(\texttt{type="normalized"}\)) are adjusted to remove correlation, computed as $\tilde{n}_i = \mathbf{V}_0^{-1/2} \mathbf{\tilde{r}}_i$, where $\mathbf{V}_0$ is the estimated correlation matrix of $\mathbf{r_i}=(r_{i1},\ldots,r_{rm})^\top$.  They are used to check for residual correlation. If the assumed correlation structure is correct, then $\tilde{n}_i \sim \Nor(\mathbf{0,I})$.
+
+:::{.example #TLC name="continued"}
+Now we apply residual analyses on the fitted model `m4`.
+:::
+```{r, echo=TRUE}
+r1 <- matrix(residuals(m4, type = "response"), ncol=3, byrow=TRUE)
+r2 <- matrix(residuals(m4, type = "pearson"), ncol=3, byrow=TRUE)
+r3 <- matrix(residuals(m4, type = "normalized"), ncol=3, byrow=TRUE)
+```
+
+```{r echo=FALSE}
+mynames <- c("week 1", "week 4", "week 6")
+colnames(r1) <- colnames(r2) <- colnames(r3) <- mynames
+
+printVarCor <- function(r){
+variance <- round(cov(r),2)
+#res <- round(cbind(variance, cor(r)),2)
+}
+```
+Table \@ref(tab:raw) shows an increasing trend in residual variance.
+<!--(on the left) and substantial correlation (on the right).-->
+```{r raw, echo=FALSE}
+## raw residuals exhibit increasing variance and substantial correlation
+knitr::kable(printVarCor(r1), caption = "Raw residuals covariance", booktabs = TRUE, align = "l")
+```
+In Table \@ref(tab:standard), the standardized residuals still exhibit an increasing variance.
+<!--and identical correlation as in Table \@ref(tab:raw).-->
+```{r standard, echo=FALSE}
+## standardized residuals still exhibit increasing variance and identical correlation as raw residuals
+knitr::kable(printVarCor(r2), caption = "Standardized residuals covariance", booktabs = TRUE, align = "l")
+```
+The normalized residuals in Table \@ref(tab:norm) still exhibit an increasing trend in variance with smaller covariances compared to raw and standardized residuals.
+```{r norm, echo=FALSE}
+## normalized residuals still exhibit increasing variance with small correlations
+knitr::kable(printVarCor(r3), caption = "Normalized residuals covariance", booktabs = TRUE, align = "l")
+```
+
+**Allowing for variance heterogeneity**
+
+We can explore further to allow for heterogeneity in variances and test the evidence for it.
+```{r, echo=TRUE, results='hide'}
+m4var <- update(m4, weight=varIdent(form = ~ 1 | fweek))
+anova(m4, m4var)
+```
+
+```{r, echo=FALSE, results='hide'}
+p <- round(anova(m4, m4var)$`p-value`[2],2)
+```
+
+According to the \(\texttt{anova()}\) output (p-value = `r p`), there is no evidence for heterogeneity of variance.
+
+<!-- - Effect estimates and comparison with GEE -->
+<!-- ```{r, echo=TRUE, results='asis'} -->
+<!-- ## gls -->
+<!-- print(xtable(summary(m4var)$tTable), type="html") -->
+
+<!-- ## gee -->
+<!-- print(xtable(summary(geeUnANCOVAFull)$coef),type="html") -->
+<!-- ``` -->
+
+### Random effects model for continuous outcomes
+We now introduce random effects into the model to capture individual heterogeneity in the mean response. For the $i$-th individual we include the individual-specific **random effects** $\boldsymbol{U}_i$:
+\begin{equation}
+  Y_{ij} \given \boldsymbol{U}_i,{\epsilon}_{ij} = \boldsymbol{x}_{ij}^{\top}\boldsymbol{\beta} + \boldsymbol{d}_{ij}^{\top}\boldsymbol{U}_i + \epsilon_{ij}
+\end{equation}
+where the $\boldsymbol{U}_i$'s are mutually independent and $\boldsymbol{U}_i\sim \Nor_q(\boldsymbol{0}, \boldsymbol{G})$, and $\epsilon_{ij} \sim \Nor(0, \tau^2)$. The vector $\boldsymbol{d}_{ij}$ (dimension $q \times 1$) is known and in general a sub-vector of the covariates $\boldsymbol{x}_{ij}$ ($p \times 1$). We obtain a linear **mixed effects** model with **fixed effects** $\boldsymbol{\beta}$ and **random effects** $\boldsymbol{U}_i$.
+
+The unknown parameters are $\beta, \boldsymbol{G}, \tau^2$ and the random effects $\boldsymbol{U}_i$. We use (RE)ML to estimate  $\beta, \boldsymbol{G}, \tau^2$ and use empirical Bayes to estimate $\boldsymbol{U}_i$. This mixed effect model will introduce marginal correlation between $Y_{ij}$ and $Y_{ik}$ into the model (see equation \@ref(eq:marg2) in Appendix \@ref(RandEff)).
+
+#### Random intercept model
+In a random intercept model (see Appendix \@ref(A:randInt)), the intercept ${\tilde U}_i=\beta_0+u_i$ is varying between individuals with mean $\beta_0$ and variance $\nu^2$. For more detail, see Appendix \@ref(A:randInt).
+
+:::{.example #TLC name="continued"}
+We fit a random intercept model for TLC data. As before, we include the baseline \(\texttt{lead.0}\) as a covariate.
+:::
+
+```{r echo=TRUE}
+library(nlme)
+## Random intercept model
+m1.ri <- lme(lead ~ Treatment * fweek + lead.0, random = ~ 1 | id, data = tlclong2)
+## Compound symmetry model (uniform correlation)
+m1.uc <- gls(lead ~ Treatment * fweek + lead.0, data = tlclong2,
+             correlation = corCompSymm(form = ~ 1 | id))
+```
+The treatment effect at week 1 is estimated to be $\beta=$ $`r round(m1.ri$coefficients$fixed[2],2)`$, with confidence interval (`r round(intervals(m1.ri)$fixed["TreatmentActive", ][1],2)`, `r round(intervals(m1.ri)$fixed["TreatmentActive", ][3],2)`). The estimated standard deviation of the random effects is $\nu=$ $`r round(exp(attributes(m1.ri$apVar)$Pars[[1]]),2)`$, and the estimated residual standard deviation $\tau=$ $`r round(exp(attributes(m1.ri$apVar)$Pars[[2]]),2)`$. 
+
+The random intercept model is equivalent to a uniform correlation model with $\rho=\nu^2/(\nu^2+\tau^2)$. We can see this by comparing estimate of `Rho` in model \(\texttt{m1.uc}\) with the calculated $\rho$ from model \(\texttt{m1.ri}\) using estimated $\nu$ and $\tau$.
+```{r echo=TRUE}
+nu <- exp(attributes(m1.ri$apVar)$Pars[[1]])
+tau <- exp(attributes(m1.ri$apVar)$Pars[[2]])
+(rho <- nu^2/(nu^2+tau^2))
+(Rho = coef(m1.uc$modelStruct$corStruct, unconstrained = F))
+```
+
+The random intercepts estimates are visualised in the beeswarm plot and histogram in Figure \@ref(fig:beeswarm).
+```{r beeswarm,warning=FALSE, message=FALSE, echo=FALSE, fig.cap="Beeswarm plot and histogram of the random intercepts."}
+ri <-  coef(m1.ri)[,1]
+par(mfrow=c(1,2), pty="s", las=1)
+library(beeswarm)
+beeswarm(ri, ylab="Random intercept", col="lightblue3", pch=19)
+##plot(ri, cex=0.7, pch=19, xlab="Tree", ylab="Random intercept", axes=FALSE)
+##axis(2)
+##box()
+##axis(1, at=1:length(ri), names(ri))
+library(MASS)
+truehist(ri, xlab="Random intercept", col="lightblue3")
+```
+
+#### Random slope model 
+Now the time points (week 1, 4, and 6) are included in the covariate vector and considered as a random effect. Then $\boldsymbol{U}_i$ is a 2-dimensional random effect with mean zero and $2 \times 2$ covariate matrix $\boldsymbol{G}$ (see Appendix \@ref(randSlope)).
+
+<!-- Note: Estimates of the intercept and of the $2 \times 2$ matrix $\boldsymbol{G}$ will depend on the **scaling** of the time variable $t_{ij}$. For example the estimate will be different when time variable takes values between -100 and 100 compared to that when time variable is from 0 to 200. -->
+
+:::{.example #TLC name="continued"}
+We fit a random slope model for the TLC data. This model allows varying intercepts and effects of treatment for every individual. 
+:::
+
+```{r echo=TRUE}
+m2.ris <- lme(lead ~ week + Treatment* week + lead.0, data = tlclong2, 
+              random = ~ 1 + week | id)
+```
+
+From the output we can get the estimated treatment effect, residual standard deviation, and the correlation matrix $\boldsymbol{G}$. 
+
+Table \@ref(tab:treateff) summarizes the estimated parameters with their standard errors and p-values.
+```{r treateff,echo=FALSE, message=FALSE,warning=FALSE}
+library(broom.mixed)
+table <- tidy(m2.ris,
+     effects   = "fixed",
+     conf.int  = TRUE,
+     exponentiate = FALSE) |>
+  select(term, estimate, conf.low, conf.high, p.value) |>
+  mutate_if(is.numeric, ~round(.x, 2))
+knitr::kable(table,
+             caption = "Parameter estimates with confidence intervals and p-values from the model m2.ris.", align = "l")
+```
+
+Figure \@ref(fig:randomslope) shows the fitted individual linear profiles and the mean linear profiles in the two groups. The placebo group has a flat mean fit while the treatment group has an increasing mean fit but remains below that in the placebo group. This is supported by the fact that after the dramatic drop in blood lead levels among the children treated with succimer in week 1, there is a rebound in blood lead levels, as lead stored in the body achieves a new equilibrium. 
+
+```{r randomslope, echo=FALSE, fig.cap="Fitted individual linear profiles and mean linear profiles in two groups according to the random slope model."}
+par(las=1, mfrow=c(1,1), pty="s")
+T <- length(table(tlclong2$week))
+x <- as.numeric(names(table(tlclong2$week)))
+mean_lead0 <- mean(tlclong2$lead.0, na.rm = TRUE)
+mean_lead0.P <- mean(tlclong2$lead.0[tlclong2$Treatment=='Placebo'], na.rm = TRUE)
+mean_lead0.T <- mean(tlclong2$lead.0[tlclong2$Treatment=='Active'], na.rm = TRUE)
+
+y <- matrix(fitted(m2.ris), nrow=T, byrow=FALSE)
+matplot(x, y, lwd=0.6,  ylim=c(0,60), xaxt="n",
+        col=rgb(0+as.numeric(tlclong2$Treatment=="Active"),0,0,0.2)[seq(1, 300, by=3)], 
+        type="b", cex=0.5, pch=19, lty=1, xlab="Week", ylab="mean blood lead level")
+axis(side=1, at=c(1, 4, 6))
+ab <- summary(m2.ris)$tTable[,1]## /c(1,100,1,100)
+abline(ab[c(1,2)]+c(mean_lead0.P * ab[4], 0), col=1, lwd=4)
+abline(ab[c(1,2)]+ab[c(3,5)]++c(mean_lead0.T * ab[4], 0), col=2, lwd=4)
+legend("topleft", col=c(1,1,2,2), lwd=c(.6,4,.6,4), legend=c("Placebo","Mean fit", "Active", "Mean fit"), lty=1, cex=0.8)
+```
+
+
+## Binary longitudinal outcomes
+There are generally two approaches for analyzing binary longitudinal data using generalized linear models. The first one is to use **marginal models** (quasi-likelihood, generalized estimating equations), and the other one is using **conditional models** (i.e. models with random effects). While the marginal approach allows explicitly for correlation or association between observations made from the same individual, a conditional model assumes independence given the random effects, which implies marginal correlation. For non-normal data, the interpretations of regression coefficients are different between the two methods: the marginal interpretation is about "population-averages", but the individual/conditional interpretation is "subject-specific". The first section will focus on the marginal model, and the second section will address the conditional model. 
+
+### GEE 
+The basic idea of this marginal approach is to use multivariate quasi-likelihood approach for non-normal data to take into account correlation between components of $Y_i$ (see Appendix \@ref(GEEs) for more details.)
+
+:::{.example #respiratory}
+We will use the dataset \(\texttt{respiratory}\) available in the package \(\texttt{geepack}\), originally from @Koch1989. The data are from a clinical trial of patients with respiratory illness, where 111 patients from two different clinics were randomized to receive either placebo or an active treatment. Patients were
+examined at baseline and at four visits during treatment. The \(\texttt{baseline}\) is always the same for the same patient \(\texttt{id}\). The respiratory status (categorized
+as 1 = good/response, 0 = poor/no response) was determined at each visit. 
+
+```{r echo=TRUE}
+data("respiratory", package = "geepack")
+```
+
+The first 6 rows of the dataset are presented in Table \@ref(tab:resp). We notice that the \(\texttt{id}\)'s in center 2 are duplicated with those in center 1, which means the same \(\texttt{id}\) in centers 1 and 2 corresponds to two different individuals. Therefore we redefine \(\texttt{id}\)'s in center 2 to distinguish individuals from the two centers.
+```{r echo=TRUE, results='hide'}
+## center 2 is repeated
+respiratory$id[respiratory$center == 2] <- 
+  respiratory$id[respiratory$center == 2] + max(respiratory$id)
+```
+
+```{r resp, echo=FALSE}
+kable(head(respiratory), align = "l", caption = "First six rows of the respiratory dataset.")
+```
+
+:::
+
+We first look at the response rate (proportion of patients with good respiratory status) per time point, stratified by treatment and center. We can see from Figure \@ref(fig:respfigure) that the response rates are higher for the active treatment than for placebo across all visits and both centers. They are also higher in center 2 than in center 1.
+```{r respfigure,echo=FALSE, fig.width = 6, fig.height = 4,message=FALSE, warning=FALSE, fig.cap="Response rates by treatment groups and centers."}
+library(dplyr)
+library(tidyr)
+summaries <- respiratory |>
+  group_by(visit, treat, center) |>
+    summarize(responses = sum(outcome), rate = responses/n())
+## Plot
+library(ggplot2)
+ggplot(data = summaries, aes(x = visit, y = rate, color = treat)) +
+geom_line(alpha = 0.3) +
+geom_point(size = 1.5) +
+facet_wrap(~ center, labeller = label_bquote("Center" ~ .(center))) +
+labs(x = "Visit", y = "Response rate", color = "Treatment") +
+scale_y_continuous(limits = c(0, 1), labels = scales::percent) +
+theme_bw()
+```
+
+Now we use package \(\texttt{geepack}\) to fit GEE models for binary data including the explanatory variables \(\texttt{center, treat, age}\), and \(\texttt{baseline}\). The first model is using an exchangeable correlation structure and the second one is using an unstructured correlation structure. 
+```{r echo=TRUE, warning=FALSE, message=FALSE}
+respiratory$treat <- relevel(respiratory$treat, ref = "P")
+respiratory$center <- factor(respiratory$center)
+## Fit GEE models
+library(geepack)
+geeExc <- geeglm(outcome ~ center + treat + age + baseline, data = respiratory,
+id = id, family = binomial(link = "logit"),
+corstr = "exchangeable")
+geeUns <- geeglm(outcome ~ center + treat + age + baseline, data = respiratory,
+id = id, family = binomial(link = "logit"),
+corstr = "unstructured")
+```
+The estimated correlation parameter in the model with exchangeable correlation structure is $`r round(geeExc$geese$alpha[[1]],2)`$. In the model with unstructured correlation structure, the estimated correlation matrix is
+
+```{r echo=FALSE, results='hide'}
+geeUns$geese$alpha
+```
+
+$$
+\begin{pmatrix}
+1 & `r round(geeUns$geese$alpha[1], 2)` & `r round(geeUns$geese$alpha[2], 2)` & `r round(geeUns$geese$alpha[3], 2)` \\
+`r round(geeUns$geese$alpha[1], 2)` & 1 & `r round(geeUns$geese$alpha[4], 2)` & `r round(geeUns$geese$alpha[5], 2)` \\
+`r round(geeUns$geese$alpha[2], 2)` & `r round(geeUns$geese$alpha[4], 2)` & 1 & `r round(geeUns$geese$alpha[6], 2)` \\
+`r round(geeUns$geese$alpha[3], 2)` & `r round(geeUns$geese$alpha[5], 2)` & `r round(geeUns$geese$alpha[6], 2)` & 1
+\end{pmatrix}.
+$$
+
+We can see that there is some variation among the correlations in the unstructured model, with values between `r round(min(geeUns$geese$alpha),2)` and `r round(max(geeUns$geese$alpha),2)`.
+
+Looking at the results from the unstructured model in Table \@ref(tab:unstr), the treatment increases the odds to respond by a factor of
+3.4 compared to placebo, and there is strong evidence that this increase is different from one. We
+also estimate slightly higher odds to respond for patients in center 2 compared to center 1
+(OR = 1.96). Finally, the estimate of baseline suggests that responding already at baseline is strongly associated (OR = 6.6) with responding also in the follow-up visits.
+```{r unstr, echo=FALSE, warning=FALSE, message=FALSE}
+knitr::kable(tableRegression(geeUns, latex = FALSE, xtable = FALSE), caption = "Estimated coefficients and their confidence intervals and p-values from the unstructured correlation model.", align = "l")
+```
+
+However, we need to be careful using the correlation between binary variables. It can be shown that the correlation has bounds depending on the marginal success probabilities, which makes correlation as a measure not optimal for binary variables (see Appendix \@ref(GEEs)).
+
+Sometimes more elaborate modelling of the correlation structure may be needed, for example dependence of correlation/association between pairs of observations $Y_{ij}$ and $Y_{ik}$ from the $i$-the individual on the time distance. Such models can be incorporated using a **user defined working correlation structure** (\(\texttt{corstr=userdefined}\)) with additional explanatory variables \(\texttt{zcor}\) (typically a function of the time distance) for each pair of observations.
+
+### Logistic regression with random effects
+We also consider the approach using generalized mixed-effects models, for example the logistic regression with random effects, for analysing binary longitudinal data. For more details, see Appendix \@ref(logisticRand). 
+
+:::{.example #respiratory name="continued"}
+Here we continue to use the \(\texttt{respiratory}\) dataset and fit a generalized linear mixed-effects model with a random intercept. After that we compare it with a marginal model (GEE).
+:::
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, results='hide'}
+library(lme4)
+## use age per decade
+respiratory$agePerDecade <- respiratory$age/10
+## Fit the model 
+glmer1 <- glmer(outcome ~ 1 + center + treat + agePerDecade + baseline + (1 | id), 
+                data = respiratory, family = binomial(link = "logit"), 
+                nAGQ = 25)
+```
+
+The estimated coefficients based on Gauss-Hermite approximation with \(\texttt{nAGQ=25}\) support points are given in Table \@ref(tab:coef2).
+The estimated standard deviation of the intercept is `r round(attr(VarCorr(glmer1)$id, "stddev"),2)`.
+```{r coef2, echo=FALSE, message=FALSE, warning=FALSE}
+library(broom.mixed)
+table <- tidy(glmer1,
+     effects   = "fixed",
+     conf.int  = TRUE,
+     exponentiate = TRUE) |>
+  select(term, estimate, conf.low, conf.high, p.value) |>
+  mutate_if(is.numeric, ~round(.x, 2))
+knitr::kable(table, align = "l",
+             caption = "Estimated odds ratios from the generalized linear mixed-effects model with a random intercept.")
+##knitr::kable(tableRegression(glmer1, latex = FALSE, xtable = FALSE), caption = "Estimated coefficients and their confidence intervals and p-values from the unstructured correlation model.", align = "l")
+```
+
+We can also visualize the estimates of random intercepts in a histogram (Figure \@ref(fig:hist2)).
+```{r hist2, echo=FALSE, fig.width = 6, fig.height = 4,fig.cap="Histogram of the estimated random intercepts from model glmer1."}
+ri <- as.matrix(coef(glmer1)$id[,1])
+par(mar=c(5,5,1,1), las=1)
+hist(ri, ylab="frequencies", xlab="random intercept", cex=0.75, main = "", col="lightblue3")
+```
+
+Then, we fit a marginal model using an exchangeable correlation structure.
+```{r echo=TRUE}
+## Fit GEE model
+geeExc <- geeglm(outcome ~ center + treat + agePerDecade + baseline, data = respiratory, id = id, 
+                 family = binomial(link = "logit"), corstr = "exchangeable")
+```
+
+We then compare the conditional with the marginal estimates by looking at the point estimates and their confidence intervals in Figure \@ref(fig:compare). From the plot, we can see that the odds ratio estimates from the marginal model (geeglm) are all closer to 1
+compared to those from the conditional model (glmer). This agrees with the relationship in Equation \@ref(eq:condmarg).
+
+```{r compare, echo=FALSE, fig.cap="Estimated odds ratios and their confidence intervals from conditional and marginal models."}
+coefs <- c(coef(geeExc), fixef(glmer1))
+ses <- c(sqrt(diag(geeExc$geese$vbeta)), sqrt(diag(vcov(glmer1))))
+modelDF <- data.frame(Variable = names(coefs),
+Estimate = coefs,
+lower = coefs - qnorm(p = 0.975)*ses,
+upper = coefs + qnorm(p = 0.975)*ses,
+Model = c(rep("geeglm", 5), rep("glmer", 5)))
+## forest plot on odds ratio scale
+ggplot(data = subset(modelDF, Variable != "(Intercept)"),
+aes(x = Variable, y = exp(Estimate), color = Model)) +
+geom_hline(yintercept = 1, lty = 2, alpha = 0.5) +
+geom_pointrange(aes(ymin = exp(lower), ymax = exp(upper)),
+position = position_dodge(width = 0.6)) +
+guides(color = guide_legend(reverse = TRUE)) +
+scale_y_log10() +
+coord_flip() +
+theme_bw()+
+labs(x = "Variable", y = "Odds Ratio")
+```
+
+## Sample size calculation
+In this section, we consider a contituous outcome case. Suppose the model is
+\[
+Y_{ij} = \beta_0 + \beta_1 x_i + \epsilon_{ij}, \quad j=1,\ldots,n; \quad i=1,\ldots, 2m
+\]
+where $x_i$ is a binary treatment indicator, $m$ is the number of patients per group and $n$ is the number of observations per patient. 
+Suppose further that the correlation between observations from the same patient is $\rho$ (exchangeable correlation). 
+We discussed the usual two independent sample size formula in Chapter \@ref(SampleSize). For longitudinal data, the normal formula has to be adjusted with the longitudinal **design effect**: 
+$$
+D_{\text{eff}} = \{1 + (n-1) \rho \}/n > \rho \quad \text{ for all $n$}.
+$$
+We notice that the design effect cannot be smaller than $\rho$.
+
+For an arbitrary correlation matrix $\boldsymbol{R}$, the design factor is
+\[
+D_{\text{eff}} = \{ \boldsymbol{1}^\top \boldsymbol{R}^{-1} \boldsymbol{1}\}^{-1},
+\]
+which is the inverse of the sum of the elements in $\boldsymbol{R}^{-1}$. 
+The sample size is then obtained by multiplying the standard sample size design with the design effect. 
+
+We compare the design effect under exchangeable and AR-1 correlation structure assumptions and different values of $\rho$ in Figure \@ref(fig:design). The independence line is the design effect when $\rho=0$, i.e. no correlation between observations. When $n$ is 1 or 2, the design effect of the exchangeable and the AR-1 correlation structures are identical, and this is because they give the same correlation structure when $n$ = 1 or 2. In the AR-1 model, the correlation is smaller as $n$ increases, so there are less correlation in the data compared to that under exchangeable assumption. Thus we need a smaller sample size under the AR-1 assumption (design effect smaller) compared to that under exchangeable assumption.
+```{r design, echo=FALSE, fig.cap="Design effects under different correlation structure and different values of $\\rho$."}
+library(latex2exp)
+rho <- seq(0.5, 0.9, 0.1)
+maxn <- 10
+n <- c(1:maxn)
+
+Deff1 <- Deff2 <- matrix(NA, nrow=length(rho), ncol=maxn)
+rownames(Deff1) <- rownames(Deff2) <- as.character(rho)
+colnames(Deff1) <- colnames(Deff2) <- as.character(n)
+
+for(i in 1:length(rho)){
+    R <- diag(maxn)
+    for(ii in 1:maxn)
+        for(jj in 2:maxn)
+            R[ii,jj] <- R[jj,ii] <- rho[i]^abs(ii-jj)
+    for(j in 1:length(n)){
+        Deff1[i,j] <- (1 + (n[j]-1)*rho[i])/n[j] 
+        Deff2[i,j] <- 1/sum(solve(R[1:n[j], 1:n[j]])) # solve() gives the inverse of R
+    }
+}
+
+par(las=1, mfrow=c(1,1))
+matplot(n, t(Deff1), type="l", ylab="design effect", lty=1, ylim=c(0,1))
+## title("exchangeable")
+legend("bottomleft", lty=1, legend = TeX(paste0("$\\rho = ", as.character(rev(rho)), "$")),, col=c(5:1), cex=0.8)
+for(i in 1:length(rho))
+    lines(n, Deff2[i,], type="l", ylab="design effect", col=i, lty=5, ylim=c(0,1))
+lines(n, 1/n, type="l", lty=2)
+
+##title("ar1")
+legend("bottomright", lty=c(1,5,2), c("exchangeable", "AR-1", "independence"),
+       cex=0.7, bg="white")
+```
+
+<!--The AR-1 lines can never go under the independence assumption line however, and this is because ???-->

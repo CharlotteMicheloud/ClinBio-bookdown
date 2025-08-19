@@ -330,7 +330,7 @@ m <- as.data.frame(matrix(c("$a=x_1=63$", "$c=x_2=38$",
                           nrow = 2))
 rownames(m) <- c("Treatment", "Control")
 colnames(m) <- c("Survived", "Not survived", "Total")
-
+library(knitr)
 kable(m, format = "latex", escape = FALSE, align = c('l', 'r', 'r', 'r'))
 ```
 
@@ -1215,7 +1215,394 @@ where $\boldsymbol{S}$ is diagonal with entries $\sqrt{\Var(X_i)}$. The diagonal
 
 # The Linear Model
 
+Suppose we have $i=1,\ldots,n$ continuous outcomes $Y_i$ with
+covariates $\boldsymbol{X}_i$, a vector of length $p$. To simplify
+notation, the first entry of $\boldsymbol{X}_i$ is assumed to be
+always 1. The linear model relates the covariates $\boldsymbol{X}_i$
+to the outcomes $Y_i$ in a linear fashion.  This is most easily
+described if we stack all outcomes into a vector $\boldsymbol{Y}$ of
+length $n$ and stack the covariates $\boldsymbol{X}_i$ into a matrix
+\[
+\boldsymbol{X} = \left( \begin{array}{c} \boldsymbol{X}_1^{\top} \\   \boldsymbol{X}_2^{\top} \\ \vdots  \\ \boldsymbol{X}_n^{\top} \end{array} \right). 
+\]
+Likewise, additional measurement error terms $\epsilon_i$, $i=1,\ldots,n$, are also stacked into a vector $\boldsymbol{\epsilon}$ of length $n$. 
 
-## Concepts
+## Standard Formulation
+The standard formulation of the linear model assumes, that the error
+terms $\epsilon_i$ have mean zero and are mutually independent with common variance
+$\sigma^2$. The relationship between $\boldsymbol{X}$ and $\boldsymbol{Y}$ is described by the **regression coefficients** 
+$\boldsymbol{\beta}$, a vector of length $p$, and we obtain the standard linear model
+\[
+\boldsymbol{Y} = \boldsymbol{X} \boldsymbol{\beta} + \boldsymbol{\epsilon}.
+\]
+The **least squares** estimate of $\boldsymbol{\beta}$ is 
+\[
+\widehat{\boldsymbol{\beta}} = (\boldsymbol{X}^{\top} \boldsymbol{X})^{-1}\boldsymbol{X}^{\top} \boldsymbol{Y}.
+(\#eq:betahat)
+\]
+Note that this estimate this does not require knowledge of $\sigma^2$, but the 
+covariance matrix of \@ref(eq:betahat) depends on $\sigma^2$:
+$$
+\Cov(\widehat{\boldsymbol{\beta}}) = \sigma^2 (\boldsymbol{X}^{\top} \boldsymbol{X})^{-1}.
+(\#eq:covBeta)
+$$
+The variance $\sigma^2$ can be estimated in a second step based on the sum of the squared residuals $e_i = Y_i - \boldsymbol{X}_i^\top \widehat{\boldsymbol{\beta}}$, $\boldsymbol{e}=(e_1, \ldots, e_n)^\top$:
+\[
+\hat \sigma^2 =  \frac{1}{n-p} \boldsymbol{e}^\top \boldsymbol{e} = \frac{1}{n-p} \left(\boldsymbol{Y} - \boldsymbol{X}\widehat{\boldsymbol{\beta}}\right)^{\top}\left(\boldsymbol{Y} - \boldsymbol{X}\widehat{\boldsymbol{\beta}}\right).
+\]
+Plugging in $\hat \sigma^2$ into \@ref(eq:covBeta) can be used to obtain
+standard errors for the coefficients of $\widehat{\boldsymbol{\beta}}$ taking the square roots of the diagonal elements. 
 
-### Standard error
+An example of a linear model is the ANCOVA model discussed in Chapter \@ref(contOut).
+
+## The General Linear Model {#General}
+This section introduces **GEE** and **GLS** for the analysis of longitudinal data, which account for correlations between measurements from the same individual.
+
+:::{.definition #balanced}
+Longitudinal data is called **balanced**, if the same number of observations $n_i=n$ for each individual $i= 1,...,m$ at the same time points $t_{ij}=t_j, j=1,...,n.$
+:::
+
+### GEE's {#GEE}
+**Model formulation**
+\begin{equation} 
+(\#eq:model)
+\boldsymbol{Y} \sim \boldsymbol{\Nor}(\boldsymbol{X\beta}, \boldsymbol{\Sigma})
+\end{equation}
+where $\boldsymbol{\Sigma}$ is block-diagonal with $n \times n$ entries $\boldsymbol{\Sigma_0}$. This means that 
+$$
+\boldsymbol{\Sigma} =
+\begin{pmatrix}
+\boldsymbol{\Sigma}_0 & & & \\
+ & \boldsymbol{\Sigma}_0 & & \\
+ & & \ddots & \\
+ & & &\boldsymbol{\Sigma}_0 
+\end{pmatrix}
+$$
+with zero entries elsewhere.
+
+$\widehat{\boldsymbol{\beta}}_{\boldsymbol{W}}$ are the weighted least squares estimate of $\boldsymbol{\beta}$. Given any weight matrix $\boldsymbol{W}$, $\widehat{\boldsymbol{\beta}}_{\boldsymbol{W}}$ is unbiased with $\E(\widehat {\boldsymbol{\beta}}_{\boldsymbol{W}}) = {\boldsymbol{\beta}}$. The weight matrix $\boldsymbol{W}$ is block-diagonal, with each block $\boldsymbol{W_0}$ of size $n \times n$ for $n$ time points. 
+
+The associated covariance matrix is ("sandwich formula"):
+
+\begin{align*}
+\Cov(\widehat{\boldsymbol{\beta}}_{\boldsymbol{W}}) 
+&= \boldsymbol{V} \, \boldsymbol{\Sigma} \, \boldsymbol{V}^{\top} \\
+\mbox{ where } \boldsymbol{V} 
+&= (\boldsymbol{X}^{\top}\boldsymbol{W}\boldsymbol{X})^{-1}\boldsymbol{X}^{\top}\boldsymbol{W}
+\end{align*}
+
+and requires knowledge of $\boldsymbol{\Sigma}$ (or an estimate $\widehat{\boldsymbol{\Sigma}}$). 
+
+Notice that $\boldsymbol{W}^{-1}$ is often called **working covariance matrix** to distinguish it from the **true covariance matrix** $\boldsymbol{\Sigma}$. It is an approximation to the true covariance matrix of the outcomes. And here are some special cases of $\boldsymbol{W}^{-1}$:
+
+- If $\boldsymbol{W}^{-1} = \boldsymbol{I}$, then we obtain the **least squares estimate** $\widehat {\boldsymbol{\beta}}_{\boldsymbol{W}} = (\boldsymbol{X}^{\top} \boldsymbol{X})^{-1}\boldsymbol{X}^{\top} \boldsymbol{Y}$.
+- If $\boldsymbol{W}^{-1} = \boldsymbol{\Sigma}$, then $\Cov(\widehat{\boldsymbol{\beta}}_{\boldsymbol{W}})$ can be simplified to
+\[
+ \Cov(\widehat{\boldsymbol{\beta}}_{\boldsymbol{W}}) = (\boldsymbol{X}^{\top}\boldsymbol{W}\boldsymbol{X})^{-1}
+\]
+If we set ${\boldsymbol{\Sigma}}$ to $\boldsymbol{W}^{-1}$ in the sandwich formula for 
+$\Cov(\widehat{\boldsymbol{\beta}}_{\boldsymbol{W}})$, we assume that $\Cov (\boldsymbol{Y})= \boldsymbol{W}^{-1}$ (up to scale). This gives us the **naive standard errors** of $\widehat{\boldsymbol{\beta}}_{\boldsymbol{W}}$.
+
+The **sandwich estimate** $\widehat {\boldsymbol R}_{\boldsymbol{W}} = \boldsymbol{V} \, \widehat{\boldsymbol{\Sigma}} \, \boldsymbol{V}^{\top}$ is a consistent estimate of $\Cov(\widehat{\boldsymbol{\beta}}_{\boldsymbol{W}})$, where the estimate $\widehat{\boldsymbol{\Sigma}}_0$ is the **empirical covariance matrix** of the residuals $\boldsymbol{r}_i = {\boldsymbol Y}_i - \boldsymbol{X}_i\widehat {\boldsymbol \beta}_{\boldsymbol{W}}$, and $\widehat{\boldsymbol{\Sigma}}$ is block-diagonal with
+entries $\widehat{\boldsymbol{\Sigma}}_0$. The **robust standard errors** can be extracted from the diagonal: $\sqrt{\diag(\widehat {\boldsymbol R}_{\boldsymbol{W}})}$.
+
+If the naive standard errors are close to the robust standard errors, then $\boldsymbol{W}^{-1}$ must be close to $\Cov (\boldsymbol{Y})$ (up to scale).
+
+Generalized estimating equations work in the following way: 
+
+1. assume some **working correlation matrix** $\boldsymbol{W}$
+2. estimate the coefficients with the **weighted least squares estimate** $\widehat{\boldsymbol{\beta}}_{\boldsymbol{W}}$
+3. estimate the correlation $\widehat{\boldsymbol{\Sigma}}$ of the residuals
+4. compute **robust standard errors** (taking residual correlation into account) from the covariance matrix
+$$\widehat {\boldsymbol{R}}_{\boldsymbol{W}} = \boldsymbol{V} \, \widehat{\boldsymbol{\Sigma}} \, \boldsymbol{V}^{\top}$$ based on the "sandwich" formula applied to the "naive" covariance matrix $\boldsymbol{V}$ of the weighted least-squares estimate $\widehat{\boldsymbol{\beta}}_{\boldsymbol{W}}$.
+
+### GLS's
+Generalized Least Squares (GLS) is a parametric method for estimating regression parameters when errors are correlated. Different from GEE, GLS uses Maximum Likelihood (\(\texttt{ML}\)) or Restricted Maximum Likelihood (\(\texttt{REML}\)). 
+
+**Model formulation**
+\begin{equation} 
+\boldsymbol{Y} \sim \boldsymbol{\Nor}(\boldsymbol{X\beta}, \boldsymbol{\Sigma})
+\end{equation}
+where $\Sigma=\sigma^2 \boldsymbol{V}$ is block-diagonal with $n \times n$ entries $\boldsymbol{\Sigma}_0=\sigma^2 \boldsymbol{V}_0$. Here $\boldsymbol{V}_0$ is a **correlation matrix** with entries corresponding to correlations between observations from the same individual. This correlation matrix often only depends on a few parameters.
+
+Below are some commonly used **parametric correlation structures**. 
+
+- **Uniform correlation model, compound symmetry**
+\[
+\boldsymbol{V}_0 = (1 - \rho) \boldsymbol{I} + \rho \boldsymbol{J},
+\]
+where $\boldsymbol{I}$ is the identity matrix, $\boldsymbol{J}$ is a matrix of ones
+and $\rho \in [0,1)$ is an unknown correlation parameter. This is also the \(\texttt{exchangeable}\) correlation structure.
+
+- **Exponential correlation model**
+
+    Set $\rho_{jk} = \exp(- \phi d_{jk})$ where $d_{jk}=|t_j - t_k|$ is the distance (in some unit) between two time points $t_j$ and $t_k$:
+\[
+\boldsymbol{V}_0  = \left\{\exp(- \phi d_{jk})\right\}_{j,k}.
+\]
+The parameter $\phi$ represents the exponential decay of the correlation. 
+The inverse $1/\phi$ is often called the **range parameter**: For a distance $d_{jk}>1/\phi$ we have "small" correlation $\rho_{jk} < \exp(-1)= 0.37$. 
+
+- **Continuous time AR-1 model**: 
+This is a reparameterisation of the exponential correlation model, where $\rho_{jk} = \left\{\alpha^{d_{jk}}\right\}_{j,k}$ and $\alpha=\exp(-\phi)$. This is also the \(\texttt{AR-1}\) correlation structure mentioned earlier.
+
+To choose which correlation structure to use, we may use the **model choice criteria**
+$$
+\mbox{AIC} = - 2 l(\boldsymbol{\hat{\theta}_{\text{ML}}}) + 2\tilde p\\
+\mbox{BIC} = - 2 l(\boldsymbol{\hat{\theta}_{\text{ML}}}) + \tilde p\log(\tilde n)
+$$
+where $l(.)$ is the log likelihood, $\hat{\theta}_{\text{ML}}$ is the maximum likelihood estimate, $\tilde p$ is the number of **all** unknown parameters $\boldsymbol{\theta}$ (including the correlation parameters), and $\tilde n$ is the number of all observations. Smaller values of $\mbox{AIC}$ and $\mbox{BIC}$ are preferred.
+
+**ML and REML estimation**
+
+In model \@ref(eq:model), the block entries $\boldsymbol{\Sigma}_0=\sigma^2 \boldsymbol{V}_0$ in $\boldsymbol{\Sigma}=\sigma^2 \boldsymbol{V}$ often only depends on a few parameters $\boldsymbol{\alpha}$ under parametric models, and it has to be estimated with numerical routines. 
+
+For fixed $\boldsymbol{V}_0$ we obtain the ML estimate of $\boldsymbol{\beta}$:
+\begin{equation} 
+\widehat{\boldsymbol{\beta}} (\boldsymbol{V}_0)= (\boldsymbol{X}^{\top}\boldsymbol{V}^{-1}\boldsymbol{X})^{-1}\boldsymbol{X}^{\top}\boldsymbol{V}^{-1}\boldsymbol{y}, (\#eq:weighted)
+\end{equation}
+which can be identified as the weighted least-squares estimate with $\boldsymbol{W}=\boldsymbol{V}^{-1}$.
+
+We can also obtain the ML estimate of $\sigma^2$:
+\[
+\widehat{\sigma}^2 (\boldsymbol{V}_0)= \mbox{RSS}(\boldsymbol{V}_0)/(nm),
+\]
+
+\[
+ \text{ where } \text{RSS}(\boldsymbol{V}_0) = {(\boldsymbol{y}-\boldsymbol{X}\widehat{\boldsymbol{\beta}})^{\top}\boldsymbol{V}^{-1}(\boldsymbol{y}-\boldsymbol{X}\widehat{\boldsymbol{\beta}})}
+\]
+are the (weighted) residual sum of squares, where $\widehat{\boldsymbol{\beta}} = \widehat{\boldsymbol{\beta}} (\boldsymbol{V}_0)$ is defined in \@ref(eq:weighted).
+ 
+However, ML estimates of $\sigma^2$ and $\boldsymbol{V}_0$ are typically biased and problematic if the dimension $p$ of $\boldsymbol{\beta}$ is large. For example, in the classical linear model ($\boldsymbol{V}_0=\boldsymbol{I}$) the ML estimate ${\sigma_{\text{ML}}}^2 = \mbox{RSS}/(nm)$ is biased, whereas ${\sigma_{\text{REML}}}^2 = \mbox{RSS}/(nm-p)$ is unbiased. The latter estimate is a **Restricted Maximum Likelihood** (REML) estimate, and is the default in function \(\texttt{gls()}\). Also notice that if the sample size $nm$ is large, then ML and REML estimates are very similar.
+
+## Random Effects Model {#RandEff}
+### General formulation
+Suppose there are $p$ covariates and we want to consider $q$ of them as random effects, we could include individual-specific random effects $\boldsymbol{U}_i$ into the model:
+\begin{equation}
+  Y_{ij} \given \boldsymbol{U}_i,{\epsilon}_{ij} = \boldsymbol{x}_{ij}^{\top}\boldsymbol{\beta} + \boldsymbol{d}_{ij}^{\top}\boldsymbol{U}_i + \epsilon_{ij}
+\end{equation}
+where $\boldsymbol{U}_i$'s are mutually independent and $\boldsymbol{U}_i\sim \Nor_q(\boldsymbol{0}, \boldsymbol{G})$ and $\epsilon_{ij} \sim \Nor(0, \tau^2)$. The vector $\boldsymbol{d}_{ij}$ ($q \times 1$) is known and in general a sub-vector of the covariates $\boldsymbol{x}_{ij}$ ($p \times 1$). Then we obtain a linear **mixed effects** model with **fixed effects** $\boldsymbol{\beta}$ and **random effects** $\boldsymbol{U}_i$.
+
+We might want to consider random effects when we want to capture **individual heterogeneity** in the mean response. Random effect model is useful as it induce **marginal correlation** between observations $Y_{ij}$ and $Y_{ik}$ from the same individual (see equation \@ref(eq:marg2)).
+
+**Parameter estimation**
+The marginal moments
+\begin{align*}
+  \E(\boldsymbol{Y}_i) & = \boldsymbol{X}_i \boldsymbol{\beta} (\#eq:marg1) \\
+  \Cov(\boldsymbol{Y}_i) & = \boldsymbol{D}_i \boldsymbol{G}\boldsymbol{D}_i^{\top} + \tau^2 \boldsymbol{I}_{n_i} (\#eq:marg2)
+\end{align*}
+determine the (normal) likelihood to estimate $\boldsymbol{\beta}$, $\boldsymbol{G}$ and $\tau^2$ via (RE)ML. 
+Here $\boldsymbol{D}_i = (\boldsymbol{d}_{i,1},\ldots,\boldsymbol{d}_{i,n_i})^{\top}$ ($n_i \times q$).
+
+It is also possible to estimate ("predict") the random effects $\boldsymbol{U}_i$ and to compute standard errors, and this is done with the **empirical Bayes (EB)** estimate (the **empirical BLUP** estimate).
+
+### Random intercept model {#A:randInt}
+The random intercept model is a special case of a random effects model. In this case, $q=1$ and ${d}_{ij}=1$. 
+
+With $\boldsymbol{x}_{ij}^{\top} = (1, \tilde{\boldsymbol{x}}_{ij}^{\top})$ we have
+$$
+  Y_{ij}\given {U}_i,{\epsilon}_{ij} = (1, \tilde{\boldsymbol{x}}_{ij}^{\top}) \cdot \boldsymbol{\beta} + {U}_i + \epsilon_{ij}.
+$$
+
+This can be rewritten as
+$$
+    Y_{ij}\given {\tilde U}_i,{\epsilon}_{ij}  =  {\tilde U}_i + \tilde{\boldsymbol{x}}_{ij}^{\top}\tilde{\boldsymbol{\beta}} + \epsilon_{ij}
+$$
+where ${\tilde U}_i \sim \Nor(\beta_0, \nu^2)$ represents the **random intercept**, varying between individuals with mean $\beta_0$ and variance $\nu^2$.
+
+### Random slope model {#randSlope}
+Suppose observations $Y_{ij}$ are made at time points $t_{ij}$, which are included in the covariate vector $\boldsymbol{x}_{ij}=(1,t_{ij},\tilde{\boldsymbol{x}}_{ij}^{\top})^{\top}$.
+
+Suppose $q=2$ and $\boldsymbol{d}_{ij}=(1, t_{ij})^{\top}$, then the model becomes
+$$
+  Y_{ij}\given \boldsymbol{U}_i,{\epsilon}_{ij} = (1, t_{ij},\tilde{\boldsymbol{x}}_{ij}^{\top}) \cdot \boldsymbol{\beta} + (1, t_{ij}) \cdot \boldsymbol{U}_i + \epsilon_{ij}
+$$
+where $\boldsymbol{U}_i$ is a 2-dimensional random effect with mean zero and $2 \times 2$ symmetric covariance matrix $\boldsymbol{G}$.
+This is the **random slope** (strictly random intercept and slope) model.
+
+# The Generalized Linear Model
+## The General Formulations
+Here we provide a brief review of the linear regression model:
+$$
+Y_i = \boldsymbol{x}_i^{\top} \boldsymbol{\beta} + \epsilon_i \, \mbox{ with } \, \epsilon_i \sim \Nor(0, \sigma^2)
+$$
+with explanatory variables $\boldsymbol{x}_i$ and regression coefficients $\boldsymbol{ \beta}$ is rewritten as $$Y_i \sim
+\Nor(\mu_i=\boldsymbol{ x}_i^{\top} \boldsymbol{ \beta}, \sigma^2)$$ with mean $\mu_i$ and variance $\sigma^2$.
+
+This can be generalized in two ways: firstly we can consider other distributions than normal distribution for the response variable $Y_i$ (for example, Bernoulli, Binomial, Poisson, $\ldots$). Secondly, the mean $\E(Y_i)=\mu_i$ will be linked to the **linear predictor** $\eta_i = \boldsymbol{ x}_i^{\top} \boldsymbol{ \beta}$ using a (monotone) **link function** $g = h^{-1}$:
+$$
+ g(\mu_i) = \eta_i \, \mbox{ so } \, \mu_i = h(\eta_i).
+$$
+Notice how this is different from **general** linear models (Appendix \@ref(General)): **general** linear models assume a normal distribution of residuals, while **generalized** linear models relax this assumption and allow for other distributions from the exponential family. A general linear model can be viewed as a  **generalized** linear model with normal errors and identity link.
+
+### Logistic regression
+Instead of the normality assumption on $Y_i$ in linear models, other distributions of $Y_i$ are allowed for generalization. 
+
+For logistic regression, consider 
+\begin{align*}
+Y_i &\sim \Bin(1, \mu_i=\pi_i)\\
+\logit(\pi_i)  &=  \boldsymbol{x}_i^{\top} \boldsymbol{\beta}\\
+ \pi_i &= \text{expit}(\boldsymbol{ x}_i^{\top} \boldsymbol{ \beta}).
+\end{align*}
+So here the link function is 
+\[
+g(\pi_i) = \logit(\pi_i) = \log \frac{\pi_i}{1-\pi_i}.
+\]
+
+Except for the intercept, we could interpret $\exp(\beta_i)$ as **odds ratio** in this model. Also notice that the variance is a function of the mean: $\Var(Y_i)=\pi_i(1-\pi_i)$.
+
+If covariates $x_i$ are identical for some observations $Y_i$, then 
+aggregation to the binomial form $Y_j = \sum_{i} Y_i \sim \Bin(n_i, \pi_i)$ is possible. 
+
+An example of a logistic regression can be found in Chapter \@ref(logisticRand).
+
+### Log-linear Poisson regression
+In addition to binary data, we may consider count data, for which the random variable $Y_i$ follows a Poisson distribution.
+
+Poisson regression assumes
+\begin{align*}
+Y_i &\sim \Po(\mu_i)\\
+\log(\mu_i) &= \boldsymbol{x}_i^{\top} \boldsymbol{\beta} ,\\
+\mu_i &= \exp( \boldsymbol{x}_i^{\top} \boldsymbol{\beta} ),\\
+\end{align*}
+so the link function in this case is
+$$g(\mu_i) = \log(\mu_i).$$
+As a consequence, $\exp(\beta_k)$ can be interpreted (for all $k \ge 1$) as a multiplicative rate ratio for the expected count. It is also important to note that the variance increases with the mean in this model: $\Var(Y_i)=\E[Y_i]=\mu_i$.
+
+If several observations share identical covariate values $\boldsymbol{x}_i$, then they can be combined into a single grouped Poisson response with outcome $Y_j = \sum_i Y_i$ and corresponding mean $\mu_j = \sum_i \mu_i$.
+
+
+## GEE's {#GEEs}
+This marginal approach is a multivariate quasi-likelihood approach. Quasi-likelihood is used to deal with overdispersion, which means that the variance of the outcome is greater than what is assumed by the model.
+
+<!--GEE intro-->
+Consider the weighted least-squares estimate $\hat{\boldsymbol{\beta}}_{\boldsymbol{{W}}}$ in the general linear model with block-diagonal
+**working correlation matrix** $\boldsymbol{W}^{-1}$ with entries $\boldsymbol{W}_0^{-1}$
+\begin{align*}
+\hat{\boldsymbol{\beta}}_{\boldsymbol{{W}}} & = 
+(\boldsymbol{X}^{\top}\boldsymbol{W}\boldsymbol{X})^{-1}\boldsymbol{X}^{\top}\boldsymbol{W}\boldsymbol{Y} \\ 
+& =  \left(
+\sum_{i=1}^m \boldsymbol{X}_i^{\top}\boldsymbol{W}_0 \boldsymbol{X}_i \right)^{-1} \sum_{i=1}^m
+\boldsymbol{X}_i^{\top}\boldsymbol{W}_0 \boldsymbol{Y}_i.
+\end{align*}
+$\hat{\boldsymbol{\beta}}_{\boldsymbol{W}}$ can be seen as solution of the multivariate **score equation**
+\begin{equation} 
+\boldsymbol{S}(\boldsymbol{\beta}) = \sum_{i=1}^m \left(\frac{\partial \boldsymbol{\mu}_i}{\partial
+\boldsymbol{\beta}}\right) \boldsymbol{W}_0 (\boldsymbol{Y}_i - \boldsymbol{\mu}_i)=\boldsymbol{0}, (\#eq:score)
+\end{equation}
+where $\boldsymbol{\mu}_i=\E(\boldsymbol{Y}_i)=\boldsymbol{X}_i \boldsymbol{\beta}$ and therefore $\left(\frac{\partial \boldsymbol{\mu}_i}{\partial\boldsymbol{\beta}}\right)=\boldsymbol{X}_i^{\top}$.
+
+The score function \@ref(eq:score) differs from the score equation in the ordinary generalized linear model 
+$$
+{S}(\boldsymbol{\beta}) = \sum_{i=1}^m \left(\frac{\partial {\mu}_i}{\partial
+\boldsymbol{\beta}}\right) \Var(Y_i)^{-1} (Y_i - \mu_i) = {0}
+$$
+by replacing $\Var(Y_i)^{-1}$ with a weight $\boldsymbol{W}_0$.
+
+The basic idea is to use multivariate quasi-likelihood approach for non-normal data to take into account correlation between components of $Y_i$. 
+
+The **generalised estimating equation**
+\[
+\boldsymbol{S}(\boldsymbol{\beta}) = \sum_{i=1}^m \left(\frac{\partial \boldsymbol{\mu}_i}{\partial
+\boldsymbol{\beta}}\right) \Cov(\boldsymbol{Y}_i)^{-1} (\boldsymbol{Y}_i - \boldsymbol{\mu}_i)=\boldsymbol{0}
+\]
+contains the multivariate $\Cov(\boldsymbol{Y}_i)^{-1}$ to allow for dependence. $\Cov(\boldsymbol{Y}_i)^{-1}$ can be replaced with some **working correlation matrix** $\boldsymbol{W}^{-1}$. This approach is called quasi-likelihood because typically no true likelihood function exists with $\boldsymbol{S}(\boldsymbol{\beta})$ as score equation.
+
+It is possible to obtain robust standard errors using the sandwich formula. The estimates $\hat{\boldsymbol{\beta}}$ (and $\hat{\boldsymbol{ \alpha}}$) are asymptotically normal. 
+
+$\hat{\boldsymbol{\beta}}$ is **consistent** (for $m \rightarrow \infty$), even if the correlation structure is not correct, which means $\Corr(\boldsymbol{Y}_i) \neq \boldsymbol{W}^{-1}$, while the estimates of $\boldsymbol{\beta}$ are **efficient** if $\Corr(\boldsymbol{Y}_i) \approx \boldsymbol{W}^{-1}$.
+
+**Bounds of correlation between binary variables**
+
+Here we discuss the bounds of correlation between binary variable. Consider two binary variables $Y_1$ and $Y_2$ with success probabilities $\pi_1$ and $\pi_2$, say. One can show 
+$$\max(0,\pi_1+\pi_2-1) \leq \P(Y_1=1,Y_2=1) \leq \min(\pi_1,\pi_2).$$
+This implies certain constraints on the correlation
+\begin{align*}
+\rho(Y_1,Y_2) 
+&= \frac{\E(Y_1 Y_2) - \E(Y_1) \E(Y_2)}{\{\Var(Y_1)\Var(Y_2)\}^{1/2}} \\ 
+&=\frac{\P(Y_1=1,Y_2=1) - \pi_1 \pi_2}{\{\pi_1(1-\pi_1)\pi_2(1-\pi_2)\}^{1/2}}.
+\end{align*}
+
+For example, suppose $\pi_1=0.5$ and $\pi_2=0.9$, then the correlation between $Y_1$ and $Y_2$ cannot
+be larger than 1/3 in absolute value: 
+```{r, echo=TRUE}
+p1 <- 0.5
+p2 <- 0.9
+(lim.joint <- c(max(c(0, p1+p2-1)), min(c(p1, p2))))
+(lim.corr <- (lim.joint - p1*p2) / sqrt(p1*(1-p1)*p2*(1-p2)))
+```
+
+Therefore, correlation as a measure of association may not be optimal for binary variables. Alternatively, we can use the **marginal odds ratio**
+$$\OR(Y_1,Y_2) = \frac{\P(Y_1=1,Y_2=1)\P(Y_1=0,Y_2=0)}{\P(Y_1=1,Y_2=0)\P(Y_1=0,Y_2=1)}.$$
+
+
+## GLM's with Random Effects {#GLMrand}
+
+Condition on random effects $\boldsymbol{U}_i \sim \Nor_q(\boldsymbol{0}, \boldsymbol{G})$ , $Y_{ij}$ follows a generalized linear model with mean $$\mu_{ij} = \E(Y_{ij}) = h(\eta_{ij})$$ and linear predictor 
+$$ \eta_{ij}=\boldsymbol{x}_{ij}^T\boldsymbol{\beta}^* + \boldsymbol{d}_{ij}^T\boldsymbol{U}_i,$$
+where $\boldsymbol{\beta}^*$ are the conditional coefficients. In this conditional model, parameters estimation is based on the marginal distribution of $\boldsymbol{Y}_i$, which can be obtained through numerical integration.
+
+### Logistic regression model {#logisticRand}
+Consider a logistic regression model with random intercept
+$$\logit \P(Y_{ij}=1\given U_i) = \boldsymbol{x}_{ij}^T\boldsymbol{\beta}^* + U_i, \quad U_i \sim \Nor(0, \nu^2).$$
+In a marginal model, we directly specify $$\logit \P(Y_{ij}=1) = \boldsymbol{x}_{ij}^T\boldsymbol{\beta}.$$
+It can be shown that 
+\begin{equation} 
+\boldsymbol{\beta} \approx \underbrace{(c^2 \nu^2 + 1)^{-1/2}}_{q(\nu^2)} \boldsymbol{\beta}^*, \mbox{ where } c 
+\approx 10/17. (\#eq:condmarg)
+\end{equation}
+Therefore, marginal coefficients $\boldsymbol{\beta}$ and conditional coefficients $\boldsymbol{\beta}^*$ have the same sign with $|\boldsymbol{\beta}| \leq |\boldsymbol{\beta}^*|$. Moreover, their ratio $q(\nu^2)$ decreases with increasing variance $\nu^2$, as shown in Table \@ref(tab:qtable).
+
+```{r qtable, echo=FALSE}
+# Define vectors
+nu_sq <- c(0, 0.1, 0.5, 1.0, 2.0, 5.0)
+q <- c(1.23, 1.45, 2.01, 2.34, 2.89, 3.12)
+
+# Combine into matrix with row names
+tbl <- rbind("$$\\nu^2$$" = nu_sq, "$$q(\\nu^2)$$" = q)
+
+# Create table with caption
+knitr::kable(tbl, caption = "Values of $q(\\nu^2)$ for different $\\nu^2$.", escape = FALSE)
+```
+
+
+```{r ,echo=FALSE, eval=FALSE}
+x <- c(-50:70)/10
+beta0  <- -2
+beta1 <- 1
+nu2 <- 5
+
+n <- 200
+
+invlogit <- function(x){
+
+return(exp(x)/(1+exp(x)))
+}
+individual <- matrix(ncol=n, nrow=length(x))
+set.seed(1234567)
+for(i in 1:n){
+U <- rnorm(1, 0, sqrt(nu2))
+individual[,i] <- invlogit(U+beta0+beta1*x)
+}
+
+logit <- function(x) log(x/(1-x))
+c <- 16*sqrt(3)/(15*pi)
+factor <- (c*c*nu2+1)^{-0.5}
+approx <- (factor*(beta0+beta1*x))
+marginal <- apply(individual, MARGIN=1, FUN=mean)
+par(mfrow=c(1,2), las=1)
+matplot(x, cbind(individual), type="l", lty=1, ylab="Probability", xlab="x", lwd=1, col="grey", cex=0.7)
+lines(x, marginal, col=2, lwd=3)
+#lines(x, invlogit(approx), col=2, lwd=3, lty=2)
+legend("topleft", legend=c("individual profiles", "population average"), 
+       col=c("grey", "red"), lwd=c(1,3), lty=c(1,1), bg="white")
+title("Probability scale")
+#legend("topleft", legend=c("20 individual probability profiles", "population average"), col=c("grey","red"), lwd=c(1,3))
+matplot(x, logit(cbind(individual)), type="l", lty=1, ylab="Logit Probability", xlab="x", lwd=1, col="grey", xlim=c(-5,5), ylim=c(-7,3), cex=0.7)
+lines(x, logit(marginal), col=2, lwd=3)
+lines(x, approx, col="darkred", lwd=3, lty=2)
+legend("topleft", legend=c("population average", "linear approximation"), col=c("red", "darkred"), lwd=c(3), lty=c(1,2), bg="white")
+title("Logit scale")
+
+```
+

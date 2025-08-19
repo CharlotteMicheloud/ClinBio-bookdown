@@ -1,6 +1,6 @@
 --- 
 title: "Clinical Biostatistics"
-author: "Leonhard Held, with contributions from Charlotte Micheloud, Lisa Hofer, Stefanie von Felten, Samuel Pawel"
+author: "Leonhard Held, with contributions from Charlotte Micheloud, Lisa Hofer, Stefanie von Felten, Samuel Pawel and Minghan Yang"
 date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
 output: bookdown::gitbook
@@ -21,8 +21,9 @@ csl: data-science-journal.csl
 \usepackage{xifthen}
 \usepackage{array}
 \usepackage{ifthen}
+\usepackage{xcolor}
 \usepackage{dsfont} % for the indicator function
-\newcommand{\given}{\,\vert\,} 
+<!-- \newcommand{\given}{\,\vert\,} -->
 \def\SE{\mbox{se}}
 \def\EF{\mbox{EF}}
 \newcommand{\LOA}{\mbox{LoA}}
@@ -30,17 +31,17 @@ csl: data-science-journal.csl
 \newcommand{\LOAup}{\mbox{LoA}_{\tiny \mbox{up}}}
 \def\pobs{p_\mathrm{obs}}
 \def\pexp{p_\mathrm{exp}}
-\newcommand{\abs}[1]{\left\lvert#1\right\rvert} % Absolutbetrag
-\newcommand{\Ind}{\mathsf{I}} % Indikatorfunktion
+<!-- \newcommand{\abs}[1]{\left\lvert#1\right\rvert} % Absolutbetrag
+\newcommand{\Ind}{\mathsf{I}} % Indikatorfunktion -->
 
 % Operatoren
 \renewcommand{\P}{\operatorname{\mathsf{Pr}}} % probability (P was already def.)
 \DeclareMathOperator{\Cor}{Cor} % correlation
 
 
-\newcommand{\partials}[3][]{
+<!-- \newcommand{\partials}[3][]{
   {\frac{d\,#2}{d\,#3}}
-} 
+} -->
 
 \def\PE{\mbox{PE}}
 \def\OR{\mbox{OR}}
@@ -54,7 +55,7 @@ csl: data-science-journal.csl
 \def\NNT{\mbox{NNT}}
 {\widehat{#2}_{\scriptscriptstyle{ML}}}
 \newcommand{\Deff}{D$_{\small{eff}}$ % Varianz
-\newcommand{\sima}{\mathrel{\overset{a}{\thicksim}}} % approx. Vtlg.
+<!-- \newcommand{\sima}{\mathrel{\overset{a}{\thicksim}}} % approx. Vtlg.-->
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%% Kommentare %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -198,7 +199,7 @@ csl: data-science-journal.csl
 \renewcommand{\P}{\operatorname{\mathsf{Pr}}} % Wahrscheinlichkeitsmaß
 \newcommand{\p}{f} % Density function
 \newcommand{\B}{\operatorname{{B}}} % Beta function
-%\newcommand{\Lik}{\operatorname{\mathsf{L}}} % Probability/Density function
+<!-- \newcommand{\Lik}{\operatorname{\mathsf{L}}} % Probability/Density function-->
 \newcommand{\Lik}{L} % Probability/Density function
 \DeclareMathOperator{\dotcup}{\dot{\cup}} % disjunkte Vereinigung
 \DeclareMathOperator{\arctanh}{arctanh} % arcus tangens hyperbolicus
@@ -241,7 +242,6 @@ csl: data-science-journal.csl
 
 % Abl. von #2 nach Skalar #3 mit optionalem Parameter #1 für wievielte Ableitung (default 1)
 \newcommand{\partials}[3][1]{%
-%% \ifthenelse{#1 = 1}{\frac{d\,#2}{d\,#3}}{\frac{d^{#1} #2}{d\,#3^{#1}}}
 \ifthenelse{#1 = 1}{\frac{d #2}{d #3}}{\frac{d^{#1} #2}{d #3^{#1}}}
 }
 
@@ -320,11 +320,11 @@ csl: data-science-journal.csl
 \newcommand{\simcid}{\mathrel{\overset{\text{cid}}{\thicksim}}} % cid-verteilt
 
 % Operationen
-\newcommand{\given}{\,\vert\,} % für "X gegeben Y" also $X\given Y$ schreiben
+\newcommand{\given}{\,\vert\,} % für "X gegeben Y" also $X\given Y$ schreiben 
 \newcommand{\semicolon}{\,;\,} % für "X gegeben Y" also $X\given Y$ schreiben
 \newcommand{\s}{\setminus}
 \newcommand{\entspricht}{\mathrel{\widehat{=}}}
-\newcommand{\abs}[1]{\left\lvert#1\right\rvert} % Absolutbetrag
+\newcommand{\abs}[1]{\left\lvert#1\right\rvert} % Absolutbetrag 
 \newcommand{\absmall}[1]{\lvert#1\rvert} % Absolutbetrag ohne Größenanpassung
 \newcommand{\norm}[1]{\left\lVert#1\right\rVert} % Norm
 \newcommand{\ceil}[1]{\left\lceil#1\right\rceil} % Ceiling
@@ -345,7 +345,7 @@ csl: data-science-journal.csl
 \newcommand{\midt}[1]{\quad\text{#1}\quad} % spart Schreibarbeit
 \newcommand{\glqm}{\text{``}} % für Anführungszeichen im Mathemodus
 \newcommand{\grqm}{\text{''}}
-\newcommand{\Ind}[2]{\mathsf{I}_{#2}(#1)} % Indikatorfunktion
+<-! \newcommand{\Ind}[2]{\mathsf{I}_{#2}(#1)} % Indikatorfunktion
 \newcommand{\IdMat}{\boldsymbol{\mathrm{I}}} % identity matrix
 
 % for diagnostic testing examples
@@ -362,7 +362,7 @@ William Osler (1849-1919).
 </div>
 
 Biostatistics is a fundamental discipline at the core of modern health
-research [@lee_biostatistics_2019]. As the science of
+data science [@lee_biostatistics_2019]. As the science of
 managing medical uncertainty, biostatistical methods play a key
 role in the scientific assessment of all areas of medical
 practice: from aetilogy to diagnosis and from treatment to prognosis. 
@@ -370,20 +370,14 @@ practice: from aetilogy to diagnosis and from treatment to prognosis.
 This script is based on a series of lectures in Clinical Biostatistics
 that I gave at the University of Zurich for Master Students in
 Biostatistics and PhD students in Clinical Science and related
-subjects. This mix of students with different backgrounds required a
-non-technical style of writing, with emphasis on implementation (in R)
-and interpretation of statistical methods used in medical research,
-covering both design and analysis.  Technical details are described in
-several appendices. 
-
-The script is a living document and we intend to update and extend
+subjects. It is a living document and we intend to update and extend
 the contents on a regular basis. Please report any errors or comments
 you might have to leonhard.held@uzh.ch. 
 
 
 
 <div style="text-align: right;">
-  Leonhard Held
+  Leonhard Held, December 2024
   
   `r Sys.Date()`
 </div>
