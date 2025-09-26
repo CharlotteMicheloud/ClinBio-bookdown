@@ -402,8 +402,8 @@ mynames <- c("week 1", "week 4", "week 6")
 colnames(r1) <- colnames(r2) <- colnames(r3) <- mynames
 
 printVarCor <- function(r){
-variance <- round(cov(r),2)
-#res <- round(cbind(variance, cor(r)),2)
+    variance <- diag(cov(r))
+    res <- round(cbind(variance, cor(r)),2)
 }
 ```
 Table \@ref(tab:raw) shows an increasing trend in residual variance.
@@ -457,7 +457,7 @@ where the $\boldsymbol{U}_i$'s are mutually independent and $\boldsymbol{U}_i\si
 The unknown parameters are $\beta, \boldsymbol{G}, \tau^2$ and the random effects $\boldsymbol{U}_i$. We use (RE)ML to estimate  $\beta, \boldsymbol{G}, \tau^2$ and use empirical Bayes to estimate $\boldsymbol{U}_i$. This mixed effect model will introduce marginal correlation between $Y_{ij}$ and $Y_{ik}$ into the model (see equation \@ref(eq:marg2) in Appendix \@ref(RandEff)).
 
 #### Random intercept model
-In a random intercept model (see Appendix \@ref(A:randInt)), the intercept ${\tilde U}_i=\beta_0+u_i$ is varying between individuals with mean $\beta_0$ and variance $\nu^2$. For more detail, see Appendix \@ref(A:randInt).
+In a random intercept model, the intercept ${\tilde U}_i=\beta_0+u_i$ is varying between individuals with mean $\beta_0$ and variance $\nu^2$. For more detail, see Appendix \@ref(A:randInt).
 
 :::{.example #TLC name="continued"}
 We fit a random intercept model for TLC data. As before, we include the baseline \(\texttt{lead.0}\) as a covariate.
@@ -473,8 +473,8 @@ m1.uc <- gls(lead ~ Treatment * fweek + lead.0, data = tlclong2,
 ```
 The treatment effect at week 1 is estimated to be $\beta=$ $`r round(m1.ri$coefficients$fixed[2],2)`$, with confidence interval (`r round(intervals(m1.ri)$fixed["TreatmentActive", ][1],2)`, `r round(intervals(m1.ri)$fixed["TreatmentActive", ][3],2)`). The estimated standard deviation of the random effects is $\nu=$ $`r round(exp(attributes(m1.ri$apVar)$Pars[[1]]),2)`$, and the estimated residual standard deviation $\tau=$ $`r round(exp(attributes(m1.ri$apVar)$Pars[[2]]),2)`$. 
 
-The random intercept model is equivalent to a uniform correlation model with $\rho=\nu^2/(\nu^2+\tau^2)$. We can see this by comparing estimate of `Rho` in model \(\texttt{m1.uc}\) with the calculated $\rho$ from model \(\texttt{m1.ri}\) using estimated $\nu$ and $\tau$.
-```{r echo=TRUE}
+The random intercept model is equivalent to a uniform correlation model with $\rho=\nu^2/(\nu^2+\tau^2)$. We can see this by comparing estimate of  \(\texttt{Rho}\) in model \(\texttt{m1.uc}\) with the calculated $\rho$ from model \(\texttt{m1.ri}\) using estimated $\nu$ and $\tau$.
+```{r echo=FALSE, eval=FALSE}
 nu <- exp(attributes(m1.ri$apVar)$Pars[[1]])
 tau <- exp(attributes(m1.ri$apVar)$Pars[[2]])
 (rho <- nu^2/(nu^2+tau^2))
@@ -549,8 +549,8 @@ legend("topleft", col=c(1,1,2,2), lwd=c(.6,4,.6,4), legend=c("Placebo","Mean fit
 ## Binary longitudinal outcomes
 There are generally two approaches for analyzing binary longitudinal data using generalized linear models. The first one is to use **marginal models** (quasi-likelihood, generalized estimating equations), and the other one is using **conditional models** (i.e. models with random effects). While the marginal approach allows explicitly for correlation or association between observations made from the same individual, a conditional model assumes independence given the random effects, which implies marginal correlation. For non-normal data, the interpretations of regression coefficients are different between the two methods: the marginal interpretation is about "population-averages", but the individual/conditional interpretation is "subject-specific". The first section will focus on the marginal model, and the second section will address the conditional model. 
 
-### GEE 
-The basic idea of this marginal approach is to use multivariate quasi-likelihood approach for non-normal data to take into account correlation between components of $Y_i$ (see Appendix \@ref(GEEs) for more details.)
+### Generalized estimating equations  
+The basic idea of the marginal approach is to use multivariate generalized estimating equation for non-normal data to take into account correlation between components of the response vector $\boldsymbol{Y}_i$ (see Appendix \@ref(GEEs) for more details.)
 
 :::{.example #respiratory}
 We will use the dataset \(\texttt{respiratory}\) available in the package \(\texttt{geepack}\), originally from @Koch1989. The data are from a clinical trial of patients with respiratory illness, where 111 patients from two different clinics were randomized to receive either placebo or an active treatment. Patients were
@@ -634,7 +634,7 @@ However, we need to be careful using the correlation between binary variables. I
 
 Sometimes more elaborate modelling of the correlation structure may be needed, for example dependence of correlation/association between pairs of observations $Y_{ij}$ and $Y_{ik}$ from the $i$-the individual on the time distance. Such models can be incorporated using a **user defined working correlation structure** (\(\texttt{corstr=userdefined}\)) with additional explanatory variables \(\texttt{zcor}\) (typically a function of the time distance) for each pair of observations.
 
-### Logistic regression with random effects
+### Logistic regression with random effects {#ch14logisticRand}
 We also consider the approach using generalized mixed-effects models, for example the logistic regression with random effects, for analysing binary longitudinal data. For more details, see Appendix \@ref(logisticRand). 
 
 :::{.example #respiratory name="continued"}

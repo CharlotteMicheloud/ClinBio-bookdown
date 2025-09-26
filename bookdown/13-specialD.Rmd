@@ -90,7 +90,7 @@ knitr::kable(tableRegression(result.w, xtable = FALSE))
 
 
 
-#### Logistic regression with random effects {-}
+#### Logistic regression with random effects {#ch13logisticRand}
 
 The recommended analysis on patient level for a binary outcome is 
 logistic regression with random effects for practices. The random effects 

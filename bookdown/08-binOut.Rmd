@@ -826,7 +826,7 @@ For binary outcomes, adjusting for baseline variables is usually done using *log
 gives a *weighted average* of strata-specific odds ratios. The MH method can also be applied to strata-specific risk ratios. However, adjustment for continuous variables using MH is only possible after suitable categorization.
 
 
-### Logistic regression
+### Logistic regression {#ch821}
 
 ```{r echo=F}
 puva <- read.table("data/puva.txt", header=TRUE)

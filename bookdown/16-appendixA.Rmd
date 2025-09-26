@@ -528,7 +528,7 @@ for example.
 The $P$-value $p$ is a value between $0$ and $1$ which can be used for
 hypothesis testing or for significance testing. We test for evidence 
 against a point null hypothesis H$_0$ which is given by a reference value,
-usually $0$. For example, H$_0$ could be the hypothesis that there is no 
+usually $0$. For example, H$_0$ can be the hypothesis that there is no 
 treatment effect.
 The $P$-value is correctly interpreted as the probability, under the 
 assumption of the null hypothesis H$_0$, of obtaining a result equal 
@@ -1280,7 +1280,18 @@ $$
 $$
 with zero entries elsewhere.
 
-$\widehat{\boldsymbol{\beta}}_{\boldsymbol{W}}$ are the weighted least squares estimate of $\boldsymbol{\beta}$. Given any weight matrix $\boldsymbol{W}$, $\widehat{\boldsymbol{\beta}}_{\boldsymbol{W}}$ is unbiased with $\E(\widehat {\boldsymbol{\beta}}_{\boldsymbol{W}}) = {\boldsymbol{\beta}}$. The weight matrix $\boldsymbol{W}$ is block-diagonal, with each block $\boldsymbol{W_0}$ of size $n \times n$ for $n$ time points. 
+$\widehat{\boldsymbol{\beta}}_{\boldsymbol{W}} = (\boldsymbol{X}^{\top}\boldsymbol{W}\boldsymbol{X})^{-1}\boldsymbol{X}^{\top}\boldsymbol{W}\boldsymbol{Y}$ 
+is the weighted least squares estimate of $\boldsymbol{\beta}$. Given any weight matrix $\boldsymbol{W}$, $\widehat{\boldsymbol{\beta}}_{\boldsymbol{W}}$ is unbiased with $\E(\widehat {\boldsymbol{\beta}}_{\boldsymbol{W}}) = {\boldsymbol{\beta}}$. The weight matrix $\boldsymbol{W}$ is block-diagonal, with each block $\boldsymbol{W_0}$ of size $n \times n$ for $n$ time points. 
+
+If $\boldsymbol{W}^{-1} = \boldsymbol{I}$, then we obtain the **least squares estimate** $\widehat {\boldsymbol{\beta}}_{\boldsymbol{W}} = (\boldsymbol{X}^{\top} \boldsymbol{X})^{-1}\boldsymbol{X}^{\top} \boldsymbol{Y}$.
+
+For block-diagonal $\boldsymbol{W}$ we obtain 
+\begin{equation}
+\widehat{\boldsymbol{\beta}}_{\boldsymbol{W}} =  \left(
+\sum_{i=1}^m \boldsymbol{X}_i^{\top}\boldsymbol{W}_0 \boldsymbol{X}_i \right)^{-1} \sum_{i=1}^m
+\boldsymbol{X}_i^{\top}\boldsymbol{W}_0 \boldsymbol{Y}_i.
+(\#eq:block)
+\end{equation}
 
 The associated covariance matrix is ("sandwich formula"):
 
@@ -1293,10 +1304,9 @@ The associated covariance matrix is ("sandwich formula"):
 
 and requires knowledge of $\boldsymbol{\Sigma}$ (or an estimate $\widehat{\boldsymbol{\Sigma}}$). 
 
-Notice that $\boldsymbol{W}^{-1}$ is often called **working covariance matrix** to distinguish it from the **true covariance matrix** $\boldsymbol{\Sigma}$. It is an approximation to the true covariance matrix of the outcomes. And here are some special cases of $\boldsymbol{W}^{-1}$:
+Notice that $\boldsymbol{W}^{-1}$ is often called **working covariance matrix** to distinguish it from the **true covariance matrix** $\boldsymbol{\Sigma}$. It is an approximation to the true covariance matrix of the outcomes.
 
-- If $\boldsymbol{W}^{-1} = \boldsymbol{I}$, then we obtain the **least squares estimate** $\widehat {\boldsymbol{\beta}}_{\boldsymbol{W}} = (\boldsymbol{X}^{\top} \boldsymbol{X})^{-1}\boldsymbol{X}^{\top} \boldsymbol{Y}$.
-- If $\boldsymbol{W}^{-1} = \boldsymbol{\Sigma}$, then $\Cov(\widehat{\boldsymbol{\beta}}_{\boldsymbol{W}})$ can be simplified to
+If $\boldsymbol{W}^{-1} = \boldsymbol{\Sigma}$, then $\Cov(\widehat{\boldsymbol{\beta}}_{\boldsymbol{W}})$ can be simplified to
 \[
  \Cov(\widehat{\boldsymbol{\beta}}_{\boldsymbol{W}}) = (\boldsymbol{X}^{\top}\boldsymbol{W}\boldsymbol{X})^{-1}
 \]
@@ -1308,7 +1318,7 @@ entries $\widehat{\boldsymbol{\Sigma}}_0$. The **robust standard errors** can be
 
 If the naive standard errors are close to the robust standard errors, then $\boldsymbol{W}^{-1}$ must be close to $\Cov (\boldsymbol{Y})$ (up to scale).
 
-Generalized estimating equations work in the following way: 
+In short, the generalized estimating equations work in the following way: 
 
 1. assume some **working correlation matrix** $\boldsymbol{W}$
 2. estimate the coefficients with the **weighted least squares estimate** $\widehat{\boldsymbol{\beta}}_{\boldsymbol{W}}$
@@ -1377,7 +1387,7 @@ However, ML estimates of $\sigma^2$ and $\boldsymbol{V}_0$ are typically biased 
 
 ## Random Effects Model {#RandEff}
 ### General formulation
-Suppose there are $p$ covariates and we want to consider $q$ of them as random effects, we could include individual-specific random effects $\boldsymbol{U}_i$ into the model:
+Suppose there are $p$ covariates and we want to consider $q$ of them as random effects, we can include individual-specific random effects $\boldsymbol{U}_i$ into the model:
 \begin{equation}
   Y_{ij} \given \boldsymbol{U}_i,{\epsilon}_{ij} = \boldsymbol{x}_{ij}^{\top}\boldsymbol{\beta} + \boldsymbol{d}_{ij}^{\top}\boldsymbol{U}_i + \epsilon_{ij}
 \end{equation}
@@ -1421,26 +1431,26 @@ where $\boldsymbol{U}_i$ is a 2-dimensional random effect with mean zero and $2 
 This is the **random slope** (strictly random intercept and slope) model.
 
 # The Generalized Linear Model
-## The General Formulations
-Here we provide a brief review of the linear regression model:
+## The General Formulation
+First we provide a brief review of the linear regression model
 $$
-Y_i = \boldsymbol{x}_i^{\top} \boldsymbol{\beta} + \epsilon_i \, \mbox{ with } \, \epsilon_i \sim \Nor(0, \sigma^2)
+Y_i = \boldsymbol{x}_i^{\top} \boldsymbol{\beta} + \epsilon_i \, \mbox{ with } \, \epsilon_i \sim \Nor(0, \sigma^2)  \quad i=1,\dots,n,
 $$
-with explanatory variables $\boldsymbol{x}_i$ and regression coefficients $\boldsymbol{ \beta}$ is rewritten as $$Y_i \sim
+with explanatory variables $\boldsymbol{x}_i \in \mathbb{R}^p$ and regression coefficients $\boldsymbol{\beta} \in \mathbb{R}^p$, rewritten as $$Y_i \sim
 \Nor(\mu_i=\boldsymbol{ x}_i^{\top} \boldsymbol{ \beta}, \sigma^2)$$ with mean $\mu_i$ and variance $\sigma^2$.
 
-This can be generalized in two ways: firstly we can consider other distributions than normal distribution for the response variable $Y_i$ (for example, Bernoulli, Binomial, Poisson, $\ldots$). Secondly, the mean $\E(Y_i)=\mu_i$ will be linked to the **linear predictor** $\eta_i = \boldsymbol{ x}_i^{\top} \boldsymbol{ \beta}$ using a (monotone) **link function** $g = h^{-1}$:
+This can be generalized in two ways: firstly we can consider other distributions than the normal distribution for the response variable $Y_i$ (for example, Bernoulli, Binomial, Poisson, $\ldots$). Secondly, the mean $\E(Y_i)=\mu_i$ will be linked to the **linear predictor** $\eta_i = \boldsymbol{ x}_i^{\top} \boldsymbol{ \beta}$ using a (monotone) **link function** $g = h^{-1}$:
 $$
  g(\mu_i) = \eta_i \, \mbox{ so } \, \mu_i = h(\eta_i).
 $$
-Notice how this is different from **general** linear models (Appendix \@ref(General)): **general** linear models assume a normal distribution of residuals, while **generalized** linear models relax this assumption and allow for other distributions from the exponential family. A general linear model can be viewed as a  **generalized** linear model with normal errors and identity link.
+Notice how this is different from **general** linear models (Appendix \@ref(General)): **general** linear models assume a normal distribution of residuals, while **generalized** linear models relax this assumption and allow for other distributions from the exponential family. A linear model can be viewed as a  **generalized** linear model with normal errors and identity link.
 
 ### Logistic regression
 Instead of the normality assumption on $Y_i$ in linear models, other distributions of $Y_i$ are allowed for generalization. 
 
 For logistic regression, consider 
 \begin{align*}
-Y_i &\sim \Bin(1, \mu_i=\pi_i)\\
+Y_i &\sim \Bin(1, \mu_i=\pi_i) \\
 \logit(\pi_i)  &=  \boldsymbol{x}_i^{\top} \boldsymbol{\beta}\\
  \pi_i &= \text{expit}(\boldsymbol{ x}_i^{\top} \boldsymbol{ \beta}).
 \end{align*}
@@ -1449,12 +1459,12 @@ So here the link function is
 g(\pi_i) = \logit(\pi_i) = \log \frac{\pi_i}{1-\pi_i}.
 \]
 
-Except for the intercept, we could interpret $\exp(\beta_i)$ as **odds ratio** in this model. Also notice that the variance is a function of the mean: $\Var(Y_i)=\pi_i(1-\pi_i)$.
+Except for the intercept, we can interpret $\exp(\beta_k), (k=1,\ldots,p)$ as **odds ratio** in this model. Also notice that the variance is a function of the mean: $\Var(Y_i)=\pi_i(1-\pi_i)$.
 
 If covariates $x_i$ are identical for some observations $Y_i$, then 
-aggregation to the binomial form $Y_j = \sum_{i} Y_i \sim \Bin(n_i, \pi_i)$ is possible. 
+aggregation to the binomial form $Y_j = \sum_{i} Y_i \sim \Bin(n_j, \pi_j)$ is possible. 
 
-An example of a logistic regression can be found in Chapter \@ref(logisticRand).
+An example of a logistic regression can be found in Section \@ref(ch821).
 
 ### Log-linear Poisson regression
 In addition to binary data, we may consider count data, for which the random variable $Y_i$ follows a Poisson distribution.
@@ -1467,24 +1477,58 @@ Y_i &\sim \Po(\mu_i)\\
 \end{align*}
 so the link function in this case is
 $$g(\mu_i) = \log(\mu_i).$$
-As a consequence, $\exp(\beta_k)$ can be interpreted (for all $k \ge 1$) as a multiplicative rate ratio for the expected count. It is also important to note that the variance increases with the mean in this model: $\Var(Y_i)=\E[Y_i]=\mu_i$.
+As a consequence, $\exp(\beta_k), (k=1,\ldots,p)$ can be interpreted as a multiplicative **rate ratio** for the expected count. It is also important to note that the variance increases with the mean in this model: $\Var(Y_i)=\E[Y_i]=\mu_i$.
 
 If several observations share identical covariate values $\boldsymbol{x}_i$, then they can be combined into a single grouped Poisson response with outcome $Y_j = \sum_i Y_i$ and corresponding mean $\mu_j = \sum_i \mu_i$.
 
 
-## GEE's {#GEEs}
-This marginal approach is a multivariate quasi-likelihood approach. Quasi-likelihood is used to deal with overdispersion, which means that the variance of the outcome is greater than what is assumed by the model.
+## Generalized estimating equations {#GEEs}
+### Quasi-likelihood
+Quasi-likelihood is used to deal with overdispersion, which means that the variance of the outcome is greater than what is assumed by the model. For example, in a Poisson regression model we have the assumption $\Var(Y_i)=\E(Y_i)=\lambda_i$, but a more flexible quasi-likelihood model for the variance of $Y_i$ is  $\Var^*(Y_i)=\phi \cdot \lambda_i$. When $\phi>1$, there is overdispersion.
 
-<!--GEE intro-->
-Consider the weighted least-squares estimate $\hat{\boldsymbol{\beta}}_{\boldsymbol{{W}}}$ in the general linear model with block-diagonal
-**working correlation matrix** $\boldsymbol{W}^{-1}$ with entries $\boldsymbol{W}_0^{-1}$
-\begin{align*}
-\hat{\boldsymbol{\beta}}_{\boldsymbol{{W}}} & = 
-(\boldsymbol{X}^{\top}\boldsymbol{W}\boldsymbol{X})^{-1}\boldsymbol{X}^{\top}\boldsymbol{W}\boldsymbol{Y} \\ 
-& =  \left(
-\sum_{i=1}^m \boldsymbol{X}_i^{\top}\boldsymbol{W}_0 \boldsymbol{X}_i \right)^{-1} \sum_{i=1}^m
-\boldsymbol{X}_i^{\top}\boldsymbol{W}_0 \boldsymbol{Y}_i.
-\end{align*}
+The **score equation** in the ordinary generalized linear model is given by 
+\begin{equation}
+{S}(\boldsymbol{\beta}) = \sum_{i=1}^m \left(\frac{\partial {\mu}_i}{\partial
+\boldsymbol{\beta}}\right) \Var(Y_i)^{-1} (Y_i - \mu_i) = {0}. 
+(\#eq:ordscore)
+\end{equation}
+To increase flexibility, the quasi-likelihood approach considers the generalized estimating equation with some working variance function $\Var^*(Y_i)$.
+$$
+{S}^*(\boldsymbol{\beta}) = \sum_{i=1}^m \left(\frac{\partial {\mu}_i}{\partial
+\boldsymbol{\beta}}\right) {\Var}^*(Y_i)^{-1} (Y_i - \mu_i). 
+$$
+Then the estimate $\widehat{\boldsymbol{\beta}}$ is the root of ${S}^*(\boldsymbol{\beta})$. 
+
+#### Quasi-Poisson and quasi-binomial models
+
+Two widely used extensions of the quasi-likelihood framework are the quasi-Poisson and quasi-binomial models.
+
+**Quasi-Poisson**:
+
+The quasi-Poisson model relaxes the standard assumption by introducing a dispersion parameter $\phi$, so that
+$$
+{\Var}^*(Y_i) = \phi \cdot \Var(Y_i), \quad \phi > 0.
+$$
+This allows the model to handle overdispersion ($\phi > 1$) or underdispersion ($\phi < 1$) in count data, while keeping the mean structure unchanged. Notice that the estimates of $\beta$ are the same from models with and without overdispersion if $\Var^*(Y_i) = \phi \cdot \Var(Y_i)$, but the standard errors of $\hat{\beta}$ will be inflated by $\sqrt{\hat{\phi}}$ and variances will be inflated by $\hat{\phi}$.
+
+We can estimate the dispersion parameter $\phi$ by $\hat{\phi}=W/(n-p),$ where $W$ is the likelihood ratio test statistic and $n-p$ are the associated degrees of freedom. 
+
+**Quasi-binomial**:
+
+In standard binomial regression with $n_i$ trials, the variance is $\Var(Y_i) = n_i \pi_i (1-\pi_i)$, where $\pi_i$ is the success probability. The quasi-binomial model generalizes this to
+$$
+{\Var}^*(Y_i) = \phi \cdot n_i \pi_i (1-\pi_i),
+$$
+again introducing a dispersion parameter $\phi$. This is particularly useful in cases where the observed proportion of successes shows greater variability than expected under the binomial model.
+
+### Multivariate quasi-likelihood
+For longitudinal data, a multivariate quasi-likelihood approach allows explicitly for correlation between observations made from the same individual.
+
+Recall in Appendix \@ref(GEE) Equation \@ref(eq:block) the weighted least-squares estimate is
+$$\widehat{\boldsymbol{\beta}}_{\boldsymbol{W}} = \left( \sum_{i=1}^m \boldsymbol{X}_i^{\top}\boldsymbol{W}_0 \boldsymbol{X}_i \right)^{-1} \sum_{i=1}^m \boldsymbol{X}_i^{\top}\boldsymbol{W}_0 \boldsymbol{Y}_i$$
+when the
+**working correlation matrix** $\boldsymbol{W}^{-1}$ is block-diagonal with entries $\boldsymbol{W}_0^{-1}$.
+
 $\hat{\boldsymbol{\beta}}_{\boldsymbol{W}}$ can be seen as solution of the multivariate **score equation**
 \begin{equation} 
 \boldsymbol{S}(\boldsymbol{\beta}) = \sum_{i=1}^m \left(\frac{\partial \boldsymbol{\mu}_i}{\partial
@@ -1492,27 +1536,21 @@ $\hat{\boldsymbol{\beta}}_{\boldsymbol{W}}$ can be seen as solution of the multi
 \end{equation}
 where $\boldsymbol{\mu}_i=\E(\boldsymbol{Y}_i)=\boldsymbol{X}_i \boldsymbol{\beta}$ and therefore $\left(\frac{\partial \boldsymbol{\mu}_i}{\partial\boldsymbol{\beta}}\right)=\boldsymbol{X}_i^{\top}$.
 
-The score function \@ref(eq:score) differs from the score equation in the ordinary generalized linear model 
-$$
-{S}(\boldsymbol{\beta}) = \sum_{i=1}^m \left(\frac{\partial {\mu}_i}{\partial
-\boldsymbol{\beta}}\right) \Var(Y_i)^{-1} (Y_i - \mu_i) = {0}
-$$
-by replacing $\Var(Y_i)^{-1}$ with a weight $\boldsymbol{W}_0$.
+The score function \@ref(eq:score) differs from the score equation in the ordinary generalized linear model (\@ref(eq:ordscore)) by replacing $\Var(Y_i)^{-1}$ with a weight $\boldsymbol{W}_0$.
 
-The basic idea is to use multivariate quasi-likelihood approach for non-normal data to take into account correlation between components of $Y_i$. 
-
-The **generalised estimating equation**
-\[
+The basic idea is to use the multivariate quasi-likelihood approach for non-normal data to take into account correlation between components of $Y_i$. Therefore we have the **generalized estimating equation**
+\begin{equation}
 \boldsymbol{S}(\boldsymbol{\beta}) = \sum_{i=1}^m \left(\frac{\partial \boldsymbol{\mu}_i}{\partial
-\boldsymbol{\beta}}\right) \Cov(\boldsymbol{Y}_i)^{-1} (\boldsymbol{Y}_i - \boldsymbol{\mu}_i)=\boldsymbol{0}
-\]
-contains the multivariate $\Cov(\boldsymbol{Y}_i)^{-1}$ to allow for dependence. $\Cov(\boldsymbol{Y}_i)^{-1}$ can be replaced with some **working correlation matrix** $\boldsymbol{W}^{-1}$. This approach is called quasi-likelihood because typically no true likelihood function exists with $\boldsymbol{S}(\boldsymbol{\beta})$ as score equation.
+\boldsymbol{\beta}}\right) \Cov(\boldsymbol{Y}_i)^{-1} (\boldsymbol{Y}_i - \boldsymbol{\mu}_i)=\boldsymbol{0}, 
+(\#eq:multiscore)
+\end{equation}
+where the multivariate $\Cov(\boldsymbol{Y}_i)^{-1}$ allows for dependence and can be replaced with some **working correlation matrix** $\boldsymbol{W}^{-1}$. This approach is called quasi-likelihood because typically no true likelihood function exists with \@ref(eq:multiscore) as the score equation.
 
 It is possible to obtain robust standard errors using the sandwich formula. The estimates $\hat{\boldsymbol{\beta}}$ (and $\hat{\boldsymbol{ \alpha}}$) are asymptotically normal. 
 
-$\hat{\boldsymbol{\beta}}$ is **consistent** (for $m \rightarrow \infty$), even if the correlation structure is not correct, which means $\Corr(\boldsymbol{Y}_i) \neq \boldsymbol{W}^{-1}$, while the estimates of $\boldsymbol{\beta}$ are **efficient** if $\Corr(\boldsymbol{Y}_i) \approx \boldsymbol{W}^{-1}$.
+The estimate $\hat{\boldsymbol{\beta}}$ is **consistent** (for $m \rightarrow \infty$), even if the correlation structure is not correct, which means $\Corr(\boldsymbol{Y}_i) \neq \boldsymbol{W}^{-1}$, while the estimates of $\boldsymbol{\beta}$ are **efficient** if $\Corr(\boldsymbol{Y}_i) \approx \boldsymbol{W}^{-1}$.
 
-**Bounds of correlation between binary variables**
+### Bounds of correlation between binary variables
 
 Here we discuss the bounds of correlation between binary variable. Consider two binary variables $Y_1$ and $Y_2$ with success probabilities $\pi_1$ and $\pi_2$, say. One can show 
 $$\max(0,\pi_1+\pi_2-1) \leq \P(Y_1=1,Y_2=1) \leq \min(\pi_1,\pi_2).$$
@@ -1535,14 +1573,13 @@ p2 <- 0.9
 Therefore, correlation as a measure of association may not be optimal for binary variables. Alternatively, we can use the **marginal odds ratio**
 $$\OR(Y_1,Y_2) = \frac{\P(Y_1=1,Y_2=1)\P(Y_1=0,Y_2=0)}{\P(Y_1=1,Y_2=0)\P(Y_1=0,Y_2=1)}.$$
 
+## Generalized Linear Models with Random Effects {#GLMrand}
 
-## GLM's with Random Effects {#GLMrand}
-
-Condition on random effects $\boldsymbol{U}_i \sim \Nor_q(\boldsymbol{0}, \boldsymbol{G})$ , $Y_{ij}$ follows a generalized linear model with mean $$\mu_{ij} = \E(Y_{ij}) = h(\eta_{ij})$$ and linear predictor 
+Conditional on random effects $\boldsymbol{U}_i \sim \Nor_q(\boldsymbol{0}, \boldsymbol{G})$ , $Y_{ij}$ follows a generalized linear model with mean $$\mu_{ij} = \E(Y_{ij}) = h(\eta_{ij})$$ and linear predictor 
 $$ \eta_{ij}=\boldsymbol{x}_{ij}^T\boldsymbol{\beta}^* + \boldsymbol{d}_{ij}^T\boldsymbol{U}_i,$$
 where $\boldsymbol{\beta}^*$ are the conditional coefficients. In this conditional model, parameters estimation is based on the marginal distribution of $\boldsymbol{Y}_i$, which can be obtained through numerical integration.
 
-### Logistic regression model {#logisticRand}
+### Logistic regression model with random intercept {#logisticRand}
 Consider a logistic regression model with random intercept
 $$\logit \P(Y_{ij}=1\given U_i) = \boldsymbol{x}_{ij}^T\boldsymbol{\beta}^* + U_i, \quad U_i \sim \Nor(0, \nu^2).$$
 In a marginal model, we directly specify $$\logit \P(Y_{ij}=1) = \boldsymbol{x}_{ij}^T\boldsymbol{\beta}.$$
@@ -1606,3 +1643,4 @@ title("Logit scale")
 
 ```
 
+Examples of a logistic regression with random effects can be found in \@ref(ch13logisticRand) and \@ref(ch14logisticRand).
