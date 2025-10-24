@@ -21,7 +21,7 @@ In a *cohort design*, a diagnostic test is applied to a sample of subjects
 from the population of interest, and the true disease status
 is also ascertained using a reference test, the *gold standard*. 
 
-Studies comparing two diagnostic tests can have an unpaired 
+Moreover, studies comparing two tests can have an unpaired 
 or a paired design. In an
 *unpaired design*, each study subject is tested with only one of the two tests. 
 In contrast, each study subject is tested with both tests in a *paired design*.
@@ -39,7 +39,7 @@ the true disease status (using a reference/gold standard test)
 must not know the test result. 
 
   
-```{r prepdata-mammo, echo = FALSE, message = FALSE}
+```{r prepdata-mammo, echo = FALSE, message = FALSE, warning=FALSE}
   library(biostatUZH)
   library(reporttools)
   ci.p <- function(y, n, level=0.95, digits = 1){
@@ -130,8 +130,7 @@ determine whether or not they have been diagnosed with breast cancer,
 confirmed via histology (the gold standard). The results are summarized in Table \@ref(tab:MWS).
 :::
 
-
-```{r MWS, echo = FALSE}
+```{r MWS, echo = FALSE, warning=FALSE}
 library(knitr)
 library(kableExtra)
 # Example data for mat
@@ -210,7 +209,7 @@ The *sensitivity* of a binary test is defined as
 \end{equation}
 
 that is, the probability of correctly identifying study subjects 
-*with* the disease in question. 
+*with* a specific disease. 
 
 The *specificity* of a binary test is defined as
 
@@ -219,7 +218,7 @@ The *specificity* of a binary test is defined as
 \end{equation*}
 
 that is, the probability of correctly identifying study subjects 
-*without* the disease in question. 
+*without* a specific disease. 
 
 :::
 
@@ -227,7 +226,7 @@ that is, the probability of correctly identifying study subjects
 
 
 In the MW Study (Example \@ref(exm:mws)), the following estimates
-for sensitivity and specificity are obtained 
+for the sensitivity and specificity are obtained 
 from Table \@ref(tab:MWS):
 
 \begin{eqnarray}
@@ -355,7 +354,7 @@ MW study shown in Example \@ref(exm:mws):
   \mbox{PPV} &=& \displaystyle\frac{{tp}}{{tp}+{fp}} = 629/`r format.bigmark(4514)` = `r round(629/4514*100, 1)`\% \mbox{ and} \\
   \mbox{NPV} &=& \displaystyle\frac{{tn}}{{tn}+{fn}} = `r format.bigmark(117744)`/`r format.bigmark(117841)` = `r round(117744/117841*100, 1)`\%.
 \end{eqnarray*}
-The negative predictive value NPV is close to 100\%, which means that a women with a negative mammogram is very likely not to have breast cancer. However, the positive predictive value is only `r round(629/4514*100, 1)`\%, so a women with a positive mammogram still has a fairly small probability to actually have breast cancer. 
+The negative predictive value NPV is close to 100\%, which means that a women with a negative mammogram is very likely not to have breast cancer. However, the positive predictive value is only `r round(629/4514*100, 1)`\%, so a women with a positive mammogram still has a fairly small probability to have breast cancer. 
 
 This simple calculation assumes that the observed *disease prevalence*
 
@@ -369,12 +368,12 @@ in the study sample is representative for the underlying population.
 Predictive values can also be calculated for other values of the prevalence with Bayes' theorem:
 
 \begin{eqnarray*}
-  \mbox{PPV} & = & \frac{\mbox{Sens} \cdot \mbox{Prev}}{\mbox{Sens} \cdot \mbox{Prev} + (1-\mbox{Spec}) \cdot (1-\mbox{Prev})}, \\
-\mbox{NPV} & = & \frac{\mbox{Spec} \cdot (1-\mbox{Prev})}{\mbox{Spec} \cdot (1-\mbox{Prev}) + (1-\mbox{Sens}) \cdot \mbox{Prev}}.
+\mbox{PPV} & = & \frac{\mbox{Sens} \cdot \mbox{Prev}}{\mbox{Sens} \cdot \mbox{Prev} + (1-\mbox{Spec}) \cdot (1-\mbox{Prev})} \mbox{ and} \\
+\mbox{NPV} & = & \frac{\mbox{Spec} \cdot (1-\mbox{Prev})}{\mbox{Spec} \cdot (1-\mbox{Prev}) + (1-\mbox{Sens}) \cdot \mbox{Prev}}
 \end{eqnarray*}
 
-This is best understood as *Bayesian updating*, the transition from the *pre-test probability* of disease (the prevalence) 
-to the *post-test probability* of disease ($\mbox{PPV}$ and $1-\mbox{NPV}$) 
+as the transition from *pre-test probability* of disease (the prevalence) 
+to *post-test probabilities* of disease ($\mbox{PPV}$ and $\mbox{NPV}$) 
 after observing a positive, or negative test result.
 Table  \@ref(tab:MWS-predvalues) gives predictive values in the MW study
 also for other values of the prevalence. 
@@ -453,16 +452,8 @@ study subjects without the disease.
 In contrast to predictive values, they do not depend on disease
 prevalence.  
 
-Useful tests have $\mbox{LR}^+ > 1$. It then follows that 
-$\mbox{LR}^- < 1$, because
-\begin{eqnarray*}
-&& \mbox{LR}^+ > 1 \\
-& \Leftrightarrow & \frac{\mbox{Sens}}{1-\mbox{Spec}} > 1 \\
-& \Leftrightarrow & {\mbox{Sens}}  >  {1-\mbox{Spec}} \\
-& \Leftrightarrow & {\mbox{Spec}}  >  {1-\mbox{Sens}} \\
-& \Leftrightarrow & 1  >  \frac{1-\mbox{Sens}}{\mbox{Spec}} \\
-& \Leftrightarrow & \mbox{LR}^-  <  1.
-\end{eqnarray*}
+Useful tests have $\mbox{LR}^+ > 1$ and
+$\mbox{LR}^- < 1$.
 Likelihood ratios above 10 and below 0.1 are considered to
 provide strong evidence to rule in or rule out
 diagnoses [@SN_LR], respectively.
@@ -490,9 +481,8 @@ positive or negative test result:
 \frac{1-\mbox{NPV}}{\mbox{NPV}} & = & \mbox{LR}^- \,  \cdot \, \frac{\mbox{Prev}}{1-\mbox{Prev}} \\[.3cm]
 \mbox{ Posterior odds}  & = & \mbox{ Likelihood ratio} \, \cdot \, \mbox{Prior odds}. \nonumber
 \end{eqnarray}
-So Bayesian updating with odds (rather than probabilities) is particularly simple: We only have to multiply the prior odds
-with the relevant likelihood ratio to obtain posterior odds. 
-The posterior odds can be easily back-transformed to probabilities as
+
+The odds on the left-hand side can be easily back-transformed to probabilities as
 \[
  \mbox{Odds } \omega = \frac{\pi}{1-\pi} \qquad \mbox{ Probability } \pi=\frac{\omega}{1+\omega} .
 \]
@@ -520,7 +510,7 @@ postOddsn <- LRn * prev / (1 - prev)
 
 
 Figure \@ref(fig:updating) gives an example of Bayesian updating with likelihood ratios. The prior odds of 1 to 21 correspond to a prevalence of 4.5\%.
-A positive test results in posterior odds of
+A positive test results in posterior odds
 \[
   \frac{1}{21} \cdot  \frac{27}{1} =   \frac{27}{21} .
 \]
@@ -681,7 +671,7 @@ points(0.7, 0.9, pch=19)
 ```
 
 So far, we have estimated population parameters using corresponding
-sample quantities. For instance, *sample proportions* ($p$) are used to estimate *probabilities*
+sample quantities. For instance, *sample proportions* (p) are used to estimate *probabilities*
 ($\pi$).
 These estimates should be reported with a confidence interval 
 (CI) to account for the sample size of the study. 
@@ -750,7 +740,8 @@ at level 95\%  then  has limits
     p - \mbox{ET}_{95} \mbox{ and } p + \mbox{ET}_{95}.
     \]
     
-The Wald confidence interval is of *additive* form, because the error term is
+This confidence interval
+follows the "add/subtract" construction, because the error term is
 added to, respectively subtracted from, the estimate $p$.
 The factor 1.96 has to be replaced by
 the appropriate standard normal quantile for other confidence levels. 
@@ -763,15 +754,15 @@ qnorm((1 + level)/2) # factor
 
 
 #### Wilson confidence interval {-}
-It is usually better to use the *Wilson* confidence interval for a proportion, in particular 
+It is usually better to use the *Wilson* confidence interval, in particular 
 if $n$ is small or $p$ is close to 0 or 1.
 The Wilson interval has better *empirical coverage* than the Wald interval,
-as shown in Figure \@ref(fig:coverage) for $n=50$. 
+as shown in Figure \@ref(fig:coverage). 
 Additionally, the Wilson confidence interval does not have overshoot issues:
 its limits are always within the unit interval, eliminating the need for truncation.
 
 
-```{r coverage, echo = FALSE, fig.cap = "Empirical coverage of Wald and Wilson confidence intervals with nominal confidence level $95\\%$ and sample size $n=50$ (grey line). The solid line is a local average of the coverage, computed as described in @held", echo = FALSE, message = FALSE }
+```{r coverage, echo = FALSE, fig.cap = "Empirical coverage of Wald and Wilson confidence intervals with nominal confidence level $95\\%$ and sample size $n=50$ (grey line). The solid line is a local average of the coverage, computed as described in @held", warning = FALSE, message = FALSE}
  source("code/settings.R")
 
  par(mfrow=c(1,2), las=1, pty="s")
@@ -823,7 +814,7 @@ wilson(x=629, n=726, conf.level = 0.95)
 ```
 
 The `R` function `prop.test()` without continuity correction also 
-computes a Wilson CI:
+produces a Wilson CI:
 ```{r echo=TRUE}
 
 prop.test(x=629, n=726, correct=FALSE, conf.level = 0.95)$conf.int
@@ -840,7 +831,7 @@ The limits of the Wald confidence interval are -- by construction -- symmetric a
 
 
 #### Other confidence intervals {-}
-Other types of confidence intervals for proportions are available, for example Agresti, 
+Other types of confidence intervals can be calculated, for example Agresti, 
 Jeffreys or Clopper-Pearson. Here we compute the different confidence intervals for 
 the sensitivity in Example \@ref(exm:depression) (screening for depression) based on both questions. 
 
@@ -857,7 +848,7 @@ of the Wald confidence interval is actually larger than 1 ("overshoot"):
 p + \mbox{ET}_{95} = `r res$p` + 1.96 \cdot \sqrt{(`r res$p` \cdot (1-`r res$p`) / 29} = `r round(res$p + 1.96*sqrt(res$p*(1-res$p)/29),3)`
 \]
 and in the output truncated to 1.
-The upper limit of Agresti's method is also 1. The other methods have an upper limit smaller than one. The method by Clopper-Pearson produces the widest confidence interval. It is often called "exact", but this is misleading, as it is known to be conservative with too large coverage, see Figure  \@ref(fig:coverage2), again for $n=50$. 
+The upper limit of Agresti's method is also 1. The other methods have an upper limit smaller than one. The method by Clopper-Pearson produces the widest confidence interval. It is often called "exact", but this is misleading, as it is known to be conservative with too large coverage, see Figure  \@ref(fig:coverage2). 
 
 
 ```{r coverage2, echo = FALSE, fig.cap = "Empirical coverage of Clopper-Pearson confidence intervals with nominal confidence level $95\\%$ and sample size $n=50$ (grey line). The solid line is a local average of the coverage, computed as described in @held", echo = FALSE, message = FALSE }
@@ -892,7 +883,7 @@ The upper limit of Agresti's method is also 1. The other methods have an upper l
   \log {\mbox{LR}}^+ - 1.96 \cdot \SE(\log {\mbox{LR}}^+) \mbox{ and } \log {\mbox{LR}}^+ + 1.96 \cdot \SE(\log {\mbox{LR}}^+).
   \]
   Note that log always refers to the natural logarithm in this document.
-  Back-transformation to the original scale gives a 95\% *multiplicative*
+  Back-transformation to the original scale gives a 95\% (multiplicative)
   Wald confidence
   interval for the positive likelihood ratio ${\mbox{LR}}^+$ with limits
   \[
@@ -901,10 +892,11 @@ The upper limit of Agresti's method is also 1. The other methods have an upper l
   where
   
   $$\EF_{.95} =\exp\left\{1.96 \cdot \SE(\log {\mbox{LR}}^+)\right\}$$
-  is called the 95\% *error factor* (EF). This Wald confidence interval
-  is of multiplicative form, as the estimate (the likelihood ratio) is
+  is called the 95\% *error factor* (EF). This confidence interval
+  follows the "multiply/divide" construction, as the estimate is
   multiplied, respectively divided, by the error factor. There are many
-  other confidence intervals in biostatistics that are of multiplicative form, for example confidence intervals for risk ratios,
+  other confidence intervals in biostatistics that are of the
+  "multiply/divide" type, for example confidence intervals for risk ratios,
   odds ratios and
   hazard ratios.
 
@@ -914,13 +906,13 @@ The upper limit of Agresti's method is also 1. The other methods have an upper l
   The exact procedure to calculate a 95\% confidence interval for a
   likelihood ratio is as follows, see Table \@ref(tab:notation) for notation:
 
-  1.  Calculate the standard error on the log scale:
+  1.  Calculate standard error on the log scale:
   \begin{eqnarray*}
   \SE(\log {\mbox{LR}}^+) & = & \sqrt{\frac{1}{{fp}}-\frac{1}{n_0} +\frac{1}{{tp}}-\frac{1}{n_1}} \\
   \SE(\log {\mbox{LR}}^-) & = & \sqrt{\frac{1}{{tn}}-\frac{1}{n_0} +\frac{1}{{fn}}-\frac{1}{n_1}} \\
   \end{eqnarray*}
   
-  2.  Compute the 95\% *error factor* (EF)
+  2.  Compute 95\% *error factor* (EF)
   
   3.  The 95\% confidence interval for ${\mbox{LR}}^+$ then has limits
   $${\mbox{LR}}^+/\EF_{.95} \mbox{ and } {\mbox{LR}}^+ \cdot \EF_{.95}$$
@@ -947,7 +939,8 @@ A 95\% confidence interval for ${\mbox{LR}}^-$ is computed accordingly using the
 
 ### Diagnostic odds ratio
 
-  The confidence interval for the diagnostic odds ratio is also of multiplicative form, again see Table \@ref(tab:notation) for
+  The confidence interval for the diagnostic odds ratio is also of the
+  "multiply/divide" type, again see Table \@ref(tab:notation) for
   notation. The steps are: 
 
   1. Calculate the standard error on the log scale:
@@ -974,7 +967,7 @@ confIntDiagnostic(tp=28, fp=129, tn=263, fn=1, cohort=TRUE)
 
 
 Alternatively, the computation can be performed with `epiR::epi.tests()`:
-```{r echo=TRUE, message = FALSE}
+```{r echo=TRUE, message = FALSE, warning=FALSE}
   ScreeningData <- as.table(matrix(c(28,129,1,263), 
                                    nrow = 2, byrow = TRUE))
   colnames(ScreeningData) <- c("Dis+","Dis-")
@@ -997,7 +990,7 @@ a pre-specified prevalence. This approach is based on the following steps:
 2.  Multiplication with ${\mbox{Prev}}/({1-\mbox{Prev}})$ gives the limits of
       a confidence interval for ${\mbox{PPV}/(1-\mbox{PPV})}$ resp. ${(1-\mbox{NPV})/\mbox{NPV}}$ according to  equation \@ref(eq:PPVBayes), resp. \@ref(eq:NPVBayes).
       
-3.  Confidence intervals for $\mbox{PPV}$ resp. $\mbox{NPV}$ can be obtained by the usual transformation of the limits obtained in step 2 to the  probability scale.
+3.  Confidence intervals for $\mbox{PPV}$ resp. $\mbox{NPV}$ can be obtained by the usual transformation of the limits obtained in step 2. to the  probability scale.
 
 
 
@@ -1109,6 +1102,58 @@ CVS.
 The relative sensitivity, specificity, LR$^{+}$ and LR$^{-}$, together 
 with the corresponding confidence intervals, can be computer using the function 
 `biostatUZH::confIntIndependentDiagnostic()`: 
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+confIntIndependentDiagnostic <-  function (tp, fp, tn, fn, names = c(1, 2), conf.level = 0.95, adjust = FALSE)
+{
+  stopifnot(is.numeric(tp), length(tp) == 2, is.finite(tp),
+            is.wholenumber(tp), is.numeric(fp), length(fp) == 2,
+            is.finite(fp), is.wholenumber(fp), is.numeric(tn), length(tn) ==
+              2, is.finite(tn), is.wholenumber(tn), is.numeric(fn),
+            length(fn) == 2, is.finite(fn), is.wholenumber(fn), is.numeric(conf.level),
+            length(conf.level) == 1, is.finite(conf.level), 0 < conf.level,
+            conf.level < 1, is.logical(adjust), length(adjust) ==
+              1, is.finite(adjust))
+  se.log.TPF <- sqrt(sum(1/tp) - sum(1/(tp + fn)))
+  se.log.FPF <- sqrt(sum(1/fp) - sum(1/(fp + tn)))
+  se.log.TNF <- sqrt(sum(1/tn) - sum(1/(tn + fp)))
+  se.log.FNF <- sqrt(sum(1/fn) - sum(1/(fn + tp)))
+  se.log.DOR <- sqrt(1/tp + 1/fp + 1/tn + 1/fn) # DOR
+  se.log.rTPF <- sqrt(sum(se.log.TPF^2))
+  se.log.rTNF <- sqrt(sum(se.log.TNF^2))
+  se.log.rFNF <- sqrt(sum(se.log.FNF^2))
+  se.log.rFPF <- sqrt(sum(se.log.FPF^2))
+  se.log.rLRp <- sqrt(sum(se.log.TPF^2 + se.log.FPF^2))
+  se.log.rLRm <- sqrt(sum(se.log.TNF^2 + se.log.FNF^2))
+  se.log.rDOR <- sqrt(sum(se.log.DOR^2)) # relative DOR
+  resultA <- confIntDiagnostic(tp[1], fp[1], tn[1], fn[1])
+  resultB <- confIntDiagnostic(tp[2], fp[2], tn[2], fn[2])
+
+  estimate1 <- resultA[1:5, 2]
+  estimate2 <- resultB[1:5, 2]
+  ratio <- estimate1/estimate2
+  FNF <- fn/(fn + tp)
+  rFNF <- FNF[1]/FNF[2]
+  FPF <- fp/(fp + tn)
+  rFPF <- FPF[1]/FPF[2]
+  if (adjust)
+    conf.level <- sqrt(conf.level)
+  z <- qnorm((1 + conf.level)/2)
+  # Error factor:
+  EF <- exp(z * c(se.log.rTPF, se.log.rTNF, se.log.rLRp, se.log.rLRm, se.log.rDOR))
+  res <- data.frame(matrix(NA, ncol = 6, nrow = 5))
+  colnames(res) <- c("type", paste0("estimate", substr(names[1], 1, 4)), paste0("estimate", substr(names[2], 1, 4)), "ratio", "lower", "upper")
+  res[, 1] <- c("Sens", "Spec", "LRplus", "LRminus", "DOR")
+  res[, 2] <-  estimate1
+  res[, 3] <- estimate2
+  res[, 4] <- ratio
+  res[, 5] <- ratio/EF
+  res[, 6] <- ratio * EF
+  res
+}
+
+```
+
 ```{r echo=T, size = "small"}
 fetAb.tp <- c(116, 111)
 fetAb.fp <- c(34, 111)
@@ -1126,10 +1171,7 @@ There is some evidence that EA has a better specificity and LR$^+$ than CVS,
 since the corresponding confidence intervals
 do not include the reference value of 1.
 
-
-
 :::{.example #paired}
-
 @RoldaNofuentes2012 show the data of a clinical trial carried out at the 
 University Clinic Hospital in Granada, Spain. In this study, two 
 diagnostic tests (T1 and T2) have been applied to 548 males to detect coronary 
@@ -1151,6 +1193,73 @@ print(Dis); print(nonDis)
 
 
 The function `biostatUZH::confIntPairedDiagnostic()`can be used in this case:
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+confIntPairedDiagnostic <- function(diseased, nonDiseased, names = c(1, 2),
+                                    conf.level = 0.95, adjust = FALSE)
+{
+  stopifnot(is.numeric(diseased), is.matrix(diseased), dim(diseased) ==
+              c(2, 2), is.finite(diseased), is.wholenumber(diseased),
+            diseased > 0, is.numeric(nonDiseased), is.matrix(nonDiseased),
+            dim(nonDiseased) == c(2, 2), is.finite(nonDiseased),
+            is.wholenumber(nonDiseased), nonDiseased > 0, is.numeric(conf.level),
+            length(conf.level) == 1, is.finite(conf.level), 0 < conf.level,
+            conf.level < 1, is.logical(adjust), length(adjust) ==
+              1, is.finite(adjust))
+
+  sens1 <- colSums(diseased)[2]/sum(colSums(diseased))
+  sens2 <- rowSums(diseased)[2]/sum(rowSums(diseased))
+
+  spec1 <- colSums(nonDiseased)[1]/sum(colSums(nonDiseased))
+  spec2 <- rowSums(nonDiseased)[1]/sum(rowSums(nonDiseased))
+
+  LR_Plus1 <- sens1/(1 - spec1)
+  LR_Plus2 <- sens2/(1 - spec2)
+
+  LR_Minus1 <- (1 - sens1)/spec1
+  LR_Minus2 <- (1 - sens2)/spec2
+
+  DOR1 <- LR_Plus1 / LR_Minus1
+  DOR2 <- LR_Plus2 / LR_Minus2
+
+
+
+  seLogrTPF <- sqrt((sum(diseased) - sum(diag(diseased)))/(rowSums(diseased)[2] *
+                                                             colSums(diseased)[2]))
+  seLogrFPF <- sqrt((sum(nonDiseased) - sum(diag(nonDiseased)))/(rowSums(nonDiseased)[2] *
+                                                                   colSums(nonDiseased)[2]))
+  seLogrFNF <- sqrt((sum(diseased) - sum(diag(diseased)))/(rowSums(diseased)[1] *
+                                                             colSums(diseased)[1]))
+  seLogrTNF <- sqrt((sum(nonDiseased) - sum(diag(nonDiseased)))/(rowSums(nonDiseased)[1] *
+                                                                   colSums(nonDiseased)[1]))
+  seLogrTPOdds <- sqrt(1/diseased[1,2] + 1/diseased[2,1])
+  seLogrTNOdds <- sqrt(1/nonDiseased[1,2] + 1/nonDiseased[2,1])
+  seLogrDOR <- sqrt(seLogrTPOdds^2 + seLogrTNOdds^2)
+  seLogrLRplus <- sqrt(seLogrTPF^2 + seLogrFPF^2)
+  seLogrLRminus <- sqrt(seLogrFNF^2 + seLogrTNF^2)
+
+  estimate1 <- c(sens1, spec1, LR_Plus1, LR_Minus1, DOR1)
+  estimate2 <- c(sens2, spec2, LR_Plus2, LR_Minus2, DOR2)
+  ratio <- estimate1/estimate2
+
+
+  if (adjust)
+    conf.level <- sqrt(conf.level)
+  z <- qnorm((1 + conf.level)/2)
+  EF <- exp(z * c(seLogrTPF, seLogrTNF, seLogrLRplus, seLogrLRminus, seLogrDOR))
+  res <- data.frame(matrix(data = NA, ncol = 6, nrow = 5))
+  colnames(res) <- c("type", paste0("estimate", substr(names[1], 1, 4)),
+                     paste0("estimate", substr(names[2], 1, 4)), "ratio","lower", "upper")
+  res[, 1] <- c("Sens", "Spec", "LRplus", "LRminus", "DOR")
+  res[, 2] <- estimate1
+  res[, 3] <- estimate2
+  res[, 4] <- ratio
+  res[, 5] <- ratio/EF
+  res[, 6] <- ratio * EF
+  res
+}
+
+```
+
 ```{r echo=T}
 # Estimates for T1 vs T2 
 print(confIntPairedDiagnostic(diseased=Dis, nonDiseased=nonDis,
@@ -1161,6 +1270,30 @@ There is some evidence that T1 performs better than T2 in terms of
 sensitivity and LR$^{-}$, 
 since the corresponding confidence intervals 
 do not include the reference value of 1.
+
+Quite often, in practice, we just use the McNemar test for sensitivity analysis for paired data. 
+
+:::{.example #paired2}
+In @Barnell2023, data from 8920 eligible participants are collected for evaluating sensitivity and specificity of two noninvasive tests for colorectal cancer screening. Among 8920 participants, 36 had colorectal cancer. Each participant was tested both by the multi-target stool RNA test (mt-sRNA) and the fecal immunochemical test (FIT), which means, test results are paired within individuals. 
+:::
+
+```{r, echo=FALSE}
+## data from Barnell et al (JAMA)
+CC <- matrix(c(2,0,6,28), ncol=2, byrow=TRUE)
+rownames(CC) <- c("RNA-", "RNA+")
+colnames(CC) <- c("FIT-", "FIT+")
+```
+To perform McNemar test, we use the `mcnemar.test` function on the matched data from the two tests. 
+```{r, echo=TRUE}
+print(CC)
+mcnemar.test(CC)
+```
+In the paper, the authors report the uncorrected p-value from the test:
+```{r, echo=TRUE}
+mcnemar.test(CC, correct=FALSE)
+```
+
+A p-value of 0.01 suggests that the mt-sRNA test showed significant improvement in sensitivity for colorectal cancer compared with results of the FIT.
 
 ## Additional references
 

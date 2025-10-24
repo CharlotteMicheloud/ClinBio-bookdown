@@ -41,7 +41,7 @@ will not affect the ROC curve, making it *scale-invariant*.
   
   
 :::{.example #genexpr}
-Gene expression data from a study with $n=23$ controls and $m=30$ 
+The gene expression data from a hypothetical study with $n=23$ controls and $m=30$ 
 cases are shown in Figure \@ref(fig:genexpress).
 Table \@ref(tab:genes) gives sensitivity and specificity for selected cut-offs.
 :::
@@ -62,7 +62,7 @@ head(rocdata, 3)
 ```
 
 
-```{r genexpress, echo = FALSE, fig.cap = "Gene expression data from a study with $n=23$ controls and $m=30$ cases."}
+```{r genexpress, echo = FALSE, fig.cap = "Continuous diagnostic test for gene expression."}
 par(mfrow=c(1,2),pty="s")
 
 boxplot(controls, cases, names=rev(c("Cases", "Controls")), 
@@ -98,8 +98,8 @@ knitr::kable(selected_rows, digits = c(2, 1, 1, 1), label = NA,
 
 ```
 
-Figure \@ref(fig:ROC-col) shows the standard ROC curve. 
-The right plot gives a colorized version that indicates the corresponding cut-off value in the color scale on the right. 
+Figure \@ref(fig:ROC-col) then shows the standard ROC curve. 
+The right plot gives a colorized version that indicates the corresponding cut-off value as indicated in the color scale on the right. 
 
 The following `R` code was used to produce Figure \@ref(fig:ROC-col):
 ```{r echo=TRUE, results='hide', fig.show='hide'}
@@ -362,7 +362,7 @@ text(0.2, 0.6, "Cut-off=0.8", col=2, pos=4)
 
 
 
-## Comparing two diagnostic tests
+## Comparing two continuous diagnostic tests
 
 Suppose that ${\mbox{AUC}}(A)$ and ${\mbox{AUC}}(B)$ are available
 for two diagnostic tests $A$ and $B$ for the same disease.

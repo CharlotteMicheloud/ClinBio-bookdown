@@ -1,5 +1,5 @@
 
-# Some special designs 
+# Some special designs {#specialDesign}
 
 This chapter gives an introduction to some special randomized
 controlled trial designs. Cluster-randomized trials no longer

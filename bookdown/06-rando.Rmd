@@ -303,7 +303,8 @@ For example, decisions like whether to transform the outcome variable,
 whether to compute risk differences, risk ratios or odds ratios for binary 
 outcomes, or whether to include a covariate in the analysis all 
 involve a degree of subjectivity.
-A precise statistical analysis plan helps in any case. 
+A precise statistical analysis plan helps in any case.
+
 
 :::{.example #ulcers name="continued"}
 In the RCT from @Mirpour2020, the patient were blinded, and 
@@ -345,23 +346,39 @@ red placebo and vice versa in the other group. For example, this method
 is useful to blind a comparison of a treatment given as a tablet with an 
 intravenous treatment.
 
+## ICH E10 guideline for control group
+One major purpose of control groups is to discriminate the outcomes caused by treatment from the outcomes caused by other factors. The ICH E10 guideline describes in detail various types of control groups commonly employed to demonstrate efficacy, and for each considers the ability to minimize bias, ethical and practical issues associated with its use, usefulness and the quality of inference in particular situations, modifications of study design or combinations with other
+controls that can resolve ethical, practical, or inferential concerns, and overall advantages and disadvantages (see @ICH2000E10).
 
-## Reporting guidelines for Clinical Trials
+Here we provide a high-level summary of E10 for control groups. We will show three types of most common control group. 
+
+The **Placebo Control** (P) helps us to analyse the treatment effect from ‘Response on standard-of-care (SoC) + Treatment’ vs ‘Response on SoC + Placebo’. This allows for blinding and randomization by requiring identical appearance or administration of treatment and placebo, but can have the risk of unblinding due to pharmacology. This approach is applicable in many situations, despite a lack of real-world applications, as it is very uncommon and not ethical to give placebo to patients in clinical practice.
+
+The **Active Control** (A) is another possible control that also allows for blinding and randomization. It has ethical and practical advantages compared to Placebo Control. There are different possible trial objectives, for example showing superiority (new treatment is more effective than active control) or non-inferiority (new treatment is not less effective than active control), and more information can be found in Chapter \@ref(specialDesign). There are limitations, however, such as having more treatment exposure than control due to large sample sizes, and regional differences in SoC. 
+
+The **External Control** (E) uses data from patients in a previous trial as control, and a single arm trial is given. This is used in some particular settings, for example for serious diseases with high mortality, for rare diseases, for pediatric drug development, or when no other effective treatments are available. It has many challenges, including the loss of randomization and blinding, and the difficulty to ensure that current patients are comparable to earlier patients. Hybrid designs augment a concurrent control (P or A) arm with E data, to strengthen the overall control arm. 
+
+
+## Reporting guidelines for clinical trials
 
 ### The SPIRIT Statement {#sec:spirit}
 
 The SPIRIT
-(**S**tandard **P**rotocol **I**tems: **R**ecommendations for **I**nterventional **T**rials) statement provides evidence-based recommendations for the minimum content of a clinical trial protocol [@spirit; @spiritEE]. SPIRIT is widely endorsed as an international standard for trial protocols.
-The recommendations are outlined in a 33-item *checklist* (see Figures \@ref(fig:SPIRITchecklist1) and \@ref(fig:SPIRITchecklist2)), and *figure* (template of recommended content for the schedule of enrolment, interventions, and assessments). Important details for each checklist item can be found in the Explanation & Elaboration paper [@spiritEE]. The items 14, 20a, 20b and 20c are statistical, and are closely related to, i.e., need to correspond with, items 7, 8, 12 and 16a.
-The current recommendations have been established in 2013, an update will be published soon (see 
-@Hopewell2022 and https://www.consort-spirit.org/).
+(**S**tandard **P**rotocol **I**tems: **R**ecommendations for **I**nterventional **T**rials) statement provides evidence-based recommendations for the minimum content of a clinical trial protocol [@spirit2025; @spiritEE2025]. SPIRIT is widely endorsed as an international standard for trial protocols.
+The recommendations are outlined in a 34-item *checklist* (see Figures \@ref(fig:SPIRITchecklist1) and \@ref(fig:SPIRITchecklist2)), and *figure* (template of recommended content for the schedule of enrolment, interventions, and assessments). Important details for each checklist item can be found in the Explanation & Elaboration paper [@spiritEE2025]. The items 19, 27a, 27b, 27c, and 27d
+<!-- 14, 20a, 20b and 20c  in spirit 2013 version -->
+are statistical, and are closely related to, i.e., need to correspond with, items 10, 12, 16, and 21a.
+<!-- 7, 8, 12 and 16a. in spirit 2013 -->
 
-```{r SPIRITchecklist1, fig.cap="The SPIRIT checklist (items 1--17).", fig.align="center", echo=FALSE, eval = TRUE}
-knitr::include_graphics("figures/SpiritCheckList_part1.png")
+The current recommendations have been established in 2013 [@spirit], and updated in 2025 [@spirit2025] (see 
+https://www.consort-spirit.org/).
+
+```{r SPIRITchecklist1, fig.cap="The SPIRIT checklist (items 1--26).", fig.align="center", echo=FALSE, eval = TRUE}
+knitr::include_graphics("figures/SpiritChecklist2025.png")
 ```
 
-```{r SPIRITchecklist2, fig.cap="The SPIRIT checklist (items 18--33).", fig.align="center", echo=FALSE, eval = TRUE}
-knitr::include_graphics("figures/SpiritCheckList_part2.png")
+```{r SPIRITchecklist2, fig.cap="The SPIRIT checklist (items 27--34).", fig.align="center", echo=FALSE, eval = TRUE}
+knitr::include_graphics("figures/SpiritChecklist2025-2.png")
 ```
 
 
@@ -370,23 +387,24 @@ knitr::include_graphics("figures/SpiritCheckList_part2.png")
 The CONSORT 
 (**CONS**olidated **S**tandards **O**f **R**eporting **T**rials) statement
 is an evidence-based minimum set of recommendations for reporting RCTs 
-[@consort; @consortEE].
+[@consort2025; @consortEE2025].
 It encompasses various initiatives developed by the CONSORT Group to alleviate 
 the problems arising from inadequate reporting of RCTs. It offers a standard 
 way for authors to prepare reports of trial design and analysis, facilitating their 
 complete and transparent reporting, and aiding their critical appraisal and 
-interpretation. The CONSORT Statement comprises a 25-item *checklist*, see Figure \@ref(fig:CONSORTchecklist),  and a 
-*flow diagram*, see Figure \@ref(fig:CONSORTdiagram). The current recommendations 
-have been established in 2010, an update will be published soon (see 
-@Hopewell2022 and https://www.consort-spirit.org/).
+interpretation. The CONSORT Statement comprises a 30-item *checklist*, see Figure \@ref(fig:CONSORTchecklist),  and a
+*flow diagram*, see Figure \@ref(fig:CONSORTdiagram). 
+
+The current recommendations 
+have been established in 2010 [@consort], and updated in 2025 [@consort2025] (see https://www.consort-spirit.org/).
 
 
 ```{r CONSORTchecklist, fig.cap="The CONSORT checklist.", fig.align="center", echo=FALSE, eval = TRUE}
-knitr::include_graphics("figures/ConsortCheckList.png")
+knitr::include_graphics("figures/ConsortCheckList2025.png")
 ```
 
 ```{r CONSORTdiagram, fig.cap="The CONSORT flow diagram.", fig.align="center", echo=FALSE}
-knitr::include_graphics("figures/consort-flow-diagram.png")
+knitr::include_graphics("figures/Consort_flow_diagram2025.png")
 ```
 
 

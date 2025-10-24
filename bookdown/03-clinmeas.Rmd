@@ -84,10 +84,10 @@ subject <- as.factor(rep(1:n,2))
 
 
 
-```{r PEFR, fig.cap = "Two repeated measurements of peak expiratory flow rate of the same patients [@bland]", echo = F, fig.width=4.0}
+```{r PEFR, fig.cap = "Repeated measurements of peak expiratory flow rate [@bland]", echo = F, fig.width=4.0}
 my.range <- range(c(First,Second))
 par(pty="s", las=1)
-plot(First, Second, xlab = "First measurement", ylab = "Second measurement", pty = "s", pch = 19, col = 2, ylim=my.range, xlim=my.range, cex=0.7)
+plot(First, Second, xlab = "First", ylab = "Second", pty = "s", pch = 19, col = 2, ylim=my.range, xlim=my.range, cex=0.7)
 segments(100, 100, 700, 700, lty = 2, col = 4)
 
 cc <- confIntCorrelation(First, Second, method = "pearson", type = "z")
@@ -107,13 +107,13 @@ are available. The two sodium intake measurements are displayed in Figure
 \@ref(fig:sodium).
 :::
 
-```{r sodium, fig.cap="Two repeated measurements of urinary sodium intake from the same patients [@Nab2021]."}
+```{r sodium, fig.cap="Repeated measurements of urinary sodium intake [@Nab2021]."}
 library(mecor)
 data(sodium)
 sodium_f <- sodium[!is.na(sodium$urinary1) & !is.na(sodium$urinary2), ]
 par(pty="s", las=1)
 plot(sodium_f$urinary1, sodium_f$urinary2, 
-     xlab = "First measurement", ylab = "Second measurement", pty = "s", pch = 19, 
+     xlab = "First", ylab = "Second", pty = "s", pch = 19, 
      col = 2, cex = 0.7, 
      xlim = c(2.5, 6), ylim = c(2.5, 6))
 
@@ -153,7 +153,7 @@ subject_sod <- rep(1:nrow(sodium_f), times = 2)
 aov_sod <- aov(measurement_sod ~ subject_sod)
 (sigmaw_sod <- sqrt(summary(aov_sod)[[1]][2,3]))
 ```
-and so $s_w = `r round(sigmaw_sod,2)`$ mg.
+and so $s_w = `r round(sigmaw_sod,1)`$ mg.
 
 It is also possible to calculate a confidence interval for the within-subject
 standard deviation $s_w$ using the following `R` function:
@@ -253,11 +253,11 @@ plot(x_sod, y_sod, xlab = "Mean of measurements",
      pty = "s", 
      pch = 19, 
      col = 2, 
-     cex = 0.7, 
+     cex = 0.9, 
      main = "Sodium")
 
 abline(coef(lm(y_sod ~ x_sod)), lty=2, col=4)
-text(4.4, 1.8, 
+text(4.5, 1.8, 
      paste("Spearman correlation =", format(cor(x_sod, y_sod, method = "spearman"), 
                                             digits = 2, nsmall = 2)), 
      cex = 0.9)
@@ -274,7 +274,7 @@ text(4.4, 1.8,
 Spearman's rank correlation coefficient
 in the PEFR example  ($\rho_S = `r round(ctest_pefr$estimate, 2)`$)
 is larger than in the sodium example ($\rho_S = `r round(ctest_sod$estimate, 4)`$), 
-but the $P$-values from the correlation test are large in both cases ($p=`r formatPval(ctest_pefr$p.value)`$ and 
+but the $P$-value for the correlation test is large in both cases ($p=`r formatPval(ctest_pefr$p.value)`$ and 
 $p=`r formatPval(ctest_sod$p.value)`$, respectively). Hence
 there is no evidence for 
 an association between the mean measurement and the absolute difference of
@@ -285,12 +285,12 @@ the measurements, so no transformation is required.
 of 20 Scottish schoolchildren, see Figure \@ref(fig:cotinine).
 :::
 
-```{r cotinine, fig.cap = "First versus second measurement for the 20 schoolchildren in Example \\@ref(exm:cotinine)."}
+```{r cotinine, fig.cap = "Measurement 1 versus Measurement 2 for the 20 schoolchildren in Example \\@ref(exm:cotinine)."}
 SC <- read.table("data/SalivaryCotinine.txt", header = TRUE)
 
 par(las = 1, pty = "s")
-plot(SC$Measurement1, SC$Measurement2, pch = 19, xlab = "First measurement (ng/ml)",
-     ylab = "Second measurement (ng/ml)", cex = 0.8, 
+plot(SC$Measurement1, SC$Measurement2, pch = 19, xlab = "Measurement 1 (ng/ml)",
+     ylab = "Measurement 2 (ng/ml)", cex = 0.8, 
      col = 2)
 abline(0, 1, lty = 2, col = 4)
 
@@ -730,31 +730,51 @@ If the limits of agreement (lower = `r format(ba1$lower.agreement.limit, nsmall=
 
 ## Agreement of two methods with binary variables
 
-:::{.example #kirkwood}
-179 patients completed a *Symptom Interpretation Questionnaire* 
-on two occasions three years apart. Each time, they were were classified
-into "normalizer" and "non-normalizer", related to how they were 
-able to cope with symptoms [@KirkwoodSterne, p. 434, Ex.36.3].
+<!-- :::{.example #kirkwood} -->
+<!-- 179 patients completed a *Symptom Interpretation Questionnaire*  -->
+<!-- on two occasions three years apart. Each time, they were were classified -->
+<!-- into "normalizer" and "non-normalizer", related to how they were  -->
+<!-- able to cope with symptoms [@KirkwoodSterne, p. 434, Ex.36.3]. -->
+<!-- ::: -->
+:::{.example #Hazir}
+In a study of chest radiography in children in Pakistan (see @Hazir2006), children aged 2 to 59 months with non-severe pneumonia were invited to participate. In total 2000 children were enrolled, for whom 1848 chest radiographs were available for assessment. Two consultant radiologists used standardized criteria to evaluate the chest radiographs, with no clinical information available to them. The primary outcome was diagnosis of pneumonia (absent or
+present) from chest radiographs. 
 :::
 
-
 ```{r agreement_cached, cache=TRUE, results="asis", echo = FALSE}
-symptoms_nx2 <- rbind(
-    matrix(rep(c(1, 1), 47), ncol = 2, byrow = T),
-    matrix(rep(c(0, 1), 17), ncol = 2, byrow = T),
-    matrix(rep(c(1, 0), 39), ncol = 2, byrow = T),
-    matrix(rep(c(0, 0), 76), ncol = 2, byrow = T)
+## symptoms_nx2 <- rbind(
+##     matrix(rep(c(1, 1), 47), ncol = 2, byrow = T),
+##     matrix(rep(c(0, 1), 17), ncol = 2, byrow = T),
+##     matrix(rep(c(1, 0), 39), ncol = 2, byrow = T),
+##     matrix(rep(c(0, 0), 76), ncol = 2, byrow = T)
+## ) # 2 ratings for each of n patients
+## norm <- symptoms_nx2[, 1]
+## nonnorm <- symptoms_nx2[, 2]
+## mat <- table(norm, nonnorm)
+## mat0 <- mat
+## mat <- rbind(mat, apply(mat, 2, sum))
+## mat <- data.frame(cbind(mat, apply(mat, 1, sum)))
+## mat <- cbind(rep(NA, 3), mat)
+## mat <- rbind(c("First classification", "normalizer", "non-normalizer", "Total"), mat)
+## mat[2:4, 1] <- c("normalizer", "non-normalizer", "Total")
+## dimnames(mat)[[2]] <- c("", "Second classification", "", "")
+## xtab2 <- xtable(mat, align = "cc|cc|c", caption = "", label = "tab: kappa1")
+radiologists <- rbind(
+    matrix(rep(c(1, 1), 176), ncol = 2, byrow = T),
+    matrix(rep(c(0, 1), 83), ncol = 2, byrow = T),
+    matrix(rep(c(1, 0), 240), ncol = 2, byrow = T),
+    matrix(rep(c(0, 0), 1349), ncol = 2, byrow = T)
 ) # 2 ratings for each of n patients
-norm <- symptoms_nx2[, 1]
-nonnorm <- symptoms_nx2[, 2]
+norm <- radiologists[, 1]
+nonnorm <- radiologists[, 2]
 mat <- table(norm, nonnorm)
 mat0 <- mat
 mat <- rbind(mat, apply(mat, 2, sum))
 mat <- data.frame(cbind(mat, apply(mat, 1, sum)))
 mat <- cbind(rep(NA, 3), mat)
-mat <- rbind(c("First classification", "**Normalizer**", "**Non-normalizer**", "Total"), mat)
-mat[2:4, 1] <- c("**Normalizer**", "**Non-normalizer**", "Total")
-dimnames(mat)[[2]] <- c("", "Second classification", "", "")
+mat <- rbind(c("Radiologist A", "Pneumonia", "No pneumonia", "Total"), mat)
+mat[2:4, 1] <- c("Pneumonia", "No pneumonia", "Total")
+dimnames(mat)[[2]] <- c("", "Radiologist B", "", "")
 xtab2 <- xtable(mat, align = "cc|cc|c", caption = "", label = "tab: kappa1")
 
 a <- mat0[1, 1]
@@ -784,18 +804,18 @@ library(dplyr)
 library(kableExtra)
 # Create the data frame
 data <- data.frame(
-  "First classification" = c("**Normalizer**", "**Non-normalizer**", "**Total**"),
-  "Normalizer" = c(76, 39, 115),
-  "Non-normalizer" = c(17, 47, 64),
-  "Total" = c(93, 86, 179), 
+  "Radiologist A" = c("**Pneumonia**", "**No pneumonia**", "**Total**"),
+  "Pneumonia" = c(176, 83, 259),
+  "No pneumonia" = c(240, 1349, 1589),
+  "Total" = c(416, 1432, 1848),
   check.names = FALSE
 )
 
 # Print the table using kable
 kable(data, format = "html", row.names = FALSE, booktabs = TRUE, 
-      caption = "Agreement of binary classification of patients on two occasions three years apart.")%>%
+      caption = "Agreement of binary classification of patients between Radiologist A and B.")%>%
   kable_styling(full_width = FALSE) %>%
-  add_header_above(c(" " = 1, "Second classification" = 2, " " = 1))
+  add_header_above(c(" " = 1, "Radiologist B" = 2, " " = 1))
 ```
 
 
@@ -806,15 +826,17 @@ The *proportion of agreement* between the two classifications is
 The problem is that two "random" classifiers would also agree for
 some patients, so we need to adjust for this *agreement by chance*. We can calculate this based on the
 expected frequencies under independence. For example, the expected frequency in the first cell of
-Table \@ref(tab:exbinary) is $115 \cdot 93 / 179 = 59.7$. 
+Table \@ref(tab:exbinary) is $259 \cdot 416 / 1848 = 58.3$. 
 
 ```{r echo = F}
-mat.exp[1:2, 1:2] <- format(round(as.matrix(mat.exp[1:2, 1:2]), 1), scientific = FALSE, nsmall = 1)
-mat <- mat.exp
-mat <- cbind(rep(NA, 3), mat)
-mat <- rbind(c("First classification", "normalizer", "non-normalizer", "Total"), mat)
-mat[2:4, 1] <- c("**Normalizer**", "**Non-normalizer**", "Total")
-dimnames(mat)[[2]] <- c("", "Second classification", "", "")
+## mat.exp[1:2, 1:2] <- format(round(as.matrix(mat.exp[1:2, 1:2]), 1), scientific = FALSE, nsmall = 1)
+## mat <- mat.exp
+## mat <- cbind(rep(NA, 3), mat)
+## mat <- rbind(c("Radiologist A", "Pneumonia", "No pneumonia", "Total"), mat)
+## mat[2:4, 1] <- c("Pneumonia", "No pneumonia", "Total")
+## dimnames(mat)[[2]] <- c("", "Radiologist B", "", "")
+## xtab2 <- xtable(mat, align = "cc|cc|c", caption = "", label = "tab: kappa2")
+## ## print(xtab2, include.rownames = FALSE, include.colnames = TRUE, floating = F, hline.after = c(1, 3), type = "latex", size = "footnotesize", sanitize.text.function = function(x){x}, table.placement = "h!", tabular.environment = "tabular")
 
 ## compute kappa in example
 pobs <- (a + d) / n
@@ -825,10 +847,10 @@ kappa <- (pobs - pexp) / (1 - pexp)
 ```{r expected}
 # Create the data frame
 data <- data.frame(
-  "First classification" = c("**Normalizer**", "**Non-normalizer**", "**Total**"),
-  "Normalizer" = c(59.7, 55.3, 115),
-  "Non-normalizer" = c(33.3, 30.7, 64),
-  "Total" = c(93, 86, 179), 
+  "Radiologist A" = c("**Pneumonia**", "**No pneumonia**", "**Total**"),
+  "Pneumonia" = c(round(mat.exp[2,2], 1), round(mat.exp[2,1], 1), "259"),
+  "No pneumonia" = c(round(mat.exp[1,2], 1), round(mat.exp[1,1], 1), "1589"),
+  "Total" = c(416, 1432 , 1848),
   check.names = FALSE
 )
 
@@ -836,7 +858,7 @@ data <- data.frame(
 kable(data, format = "html", row.names = FALSE, booktabs = TRUE, 
       caption = "Table of expected frequencies of agreement by chance, given row- and column totals.") %>%   
   kable_styling(full_width = FALSE) %>%
-  add_header_above(c(" " = 1, "Second classification" = 2, " " = 1))
+  add_header_above(c(" " = 1, "Radiologist B" = 2, " " = 1))
 
 ```
 
@@ -848,9 +870,6 @@ The expected proportion of *agreement by chance* then is
     &=& (`r format(a2, nsmall = 1, digits = 2)` + `r format(d2, nsmall = 1, digits = 2)`) / `r n2` \\
     &=& `r format((a2 + d2) / n2, nsmall = 2, digits = 2)`.
 \end{eqnarray*}
-
-
-
 
 
 
@@ -869,7 +888,7 @@ The expected proportion of *agreement by chance* then is
 It has the following properties: $\kappa \leq \pobs$, $\kappa = 1$ means 
 that there is perfect agreement ($\pobs=1$), $\kappa = 0$ mean that the agreement not larger than expected by chace ($\pobs=\pexp$), and the smallest possible value of $\kappa$ is $-\pexp/(1-\pexp)$. 
 
-In Example \@ref(exm:kirkwood) we obtain
+In Example \@ref(exm:Hazir) we obtain
 
 \begin{eqnarray*}
      \kappa &=& \frac{`r format((a + d) / n, nsmall = 2, digits = 2)`- `r format((a2 + d2) / n2, nsmall = 2, digits = 2)`}{1 - `r format((a2 + d2) / n2, nsmall = 2, digits = 2)`}
@@ -891,22 +910,23 @@ kable(kappa_table, format = "html", caption = "Classification of Cohen's Kappa [
 ```
 
 However, there is a caveat with the interpretation shown in Table \@ref(tab:kappaClass):
-$\kappa$ also depends on the true proportion of subjects in the two
-categories. Figure \@ref(fig:kappa-dep) shows the expected $\kappa$ as a function of the
-true proportion of "Yes" subjects for different probabilities of 
-agreement. We can see that expected $\kappa$ drops for extreme proportions close to zero or one. 
+The expected value of $\kappa$ also depends on the true proportion of subjects in the two
+categories. Figure \@ref(fig:kappa-dep) shows the expected value of $\kappa$ as a function of the
+true proportion of "Yes" subjects for different probabilities of a correct assessment by the two classifiers. 
+We can see that expected $\kappa$ drops for extreme proportions close to zero or one. 
 
 
-
-In Table \@ref(tab:kappa-extreme),
+In Table \@ref(tab:exbinary),
 $\kappa = `r round(vcd::Kappa(mat0)$Unweighted[1], 2)`$
 although $\pobs = `r mat0[1,1] + mat0[2,2]`$/$`r sum(mat0)`$ = $`r round((mat0[1,1] + mat0[2,2])/sum(mat0), 2)`$.
 The problem is that the observed proportion of "positive" subjects is very low
 (5/94 resp. 6/94).
-This shows that $\kappa$ also depends on the marginal distribution of positive
-(respectively negative) subjects!
+ Figure \@ref(fig:kappa-dep) shows that the expected value of $\kappa$ also depends on the marginal distribution of positive
+(respectively negative) subjects. It can be quite low, even if the probability of a correct assessment is quite large. 
 
-```{r kappa-dep, fig.cap = "Dependence of $\\kappa$ on the true proportion of positive subjects.", echo = FALSE}
+
+
+```{r kappa-dep, fig.cap = "Dependence of expected $\\kappa$ on the true proportion of positive subjects.", echo = FALSE, warning=FALSE}
 k <- function(p, q){
     num <- p*(1-p)
     den <- num + q*(1-q)/((2*q-1)^2)
@@ -932,42 +952,6 @@ legend("topleft", lty=1, col=rev(1:6), legend=paste(as.character(rev(q*100)), "%
 ``` 
 
 
-```{r kappa-extreme, results = "asis", echo = F, message = FALSE}
-mat <- rbind(
-matrix(rep(c(1, 1), 1), ncol = 2, byrow = T),
-matrix(rep(c(0, 1), 4), ncol = 2, byrow = T),
-matrix(rep(c(1, 0), 5), ncol = 2, byrow = T),
-matrix(rep(c(0, 0), 84), ncol = 2, byrow = T)
-)
-library("vcd", warn.conflicts = FALSE, quietly = TRUE)
-norm <- mat[, 1]
-nonnorm <- mat[, 2]
-mat <- table(norm, nonnorm)
-mat0 <- mat
-
-
-# Compute Kappa
-k <- Kappa(mat)
-
-# Prepare the table for xtable
-mat <- rbind(mat, apply(mat, 2, sum))
-mat <- data.frame(cbind(mat, apply(mat, 1, sum)))
-mat <- cbind(rep(NA, 3), mat)
-mat <- rbind(c("<b>Rater 1</b>", "negative", "positive", "Total"), mat)
-mat[2:4, 1] <- c("negative", "positive", "Total")
-colnames(mat) <- c("", "Rater 2", "", "")
-# rownames(mat) <- c("", "negative", "positive", "Total")
-
-# Print the table using kable
-knitr::kable(mat, format = "html",
-      caption = "Extreme example for interpretation of Kappa.", 
-      row.names = FALSE, 
-      escape = FALSE) %>%   
-  kable_styling(full_width = FALSE)
-```
-
-
-
 ### Confidence Interval for Cohen's Kappa
 
 The standard error of $\kappa$ is
@@ -988,51 +972,76 @@ respect to $\pexp$.
 
 
 ```{r echo=F}
-symptoms <- matrix(c(76,39,17,47), byrow=F, ncol=2, nrow=2)
-names <- c("**Normalizer**", "**Non-normalizer**")
-colnames(symptoms) <- names
-rownames(symptoms) <- names
-symptoms <- as.table(symptoms, dnn=c("First classification","Second classification"))
 
-## 2 ratings for each of n patients
+## symptoms <- matrix(c(76,39,17,47), byrow=F, ncol=2, nrow=2)
+## names <- c("normalizer", "non-normalizer")
+## colnames(symptoms) <- names
+## rownames(symptoms) <- names
+## symptoms <- as.table(symptoms, dnn=c("First classification","Second classification"))
 
-symptoms.ind <- rbind(matrix(rep(c(1, 1), 76), ncol = 2, byrow = T),
-                      matrix(rep(c(0, 1), 39), ncol = 2, byrow = T),
-                      matrix(rep(c(1, 0), 17), ncol = 2, byrow = T),
-                      matrix(rep(c(0, 0), 47), ncol = 2, byrow = T))
-#symptoms.ind <- cbind(c(1:nrow(symptoms.ind)), symptoms.ind)
-symptoms.ind <- as.data.frame(symptoms.ind)
-colnames(symptoms.ind) <- c("First", "Second")
-rownames(symptoms.ind) <- NULL
+## ## 2 ratings for each of n patients
+
+## symptoms.ind <- rbind(matrix(rep(c(1, 1), 76), ncol = 2, byrow = T),
+##                       matrix(rep(c(0, 1), 39), ncol = 2, byrow = T),
+##                       matrix(rep(c(1, 0), 17), ncol = 2, byrow = T),
+##                       matrix(rep(c(0, 0), 47), ncol = 2, byrow = T))
+## #symptoms.ind <- cbind(c(1:nrow(symptoms.ind)), symptoms.ind)
+## symptoms.ind <- as.data.frame(symptoms.ind)
+## colnames(symptoms.ind) <- c("First", "Second")
+## rownames(symptoms.ind) <- NULL
+## symptoms <- matrix(c(76,39,17,47), byrow=F, ncol=2, nrow=2)
+## names <- c("normalizer", "non-normalizer")
+## colnames(symptoms) <- names
+## rownames(symptoms) <- names
+## symptoms <- as.table(symptoms, dnn=c("First classification","Second classification"))
+
+pneumonia <- matrix(c(176, 240, 83, 1349), byrow=T, ncol=2, nrow=2)
+pneumonia <- as.table(pneumonia, dnn=c("Radiologist A","Radiologist B"))
+names <- c("Pneumonia", "No pneumonia")
+colnames(pneumonia) <- names
+rownames(pneumonia) <- names
+
+## ratings for each of n patients
+
+pneumonia.ind <- rbind(matrix(rep(c("Pneumonia", "Pneumonia"), 176), ncol = 2, byrow = T),
+                      matrix(rep(c("No Pneumonia", "Pneumonia"), 240), ncol = 2, byrow = T),
+                      matrix(rep(c("Pneumonia", "No Pneumonia"), 83), ncol = 2, byrow = T),
+                      matrix(rep(c("No Pneumonia", "No Pneumonia"), 1349), ncol = 2, byrow = T))
+#pneumonia.ind <- cbind(c(1:nrow(pneumonia.ind)), pneumonia.ind)
+pneumonia.ind <- as.data.frame(pneumonia.ind)
+colnames(pneumonia.ind) <- c("RadiologistA", "RadiologistB")
+rownames(pneumonia.ind) <- NULL
+
 ``` 
 
 The different confidence intervals require different formats of the data:
 The Wald CI requires data in *aggregated form* (the ordinary $2 \times 2$ table
 format):
 ```{r format1, echo=TRUE}
-print(symptoms)
+print(pneumonia)
 ``` 
 In contrast, the bootstrap CI needs data *on individual level*,
-with each row representing the measurements from one subject:
+with each row representing the measurements from one child:
 ```{r format2, echo=T}
-print(head(symptoms.ind))
+print(head(pneumonia.ind, 3))
+print(table(pneumonia.ind))
 ``` 
-
 
 
 A  Wald confidence interval is obtained conveniently using `psych::cohen.kappa()`: 
 
-```{r echo=TRUE}
+```{r echo=TRUE, message=FALSE, warning=FALSE}
 library(psych)
-cohen.kappa(symptoms)
+cohen.kappa(pneumonia)
 ``` 
 
 The Wilson confidence interval requires transformation of the confidence limits
 of $\pobs$ to $\kappa$:
 
 ```{r echo=TRUE}
-pobsCI <- wilson(x=sum(diag(symptoms)), n=sum(symptoms))
-pexp <- sum(diag(chisq.test(symptoms)$expected)/sum(symptoms))
+pobsCI <- wilson(x=sum(diag(pneumonia)), n=sum(pneumonia))
+pexp <- sum(diag(chisq.test(pneumonia)$expected))/sum(pneumonia)
+## substitution method
 round((pobsCI-pexp)/(1-pexp), 2)
 ``` 
 
@@ -1044,7 +1053,7 @@ set.seed(211213)
 ```
 
 ```{r confintkappa_cached, cache=TRUE, echo=TRUE}
-res <- biostatUZH::confIntKappa(symptoms.ind, type="Cohen")
+res <- biostatUZH::confIntKappa(pneumonia.ind, type="Cohen", m=10000)
 round(res$boot.quant, 2)
 ``` 
 

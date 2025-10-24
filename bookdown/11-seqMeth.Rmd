@@ -1,4 +1,4 @@
-# Sequential methods and trial protocols
+# Sequential methods and trial protocols {#Ch11}
 
 
 ## Monitoring accumulating data

@@ -482,7 +482,26 @@ emulate a target trial.
 Details on the challenges and conduct of target trials 
 are explained in @Hernan2022 and @Matthews2022, for example.
 
+## ICH E9 guidelines
+Founded in 1990, the International Conference on Harmonisation (ICH) strives for harmonisation in regulatory requirements worldwide to ensure that safe, effective and
+high-quality medicines are developed. It brings together regulatory authorities and pharmaceutical industry to discuss scientific and technical aspects of
+pharmaceuticals. 
 
+The presence of bias may seriously compromise the ability to
+draw valid conclusions from clinical trials. Many of the principles outlined in **ICH E9** from 1998 focus on **minimizing bias**, see @ICH1998E9.
+
+According to ICH E9, the **sources of bias** discussed earlier in this chapter are referred to as "statistical" bias. The bias introduced through deviations in conduct is referred to as "operational" bias. Some sources of bias arise from the trial design. For example, an assignment of treatments such that patients at lower risk are systematically assigned to one treatment. Other sources of bias arise during the conduct and analysis of a trial. For example, exclusion of patients from analysis based upon knowledge of patient outcomes may affect the accurate assessment of the treatment effect. Therefore, it is important to identify potential sources of bias as completely as possible so that attempts to limit such bias may be made.
+
+At the early stage, we could use **principles of trial design and conduct** to reduce bias.
+For example, we could pre-specify objectives, endpoints, and analysis
+methods to prevent data-driven choices. We could also ensure blinding by keeping patients, doctors, and sponsors unaware of treatment assignment to avoid conscious or unconscious
+influence. Randomization can also help, by assigning patients to treatments by chance to
+balance known and unknown confounding factors. What's more, adding control for comparison is helpful for discriminating outcomes
+caused by the treatment from outcomes caused by other
+factors, such as the natural progression of the disease or
+patient expectations.
+
+There are also something we can do after the trial is closed. We can follow the **principles of trial analysis** to reduce bias. For example, we can control the Type I error probability at a pre-specified threshold, and limit false positive findings to reduce stopping bias. Reliable treatment estimates are important to facilitate regulatory decisions and inform patients and doctors. Intention-to-treat (ITT) can also help to reduce bias, by evaluating the treatment effect on the basis of the intention to treat a patient rather than the actual treatment given. ITT will be discussed more in Chapter \@ref(Ch11).
 
 ## Additional references
 

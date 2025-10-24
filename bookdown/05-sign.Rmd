@@ -507,9 +507,9 @@ value, then the corresponding test is significant
 (two-sided p < 0.05).
 Furthermore, it is possible to transform a $P$-value to a confidence interval, 
 provided that the effect estimate is known, the exact $P$-value is reported
-and is based on a normal test statistic. 
+and is based on a normal test statistic [@altman2]. 
 Conversely, a confidence interval can be transformed to a $P$-value 
-provided that the CI is of Wald-type. 
+provided that the CI is of Wald-type [@altman1]. 
 
 <!-- Suppose we know the lower and upper limits -->
 <!-- $l$ and $u$ of the $\gamma\cdot 100$\% Wald CI.  -->
@@ -545,22 +545,25 @@ The 95\% confidence interval for the difference in mean baby birthweight
 between non-smoking and smoking mothers is 
 $[`r round(res.baby$conf.int[1], 2)`, 
 `r round(res.baby$conf.int[2], 2)`]$. 
-The two-sided $P$-value can be retrieved using:
+The approximate two-sided $P$-value can be retrieved using:
 :::
 
 ```{r echo = TRUE}
 library(biostatUZH)
 l <- 72.76
 u <- 494.80
-gamma <- 0.95
-t_gamma <-  qt(p = (1 - gamma)/2, df = nrow(birthwt) - 2, lower.tail = FALSE)
-
+## estimate is in the middle of the confidence intervals
 estimate <- (u + l)/2; print(estimate)
-se <- (u - l)/(2*t_gamma); print(se)
+
+## standard error can be retrieved from width of confidence interval
+se <- (u - l)/(2*1.96); print(se)
+
+## z-statistic
 z_val <- estimate/se
-p <- 2*(1 - pt(z_val, df = nrow(birthwt)))
-print(p)
+## two-sided p-value
+p <- 2*pnorm(z_val, lower.tail=FALSE); print(p)
 ```
+The exact $p$-value based on the $t$-distribution is $p = `r formatPval(res.baby$p.value)`$, so only slightly larger, see Example \@ref(exm:birth). 
 
 
 <!-- One can also transform a $P$-Value to -->
@@ -600,7 +603,6 @@ z <- qt(p = 1 - p/2, df = 170); print(z)
 se <- estimate/z; print(se)
 CI <- c(estimate - t_gamma*se, estimate + t_gamma*se); print(CI)
 ```
-
 
 
 Confidence intervals convey very different information than
@@ -1299,7 +1301,8 @@ p0 <- 0.05
 delta <- p1-p0
 w <- 0.1
 seDelta <- w/4
-myn <- ceiling((p1*(1-p1)+p0*(1-p0))/(seDelta^2))
+sigma2 <- p1*(1-p1)+p0*(1-p0)
+myn <- ceiling(sigma2/(seDelta^2))
 ``` 
 
 
@@ -1307,15 +1310,18 @@ myn <- ceiling((p1*(1-p1)+p0*(1-p0))/(seDelta^2))
 If $\Delta=\pi_1-\pi_o$ is the difference between two proportions $\pi_1$ and $\pi_0$
 with unit variance 
 $$
-\sigma^2 = \{\pi_1 (1-\pi_1) + \pi_0 (1-\pi_0)\}/2,
+\sigma^2 = \pi_1 (1-\pi_1) + \pi_0 (1-\pi_0),
 $$ the required sample size in each group is
 \[
 n = \frac{\sigma^2}{\SE(\hat \Delta)^2}=  16 \, \frac{\sigma^2}{w^2} \, ,
 \]
-where $w = 4 \SE(\hat \Delta)$ is the width of the 95% confidence interval 
+where $w = 4 \, \SE(\hat \Delta)$ is the (approximate) width of the 95% confidence interval 
 for $\Delta$.
-For example, if $\pi_1=`r p1`$, $\pi_0=`r p0`$ and $w=0.1$, then $n=`r myn`$.
+For example, if $\pi_1=`r p1`$, $\pi_0=`r p0`$ and $w=0.1$, then $\sigma^2=`r sigma2`$ and $n=`r myn`$.
 
+### Sample size re-estimation
+There are various assumptions that can impact sample size calculation. For example, higher-than-expected variance may reduce the power to detect treatment effects. We can use sample size re-estimation at interim analysis, for example re-estimating the standard deviation $\sigma$ in internal pilot, or potentially increase sample size to maintain power level. We can also adjust sample size for "blinded" vs. "unblinded" designs (with respect to treatment assignment). 
+Other parameters can also be re-estimated, for example the baseline event rate parameter for binary outcomes. For more discussions, see @Chuang-Stein and @Proschan. 
 
 ## Additional references
 

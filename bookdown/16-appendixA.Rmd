@@ -754,7 +754,7 @@ here $x_+ = \max\{x, 0\}$. What we illustrated here for $2 \times 2$ tables can 
 
 
 
-#### Application in two paired groups
+### McNemar test
 
 :::{.example}
 In Example \@ref(exm:ischemia) with paired data, a McNemar test can be performed in 
