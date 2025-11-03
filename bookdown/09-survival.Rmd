@@ -607,17 +607,17 @@ leads to biased estimates of the survival distributions, invalid statistical
 tests, and misleading conclusions. 
 This bias results from the fact that responders must live long enough
 for response to be observed; there is no such requirement for 
-non-responders [@Anderson1983, @Anderson2008].
+non-responders [@Anderson1983],[@Anderson2008].
 Another example where Breslow's rule is violated is a study reporting that
 Oscar winners live longer [@oscarwinners]. As other scientists have noticed,
 this study was subject to *survival bias* or *immortal time bias*
-[@oscarwinners_reanalysis].
-
+[@oscarwinners_reanalysis]. 
 
 
 We now discuss how survival curves can be compared between groups. 
 For example, the survival curves of the RT and RT+CT groups are shown in Figure \@ref(fig:sakkTwoGroups). Later, we show how to generate 
-such a plot with the `R`function `ggminer::ggsurvplot`.
+such a plot with the `R`function `ggminer::ggsurvplot`. In Section \@ref(sec:timeVarying) we will describe methods to incorporate time-varying covariates in the analysis to avoid immortal time bias.
+
 
 ```{r sakkTwoGroups, fig.cap = "Kaplan-Meier curves for both groups in Example \\@ref(exm:sakk).", echo = FALSE}
 par(mar = c(4.5, 4, 0.1, 1), las = 1)
@@ -1013,15 +1013,15 @@ Instead of a non-parametric fit of the survival curves, the function can also be
 
 
 
-## Time-varying explanatory variables
+## Time-varying explanatory variables  {#sec:timeVarying}
 
 Time-varying explanatory variables, e.g. exposure yes/no, can be dealt with by
 
 
--  splitting the follow-up into parts with constant covariate values and
+-  splitting the follow-up of each patient into parts with constant covariate values and
 -  treating the parts as distinct subjects.
 
-This approach requires allowance for late entries and is valid if changes in explanatory variables are unrelated to the underlying risk of failure. We will now see two examples of time-dependent analyses.
+This approach requires allowance for late entries in the analysis, which is the case in `R`. The approach is valid if changes in explanatory variables are unrelated to the underlying risk of failure. We will now see two examples of time-dependent analyses.
 
 
 :::{.example}
@@ -1039,15 +1039,14 @@ head(pbc[,sel])
 Variables bili and protime are time-dependent measurements. The baseline data shown above, in contrast, only include baseline measurements of these covariates that have multiple measurements over time.
 
 ```{r echo=TRUE}
-sel <- c("id", "futime", "status", "trt", "age", "sex", "day", "bili",
-         "protime")
+sel <- c("id", "futime", "status", "trt", "age", "sex", "day", "bili", "protime")
 head(pbcseq[,sel], 14)
 ```
 
 In a baseline analysis (including only baseline measurements), first without and then with adjustment for covariates, we obtain the following results:
 
 ```{r echo=TRUE, results="asis"}
-## baseline fit for first 312 patients
+## baseline fit 
 fit0 <- coxph(Surv(time, status == 2) ~ trt, 
               data = pbc, subset = (id <= 312))
 fit1 <- coxph(Surv(time, status == 2) ~ trt + log(bili) + log(protime),
@@ -1056,7 +1055,9 @@ knitr::kable(tableRegression(fit0, latex = FALSE, xtable = FALSE))
 knitr::kable(tableRegression(fit1, latex = FALSE, xtable = FALSE))
 ```
 
-A time-dependent analysis includes all measurements. First, we need to prepare the data accordingly. The data preparation below is adopted from vignette `timedep.pdf` in package `survival`.
+A time-dependent analysis includes all measurements of the covariates. First, we need to prepare the data accordingly. The data preparation below is adopted from vignette `timedep.pdf` in package `survival`. It therefore also contains the variables `ascites`, `albumin` and `alk.phos`, that are not used in the following analysis. 
+
+
 
 ```{r echo=TRUE}
 temp <- subset(pbc, id <= 312, select = c(id:sex, stage)) # baseline
@@ -1069,12 +1070,15 @@ head(pbc2)
 ```
 
 ```{r echo=TRUE, results="asis"}
-## time-dependent fit for first 312 patients
+## time-dependent fit 
 fit2 <- coxph(Surv(tstart, tstop, death == 2) ~ trt + log(bili) + 
                 log(protime), data = pbc2)
 knitr::kable(tableRegression(fit2, latex = FALSE, xtable = FALSE))
 ```
 
+The analysis reveals, that - after taking into account adjustments
+for time-varying covariates - the effect of `trt` is weaker with a HR of
+`r round(exp(coef(fit2)[1]),2)` rather than `r round(exp(coef(fit1)[1]),2)` and a larger $p$-value. 
 
 
 :::{.example}
