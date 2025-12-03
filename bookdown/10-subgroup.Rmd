@@ -4,7 +4,7 @@ Up to now we have focused on the comparison of two or more groups of
 patients, usually intervention vs. control. It is natural to
 investigate whether a treatment effect exists only in a certain
 subgroup of patients. Multiplicity issues arise if there are more than
-one subgroup-defining variables.
+one subgroup-defining variable.
 
 In addition, multiplicity issues also arise if more than one outcome
 are considered in a randomized trial. 
@@ -618,8 +618,7 @@ If $k>1$ outcomes are considered, the FWER will be larger than the Type I error 
 \mbox{FWER} = 1-(1-\alpha)^k.
 \end{equation*}
 
-For small $k$, the FWER under independence is close to the *Bonferroni bound* $k \cdot \alpha$ as can be seen in Figure \@ref(fig:FWER).
-
+For small $k$, the FWER under independence is close to the *Bonferroni bound* $k \cdot \alpha$, which is an upper bound on the FWER obtained by applying the Bonferroni inequality, as shown in Figure \@ref(fig:FWER). 
 
 ```{r FWER, fig.cap = "Family-wise error rate (FWER) under independence of the outcomes for a type I error rate $\\alpha = 0.05$ (black line) compared to the Bonferroni bound (green dotted line) as functions of the number of outcomes $k$.", echo=F, fig.height=4}
 k=c(1:50)
@@ -874,11 +873,11 @@ $P$-value from the summary score analysis ($p=`r formatPval(summary.test$p.value
 library(beeswarm)
 par(mfrow=c(1,2))
 
-beeswarm(ep.r ~ group, method = "center", breaks=NA, ylab="Rank", xlab="", pch=16, cex=1.5, xlim = c(0.5, 2.5), xaxt = "n", las = 1, lwd = 1.5, main = "", col="red")
+beeswarm(ep.r ~ group, method = "center", breaks=NA, ylab="Rank", xlab="Groups", pch=16, cex=1.5, xlim = c(0.5, 2.5), xaxt = "n", las = 1, lwd = 1.5, main = "", col="red")
 title("Rank of Epworth Score")
 axis(1, c(1, 2), (c("Didgeridoo", "Control")), padj = 0.5)
 
-beeswarm(rank.sum ~ group, method = "center", breaks=NA, ylab="Rank sum", xlab="", pch=16, cex=1.5, xlim = c(0.5, 2.5), xaxt = "n", las = 1, lwd = 1.5, main = "", col="red")
+beeswarm(rank.sum ~ group, method = "center", breaks=NA, ylab="Rank sum", xlab="Groups", pch=16, cex=1.5, xlim = c(0.5, 2.5), xaxt = "n", las = 1, lwd = 1.5, main = "", col="red")
 title("Rank Sum")
 axis(1, c(1, 2), (c("Didgeridoo", "Control")), padj = 0.5)
 ```

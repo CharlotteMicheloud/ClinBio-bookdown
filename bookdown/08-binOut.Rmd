@@ -266,7 +266,7 @@ nnt.upper.w <- 1/arr.upper.w
 ```
 
 
-Using articifial data,
+Using artificial data,
 the lower plot in Figure \@ref(fig:APSACartCIs) highlights the distinct advantage
 of the Wilson confidence interval: its ability to prevent *overshoot*.
 Indeed, the upper limit of the Wald confidence
@@ -300,7 +300,7 @@ lines(rep(0,2), c(0,3), lty=2)
 
 
 
-```{r APSACartCIs, fig.cap= "Wald and Wilson CIs for the ARR in the APSAC study (upper plot) and in an example with artifical data illustrating overshoot (lower plot).", echo=F, warning=FALSE, fig.height=2.5}
+```{r APSACartCIs, fig.cap= "Wald and Wilson CIs for the ARR in the APSAC study (upper plot) and in an example with artificial data illustrating overshoot (lower plot).", echo=F, warning=FALSE, fig.height=2.5}
 library(gplots)
 
 ci.rd.art <- confIntRiskDiff(x.art, n.art)
@@ -344,7 +344,7 @@ in the APSAC study is the following:
 To avoid one death, we need to treat
 $\widehat{\NNT} = `r round(abs(nnt),1)`$ patients with APSAC rather than
 with Heparin. A confidence interval for $\NNT$ can be obtained by inverting the limits
-$\mbox{L}_{\mbox{\tiny ARR}}$ and $\mbox{U}_{\mbox{ARR}}$
+$\mbox{L}_{\mbox{ARR}}$ and $\mbox{U}_{\mbox{ARR}}$
 of the CI for $\ARR$:
 
 ```{r echo=TRUE}
@@ -733,7 +733,7 @@ What matters is the number of events.
   
 A problem of the estimate \@ref(eq:or) is that it can become infinite
 if either $b=0$ or $c=0$. Likewise, the standard error \@ref(eq:orse)
-of the log odds ratio will be infinte if at least one of the entries
+of the log odds ratio will be infinite if at least one of the entries
 $a$, $b$, $c$ or $d$ is zero. A modification suggested in the
 literature is to add $1/2$ to all entries $a$, $b$, $c$ and $d$. This
 prevents problems with small number of events and also reduces the
@@ -854,7 +854,7 @@ in treatment arms (`r t[1]`:`r t[3]` vs. `r t[2]`:`r t[4]`).
 print(puva)
 ```
 
-The unadjusted analyis can be performed as follows:
+The unadjusted analysis can be performed as follows:
 ```{r echo=T, results="asis"}
 m1 <- glm(cbind(cleared, total-cleared) ~ treatment,
           data=puva, family=binomial)
@@ -1057,7 +1057,7 @@ output <- cbind(observed, round(expected, 1))[,c(1,4,2,5,3,6)]
 
 # Generate the table with specified rounding and alignment
 kable(output, digits = c(0, 1, 0, 1, 0, 1), align = "r", booktabs = TRUE) %>%
-  add_header_above(c(" " = 1, "Poor followup" = 2, "Fair followup" = 2, "Good followup" = 2))
+  add_header_above(c(" " = 1, "Poor follow-up" = 2, "Fair follow-up" = 2, "Good follow-up" = 2))
 
 Observed <- observed
 Fitted <- expected

@@ -368,7 +368,7 @@ forest(metacum(meta1, pooled="random"))
 
 ### Meta-regression
 A meta-regression tries to explain heterogeneity with study-specific 
-covariates. The visualisation can be done with bubble plots. 
+covariates. The visualization can be done with bubble plots. 
 
 :::{.example #bcg name="continued"}
 In the `dat.bcg` dataset, the covariable `ablat` gives the absolute 
@@ -446,7 +446,7 @@ The idea of this method is to:
 
 
 :::{.example #stroke}
-Figure \@ref(fig:trimfillStroke) illustrates the trim-and-fill method for 11 studies of the effect of using gangliosides in reducing case fatality and disability in acute ischaemic stroke.
+Figure \@ref(fig:trimfillStroke) illustrates the trim-and-fill method for 11 studies of the effect of using gangliosides in reducing case fatality and disability in acute ischemic stroke.
 :::
 
 
@@ -503,7 +503,7 @@ gs <- xtable(gs, digits=c(0,rep(2,3),0, 2,0,2,0,2,2))
 
 Trim-and-fill with `R`:
 
-```{r ch10, echo=TRUE}
+```{r ch10, echo=TRUE, message=FALSE, warning=FALSE}
 library(meta) # load the library
 gs <- as.matrix(read.table("data/ganglioside.txt", header = TRUE))
 tf_gs <- trimfill(x = gs[,1], seTE = gs[,2], 
@@ -601,8 +601,8 @@ Begg's rank correlation test computes standardized treatment estimates
 
 where $\hat{\theta}$ is the fixed-effect estimate of the summary effect and 
 $v_i^*=v_i - 1/(\sum v_j^{-1})$ is the variance of $\theta_i-\hat{\theta}$.
-Then, it tests the null hypothesis that *Kendell's rank correlation* 
-(Kendell's $\tau$) between $\theta_i^*$ and $v_i^*$ is zero. This test 
+Then, it tests the null hypothesis that *Kendall's rank correlation* 
+(Kendqll's $\tau$) between $\theta_i^*$ and $v_i^*$ is zero. This test 
 may have low power if the number of studies is small.
 
 A rank correlation test can be performed using `R` as shown below for Example \@ref(exm:tobacco).

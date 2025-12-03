@@ -203,7 +203,7 @@ Wald and $t$-test CIs are very similar due to the large sample size $n=252$.
 
 :::{.example}
 We consider the same example as before (Example \@ref(exm:pima)).
-Denote the observations in the non-diabetic group by $y_1,\ldots, y_m$, the mean by $\mu_{\bar{D}}$ and the sample variance of $y_1,\ldots, y_m$ by $s_{\bar{D}}^2$. This group is independent from the diabetic group (unpaired). We are interested in the mean difference $\Delta=\mu_D-\mu_{\bar{D}}$. If the two groups have equal variances (hence equal standard deviations), then:
+Denote the observations in the non-diabetic group by $y_1,\ldots, y_m$, the mean by $\mu_{\bar{D}}$ and the sample variance of $y_1,\ldots, y_m$ by $s_{\bar{D}}^2$. This group is independent of the diabetic group (unpaired). We are interested in the mean difference $\Delta=\mu_D-\mu_{\bar{D}}$. If the two groups have equal variances (hence equal standard deviations), then:
 
 -  $\widehat{\Delta} = \bar{x}-\bar{y}$
 -  $\SE(\widehat{\Delta}) = s \sqrt{\dfrac{1}{m} + \dfrac{1}{n}}$, where $s^2=\dfrac{(m-1)\cdot s_{\bar{D}}^2 + (n-1)\cdot s_D^2}{m+n-2}$
@@ -301,7 +301,7 @@ wilson(x, n, conf.level = 0.95)
 
 Note that when the Wald CI overshoots, the function `wald ()` returns a CI that is truncated such that the limits lie between $0$ and $1$.
 
-Also the function `prop.test()` computes the Wilson CI: 
+Also, the function `prop.test()` computes the Wilson CI: 
 ```{r echo=TRUE}
 prop.test(x, n, conf.level = 0.95, correct = FALSE)
 ``` 
@@ -348,7 +348,7 @@ The standard error is computed using equation \@ref(eq:diff1) for the difference
 Wald and Wilson CIs can be computed in`R`using the package 
 `biostatUZH`. A Wald CI uses the above standard error.
 A Wilson CI uses the square-and-add method with Wilson CIs 
-for $\pi_1$ and $\pi_2$. Also here, Wilson CIs have better properties.
+for $\pi_1$ and $\pi_2$. Here, Wilson CIs also have better properties.
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 ## Data
@@ -483,7 +483,7 @@ $$
 \frac{n - 1}{\sigma^2} S^2 \sim \chi^2(n - 1)
 $$
 holds, 
-so $\E(S^2) = \sigma^2$, i.e. $S^2$ is unbiaised for $\sigma^2$.
+so $\E(S^2) = \sigma^2$, i.e. $S^2$ is unbiased for $\sigma^2$.
 
 Let $\chi_\alpha^2(k)$ denote the $\alpha$-quantile of the $\chi^2(k)$
 distribution. It follows that 
@@ -857,8 +857,8 @@ and non-diseased
 populations, respectively.
 
 
-To proof this result, we first note that the derivative of a survivor function $S(y)$ of
-a continous test result $Y$ is
+To prove this result, we first note that the derivative of a survivor function $S(y)$ of
+a continuous test result $Y$ is
 closely related to the cumulative distribution function $F(y)$ of $Y$:
 \[
 S(y) = \Pr(Y \geq y) = 1 - \Pr(Y < y) = 1 - \Pr(Y \leq y) =  1 - F(y)
@@ -867,7 +867,7 @@ Now
 \begin{eqnarray*}
 \partials{F(y)}{y} = f(y)
 \end{eqnarray*}
-where $f(y)$ denotes the density function of $Y$. Therefore
+where $f(y)$ denotes the density function of $Y$. Therefore,
 \[
 \partials{S(y)}{y} = -f(y).
 \]
@@ -978,7 +978,7 @@ is then very close to zero. Note that \@ref(eq:eq3App)  differs from
 superiority trials, where $\alpha = 1-\gamma$.
 
 
-## Sample size calulations in equivalence trials 
+## Sample size calculations in equivalence trials 
 
 Assume equal group sizes, i.e. $n=n_A=n_B$, then $\lambda=\sqrt{2/n}$.
 
@@ -993,8 +993,8 @@ as the required sample size in each group for Type I error rate $\alpha$
 and power $1-\beta$.
 
 
-# Expectation, Variance, Covariance and Correlation
-This section describes fundamental summaries of the distribution of random variables, namely their expectation and variance. For multivariate random variables, the association between the components is summarised by their covariance or correlation. Moreover we list some useful inequalities.
+# Expectation, variance, covariance and correlation
+This section describes fundamental summaries of the distribution of random variables, namely their expectation and variance. For multivariate random variables, the association between the components is summarized by their covariance or correlation. Moreover, we list some useful inequalities.
 
 ## Expectation {#sec:expectation}
 
@@ -1012,7 +1012,7 @@ $$
 (\#eq:expectation2)
 $$
 
-Note that the expectation of a random variable not necessarily exists. If the integral exists then $X$ has **finite expectation**; otherwise, we say $X$ has **infinite expectation**.
+Note that the expectation of a random variable not necessarily exists. If the integral exists, then $X$ has **finite expectation**; otherwise, we say $X$ has **infinite expectation**.
 
 For a discrete random variable $X$ with probability mass function $\p(x)$, the integral in \@ref(eq:expectation) and \@ref(eq:expectation2) is replaced with a sum over the support of $X$.
 
@@ -1091,7 +1091,7 @@ $$
 
 The expectation is the first moment, and the variance is the second central moment.
 
-## Conditional Expectation and Variance {#sec:conditionalexpectationUndVariance}
+## Conditional expectation and variance {#sec:conditionalexpectationUndVariance}
 
 For continuous random variables, the **conditional expectation** of $Y$ given $X = x$ is
 
@@ -1213,7 +1213,7 @@ $$
 
 where $\boldsymbol{S}$ is diagonal with entries $\sqrt{\Var(X_i)}$. The diagonal of $\boldsymbol{R}$ contains all ones.
 
-# The Linear Model
+# Linear models
 
 Suppose we have $i=1,\ldots,n$ continuous outcomes $Y_i$ with
 covariates $\boldsymbol{X}_i$, a vector of length $p$. To simplify
@@ -1227,7 +1227,7 @@ length $n$ and stack the covariates $\boldsymbol{X}_i$ into a matrix
 \]
 Likewise, additional measurement error terms $\epsilon_i$, $i=1,\ldots,n$, are also stacked into a vector $\boldsymbol{\epsilon}$ of length $n$. 
 
-## Standard Formulation
+## Standard formulation
 The standard formulation of the linear model assumes, that the error
 terms $\epsilon_i$ have mean zero and are mutually independent with common variance
 $\sigma^2$. The relationship between $\boldsymbol{X}$ and $\boldsymbol{Y}$ is described by the **regression coefficients** 
@@ -1255,12 +1255,8 @@ standard errors for the coefficients of $\widehat{\boldsymbol{\beta}}$ taking th
 
 An example of a linear model is the ANCOVA model discussed in Chapter \@ref(contOut).
 
-## The General Linear Model {#General}
+## General linear models {#General}
 This section introduces **GEE** and **GLS** for the analysis of longitudinal data, which account for correlations between measurements from the same individual.
-
-:::{.definition #balanced}
-Longitudinal data is called **balanced**, if the same number of observations $n_i=n$ for each individual $i= 1,...,m$ at the same time points $t_{ij}=t_j, j=1,...,n.$
-:::
 
 ### GEE's {#GEE}
 **Model formulation**
@@ -1281,7 +1277,9 @@ $$
 with zero entries elsewhere.
 
 $\widehat{\boldsymbol{\beta}}_{\boldsymbol{W}} = (\boldsymbol{X}^{\top}\boldsymbol{W}\boldsymbol{X})^{-1}\boldsymbol{X}^{\top}\boldsymbol{W}\boldsymbol{Y}$ 
-is the weighted least squares estimate of $\boldsymbol{\beta}$. Given any weight matrix $\boldsymbol{W}$, $\widehat{\boldsymbol{\beta}}_{\boldsymbol{W}}$ is unbiased with $\E(\widehat {\boldsymbol{\beta}}_{\boldsymbol{W}}) = {\boldsymbol{\beta}}$. The weight matrix $\boldsymbol{W}$ is block-diagonal, with each block $\boldsymbol{W_0}$ of size $n \times n$ for $n$ time points. 
+is the weighted least squares estimate of $\boldsymbol{\beta}$, which minimizes the weighted least squares criterion $(\boldsymbol{Y}-\boldsymbol{X} \boldsymbol{\beta})^\top \boldsymbol{W}(\boldsymbol{Y}-\boldsymbol{X} \boldsymbol{\beta})$. Given any weight matrix $\boldsymbol{W}$, $\widehat{\boldsymbol{\beta}}_{\boldsymbol{W}}$ is unbiased with $\E(\widehat {\boldsymbol{\beta}}_{\boldsymbol{W}}) = {\boldsymbol{\beta}}$. 
+
+The weight matrix $\boldsymbol{W}$ is block-diagonal, with each block $\boldsymbol{W_0}$ of size $n \times n$ for $n$ time points. Its inverse, $\boldsymbol{W}^{-1}$, is often called **working covariance matrix** to distinguish it from the **true covariance matrix** $\boldsymbol{\Sigma}$. The term "working" refers to the fact that it is an approximation to the true covariance matrix of the outcomes. 
 
 If $\boldsymbol{W}^{-1} = \boldsymbol{I}$, then we obtain the **least squares estimate** $\widehat {\boldsymbol{\beta}}_{\boldsymbol{W}} = (\boldsymbol{X}^{\top} \boldsymbol{X})^{-1}\boldsymbol{X}^{\top} \boldsymbol{Y}$.
 
@@ -1303,8 +1301,6 @@ The associated covariance matrix is ("sandwich formula"):
 \end{align*}
 
 and requires knowledge of $\boldsymbol{\Sigma}$ (or an estimate $\widehat{\boldsymbol{\Sigma}}$). 
-
-Notice that $\boldsymbol{W}^{-1}$ is often called **working covariance matrix** to distinguish it from the **true covariance matrix** $\boldsymbol{\Sigma}$. It is an approximation to the true covariance matrix of the outcomes.
 
 If $\boldsymbol{W}^{-1} = \boldsymbol{\Sigma}$, then $\Cov(\widehat{\boldsymbol{\beta}}_{\boldsymbol{W}})$ can be simplified to
 \[
@@ -1333,7 +1329,7 @@ Generalized Least Squares (GLS) is a parametric method for estimating regression
 \begin{equation} 
 \boldsymbol{Y} \sim \boldsymbol{\Nor}(\boldsymbol{X\beta}, \boldsymbol{\Sigma})
 \end{equation}
-where $\Sigma=\sigma^2 \boldsymbol{V}$ is block-diagonal with $n \times n$ entries $\boldsymbol{\Sigma}_0=\sigma^2 \boldsymbol{V}_0$. Here $\boldsymbol{V}_0$ is a **correlation matrix** with entries corresponding to correlations between observations from the same individual. This correlation matrix often only depends on a few parameters.
+where $\Sigma=\sigma^2 \boldsymbol{V}$ is block-diagonal with $n \times n$ entries $\boldsymbol{\Sigma}_0=\sigma^2 \boldsymbol{V}_0$. Here, $\boldsymbol{V}_0$ is a **correlation matrix** with entries corresponding to correlations between observations from the same individual. This correlation matrix often only depends on a few parameters.
 
 Below are some commonly used **parametric correlation structures**. 
 
@@ -1354,7 +1350,7 @@ The parameter $\phi$ represents the exponential decay of the correlation.
 The inverse $1/\phi$ is often called the **range parameter**: For a distance $d_{jk}>1/\phi$ we have "small" correlation $\rho_{jk} < \exp(-1)= 0.37$. 
 
 - **Continuous time AR-1 model**: 
-This is a reparameterisation of the exponential correlation model, where $\rho_{jk} = \left\{\alpha^{d_{jk}}\right\}_{j,k}$ and $\alpha=\exp(-\phi)$. This is also the \(\texttt{AR-1}\) correlation structure mentioned earlier.
+This is a reparameterization of the exponential correlation model, where $\rho_{jk} = \left\{\alpha^{d_{jk}}\right\}_{j,k}$ and $\alpha=\exp(-\phi)$. This is also the \(\texttt{AR-1}\) correlation structure mentioned earlier.
 
 To choose which correlation structure to use, we may use the **model choice criteria**
 $$
@@ -1385,7 +1381,7 @@ are the (weighted) residual sum of squares, where $\widehat{\boldsymbol{\beta}} 
  
 However, ML estimates of $\sigma^2$ and $\boldsymbol{V}_0$ are typically biased and problematic if the dimension $p$ of $\boldsymbol{\beta}$ is large. For example, in the classical linear model ($\boldsymbol{V}_0=\boldsymbol{I}$) the ML estimate ${\sigma_{\text{ML}}}^2 = \mbox{RSS}/(nm)$ is biased, whereas ${\sigma_{\text{REML}}}^2 = \mbox{RSS}/(nm-p)$ is unbiased. The latter estimate is a **Restricted Maximum Likelihood** (REML) estimate, and is the default in function \(\texttt{gls()}\). Also notice that if the sample size $nm$ is large, then ML and REML estimates are very similar.
 
-## Random Effects Model {#RandEff}
+## Random effects model {#RandEff}
 ### General formulation
 Suppose there are $p$ covariates and we want to consider $q$ of them as random effects, we can include individual-specific random effects $\boldsymbol{U}_i$ into the model:
 \begin{equation}
@@ -1393,7 +1389,7 @@ Suppose there are $p$ covariates and we want to consider $q$ of them as random e
 \end{equation}
 where $\boldsymbol{U}_i$'s are mutually independent and $\boldsymbol{U}_i\sim \Nor_q(\boldsymbol{0}, \boldsymbol{G})$ and $\epsilon_{ij} \sim \Nor(0, \tau^2)$. The vector $\boldsymbol{d}_{ij}$ ($q \times 1$) is known and in general a sub-vector of the covariates $\boldsymbol{x}_{ij}$ ($p \times 1$). Then we obtain a linear **mixed effects** model with **fixed effects** $\boldsymbol{\beta}$ and **random effects** $\boldsymbol{U}_i$.
 
-We might want to consider random effects when we want to capture **individual heterogeneity** in the mean response. Random effect model is useful as it induce **marginal correlation** between observations $Y_{ij}$ and $Y_{ik}$ from the same individual (see equation \@ref(eq:marg2)).
+We might want to consider random effects when we want to capture **individual heterogeneity** in the mean response. Random effect model is useful as it induces **marginal correlation** between observations $Y_{ij}$ and $Y_{ik}$ from the same individual (see equation \@ref(eq:marg2)).
 
 **Parameter estimation**
 The marginal moments
@@ -1430,8 +1426,8 @@ $$
 where $\boldsymbol{U}_i$ is a 2-dimensional random effect with mean zero and $2 \times 2$ symmetric covariance matrix $\boldsymbol{G}$.
 This is the **random slope** (strictly random intercept and slope) model.
 
-# The Generalized Linear Model
-## The General Formulation
+# Generalized linear model
+## General formulation
 First we provide a brief review of the linear regression model
 $$
 Y_i = \boldsymbol{x}_i^{\top} \boldsymbol{\beta} + \epsilon_i \, \mbox{ with } \, \epsilon_i \sim \Nor(0, \sigma^2)  \quad i=1,\dots,n,
@@ -1538,7 +1534,7 @@ where $\boldsymbol{\mu}_i=\E(\boldsymbol{Y}_i)=\boldsymbol{X}_i \boldsymbol{\bet
 
 The score function \@ref(eq:score) differs from the score equation in the ordinary generalized linear model (\@ref(eq:ordscore)) by replacing $\Var(Y_i)^{-1}$ with a weight $\boldsymbol{W}_0$.
 
-The basic idea is to use the multivariate quasi-likelihood approach for non-normal data to take into account correlation between components of $Y_i$. Therefore we have the **generalized estimating equation**
+The basic idea is to use the multivariate quasi-likelihood approach for non-normal data to take into account correlation between components of $Y_i$. Therefore, we have the **generalized estimating equation**
 \begin{equation}
 \boldsymbol{S}(\boldsymbol{\beta}) = \sum_{i=1}^m \left(\frac{\partial \boldsymbol{\mu}_i}{\partial
 \boldsymbol{\beta}}\right) \Cov(\boldsymbol{Y}_i)^{-1} (\boldsymbol{Y}_i - \boldsymbol{\mu}_i)=\boldsymbol{0}, 
@@ -1573,7 +1569,7 @@ p2 <- 0.9
 Therefore, correlation as a measure of association may not be optimal for binary variables. Alternatively, we can use the **marginal odds ratio**
 $$\OR(Y_1,Y_2) = \frac{\P(Y_1=1,Y_2=1)\P(Y_1=0,Y_2=0)}{\P(Y_1=1,Y_2=0)\P(Y_1=0,Y_2=1)}.$$
 
-## Generalized Linear Models with Random Effects {#GLMrand}
+## Generalized linear models with random effects {#GLMrand}
 
 Conditional on random effects $\boldsymbol{U}_i \sim \Nor_q(\boldsymbol{0}, \boldsymbol{G})$ , $Y_{ij}$ follows a generalized linear model with mean $$\mu_{ij} = \E(Y_{ij}) = h(\eta_{ij})$$ and linear predictor 
 $$ \eta_{ij}=\boldsymbol{x}_{ij}^T\boldsymbol{\beta}^* + \boldsymbol{d}_{ij}^T\boldsymbol{U}_i,$$

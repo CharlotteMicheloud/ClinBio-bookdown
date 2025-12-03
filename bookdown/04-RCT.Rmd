@@ -34,7 +34,7 @@ He also said about the importance of design:
 
 "To consult the statistician after an experiment is finished is often merely to 
 ask him to conduct a post mortem examination. He can perhaps say what the 
-experiment died of"
+experiment died of."
 
 (Presidential Address to the First Indian Statistical Congress, 1938).
 
@@ -144,7 +144,7 @@ RCTs have five key characteristics:
 @Polack2020 conducted a multinational, placebo-controlled, 
 observer-blinded, pivotal efficacy trial to assess the efficacy
 of the BNT162b2 vaccine candidate against laboratory-confirmed 
-Covid-19.
+Covid-19. A pivotal trial is designed to provide the critical evidence needed to support regulatory approval of a drug or vaccine, typically in Phase III. 
 :::
 
 
@@ -156,7 +156,7 @@ We can distinguish inclusion and exclusion criteria.
 Specification of eligibility criteria is particularly important for 
 trials with *long enrollment period* (months, years) and
 *multicenter* trials.
-Otherwise the type of patient recruited may change over the duration of the
+Otherwise, the type of patient recruited may change over the duration of the
 trial or may vary from center to center.
 
 :::{.example #covidVacc name="continued"}
@@ -197,12 +197,12 @@ response is due to treatment. For example, without a control group,
   resulting distribution is shown in Figure \@ref(fig:senn) (right
   plot). In this hypothetical trial, 
   mean DBP at follow-up is 100.6 mmHg, more than 2 mmHg
-  lower than at baseline (98.0 mmHg). This suggests a treatment effect which is
+  higher than at baseline (98.0 mmHg). This suggests a treatment effect which is
   not present. Now suppose that this hypothetical trial was in fact the Placebo arm in a two-arm trial. An apparent Placebo effect in the Placebo arm of this trial will then be just an artefact due to regression to the mean [@dirnagl2018]!
 :::
 
 
-```{r senn, fig.cap="Regression to the mean in an example from @senn2011. The left plot shows the joint distribution of diastolic blood pressure measurements at Baseline and at Outcome. The mean of both measurements is 90 mmHg. The right plot shows the truncated distribution of the patients that have been included in the hypothetical trial. The mean DBP at outcome is now more than 2 mmHg lower than at baseline.", echo=FALSE, fig.show="hold", out.width="50%"}
+```{r senn, fig.cap="Regression to the mean in an example from @senn2011. The left plot shows the joint distribution of diastolic blood pressure measurements at Baseline and at Outcome. The mean of both measurements is 90 mmHg. The right plot shows the truncated distribution of the patients that have been included in the hypothetical trial. The mean DBP at outcome is now more than 2 mmHg higher than at baseline.", echo=FALSE, fig.show="hold", out.width="50%"}
 library(knitr)
 include_graphics(c("figures/sign509-fig-0002-m.jpg", "figures/sign509-fig-0003-m.jpg"))
 ```
@@ -245,7 +245,7 @@ was chosen.
 
 *Allocation at random* aims to ensure that all *prognostic factors* 
 (both known and unknown) are similarly represented in the two groups. 
-That means that there is *no systematic difference* between the groups
+That means that there is *no systematic difference* between the groups,
 which may have caused treatment difference.
 
 :::{.example}
@@ -327,7 +327,7 @@ success rate, we could not see this before.
 ## Bias in RCTs
 
 We will now discuss in detail the five types of biases that may occur 
-in RCTs as described in @matthews. There are many more types of biases, 
+in RCTs, as described in @matthews. There are many more types of biases, 
 see for example https://catalogofbias.org/.
  
 
@@ -367,7 +367,7 @@ Trials with small sample size may also result in
 imbalance with respect to prognostic factors, simply due to
 the stochastic process of allocation.
 There are methods to address the latter problem in the design
-phase, e.g. *stratification*.
+phase, e.g. via *stratification*.
 
 ### Assessment bias
 
@@ -398,7 +398,7 @@ particular trajectory shown in Figure \@ref(fig:stoppingbias) flags a
 significant difference early in the trial on the basis of 60-90
 patients at the standard 5\% significance level (1.96 threshold for
 the absolute value of test statistic). However, at the end of the
-trial no significant difference can be observed. An extensive
+trial, no significant difference can be observed. An extensive
 simulation reveals that such a significant difference will occur at
 some point in time in 36\% of the cases.  If we would only assess
 significance at the end of the trial based on 500 patients, then this
@@ -505,5 +505,5 @@ There are also something we can do after the trial is closed. We can follow the 
 
 ## Additional references
 
-An introduction to randomized controlled clinical trials is given in @matthews. The design of experiments is discussed in \citet[Chapter 2]{bland}. Regression to the mean is discussed in the Statistics Notes @SN_regrtothemean, @SN_exregrtothemean. A practical example for allocation concealment is @adamsen, and @hijazi for convenience sampling.
+An introduction to randomized controlled clinical trials is given in @matthews. The design of experiments is discussed in Chapter 2 in @bland. Regression to the mean is discussed in the Statistics Notes @SN_regrtothemean, @SN_exregrtothemean. A practical example for allocation concealment is @adamsen, and @hijazi for convenience sampling.
 

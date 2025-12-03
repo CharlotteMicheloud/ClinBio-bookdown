@@ -63,7 +63,7 @@ tail(CRT, 5)
 
 The analysis on practice level can be performed by applying a 
 $t$-test to compare the percentage of x-ray examination in each practice.
-For simplicity we follow 
+For simplicity, we follow 
 @SN_clusterAnalysis and treat the percentages as a continuous outcome. 
 
 
@@ -375,7 +375,7 @@ lines(c(x-s,x+s),c(h,h),lwd=4,lty=1,col="red")
 lines(c(x,x),c(h-.1,h+.1),lwd=4,lty=1,col="red")
 text(min,h,"Superiority",cex=1.2,font=2,pos=4)
 text(max-.5,h,"sig",cex=1.2,font=2,col="red",pos=4)
-text(max-.5,h-1,"ns",cex=1.2,font=2,col="blue",pos=4)
+text(max-.5,h-1,"not sig",cex=1.2,font=2,col="blue",pos=4)
 
 h<-9;x<- -2.1;s<-0.8;
 lines(c(x-s,x+s),c(h,h),lwd=4,lty=1,col="red")
@@ -411,25 +411,25 @@ h<-4;x<-0.3;s<-0.6;
 lines(c(x-s,x+s),c(h,h),lwd=4,lty=1,col="blue")
 lines(c(x,x),c(h-.1,h+.1),lwd=4,lty=1,col="blue")
 text(min,h,"Equivalence",cex=1.2,font=2,pos=4)
-#text(max-1,h,"ns",cex=1.2,font=2,col="blue",pos=4)
+#text(max-1,h,"not sig",cex=1.2,font=2,col="blue",pos=4)
 
 h<-3;x<-0.6;s<-0.8;
 lines(c(x-s,x+s),c(h,h),lwd=4,lty=1,col="blue")
 lines(c(x,x),c(h-.1,h+.1),lwd=4,lty=1,col="blue")
 text(min,h,"Non-inferiority",cex=1.2,font=2,pos=4)
-#text(max-1,h,"ns",cex=1.2,font=2,col="blue",pos=4)
+#text(max-1,h,"not sig",cex=1.2,font=2,col="blue",pos=4)
 
 h<-2;x<- -0.6;s<-0.8;
 lines(c(x-s,x+s),c(h,h),lwd=4,lty=1,col="blue")
 lines(c(x,x),c(h-.1,h+.1),lwd=4,lty=1,col="blue")
 text(min,h,"Non-superiority",cex=1.2,font=2,pos=4)
-#text(max-1,h,"ns",cex=1.2,font=2,col="blue",pos=4)
+#text(max-1,h,"not sig",cex=1.2,font=2,col="blue",pos=4)
 
 h<-1;x<-0.7;s<-2;
 lines(c(x-s,x+s),c(h,h),lwd=4,lty=1,col="blue")
 lines(c(x,x),c(h-.1,h+.1),lwd=4,lty=1,col="blue")
 text(min,h,"No conclusion",cex=1.2,font=2,pos=4)
-#text(max-1,h,"ns",cex=1.2,font=2,col="blue",pos=4)
+#text(max-1,h,"not sig",cex=1.2,font=2,col="blue",pos=4)
 
 h<-11.5
 text(0,h+.5,"Equivalence",cex=1.2,font=2,pos=1)
@@ -447,11 +447,6 @@ text(1,h,paste("+", "delta"),cex=1.2,font=2,pos=1)
 text(3,h-1,paste("Favors treatment"),cex=1.2,font=2,pos=1)
 text(0,-2,"confidence interval for difference in means",cex=1.5,font=2,pos=1)
 ```
-
-
-
-
-
 
 
 
@@ -484,9 +479,9 @@ The paper states: "Sample size calculations indicated that 144 participants were
 ```{r, echo = TRUE}
 n_equi <- function(delta, sd, alpha, beta){
   zalpha <- qnorm(1-alpha)
-zbeta2 <- qnorm(1 - beta/2)
-n <- 2*sd^2*(zalpha + zbeta2)^2/delta^2
-return(n)
+  zbeta2 <- qnorm(1 - beta/2)
+  n <- 2*sd^2*(zalpha + zbeta2)^2/delta^2
+  return(n)
 }
 
 # ss per group with alpha = 2.5%

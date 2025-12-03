@@ -10,7 +10,7 @@ pap smear screening for the diagnosis of cervical cancer, and
 prostate-specific antigen (PSA) screening for the diagnosis of prostate cancer. 
 *Continuous diagnostic tests* (such as the actual PSA measurements) are often 
 dichotomized to binary tests using a suitable threshold, see 
-Chapter \@ref(contDiag).
+Chapter \@ref(doc).
 
 ### Study designs{#sec:design}
 
@@ -123,7 +123,7 @@ must not know the test result.
 
 ::: {.example #mws}
 The *Million Women Study* (MW Study) is a cohort study of women’s health
-analysing data from more than one million women aged 50 and over [@MWS].
+analyzing data from more than one million women aged 50 and over [@MWS].
 `r format.bigmark(sum(c(tp, fp, fn, tn)))` women between 50 and
 64 years underwent a mammography and have been followed-up for a year to
 determine whether or not they have been diagnosed with breast cancer,
@@ -354,7 +354,7 @@ MW study shown in Example \@ref(exm:mws):
   \mbox{PPV} &=& \displaystyle\frac{{tp}}{{tp}+{fp}} = 629/`r format.bigmark(4514)` = `r round(629/4514*100, 1)`\% \mbox{ and} \\
   \mbox{NPV} &=& \displaystyle\frac{{tn}}{{tn}+{fn}} = `r format.bigmark(117744)`/`r format.bigmark(117841)` = `r round(117744/117841*100, 1)`\%.
 \end{eqnarray*}
-The negative predictive value NPV is close to 100\%, which means that a women with a negative mammogram is very likely not to have breast cancer. However, the positive predictive value is only `r round(629/4514*100, 1)`\%, so a women with a positive mammogram still has a fairly small probability to have breast cancer. 
+The negative predictive value NPV is close to 100\%, which means that a woman with a negative mammogram is very likely not to have breast cancer. However, the positive predictive value is only `r round(629/4514*100, 1)`\%, so a woman with a positive mammogram still has a fairly small probability to have breast cancer. 
 
 This simple calculation assumes that the observed *disease prevalence*
 
@@ -592,7 +592,7 @@ and without the disease.
 :::
 
 
-The diagonstic odds ratio can be calculated as
+The diagnostic odds ratio can be calculated as
 \[
 \mbox{DOR}  =  \frac{\mbox{LR}^+}{\mbox{LR}^-} = \frac{tp \cdot tn}{fp \cdot fn}.
 \]
@@ -755,9 +755,9 @@ qnorm((1 + level)/2) # factor
 
 #### Wilson confidence interval {-}
 It is usually better to use the *Wilson* confidence interval, in particular 
-if $n$ is small or $p$ is close to 0 or 1.
+if $n$ is small or $p$ is close to 0 or 1. 
 The Wilson interval has better *empirical coverage* than the Wald interval,
-as shown in Figure \@ref(fig:coverage). 
+as shown in Figure \@ref(fig:coverage). Empirical coverage refers to the proportion of times a confidence interval actually contains the true parameter value across many repeated samples.
 Additionally, the Wilson confidence interval does not have overshoot issues:
 its limits are always within the unit interval, eliminating the need for truncation.
 
@@ -832,7 +832,7 @@ The limits of the Wald confidence interval are -- by construction -- symmetric a
 
 #### Other confidence intervals {-}
 Other types of confidence intervals can be calculated, for example Agresti, 
-Jeffreys or Clopper-Pearson. Here we compute the different confidence intervals for 
+Jeffreys or Clopper-Pearson. Here, we compute the different confidence intervals for 
 the sensitivity in Example \@ref(exm:depression) (screening for depression) based on both questions. 
 
 ```{r echo=FALSE}
@@ -842,7 +842,7 @@ res <- confIntProportion(x=28, n=29)
 confIntProportion(x=28, n=29)
 ```
 
-The Upper limit 
+The upper limit 
 of the Wald confidence interval is actually larger than 1 ("overshoot"): 
 \[
 p + \mbox{ET}_{95} = `r res$p` + 1.96 \cdot \sqrt{(`r res$p` \cdot (1-`r res$p`) / 29} = `r round(res$p + 1.96*sqrt(res$p*(1-res$p)/29),3)`
@@ -958,7 +958,7 @@ A 95\% confidence interval for ${\mbox{LR}}^-$ is computed accordingly using the
 
 The function `biostatUZH::confIntDiagnostic()` computes the estimate and 
 confidence interval of several indicators of test performance. 
-For example, for the screening for depression study (Example \@ref(exm:depression)): 
+For example, for the study on screening for depression (Example \@ref(exm:depression)): 
 ```{r echo=T}
 library(biostatUZH)
 confIntDiagnostic(tp=28, fp=129, tn=263, fn=1, cohort=TRUE)
@@ -1071,7 +1071,7 @@ kable(combined_data, label = NA,
 
  The sensitivity and specificity are $\mbox{Sens}=116/122=`r round(116/(116+6)*100,1)`$\%
   and $\mbox{Spec}=4844/4878=`r round(4844/(4844+34)*100,1)`$\% for EA and $\mbox{Sens}=111/124=`r round(111/(111+13)*100,1)`$\% and $\mbox{Spec}=4765/4876=`r round(4765/(4765+111)*100,1)`$\% for CVS. 
-Hence
+Hence,
 
   \begin{eqnarray*}
   \mbox{rSens} & = & `r round(116/(116+6)*100,1)`\%/`r round(111/(111+13)*100,1)`\%
@@ -1161,8 +1161,8 @@ fetAb.tn <- c(4844, 4765)
 fetAb.fn <- c(6, 13)
 
 ## T1 (EA) versus T2 (CVS)
-print(confIntIndependentDiagnostic(tp=fetAb.tp, fp=fetAb.fp,
-                                   tn=fetAb.tn, fn=fetAb.fn,
+print(confIntIndependentDiagnostic(tp = fetAb.tp, fp = fetAb.fp,
+                                   t = fetAb.tn, fn = fetAb.fn,
                                    names = c("EA", "CVS"),
                                    conf.level = 0.95))
 ```
@@ -1175,7 +1175,7 @@ do not include the reference value of 1.
 @RoldaNofuentes2012 show the data of a clinical trial carried out at the 
 University Clinic Hospital in Granada, Spain. In this study, two 
 diagnostic tests (T1 and T2) have been applied to 548 males to detect coronary 
-heart disease. The data is paired, that is, each subjects performs 
+heart disease. The data is paired, that is, each subject performs 
 both tests.
 :::
 

@@ -573,7 +573,7 @@ twoby2(tab.asTreated)
 
 ## Additional references
 
-More information about RSTs and sequential methods can be found in @bland
+More information about RCTs and sequential methods can be found in @bland
 (Ch. 9.11) and in @todd2001, about ITT in @bland (Ch. 2.6), about monitoring 
 accumulating data in @matthews (Ch. 8) and about protocols and protocol 
 deviations in @matthews (Ch. 10). Studies where the methods from this chapter 

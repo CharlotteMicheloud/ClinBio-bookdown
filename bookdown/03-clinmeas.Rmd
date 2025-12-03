@@ -84,7 +84,7 @@ subject <- as.factor(rep(1:n,2))
 
 
 
-```{r PEFR, fig.cap = "Repeated measurements of peak expiratory flow rate [@bland]", echo = F, fig.width=4.0}
+```{r PEFR, fig.cap = "Repeated measurements of peak expiratory flow rate [@bland].", echo = F, fig.width=4.0}
 my.range <- range(c(First,Second))
 par(pty="s", las=1)
 plot(First, Second, xlab = "First", ylab = "Second", pty = "s", pch = 19, col = 2, ylim=my.range, xlim=my.range, cex=0.7)
@@ -160,8 +160,10 @@ standard deviation $s_w$ using the following `R` function:
 
 
 ```{r echo=TRUE}
-
 confintSD <- function(sd, dof, level = 0.95){
+  # sd: standard deviation
+  # dof: degree of freedom
+  # level: confidence level
   alpha <- 1 - level
   p_lower <- alpha/2
   p_upper <- 1-alpha/2
@@ -175,16 +177,14 @@ round(confintSD(sd = sigmaw, dof = 17), 1)
 
 # for sodium data
 round(confintSD(sd = sigmaw_sod, dof = nrow(sodium_f)), 2)
-
-
 ```
 Derivation details are given in Appendix \@ref(CIvar).
 
 
 A simpler way to compute $s^2_w$ (which gives approximately the same result)
 is based on the variance $s^2_d$ of the 
-differences  `Diff` between the two measurements, \ie 
-$s^2_w = s^2_d/2$.
+differences `Diff` between the two measurements, \ie 
+$s^2_w = s^2_d/2$ (assuming independence between groups).
 For the PEFR data (Example \@ref(exm:pefr)), this 
 gives
 
@@ -210,7 +210,8 @@ if there are more than two measurements for some subjects.
 Sometimes *measurement error*
 is proportional to the *size* of the measurement. 
 If this is the case, a *logarithmic transformation* of the 
-measurements may be helpful. 
+measurements may be helpful, because taking logarithms converts multiplicative 
+errors into additive errors, for which the model assumptions are more valid. 
 If there are two measurements per subject, the (rank) correlation between
 the absolute value of the difference between two measurements
 and the mean of the two measurements
@@ -275,10 +276,7 @@ Spearman's rank correlation coefficient
 in the PEFR example  ($\rho_S = `r round(ctest_pefr$estimate, 2)`$)
 is larger than in the sodium example ($\rho_S = `r round(ctest_sod$estimate, 4)`$), 
 but the $P$-value for the correlation test is large in both cases ($p=`r formatPval(ctest_pefr$p.value)`$ and 
-$p=`r formatPval(ctest_sod$p.value)`$, respectively). Hence
-there is no evidence for 
-an association between the mean measurement and the absolute difference of
-the measurements, so no transformation is required. 
+$p=`r formatPval(ctest_sod$p.value)`$, respectively). Hence, there is no evidence for an association between the mean measurement and the absolute difference of the measurements, so no transformation is required. 
 
 :::{.example #cotinine}
 @Bland1996 report the duplicate salivary cotinine measurements for a group 
@@ -364,8 +362,7 @@ text(- 0.25, 0.4,
 ### Repeatability {#sec:repeatability}
 
 :::{.definition}
-*Repeatability* is the value below which the difference $d$ between
-two measurements will lie with a certain probability, usually 0.95.
+*Repeatability coefficient* is the value below which the difference $d$ between two measurements will lie with a certain probability, usually 0.95.
 :::
 
 Repeatability is 
@@ -403,14 +400,12 @@ a real change in the subject's true value.
 
 ### Reliability and the intraclass correlation coefficient
 
-:::{.definition}
-*Reliability* refers to the correlation between pairs of readings.
-:::
+*Reliability* of a measurement is characterized by the correlation coefficient between pairs of readings. 
+
 Pearson correlation coefficient between the
-first and second measurement depends on the ordering of pairs
-and is therefore not appropriate to assess the reliability 
+first and second measurement depends on the ordering of pairs, and is therefore not appropriate to assess the reliability 
 between two pairs of measurements. 
-To illustrate this problem we change the ordering of 
+To illustrate this problem, we change the ordering of 
 some random pairs in the PERF data: 
 
 ```{r echo=FALSE}
@@ -437,7 +432,7 @@ cor(First.new, Second.new)
 In contrast, the *intraclass correlation coefficient* (ICC)
 does not depend on the ordering of the pairs and should be used instead.
 The ICC is the average correlation among all
-possible ordering of pairs and extends easily to the case of more than
+possible ordering of pairs, and extends easily to the case of more than
 two observations per subject. It can be defined based on the between- and 
 within-subject variances: 
 
@@ -485,7 +480,7 @@ print(t(ICC.CI))
 ICC can be interpreted as the *proportion* of the variance of
 measurements which is due to the variation between true values
 rather than to measurement error.
-Therefore ICC depends on the *variation between subjects* and thus
+Therefore, ICC depends on the *variation between subjects* and thus
 relates to the population from which the sample was taken. 
 This method should hence 
 be used only when we have a *representative sample* of the subjects of interest
@@ -651,7 +646,7 @@ $$\underbrace{\bar{d} - 2 \cdot s_d}_{\LOAlow} \mbox{ and } \underbrace{\bar{d} 
 
 Here $s_d=\sqrt{2} s_w$ is the standard deviation of the differences.
 If differences within the limits of agreement are considered 
-*not clinically relevant* then the two methods are considered exchangeable.
+*not clinically relevant*, then the two methods are considered exchangeable.
 
 ### Confidence intervals for limits of agreement {#CIloa}
 
@@ -662,12 +657,12 @@ The variance of $s_d$ can be approximately estimated
 by $s_d^2/2n$ [see @BlandAltman1986; @Bland1999; Appendix \@ref(CIvar)].
 Hence, the standard error of the limits of agreement is estimated by
 \begin{eqnarray*}
-  \SE(\LOAlow)   =  &\SE(\LOAup) \\
-  = & \SE(\bar{d} \pm 2 \cdot s_d) \\
-  = & \sqrt{\Var(\bar{d} \pm 2 \cdot s_d)} \\
-  = & \sqrt{\Var(\bar d) + 4 \Var(s_d)} \\
-  \approx &  \sqrt{s_d^2/n + 4 s_d^2/2n} \\
-= & \sqrt{3/n} \, s_d \ .
+  \SE(\LOAlow)   &=  \SE(\LOAup) \\
+  &=  \SE(\bar{d} \pm 2 \cdot s_d) \\
+  &=  \sqrt{\Var(\bar{d} \pm 2 \cdot s_d)} \\
+  &= \sqrt{\Var(\bar d) + 4 \Var(s_d)} \\
+  & \approx   \sqrt{s_d^2/n + 4 s_d^2/2n} \\
+  &=  \sqrt{3/n} \, s_d \ .
 \end{eqnarray*}
 This can be used to compute 95\% CI for $\LOAlow$ and $\LOAup$.
 The standard error can also be used to compute the required sample 
@@ -886,7 +881,7 @@ The expected proportion of *agreement by chance* then is
 \end{eqnarray*} 
 
 It has the following properties: $\kappa \leq \pobs$, $\kappa = 1$ means 
-that there is perfect agreement ($\pobs=1$), $\kappa = 0$ mean that the agreement not larger than expected by chace ($\pobs=\pexp$), and the smallest possible value of $\kappa$ is $-\pexp/(1-\pexp)$. 
+that there is perfect agreement ($\pobs=1$), $\kappa = 0$ means that the agreement not larger than expected by chance ($\pobs=\pexp$), and the smallest possible value of $\kappa$ is $-\pexp/(1-\pexp)$. A negative $\kappa$ means that the agreement is worse than by chance. 
 
 In Example \@ref(exm:Hazir) we obtain
 
@@ -910,23 +905,24 @@ kable(kappa_table, format = "html", caption = "Classification of Cohen's Kappa [
 ```
 
 However, there is a caveat with the interpretation shown in Table \@ref(tab:kappaClass):
-The expected value of $\kappa$ also depends on the true proportion of subjects in the two
-categories. Figure \@ref(fig:kappa-dep) shows the expected value of $\kappa$ as a function of the
-true proportion of "Yes" subjects for different probabilities of a correct assessment by the two classifiers. 
-We can see that expected $\kappa$ drops for extreme proportions close to zero or one. 
+$\kappa$ also depends on the true proportion of subjects in the two
+categories. Figure \@ref(fig:kappa-dep) shows the expected $\kappa$ as a function of the
+true proportion of "Yes" subjects for different probabilities of 
+agreement. We can see that expected $\kappa$ drops for extreme proportions close to zero or one. 
 
 
-In Table \@ref(tab:exbinary),
+In Table \@ref(tab:kappa-extreme),
 $\kappa = `r round(vcd::Kappa(mat0)$Unweighted[1], 2)`$
 although $\pobs = `r mat0[1,1] + mat0[2,2]`$/$`r sum(mat0)`$ = $`r round((mat0[1,1] + mat0[2,2])/sum(mat0), 2)`$.
 The problem is that the observed proportion of "positive" subjects is very low
 (5/94 resp. 6/94).
- Figure \@ref(fig:kappa-dep) shows that the expected value of $\kappa$ also depends on the marginal distribution of positive
-(respectively negative) subjects. It can be quite low, even if the probability of a correct assessment is quite large. 
+This shows that $\kappa$ also depends on the marginal distribution of positive
+(respectively negative) subjects! 
 
+Assume the two observers have the same chance of a
+correct assessment, we have the following figure.
 
-
-```{r kappa-dep, fig.cap = "Dependence of expected $\\kappa$ on the true proportion of positive subjects.", echo = FALSE, warning=FALSE}
+```{r kappa-dep, fig.cap = "Dependence of $\\kappa$ on the true proportion of positive subjects.", echo = FALSE, warning=FALSE}
 k <- function(p, q){
     num <- p*(1-p)
     den <- num + q*(1-q)/((2*q-1)^2)
@@ -951,6 +947,42 @@ for(i in 1:length(l)){
 legend("topleft", lty=1, col=rev(1:6), legend=paste(as.character(rev(q*100)), "% correct", seq=""), bg="white", cex=1, lwd=2)
 ``` 
 
+
+```{r kappa-extreme, results = "asis", echo = F, message = FALSE, warning=FALSE}
+mat <- rbind(
+matrix(rep(c(1, 1), 1), ncol = 2, byrow = T),
+matrix(rep(c(0, 1), 4), ncol = 2, byrow = T),
+matrix(rep(c(1, 0), 5), ncol = 2, byrow = T),
+matrix(rep(c(0, 0), 84), ncol = 2, byrow = T)
+)
+library("vcd", warn.conflicts = FALSE, quietly = TRUE)
+norm <- mat[, 1]
+nonnorm <- mat[, 2]
+mat <- table(norm, nonnorm)
+mat0 <- mat
+
+
+# Compute Kappa
+k <- Kappa(mat)
+
+# Prepare the table for xtable
+mat <- rbind(mat, apply(mat, 2, sum))
+mat <- data.frame(cbind(mat, apply(mat, 1, sum)))
+mat <- cbind(rep(NA, 3), mat)
+mat <- rbind(c("<b>Rater 1</b>", "negative", "positive", "Total"), mat)
+mat[2:4, 1] <- c("negative", "positive", "Total")
+colnames(mat) <- c("", "Rater 2", "", "")
+# rownames(mat) <- c("", "negative", "positive", "Total")
+
+# Print the table using kable
+knitr::kable(mat, format = "html",
+      caption = "Extreme example for interpretation of Kappa.", 
+      row.names = FALSE, 
+      escape = FALSE) %>%   
+  kable_styling(full_width = FALSE)
+```
+
+This case shows that $\kappa$ can be small even you have good agreement.
 
 ### Confidence Interval for Cohen's Kappa
 
@@ -1084,7 +1116,7 @@ kable(health, digits=0,
 ``` 
 
 
-As a start we may only consider the diagonal entries for the assessment of agreement.
+As a start, we may only consider the diagonal entries for the assessment of agreement.
 This is  *unweighted kappa*, calculated with 
 \begin{eqnarray*}
     \pobs = \sum_{i=1}^{k} p_{ii}, \\

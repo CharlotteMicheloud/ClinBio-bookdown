@@ -14,15 +14,15 @@ pain-relieving drugs. The simplest crossover trial design is the **AB/BA design*
 
 The AB/BA design is illustrated in Table \@ref(tab:ABBA).
 There are two treatment periods, and patients are randomized into two
-sequence groups where patients in group AB receive the treatments in the
+sequence groups, where patients in group AB receive the treatments in the
 order A-B, and patients in group BA receive the treatments in the order B-A.
 
 This design ensures that *period effects* can be separated from
 *treatment effects*, which would not be the case if all patients
-would have been allocated to group AB. For example, to study the
+had been allocated to group AB. For example, to study the
 effect of pain-relieving drugs for headaches, a possible period effect
 may be due to changes in weather conditions in the two periods.  If
-all patients would be treated in the order A-B, then any difference in
+all patients were treated in the order A-B, then any difference in
 the outcome between A and B may be due to the period effect alone, or
 a combination of the period and treatment effect.
 
@@ -275,17 +275,13 @@ $\sigma_w = `r round((summary(mixed1)$sigma),2)`$.
 
 ## The issue of carryover
 
-
 The above analysis assumes that there is no *carryover effect*, i.e.
 effects of the treatment given in period 1 do not persist during period 2.
-A statistical approach to handle carryover which has been suggested is to 1. test for carryover, and 2. If significant then compare only data from period 1,
-otherwise analyse data from period 1 and 2 jointly assuming there is no carryover effect. We emphasize that this is generally not recommended due to lack of power and other problems. 
-The recommended approach is not to use a crossover design when there is a 
-possibility of a carryover effect. 
+A statistical approach to handle carryover has been suggested: first, test for carryover, and if significant, compare only data from period 1, otherwise, analyse data from period 1 and 2 jointly assuming there is no carryover effect. We emphasize that this is generally not recommended due to lack of power and other problems. 
+
+The recommended approach is not to use a crossover design when there is a possibility of a carryover effect. 
 You should try to use non-statistical arguments, perhaps based on the half-lives of drugs, etc., to decide how long treatment effects are likely to persist and
 apply appropriate washout periods between the two treatment periods. 
-
-
 
 ### Analysis of carryover
 
@@ -317,7 +313,7 @@ Then:
 So, for $\gamma \neq 0$, the traditional estimate of $\Delta$ will be biased.
 
 
-### Test for carryover
+### Test for carryover {#testcarryover}
 
 A test for $H_0$: $\gamma = 0$ can be performed using a standard $t$-test comparing the sums $s_i=x_{i1} + x_{i2}$ across groups:
 
@@ -385,7 +381,7 @@ kable(period_data, escape = FALSE, booktabs = TRUE, label = NA) %>%
 
 
 Interpretation of the coefficients of a model with carry-over effect is difficult. The treatment effect is now assumed to interact with period, so is no longer constant across the two periods. 
-The negative sign of the carryover effect is a consequence of a systematic difference in the outcome means between the AB and the BA group. For a perfectly randomised trial we would expect the sum of the two outcomes across the two treatment to be the same, but in the enuresis trial they are
+The negative sign of the carryover effect is a consequence of a systematic difference in the outcome means between the AB and the BA group. For a perfectly randomized trial we would expect the sum of the two outcomes across the two treatment to be the same, but in the enuresis trial they are
 `r round(2*mean(means$A),1)` dry days in the AB group and `r round(2*mean(means$B),1)` days in the BA group, and the difference of the two is the carryover effect of 
 `r round(2*mean(means$A)-2*mean(means$B),1)` days. 
 
@@ -394,7 +390,7 @@ The negative sign of the carryover effect is a consequence of a systematic diffe
 
 ## Sample size for AB/BA design
 
-We now discuss sample size calculation for a AB/BA crossover design
+We now discuss sample size calculation for an AB/BA crossover design
 with continuous outcome. Consider the model with patient-specific
 random-effects $\xi_i$:
   \[
@@ -426,7 +422,7 @@ The standard parallel group design thus requires
   \[
     n_{\tiny{\mbox PG}} = \frac{2 \sigma^2 (u + v)^2}{ \Delta^2} = \frac{2 \sigma_w^2 (u + v)^2}{(1- \mbox{ICC}) \Delta^2}
     \]
-patients per group. Less patients are needed in a crossover trial, 
+patients per group. Fewer patients are needed in a crossover trial, 
 
 $$n_{\tiny{\mbox CO}}/n_{\tiny{\mbox PG}} = (1-\mbox{ICC})/2,$$
 
@@ -459,9 +455,9 @@ tail(cerebrovascular)
 ``` 
 
 
-For illustration purposes we start with a separate analysis by period. 
+For illustration purposes, we start with a separate analysis by period. 
 In period 1, each patient receives either the active treatment or the
-placebo and the same holds for period 2. So, by considering the two
+placebo, and the same holds for period 2. So, by considering the two
 periods separately, all observations are independent as we are used to
 from a parallel group design. 
 
@@ -651,7 +647,7 @@ mcnemar.test(x, correct=FALSE)
 ``` 
 
 However, no effect estimate is given, and the test is based on a
-slighlty different test statistic (with or without continuity correction).
+slightly different test statistic (with or without continuity correction).
 
 
 ### Recommended analysis using Mainland-Gart test
@@ -670,7 +666,7 @@ with standard error
 
 $$\SE( \log \widehat{\OR}) = \frac{1}{2} \sqrt{\frac{1}{a} + \frac{1}{b} + \frac{1}{c} + \frac{1}{d}}.$$
 
-Note the additional factor $1/2$ in both $\widehat{\OR}$ and $\SE(\hat \beta)$, as in the analysis of a continuous outcome. 
+Note the additional exponent and factor $1/2$ in $\widehat{\OR}$ and $\SE(\hat \beta)$ respectively, as in the analysis of a continuous outcome. 
 
 
 ```{r echo=TRUE}
@@ -697,7 +693,7 @@ se.log.or <- sqrt(1/a+1/b+1/c+1/d)/2
 
 
 ### Analysis with generalized linear mixed models
-We may also use a generalized linear mixed model (but results may depend on the choice of the integration parameter \code{nAGQ}):
+We may also use a generalized linear mixed model (but results may depend on the choice of the integration parameter `nAGQ`):
 
 ```{r echo=TRUE}
 resCerebro <- glmer(y ~ treatment + time + (1|ID), 

@@ -1,4 +1,4 @@
-# Continuous diagnostic tests {#contDiag}
+# Continuous diagnostic tests {#doc}
 
 We now consider diagnostic tests that report a continuous test result.
 
@@ -41,11 +41,9 @@ will not affect the ROC curve, making it *scale-invariant*.
   
   
 :::{.example #genexpr}
-The gene expression data from a hypothetical study with $n=23$ controls and $m=30$ 
-cases are shown in Figure \@ref(fig:genexpress).
+The gene expression data from @pepe with $n=23$ controls (with healthy ovary tissues) and $m=30$ cases of ovarian cancer are shown in Figure \@ref(fig:genexpress). 
 Table \@ref(tab:genes) gives sensitivity and specificity for selected cut-offs.
 :::
-
 
 ```{r echo=FALSE}
 library(ROCR, warn.conflicts = FALSE, quietly = TRUE)
@@ -56,8 +54,8 @@ rocdata <- read.table("data/rocdata.txt", header=TRUE)
 cases <- rocdata[rocdata$case==1,]$expr
 controls <- rocdata[rocdata$case==0,]$expr
 ``` 
-
-```{r echo=TRUE}
+We can see that now the diagnostic test is a continuous measurement, and higher value means higher probability of disease. The first column is the gene expression, and the second column contains information about the case and control groups.
+```{r echo=TRUE, message=FALSE, warning=FALSE}
 head(rocdata, 3)
 ```
 
@@ -93,8 +91,6 @@ knitr::kable(selected_rows, digits = c(2, 1, 1, 1), label = NA,
       caption = "Sensitivity and specificity for selected cut-offs.", 
       align = "c", row.names = FALSE) %>%
   kable_styling(latex_options = "hold_position", position = "center")
-
-
 
 ```
 
@@ -152,8 +148,9 @@ a randomly selected case is larger than the test result $Y_{\bar D}$ from
 a randomly selected control:
 
 \[
-\mbox{AUC} = \Pr(Y_D > Y_{\bar D}).
+\mbox{AUC} = \Pr(Y_D > Y_{\bar D}),
 \]
+where $\bar D$ is the control, and $D$ is the case. 
 
 A proof of this result can be found in Appendix \@ref(ROC). 
 Most tests have values between 0.5 (useless test) and 1.0 (perfect test).
@@ -316,7 +313,7 @@ of the optimal cut-off should account for the
 take into account the prevalence (Pre) of the disease. 
 
 :::{.definition}
-The minimize the overall cost, the *optimal cut-off* is where
+To minimize the overall cost, the *optimal cut-off* is where
 a straight line with slope 
 
 \begin{equation}

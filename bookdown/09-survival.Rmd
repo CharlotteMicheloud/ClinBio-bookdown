@@ -80,7 +80,7 @@ a patient might decide to withdraw from the study or a
 patient might die from some other reason, for example in a car crash.
 
 A central assumption in survival analysis is that the censoring time is 
-independent from the survival time (non-informative censoring).
+independent of the survival time (non-informative censoring).
 
 ```{r dataprep-sakk, echo = FALSE}
 howmany <- 10
@@ -152,7 +152,7 @@ legend("bottomright", bty = 'n', pch = c(4, 1), col = c(col.red, col.green),
 
 
 Table \@ref(tab:sakkdata) shows a selection of variables for the first five 
-patients. The notion overall of survival (OS) denotes survival without any further 
+patients. The notion of overall of survival (OS) denotes survival without any further 
 conditions (in contrast to, e.g., progression free survival).
 In this example, OS is the survival time in years and the $+$ stands for
 "censored". The format of the variable OS (with $+$ for censored) is the output 
@@ -410,7 +410,7 @@ col = c(col.blue, col.red), lwd = 2, bty = 'n')
 With `survminer::ggsurvplot`, a Kaplan-Meier estimate with additional risk 
 table can be obtained as shown in Figure \@ref(fig:ggsurvplot).
 
-```{r ggsurvplot, echo = TRUE, fig.cap="Kaplan-Meier estimate of the survival curve in the RT+CT group from Example \\@ref(exm:sakk), with risk table."}
+```{r ggsurvplot, echo = TRUE, fig.cap="Kaplan-Meier estimate of the survival curve in the RT+CT group from Example \\@ref(exm:sakk), with risk table.", message=FALSE, warning=FALSE}
 library(survminer)
 ggsurvplot(sakk.surv, risk.table = TRUE)
 ``` 
@@ -418,8 +418,6 @@ Based on the Kaplan-Meier curve we can now compute survival probabilities with c
 ```{r survprob, echo = TRUE}
 summary(sakk.surv, times = 5)
 ``` 
-
-
 
 It is important to be careful with censored data. 
 Censored observations cannot be simply ignored, i.e. 
@@ -607,17 +605,17 @@ leads to biased estimates of the survival distributions, invalid statistical
 tests, and misleading conclusions. 
 This bias results from the fact that responders must live long enough
 for response to be observed; there is no such requirement for 
-non-responders [@Anderson1983],[@Anderson2008].
+non-responders, see [@Anderson1983, @Anderson2008].
 Another example where Breslow's rule is violated is a study reporting that
 Oscar winners live longer [@oscarwinners]. As other scientists have noticed,
 this study was subject to *survival bias* or *immortal time bias*
-[@oscarwinners_reanalysis]. 
+[@oscarwinners_reanalysis].
+
 
 
 We now discuss how survival curves can be compared between groups. 
 For example, the survival curves of the RT and RT+CT groups are shown in Figure \@ref(fig:sakkTwoGroups). Later, we show how to generate 
 such a plot with the `R`function `ggminer::ggsurvplot`. In Section \@ref(sec:timeVarying) we will describe methods to incorporate time-varying covariates in the analysis to avoid immortal time bias.
-
 
 ```{r sakkTwoGroups, fig.cap = "Kaplan-Meier curves for both groups in Example \\@ref(exm:sakk).", echo = FALSE}
 par(mar = c(4.5, 4, 0.1, 1), las = 1)
@@ -639,7 +637,7 @@ pwert2 <- signif(1-pchisq(test2$chisq, df = 1), 2)
 
 The *log-rank test*, also called *Mantel-Cox test*, 
 quantifies the evidence against the null hypothesis of
-equal survival curves $S_A(t) = S_B(t)$ , in groups A and B,
+equal survival curves $S_A(t) = S_B(t)$, in groups A and B,
 for all times $t$ with a $P$-value. The method compares 
 the *observed number* of events with the corresponding
 *expected number* of events (under the null hypothesis $H_0$) in each group.
@@ -863,7 +861,7 @@ model.cox2 <- coxph(Surv(os, death) ~ trt2 + sex + age, data = dat.tmp)
 The hazard ratio can be calculated from the output of the log-rank
 test as the ratio of the relative event rates (observed/expected) in
 the two groups.  Only the observed and expected number of cases are
-required. This simple estimate is know as the Pike hazard ratio
+required. This simple estimate is known as the Pike hazard ratio
 estimate and has been shown to slightly underestimate larger effects.
 It has only little bias for hazard rates typically observed in clinical trials. 
 
@@ -876,7 +874,7 @@ HR <- EventRates[2]/EventRates[1]
 SElogHR <- sqrt(sum(1/expected))
 printWaldCI(log(HR), SElogHR, FUN = exp)
 ``` 
-In the example the hazard ratio turns out to be $\mbox{HR}=`r round(HR,3)`$. 
+In the example, the hazard ratio turns out to be $\mbox{HR}=`r round(HR,3)`$. 
 
 #### The Cox model {-}
 The (semiparametric) *Cox model* assumes that the hazard function $h_i(t)$ of individual $i$ with explanatory variables $\boldsymbol{ x}_i$ has the form
@@ -901,10 +899,17 @@ we use *Cox-Regression* as in the following example.
 :::{.example #sakk name="continued"}
 Cox regression in Example \@ref(exm:sakk):
 :::
-```{r ch29, echo = TRUE, results = "asis"}
+```{r , echo = TRUE, results = "asis"}
 model.cox0 <- coxph(Surv(os, death) ~ trt2, data = dat.tmp)
-knitr::kable(tableRegression(model.cox0, latex = FALSE, xtable = FALSE))
 ``` 
+
+```{r ch29, echo=FALSE, results = "asis"}
+knitr::kable(tableRegression(model.cox0, latex = FALSE, xtable = FALSE),
+             caption = "Estimated hazard ratio and confidence interval without adjusting for baseline.", 
+      booktabs = TRUE, escape = FALSE, caption.placement = "top", label = NA, row.names = FALSE)%>%
+  kable_styling(latex_options = c("striped", "hold_position"), full_width = TRUE)
+```
+
 The comparison RT vs. RT+CT gives $\mbox{HR}=`r round(exp(coef(model.cox0)),2)`$ with relatively large confidence interval, very close to the one obtained with Pike's method based on the log-rank test. There is no evidence for a treatment effect ($p=0.19$).
 
 #### Adjusting in survival analysis {-}
@@ -926,7 +931,7 @@ kable(table_data,
       caption = "Distribution of gender in the two treatment groups in Example \\@ref(exm:sakk).",
       booktabs = TRUE, escape = FALSE, caption.placement = "top", 
       label = NA) %>%
-  kable_styling(latex_options = "striped", full_width = FALSE)
+  kable_styling(latex_options = "striped",full_width = FALSE)
 ``` 
 
 
@@ -934,11 +939,17 @@ kable(table_data,
 Adjusting for baseline values with Cox regression in Example \@ref(exm:sakk):
 :::
 
-```{r ch37, echo = TRUE, results = "asis"}
-model.cox1 <- coxph(Surv(os, death) ~ trt 
-                    + sex, data = dat.tmp)
-knitr::kable(tableRegression(model.cox1, latex = FALSE, xtable = FALSE))
+```{r , echo = TRUE, results = "asis"}
+model.cox1 <- coxph(Surv(os, death) ~ trt + sex, data = dat.tmp)
 ``` 
+
+```{r ch37, echo=FALSE, results='asis'}
+knitr::kable(tableRegression(model.cox1, latex = FALSE, xtable = FALSE),
+             caption = "Estimated hazard ratio and confidence interval adjusted for baseline.", 
+      booktabs = TRUE, escape = FALSE, caption.placement = "top", label = NA, row.names = FALSE)%>%
+  kable_styling(latex_options = c("striped", "hold_position"), full_width = TRUE)
+```
+
 
 The adjusted hazard of death (instantaneous death risk) is increased by 
 $`r round((exp(coef(model.cox1)[1])-1)*100)`$\% for RT relative to RT + CT 
@@ -960,7 +971,7 @@ There is a simple formula for the required total number of events [@collett, Cha
 \begin{equation*}
 d = \frac{ 4 (u + v)^2}{ \Delta^2},
 \end{equation*}
-where $\Delta$ is the log hazard ratio to be detected.
+where $\Delta$ is the log hazard ratio to be detected, and $u$, $v$ are the same as the ones defined in Section \@ref(sec:ss).
 
 The number of events can be calculated with 
 the `R`function `biostatUZH::survEvents()`:
@@ -1013,6 +1024,7 @@ Instead of a non-parametric fit of the survival curves, the function can also be
 
 
 
+
 ## Time-varying explanatory variables  {#sec:timeVarying}
 
 Time-varying explanatory variables, e.g. exposure yes/no, can be dealt with by
@@ -1022,7 +1034,6 @@ Time-varying explanatory variables, e.g. exposure yes/no, can be dealt with by
 -  treating the parts as distinct subjects.
 
 This approach requires allowance for late entries in the analysis, which is the case in `R`. The approach is valid if changes in explanatory variables are unrelated to the underlying risk of failure. We will now see two examples of time-dependent analyses.
-
 
 :::{.example}
 The PBC study is about treatment of primary biliary cirrhosis (PBC) of the liver. We will use the first 312 cases in this dataset from the `survival` package since they participated in the randomized trial and contain largely complete data. The `status` at endpoint can be 0 = censored, 1 = transplant or 2 = dead.
@@ -1036,7 +1047,7 @@ sel <- c("id", "time", "status", "trt", "age", "sex", "bili", "protime")
 head(pbc[,sel])
 ```
 
-Variables bili and protime are time-dependent measurements. The baseline data shown above, in contrast, only include baseline measurements of these covariates that have multiple measurements over time.
+Variables `bili` and `protime` are time-dependent measurements. The baseline data shown above, in contrast, only include baseline measurements of these covariates that have multiple measurements over time.
 
 ```{r echo=TRUE}
 sel <- c("id", "futime", "status", "trt", "age", "sex", "day", "bili", "protime")
@@ -1046,38 +1057,54 @@ head(pbcseq[,sel], 14)
 In a baseline analysis (including only baseline measurements), first without and then with adjustment for covariates, we obtain the following results:
 
 ```{r echo=TRUE, results="asis"}
-## baseline fit 
+## baseline fit for first 312 patients
 fit0 <- coxph(Surv(time, status == 2) ~ trt, 
               data = pbc, subset = (id <= 312))
 fit1 <- coxph(Surv(time, status == 2) ~ trt + log(bili) + log(protime),
               data = pbc, subset = (id <= 312))
-knitr::kable(tableRegression(fit0, latex = FALSE, xtable = FALSE))
-knitr::kable(tableRegression(fit1, latex = FALSE, xtable = FALSE))
 ```
 
-A time-dependent analysis includes all measurements of the covariates. First, we need to prepare the data accordingly. The data preparation below is adopted from vignette `timedep.pdf` in package `survival`. It therefore also contains the variables `ascites`, `albumin` and `alk.phos`, that are not used in the following analysis. 
+```{r echo=FALSE, results='asis'}
+knitr::kable(tableRegression(fit0, latex = FALSE, xtable = FALSE),
+             caption = "Estimated hazard ratio and confidence interval (baseline only).", 
+      booktabs = TRUE, escape = FALSE, caption.placement = "top", label = NA, row.names = FALSE)%>%
+  kable_styling(latex_options = c("striped", "hold_position"), full_width = TRUE)
+```
+
+```{r echo=FALSE, results='asis'}
+knitr::kable(tableRegression(fit1, latex = FALSE, xtable = FALSE),
+             caption = "Estimated hazard ratio and confidence interval (with covariates).", 
+      booktabs = TRUE, escape = FALSE, caption.placement = "top", label = NA, row.names = FALSE)%>%
+  kable_styling(latex_options = c("striped", "hold_position"), full_width = TRUE)
+```
 
 
+A time-dependent analysis includes all measurements of the covariates. First, we need to prepare the data accordingly. The data preparation below is adopted from vignette `timedep.pdf` in package `survival`. It therefore also contains the variables `ascites`, `albumin` and `alk.phos` that are not used in the following analysis. 
 
 ```{r echo=TRUE}
 temp <- subset(pbc, id <= 312, select = c(id:sex, stage)) # baseline
 pbc2 <- tmerge(temp, temp, id = id, death = event(time, status)) #set range
-pbc2 <- tmerge(pbc2, pbcseq, id = id, ascites = tdc(day, ascites),
-               bili = tdc(day, bili), albumin = tdc(day, albumin), 
-               protime = tdc(day, protime), alk.phos = tdc(day, alk.phos))
-
+pbc2 <- tmerge(pbc2, pbcseq, id = id, bili = tdc(day, bili),
+               protime = tdc(day, protime))
 head(pbc2)
 ```
 
 ```{r echo=TRUE, results="asis"}
-## time-dependent fit 
+## time-dependent fit
 fit2 <- coxph(Surv(tstart, tstop, death == 2) ~ trt + log(bili) + 
                 log(protime), data = pbc2)
-knitr::kable(tableRegression(fit2, latex = FALSE, xtable = FALSE))
 ```
 
-The analysis reveals, that - after taking into account adjustments
-for time-varying covariates - the effect of `trt` is weaker with a HR of
+```{r echo=FALSE, results='asis'}
+knitr::kable(tableRegression(fit2, latex = FALSE, xtable = FALSE),
+             caption = "Estimated hazard ratio and confidence interval (time-dependent analysis).", 
+      booktabs = TRUE, escape = FALSE, caption.placement = "top", label = NA, row.names = FALSE)%>%
+  kable_styling(latex_options = c("striped", "hold_position"), full_width = TRUE)
+```
+
+
+The analysis reveals that -- after taking into account adjustments
+for time-varying covariates -- the effect of `trt` is weaker with a HR of
 `r round(exp(coef(fit2)[1]),2)` rather than `r round(exp(coef(fit1)[1]),2)` and a larger $p$-value. 
 
 
@@ -1146,7 +1173,13 @@ ggsurvplot(badfit, xlab = "Years post diagnosis", ylab = "Survival",
 
 ```{r echo=TRUE, results="asis"}
 badcoxfit <- coxph(Surv(time/365.25, status) ~ responder, data = lung)
-knitr::kable(tableRegression(badcoxfit, latex = FALSE, xtable = FALSE))
+```
+
+```{r, echo=FALSE, results="asis"}
+knitr::kable(tableRegression(badcoxfit, latex = FALSE, xtable = FALSE),
+             caption = "Estimated hazard ratio and confidence interval (bad fit).", 
+      booktabs = TRUE, escape = FALSE, caption.placement = "top", label = NA, row.names = FALSE)%>%
+  kable_styling(latex_options = c("striped", "hold_position"), full_width = TRUE)
 ```
 
 There appears to be an effect of tumor response on survival, but it should not have an effect as responders were generated randomly. The analysis is flawed as it violates "Breslow's first rule" and is subject to *time-dependent bias*. More precisely, the bias is that the probability to be a responder increases with time.
@@ -1171,8 +1204,15 @@ head(newdata)
 
 ```{r echo=TRUE, results="asis"}
 goodcoxfit <- coxph(Surv(tstart, tstop, endpt==2) ~ response, data=newdata)
-knitr::kable(tableRegression(goodcoxfit, latex = FALSE, xtable = FALSE))
 ```
+
+```{r echo=FALSE, results='asis'}
+knitr::kable(tableRegression(goodcoxfit, latex = FALSE, xtable = FALSE),
+             caption = "Estimated hazard ratio and confidence interval (correct fit).", 
+      booktabs = TRUE, escape = FALSE, caption.placement = "top", label = NA, row.names = FALSE)%>%
+  kable_styling(latex_options = c("striped", "hold_position"), full_width = TRUE)
+```
+
 
 In the correct analysis, there is no evidence for an effect of tumor response on survival, as it should be for randomly generated responders.
 

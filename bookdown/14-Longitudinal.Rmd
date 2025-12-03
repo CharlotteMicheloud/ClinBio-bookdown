@@ -25,6 +25,11 @@ predictors on response and association among repeated responses over
 time. This means we need to account for correlation within one individual.
 
 ## Continuous longitudinal outcomes
+
+:::{.definition #balanced}
+Longitudinal data is called **balanced**, if the same number of observations $n_i=n$ for each individual $i= 1,...,m$ at the same time points $t_{ij}=t_j, j=1,...,n.$
+:::
+
 We use an example from @Fitzmaurice about the treatment of lead-exposed children 
 (TLC) to illustrate different methods for the analysis of continuous longitudinal outcomes. 
 
@@ -156,7 +161,7 @@ The Bartlett test suggests no significant difference in variances, supporting th
 In Chapter \@ref(contOut), we discussed change score analysis and ANCOVA for analyzing baseline and one follow-up. In longitudinal data, there are often more than one follow-up measurements, which means we need to consider the correlation between the follow-up measurements as well. We can handle the baseline values by generalizing the discussed methods. We can either subtract the baseline value from all remaining post-baseline responses (change score analysis), or use the baseline as a covariate in the analysis of post-baseline responses (extended ANCOVA).
 
 #### Correlation structure
-These statistical analyses must be adjusted for residual correlation between measurements from the same individual. Hence we introduce three common **correlation structures** between observations with their illustrative examples in 3 $\times$ 3 matrices. More discussions and practical examples will be given in the later sections.
+These statistical analyses must be adjusted for residual correlation between measurements from the same individual. Hence, we introduce three common **correlation structures** between observations with their illustrative examples in 3 $\times$ 3 matrices. More discussions and practical examples will be given in the later sections.
 
 \(\texttt{exchangeable}\): It assumes equal correlations for every pair of observations made from the same individual, no matter how large the distance is. It is also called a "compound symmetry" correlation structure. 
 
@@ -228,7 +233,7 @@ CSNull <- lead ~ offset(lead.0) + fweek
 CSFull <- lead ~ offset(lead.0) + Treatment*fweek
 ```
 
-Assuming independence working correlation, we fit the null and the full model for comparison. 
+Assuming independent working correlation (measurements mutually independent), we fit the null and the full model for comparison. 
 
 ```{r TLC5, echo=TRUE, size="tiny", results = FALSE, message=FALSE, warning=FALSE}
 library(geepack)
@@ -247,11 +252,11 @@ knitr::kable(tableRegression(geeInCS, intercept = F, latex = FALSE, xtable = FAL
              booktabs = TRUE, align = "l")
 ```
 
-In the output, \(\texttt{treatA}\) is the main effect for treatment, but to test for an overall
+In the output, \(\texttt{TreatmentActive}\) is the main effect for treatment, but to test for an overall
 treatment effect, we need to test whether all three treatment
 parameters are different from zero using the function \(\texttt{anova()}\).
 
-```{r, echo=TRUE, eval=FALSE}
+```{r, echo=TRUE}
 anova(geeInCSNull, geeInCS)
 ```
 
@@ -261,7 +266,7 @@ since the comparison of the full with the null model with
 
 **Approach 2: Extended ANCOVA model**
 
-Again, we compare a null with the full model. The null model contains only the baseline lead and week as variables, while the full model includes an interaction between treatment and week to explore whether there is an treatment effect.
+Again, we compare a null with the full model. The null model contains only the baseline lead and week as variables, while the full model includes an interaction between treatment and week to explore whether there is a treatment effect.
 ```{r, echo=TRUE}
 ANCOVANull <- lead ~ lead.0 + fweek
 ANCOVAFull <- lead ~ lead.0 + Treatment*fweek
@@ -273,7 +278,7 @@ ANCOVAFull <- lead ~ lead.0 + Treatment*fweek
 <!-- head(tlclong2) -->
 <!-- ``` -->
 
-Assuming an unstructured working correlation structure, we fit the two models.
+To allow for more flexibility in the model, we assume an unstructured working correlation structure and fit the two models.
 ```{r, echo=TRUE, size="tiny", results = FALSE, message=FALSE}
 geeUnANCOVANull <- geeglm(ANCOVANull, id=id, data = tlclong2,
                           corstr = "unstructured")
@@ -283,7 +288,7 @@ geeUnANCOVAFull <- geeglm(ANCOVAFull, id=id, data = tlclong2,
 Table \@ref(tab:geeUnANCOVAFull) summarizes the estimates, confidence intervals, and p-values of the full model. 
 ```{r geeUnANCOVAFull, echo=FALSE, size="tiny", results="asis"}
 knitr::kable(tableRegression(geeUnANCOVAFull, intercept = FALSE, latex = FALSE, xtable = FALSE),
-             caption = "Model fit results from the full model",
+             caption = "Model fit results from the full model.",
              booktabs = TRUE, align = "l")
 ```
 Using \(\texttt{anova()}\) again, we can see strong evidence for a treatment effect since the p-value is very small.
@@ -293,7 +298,7 @@ anova(geeUnANCOVANull, geeUnANCOVAFull)
 
 The baseline variable \(\texttt{lead.0}\) has coefficient $`r round(coef(geeUnANCOVAFull)[2],2)`$. According to Chapter \@ref(contOut), in ANCOVA, this coefficient represents the correlation between baseline and follow-up measurements and can be expected to be between 0 and 1. When it is 1, ANCOVA is the same as the change score analysis. 
 
-### Generalized Least Squares
+### Generalized least squares
 Generalized Least Squares (GLS) is a parametric method for estimating regression parameters when errors are correlated. Different from GEE, GLS uses Maximum Likelihood (\(\texttt{ML}\)) or Restricted Maximum Likelihood (\(\texttt{REML}\)). GLS is more powerful for unbalanced data.
 
 :::{.example #TLC name="continued"}
@@ -386,7 +391,7 @@ knitr::kable(anova_result_df,
 **Residual analysis**
 
 There are different types of residuals that can be calculated from a fitted general linear model. 
-The **raw residuals** (\(\texttt{type="response"}\)) are calculated using $r_{ij} = y_{ij} - \boldsymbol{x_{ij}^\top \hat{\beta}}$. The **standardized residuals** (\(\texttt{type="pearson"}\)) are obtained by dividing the raw residuals by an estimate of the standard deviation, $\tilde{r}_{ij} = r_{ij} / \hat{\sigma}$. The **normalized residuals** (\(\texttt{type="normalized"}\)) are adjusted to remove correlation, computed as $\tilde{n}_i = \mathbf{V}_0^{-1/2} \mathbf{\tilde{r}}_i$, where $\mathbf{V}_0$ is the estimated correlation matrix of $\mathbf{r_i}=(r_{i1},\ldots,r_{rm})^\top$.  They are used to check for residual correlation. If the assumed correlation structure is correct, then $\tilde{n}_i \sim \Nor(\mathbf{0,I})$.
+The **raw residuals** (\(\texttt{type="response"}\)) are calculated using $r_{ij} = y_{ij} - \boldsymbol{x_{ij}^\top \hat{\beta}}$. The **standardized residuals** (\(\texttt{type="pearson"}\)) are obtained by dividing the raw residuals by an estimate of the standard deviation, $\tilde{r}_{ij} = r_{ij} / \hat{\sigma}$. The **normalized residuals** (\(\texttt{type="normalized"}\)) are adjusted to remove correlations, computed as $\tilde{n}_i = \mathbf{V}_0^{-1/2} \mathbf{\tilde{r}}_i$, where $\mathbf{V}_0$ is the estimated correlation matrix of $\mathbf{r_i}=(r_{i1},\ldots,r_{rm})^\top$.  They are used to check for residual correlation. If the assumed correlation structure is correct, then $\tilde{n}_i \sim \Nor(\mathbf{0,I})$.
 
 :::{.example #TLC name="continued"}
 Now we apply residual analyses on the fitted model `m4`.
@@ -410,23 +415,23 @@ Table \@ref(tab:raw) shows an increasing trend in residual variance.
 <!--(on the left) and substantial correlation (on the right).-->
 ```{r raw, echo=FALSE}
 ## raw residuals exhibit increasing variance and substantial correlation
-knitr::kable(printVarCor(r1), caption = "Raw residuals covariance", booktabs = TRUE, align = "l")
+knitr::kable(printVarCor(r1), caption = "Raw residuals variance(first column) and covariance", booktabs = TRUE, align = "l")
 ```
 In Table \@ref(tab:standard), the standardized residuals still exhibit an increasing variance.
 <!--and identical correlation as in Table \@ref(tab:raw).-->
 ```{r standard, echo=FALSE}
 ## standardized residuals still exhibit increasing variance and identical correlation as raw residuals
-knitr::kable(printVarCor(r2), caption = "Standardized residuals covariance", booktabs = TRUE, align = "l")
+knitr::kable(printVarCor(r2), caption = "Standardized residuals variance(first column) and covariance", booktabs = TRUE, align = "l")
 ```
 The normalized residuals in Table \@ref(tab:norm) still exhibit an increasing trend in variance with smaller covariances compared to raw and standardized residuals.
 ```{r norm, echo=FALSE}
 ## normalized residuals still exhibit increasing variance with small correlations
-knitr::kable(printVarCor(r3), caption = "Normalized residuals covariance", booktabs = TRUE, align = "l")
+knitr::kable(printVarCor(r3), caption = "Normalized residuals variance(first column) and covariance", booktabs = TRUE, align = "l")
 ```
 
 **Allowing for variance heterogeneity**
 
-We can explore further to allow for heterogeneity in variances and test the evidence for it.
+We can explore further to allow for heterogeneity in variances and test the evidence for it. Here the \(\texttt{weight=varIdent}\) allows different residual variances in each week. 
 ```{r, echo=TRUE, results='hide'}
 m4var <- update(m4, weight=varIdent(form = ~ 1 | fweek))
 anova(m4, m4var)
@@ -481,7 +486,7 @@ tau <- exp(attributes(m1.ri$apVar)$Pars[[2]])
 (Rho = coef(m1.uc$modelStruct$corStruct, unconstrained = F))
 ```
 
-The random intercepts estimates are visualised in the beeswarm plot and histogram in Figure \@ref(fig:beeswarm).
+The random intercepts estimates are visualized in the beeswarm plot and histogram in Figure \@ref(fig:beeswarm).
 ```{r beeswarm,warning=FALSE, message=FALSE, echo=FALSE, fig.cap="Beeswarm plot and histogram of the random intercepts."}
 ri <-  coef(m1.ri)[,1]
 par(mfrow=c(1,2), pty="s", las=1)
@@ -561,7 +566,7 @@ as 1 = good/response, 0 = poor/no response) was determined at each visit.
 data("respiratory", package = "geepack")
 ```
 
-The first 6 rows of the dataset are presented in Table \@ref(tab:resp). We notice that the \(\texttt{id}\)'s in center 2 are duplicated with those in center 1, which means the same \(\texttt{id}\) in centers 1 and 2 corresponds to two different individuals. Therefore we redefine \(\texttt{id}\)'s in center 2 to distinguish individuals from the two centers.
+The first 6 rows of the dataset are presented in Table \@ref(tab:resp). We notice that the \(\texttt{id}\)'s in center 2 are duplicated with those in center 1, which means the same \(\texttt{id}\) in centers 1 and 2 corresponds to two different individuals. Therefore, we redefine \(\texttt{id}\)'s in center 2 to distinguish individuals from the two centers.
 ```{r echo=TRUE, results='hide'}
 ## center 2 is repeated
 respiratory$id[respiratory$center == 2] <- 
@@ -705,13 +710,13 @@ labs(x = "Variable", y = "Odds Ratio")
 ```
 
 ## Sample size calculation
-In this section, we consider a contituous outcome case. Suppose the model is
+In this section, we consider a continuous outcome case. Suppose the model is
 \[
 Y_{ij} = \beta_0 + \beta_1 x_i + \epsilon_{ij}, \quad j=1,\ldots,n; \quad i=1,\ldots, 2m
 \]
 where $x_i$ is a binary treatment indicator, $m$ is the number of patients per group and $n$ is the number of observations per patient. 
 Suppose further that the correlation between observations from the same patient is $\rho$ (exchangeable correlation). 
-We discussed the usual two independent sample size formula in Chapter \@ref(SampleSize). For longitudinal data, the normal formula has to be adjusted with the longitudinal **design effect**: 
+We discussed the usual two independent sample size formula in Section \@ref(sec:ss). For longitudinal data, the normal formula has to be adjusted with the longitudinal **design effect**: 
 $$
 D_{\text{eff}} = \{1 + (n-1) \rho \}/n > \rho \quad \text{ for all $n$}.
 $$
@@ -724,7 +729,7 @@ D_{\text{eff}} = \{ \boldsymbol{1}^\top \boldsymbol{R}^{-1} \boldsymbol{1}\}^{-1
 which is the inverse of the sum of the elements in $\boldsymbol{R}^{-1}$. 
 The sample size is then obtained by multiplying the standard sample size design with the design effect. 
 
-We compare the design effect under exchangeable and AR-1 correlation structure assumptions and different values of $\rho$ in Figure \@ref(fig:design). The independence line is the design effect when $\rho=0$, i.e. no correlation between observations. When $n$ is 1 or 2, the design effect of the exchangeable and the AR-1 correlation structures are identical, and this is because they give the same correlation structure when $n$ = 1 or 2. In the AR-1 model, the correlation is smaller as $n$ increases, so there are less correlation in the data compared to that under exchangeable assumption. Thus we need a smaller sample size under the AR-1 assumption (design effect smaller) compared to that under exchangeable assumption.
+We compare the design effect under exchangeable and AR-1 correlation structure assumptions and different values of $\rho$ in Figure \@ref(fig:design). The independence line is the design effect when $\rho=0$, i.e. no correlation between observations. When $n$ is 1 or 2, the design effect of the exchangeable and the AR-1 correlation structures are identical, and this is because they give the same correlation structure when $n$ = 1 or 2. In the AR-1 model, the correlation is smaller as $n$ increases, so there are less correlation in the data compared to that under exchangeable assumption. Thus, we need a smaller sample size under the AR-1 assumption (design effect smaller) compared to that under exchangeable assumption.
 ```{r design, echo=FALSE, fig.cap="Design effects under different correlation structure and different values of $\\rho$."}
 library(latex2exp)
 rho <- seq(0.5, 0.9, 0.1)

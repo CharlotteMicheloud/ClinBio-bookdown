@@ -177,8 +177,8 @@ using the `R` function `bartlett.test()`:
 print(bTest <- bartlett.test(f.up ~ treatment))
 ```
 
-The test indicates strong evidence for variance heterogeneity ($p=
-0.003$), which confirms the earlier findings based on regression
+The test indicates strong evidence for variance heterogeneity ($p=0.003$), 
+which confirms the earlier findings based on regression
 diagnostics.  However, it is not recommended to pre-test for equal
 variances and then choose between a $t$-test or Welch's test. Such a
 two-stage procedure fails to control the Type-I error rate and usually
@@ -371,7 +371,7 @@ indicate evidence for a difference in mean change score:
 ```
 
 #### Mann-Whitney test {-}
-Mann-Whitney test gives a confidence for the median of the 
+Mann-Whitney test gives a confidence interval for the median of the 
 difference between a sample from the Didgeridoo and the control 
 group (`difference in location`), which is hard to interpret: 
 
@@ -379,7 +379,7 @@ group (`difference in location`), which is hard to interpret:
 (MWTest2 <- wilcox.test(change.score ~ treatment, conf.int=TRUE))
 ```
 
-Mann-Whitney test has less assumptions that the $t$-test, but 
+Mann-Whitney test has fewer assumptions than the $t$-test, but 
 also less power. 
 
 #### Permutation test {-} 
@@ -392,7 +392,7 @@ allocation. The comparison with the observed difference then
 gives a $P$-value. In practice, a Monte Carlo random sample is 
 taken from all possible permutations. This approach can be extended to 
 stratified randomisation, etc. Figure \@ref(fig:permut) illustrated the 
-permutation test for the change score analysis. Not that in total, 
+permutation test for the change score analysis. Note that in total, 
 there are ${25 \choose 14} \approx `r round(choose(25, 14)/1000000, 1)`$ 
 Mio. distinct permutations of treatment allocation.
 
@@ -514,8 +514,7 @@ the other results reported as sensitivity analyses.
 
 #### Comparison of effect estimates {-}
 
-
-Let us know define some notation. The outcome means
+Let us now define some notation. The outcome means
 
 - at Baseline in both groups is $\mu_B$,
 - at Follow-up in the control group is $\mu$, and
@@ -538,9 +537,7 @@ so it will produce narrower confidence intervals and
 more powerful tests.
 In the Didgeridoo study, the estimated correlation $\hat \rho = 0.72$.
 
-### Analysis of covariance
-
-
+### Analysis of covariance 
 
 *Analysis of covariance* (ANCOVA) is an extension of the change score analysis:
 

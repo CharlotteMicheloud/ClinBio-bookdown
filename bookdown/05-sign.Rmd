@@ -14,13 +14,13 @@ The first question requires computation of the effect size and its
 precision, usually represented by a confidence (or credible)
 interval. There has been an important movement in medical statistics over the last decades to focus on estimation
 of effect sizes together with information on the inherent imprecision due to sampling variability, see @altman. 
-The second question requires to quantify the strength of
-evidence for an effect.  This is commonly done with $P$-values, but
+The second question requires quantifying the strength of
+evidence for an effect. This is commonly done with $P$-values, but
 other measures of evidence exist such as likelihood ratios and Bayes
 factors.  The third question requires a decision-theoretic
 perspectives, where error rates play a prominent role. The concepts of a
 *null hypothesis* and *statistical significance* play a crucial rule to answer the second
-and third queston, but is often misunderstood. This is reflected by 
+and third question, but is often misunderstood. This is reflected by 
 the fundamental difference between significance and
 hypothesis tests, described in the next section.
 
@@ -848,7 +848,7 @@ plotCI.wrap(x = c(1.2, 1.8), y = c(d1, d2), uiw = c(const*se1, const*se2), xaxt 
 
 ## Sample size calculations {#sec:ss}
 
-Having a fixet target for recruitment implies that you 
+Having a fixed target for recruitment implies that you 
 have a known objective stopping rule. 
 Appropriate sample size calculations ensure that 
 enough patients are recruited to collect 
@@ -1064,7 +1064,7 @@ power.t.test(delta = 0.33, sd = 1, sig.level = 0.05, power=.90)$n
 ``` 
 
 The exact statement in the paper reads: 
-"A  sample  size  of  194  in  each  group  was  needed  to  detect  a  mean  difference  in  area under  the  curve of 0.33 standard deviations derived from the SF-36 bodily pain domain with 90% power and a 5% (two sided $\alpha$)  significance level."
+"A  sample  size  of  194  in  each  group  was  needed  to  detect  a  mean  difference  in  area under  the  curve of 0.33 standard deviations derived from the SF-36 bodily pain domain with 90% power and a 5% (two-sided $\alpha$)  significance level."
  
 
 #### Minimum detectable difference {-}
@@ -1301,8 +1301,7 @@ p0 <- 0.05
 delta <- p1-p0
 w <- 0.1
 seDelta <- w/4
-sigma2 <- p1*(1-p1)+p0*(1-p0)
-myn <- ceiling(sigma2/(seDelta^2))
+myn <- ceiling((p1*(1-p1)+p0*(1-p0))/(seDelta^2))
 ``` 
 
 
@@ -1310,14 +1309,14 @@ myn <- ceiling(sigma2/(seDelta^2))
 If $\Delta=\pi_1-\pi_o$ is the difference between two proportions $\pi_1$ and $\pi_0$
 with unit variance 
 $$
-\sigma^2 = \pi_1 (1-\pi_1) + \pi_0 (1-\pi_0),
+\sigma^2 = \{\pi_1 (1-\pi_1) + \pi_0 (1-\pi_0)\}/2,
 $$ the required sample size in each group is
 \[
 n = \frac{\sigma^2}{\SE(\hat \Delta)^2}=  16 \, \frac{\sigma^2}{w^2} \, ,
 \]
-where $w = 4 \, \SE(\hat \Delta)$ is the (approximate) width of the 95% confidence interval 
+where $w = 4 \SE(\hat \Delta)$ is the width of the 95% confidence interval 
 for $\Delta$.
-For example, if $\pi_1=`r p1`$, $\pi_0=`r p0`$ and $w=0.1$, then $\sigma^2=`r sigma2`$ and $n=`r myn`$.
+For example, if $\pi_1=`r p1`$, $\pi_0=`r p0`$ and $w=0.1$, then $n=`r myn`$.
 
 ### Sample size re-estimation
 There are various assumptions that can impact sample size calculation. For example, higher-than-expected variance may reduce the power to detect treatment effects. We can use sample size re-estimation at interim analysis, for example re-estimating the standard deviation $\sigma$ in internal pilot, or potentially increase sample size to maintain power level. We can also adjust sample size for "blinded" vs. "unblinded" designs (with respect to treatment assignment). 

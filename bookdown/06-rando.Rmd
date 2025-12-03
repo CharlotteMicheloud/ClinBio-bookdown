@@ -179,7 +179,7 @@ getAllSeq(obj4)
 ```
 
 :::{.example #ulcers}
-An RCT was conducted to examine the use of cold atmosperic plasma 
+An RCT was conducted to examine the use of cold atmospheric plasma 
 as a method to treat diabetic foot ulcers [@Mirpour2020].
 The Methods section states that the patients were randomly assigned to 
 the two treatment groups using block randomization with mixing block sizes 
@@ -307,7 +307,7 @@ A precise statistical analysis plan helps in any case.
 
 
 :::{.example #ulcers name="continued"}
-In the RCT from @Mirpour2020, the patient were blinded, and 
+In the RCT from @Mirpour2020, the patients were blinded, and 
 the data were collected by a trained physician 
 and nurse who were blinded to the randomization method and the treatment 
 assignment. Moreover, the data were analyzed by a blinded investigator 
@@ -329,7 +329,7 @@ The *placebo effect* occurs if a patient exhibits a response to treatment,
 even though the treatment has *no active component* and cannot be having a 
 direct effect. If only *untreated controls* (no treatment at all) are used, 
 then we would not be able to tell whether an observed effect is due to treatment 
-or to the placebo effect. Therefore a *placebo control group* is usually selected 
+or to the placebo effect. Therefore, a *placebo control group* is usually selected 
 to control the placebo effect. In some trials, both untreated and placebo
 control groups are used in addition to the usual intervention group to 
 *directly assess* the size of the placebo effect.
@@ -425,7 +425,7 @@ Only very small $P$-values should be reported with the "<" symbol, e.g.
 "$p < 0.0001$".
 
 
-An example a good reporting is:
+An example of a good reporting is:
 
 "The difference in means at follow-up was 2.28 units 
 (95\% CI: $-1.34$ to $5.90$, $p=0.21$)."
