@@ -269,7 +269,7 @@ kable(output,align = c("c", rep("r", 7)),
 In many studies, the exact follow-up time for each individual is known. 
 Aggregation in arbitrary time intervals can then be avoided. 
 The *Kaplan-Meier estimate* of the survival function uses intervals 
-which contain only one event, so $d_i \in \{0, 1\}$ (if there are no ties). 
+which contain only up to one event, so $d_i \in \{0, 1\}$ (if there are no ties). 
 Application of the life table method to these intervals yields the Kaplan-Meier
 estimate, a step function with  jumps of relative size
 \[
