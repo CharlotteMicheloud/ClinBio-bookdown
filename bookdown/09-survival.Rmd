@@ -53,8 +53,8 @@ sakk$primarysite <- factor(sakk$primarysite, levels = 1:4,
                            labels = c(" (Oral cavity)", 
                                       " (Oropharynx)", 
                                       " (Hypopharynx)", 
-                                      " (Larynx)")) ## site of primary tumor
-## t : tumor stage
+                                      " (Larynx)")) ## site of primary tumour
+## t : tumour stage
 sakk$n <- factor(sakk$n) ## nodal stage
 
 
@@ -72,12 +72,15 @@ analysis.
 ## Analysis of survival outcomes 
 
 ### Censoring
+:::{.definition}
 A survival time $T$ is called *(right-)censored*, if it is known that the
 individual has survived up to time $T$, but whose survival status past that
-point is not known. For example, the study might be finished before all patients 
-have died,
-a patient might decide to withdraw from the study or a
-patient might die from some other reason, for example in a car crash.
+point is not known. 
+
+For example, the study might be finished before all patients 
+have died, a patient might decide to withdraw from the study, or a
+patient might die from some other reason, for example a car accident.
+:::
 
 A central assumption in survival analysis is that the censoring time is 
 independent of the survival time (non-informative censoring).
@@ -113,17 +116,16 @@ sakk.rt <- sakk[sakk$trt == "B", ]
 
 
 :::{.example #sakk}
-The Chemotherapy study [@Huguenin2004] is a randomized study to compare two treatments 
+The Chemotherapy study [@Huguenin2004] is a randomised study to compare two treatments 
 for head and neck cancer on $`r nrow(sakk)`$ patients: 
-Combination of radiotherapy and chemotherapy (RT+CT)
-($n=`r sum(sakk$trt == "A")`$) versus radiotherapy alone (RT) 
+A combination of radiotherapy and chemotherapy (RT+CT)
+($n=`r sum(sakk$trt == "A")`$) was compared with radiotherapy alone (RT) 
 ($n=`r sum(sakk$trt == "B")`$). The primary outcome is survival time (in years) 
 from start of treatment. Figure \@ref(fig:sakkTimes) shows data for the 
 survival times of the first 10 patients. The survival time is measured 
 from the start of treatment (starting point $0$) and it ends if a patient 
 either dies or is censored.
 :::
-
 
 
 ```{r sakkTimes, fig.cap = "Survival times for a selection of patients from Example \\@ref(exm:sakk).", echo = FALSE}
@@ -152,7 +154,7 @@ legend("bottomright", bty = 'n', pch = c(4, 1), col = c(col.red, col.green),
 
 
 Table \@ref(tab:sakkdata) shows a selection of variables for the first five 
-patients. The notion of overall of survival (OS) denotes survival without any further 
+patients. The notion of overall survival (OS) denotes survival without any further 
 conditions (in contrast to, e.g., progression free survival).
 In this example, OS is the survival time in years and the $+$ stands for
 "censored". The format of the variable OS (with $+$ for censored) is the output 
@@ -171,7 +173,7 @@ library(kableExtra)
 
 # Create the table
 kable(sakk.tab[, 1:8], align = "lcccc", 
-      caption = "Data from selected patients in the Chemotherapy study. OS is the overall survival time, a $+$ indicates censoring, LK are the lymph nodes and PS the performance status.", 
+      caption = "Data from selected patients in the Chemotherapy study. OS is the overall survival time, a $+$ indicates censoring, LK are the lymph nodes and PS is the performance status.", 
       booktabs = TRUE, escape = FALSE, caption.placement = "top", label = NA, row.names = FALSE) %>%
   kable_styling(latex_options = c("striped", "hold_position"), full_width = FALSE)
 ```
@@ -201,11 +203,13 @@ for (i in 1:length(shapes)){lines(ts, 1 - pweibull(ts, shape = shapes[i], scale 
 
 #### Life table method {-}
 
-The *life table* method is a classical approach to estimate the survival function $S(t)$. It is based on a partition of the time axis into time intervals $i=1,\ldots,I$ of typically equal length. The *risk of death* $r_i$ in interval $i$ is estimated as
+The *life table* method is a classical approach to estimate the survival function $S(t)$. It is based on a partition of the time axis into time intervals $i=1,\ldots,I$ of typically equal length. 
+
+The *risk of death* $r_i$ in interval $i$ is estimated as
 
 \begin{equation*}
 \hat r_i = \frac{\mbox{# patients which died in interval
-$i$}}{\mbox{# patients at risk in interval $i$}} = \frac{d_i}{n_i}
+$i$}}{\mbox{# patients at risk in interval $i$}} = \frac{d_i}{n_i}.
 \end{equation*}
 
 By convention, observations censored in interval $i$ contribute half to the 
@@ -219,7 +223,7 @@ The survival function is then estimated as
 \end{equation*}
 
 Wald confidence intervals can be calculated for $\hat S(i)$, $\log \hat S(i)$ or 
-$\log \{-\log \hat S(i)\}$ with appropriate back-transformation. The corresponding standard errors can be found in textbooks,
+$\log \{-\log \hat S(i)\}$ with appropriate back-transformations. The corresponding standard errors can be found in textbooks,
 e.g. @collett (Section 2.2).
 
 ```{r sterbetafel, quiet=TRUE, echo = FALSE}
@@ -267,7 +271,7 @@ kable(output,align = c("c", rep("r", 7)),
 #### Kaplan-Meier estimate of the survival function {-}
 
 In many studies, the exact follow-up time for each individual is known. 
-Aggregation in arbitrary time intervals can then be avoided. 
+Aggregation into arbitrary time intervals can then be avoided. 
 The *Kaplan-Meier estimate* of the survival function uses intervals 
 which contain only up to one event, so $d_i \in \{0, 1\}$ (if there are no ties). 
 Application of the life table method to these intervals yields the Kaplan-Meier
@@ -281,16 +285,16 @@ There are some critical assumptions in Kaplan-Meier estimation [@SN_KMcurves]:
 First, at any time, patients who are censored have the same survival
 prospects as those who continue to be followed.
 If censoring is related to survival for some patients,
-the estimated survival probabilities would be biased.
+the estimated survival probabilities will be biased.
 Secondly, survival probabilities are the same for subjects recruited early
 and late in the study. 
 In a long term study, the case mix may change over the period of recruitment, 
 or there may be an innovation in ancillary treatment.
-Last, the event happens at the time specified. This could be a problem,
-for example, if the event were recurrence of a tumor which would be detected at
+Lastly, the event happens at the time specified. This could be a problem,
+for example, if the event were recurrence of a tumour which would be detected at
 a regular examination (interval censoring).
 
-The results of a survival analysis depend upon the choice of time scale: 
+The results of a survival analysis depend on the choice of time scale: 
 time since study entry (i.e. randomisation in RCTs), calendar time, or age.
 For example, consider the following dataset: 
 
@@ -309,8 +313,8 @@ cohort <- data.frame(Subject, Sex, DateEntry, AgeEntry, DateExit, AgeExit, Event
 
 print(cohort)
 ```
-With this dataset, the three time scales look as follows: 
-```{r}
+With this dataset, the three time scales are as follows: 
+```{r, fig.cap = "Illustration of survival data across three distinct time scales: time since study entry (left), calendar time (centre), and age (right)."}
 
 ## Funktion zum Plotten von Überlebenszeiten. observed ist Indikator für nicht-zensierte Beob.
 ## obsLabels kann Vektor mit y-Labels für die Zeiten sein.
@@ -353,14 +357,34 @@ with(cohort,
 legend("topleft", pch=c(4, 19), cex=1.25, , col=c(2, 1), legend=c("Event", "Censored"))
 ```
 
-| **Time scale**          | **Risk set at first event**                 | **Risk set at second event**             |
-|--------------------------|---------------------------------------------|-------------------------------------------|
-| Time since study entry   | {1, 2, 3, 4, 5, **7**, 8, 9, 10}           | {1, 3, 4, **5**, 8}                       |
-| Calendar time            | {1, 3, 4, 5, **7**}                        | {1, 2, 3, 4, **5**, 6, 8, 9, 10}          |
-| Age                      | {1, 3, 4, 5, 6, **7**, 9}                  | {1, 3, 4, **5**, 6, 9, 10}                |
+<!-- | **Time scale**          | **Risk set at first event**                 | **Risk set at second event**             | -->
+<!-- |--------------------------|---------------------------------------------|-------------------------------------------| -->
+<!-- | Time since study entry   | {1, 2, 3, 4, 5, **7**, 8, 9, 10}           | {1, 3, 4, **5**, 8}                       | -->
+<!-- | Calendar time            | {1, 3, 4, 5, **7**}                        | {1, 2, 3, 4, **5**, 6, 8, 9, 10}          | -->
+<!-- | Age                      | {1, 3, 4, 5, 6, **7**, 9}                  | {1, 3, 4, **5**, 6, 9, 10}                | -->
+
+```{r risk, echo=FALSE, results='asis'}
+risk_data <- data.frame(
+  "Time scale" = c("Time since study entry", "Calendar time", "Age"),
+  "Risk set at first event" = c("{1, 2, 3, 4, 5, **7**, 8, 9, 10}", 
+                                "{1, 3, 4, 5, **7**}", 
+                                "{1, 3, 4, 5, 6, **7**, 9}"),
+  "Risk set at second event" = c("{1, 3, 4, **5**, 8}", 
+                                 "{1, 2, 3, 4, **5**, 6, 8, 9, 10}", 
+                                 "{1, 3, 4, **5**, 6, 9, 10}"),
+  check.names = FALSE
+)
+
+knitr::kable(risk_data, 
+             caption = "Risk sets at the first and second event times according to three different time scales.",
+             booktabs = TRUE,
+             escape = FALSE) # escape = FALSE allows the bold **7** to render
+```
 
 
-The risk set depends on the time scale. Then how do we select a time scale? 
+From Table \@ref(tab:risk), we can see that the risk set depends on the time scale.
+
+Then how do we select a time scale? 
 Usually, the time scale with the strongest relationship to the event rate 
 is used. In RCTs, survival is usually analysed in relation to the 
 time since randomisation. An additional time scale can be 
@@ -376,8 +400,8 @@ the survival curve in Example \@ref(exm:sakk) for the RT+CT group
 to the estimate obtained with the life table method 
 using yearly intervals. 
 The Kaplan-Meier estimate can be calculated and plotted with the following `R` code.
-The option `conf.int = TRUE` shows a dotted confidence band and the option
-`mark.time = TRUE` would show censoring events (see Figure \@ref(fig:KMbiased)).
+The option `conf.int = TRUE` shows a dotted confidence band, and the option
+`mark.time = TRUE` will show censoring events (see Figure \@ref(fig:KMbiased)).
 :::
 
 ```{r survplot1, echo = TRUE, fig.show='hide'}
@@ -592,15 +616,13 @@ biostatUZH::confIntSquareAdd(theta1 = 3.9, lower1 = 2.2, upper1 = 6,
 
 
 
-
-
 ## Comparison of survival curves {#sec:breslow}
 
-One has to be careful about what groups to compare.
+One has to be careful about which groups to compare.
 Breslow's first rule of survival analysis states that:
 "Selection into the study cohort, or into subgroups to be compared in 
 the analysis, must not depend on events that occur after the start of follow-up".
-*Survival by tumor response analysis* in oncology is an example that 
+*Survival by tumour response analysis* in oncology is an example that 
 leads to biased estimates of the survival distributions, invalid statistical 
 tests, and misleading conclusions. 
 This bias results from the fact that responders must live long enough
@@ -651,7 +673,7 @@ The two survival curves can be shown in one plot using the following code,
 see Figure \@ref(fig:ggch21):
 
 
-```{r ggch21, echo = TRUE, fig.height=5.5, fig.cap="Kaplan-Meier curves for both groups in Example \\@ref(exm:sakk) obtained with ggsurvplot."}
+```{r ggch21, echo = TRUE, fig.height=5.5, fig.cap="Kaplan-Meier curves for both groups in Example \\@ref(exm:sakk) obtained with `ggsurvplot`."}
 sakk.surv1 <- survfit(Surv(time, death) ~ treat, data = sakk, conf.type = "log-log")
 ggsurvplot(sakk.surv1, risk.table = TRUE, conf.int = TRUE, pval = TRUE)
 ``` 
@@ -689,7 +711,7 @@ H(t) = \int_0^t h(u) du = - \log S(t).
 Figure \@ref(fig:survhazard) shows the survival and hazard functions for a constant hazard rate ($\mbox{HR} = 2$, top) and for an increasing hazard rate (bottom).
 
 
-```{r survhazard, fig.cap = "Survival function and hazard function: constant hazard (top) and non-linearly increasing (bottom)", echo = FALSE}
+```{r survhazard, fig.cap = "Survival function and hazard function: constant hazard (top) and non-linearly increasing (bottom) .", echo = FALSE}
 shapes <- c(1, 1)
 scales <- c(1, 2)
 
@@ -762,9 +784,6 @@ for (i in 1:length(shapes)){
 
 
 
-
-
-
 ```{r ch24, echo=F}
 #res <- mantelCoxHR(time, event, cholestase)
 event <- sakk$death
@@ -795,15 +814,15 @@ The hazard ratio can be interpreted as
 \begin{equation*}
 \mbox{HR} = \frac{h_A(t)}{h_B(t)}\approx 
 \frac{{\P(t < T_A < t+h \given T_A>t)}/{h}}{{\P(t < T_B < t+h \given T_B>t)}/{h}} 
-\equiv \frac{{\P(t < T_A < t+h \given T_A>t)}}{{\P(t < T_B < t+h \given T_B>t)}}
+\equiv \frac{{\P(t < T_A < t+h \given T_A>t)}}{{\P(t < T_B < t+h \given T_B>t)}} ,
 \end{equation*}
 
 2.  ratio of the cumulative hazard functions at any time $t>0$:
 
 \begin{equation*}
-\mbox{HR} = \frac{H_A(t)}{H_B(t)} = \frac{\log S_A(t)}{\log S_B(t)}
+\mbox{HR} = \frac{H_A(t)}{H_B(t)} = \frac{\log S_A(t)}{\log S_B(t)} . 
 \end{equation*}
-so the survival function in group A is the survival function in group B to the power of HR: 
+So the survival function in group A is the survival function in group B to the power of $\mbox{HR}$: 
 \begin{equation*}
 S_A(t) = S_B(t)^{\scriptsize \mbox{HR}}.
 \end{equation*}
@@ -891,7 +910,7 @@ where $h_0(t)$ is the *baseline hazard function*. Ratios of hazard functions are
 {\exp(\boldsymbol{ x}_j^{\top} \boldsymbol{ \beta})},
 \end{equation*}
 
-i.e. we have proportional hazards. A *profile likelihood approach* allows to estimate the log hazard ratios $\boldsymbol{ \beta}$, no matter which form 
+i.e. we have proportional hazards. A *profile likelihood approach* allows one to estimate the log hazard ratios $\boldsymbol{ \beta}$, no matter which form 
 $h_0(t)$ has. To estimate the hazard ratio,
 we use *Cox-Regression* as in the following example.
 
@@ -1022,21 +1041,17 @@ Instead of a non-parametric fit of the survival curves, the function can also be
 
 
 
-
-
-
 ## Time-varying explanatory variables  {#sec:timeVarying}
 
 Time-varying explanatory variables, e.g. exposure yes/no, can be dealt with by
 
-
 -  splitting the follow-up of each patient into parts with constant covariate values and
 -  treating the parts as distinct subjects.
 
-This approach requires allowance for late entries in the analysis, which is the case in `R`. The approach is valid if changes in explanatory variables are unrelated to the underlying risk of failure. We will now see two examples of time-dependent analyses.
+This approach requires accounting for late entries in the analysis, which `R` supports. The approach is valid if changes in explanatory variables are unrelated to the underlying risk of failure. We will now see two examples of time-dependent analyses.
 
 :::{.example}
-The PBC study is about treatment of primary biliary cirrhosis (PBC) of the liver. We will use the first 312 cases in this dataset from the `survival` package since they participated in the randomized trial and contain largely complete data. The `status` at endpoint can be 0 = censored, 1 = transplant or 2 = dead.
+The PBC study is about treatment of primary biliary cirrhosis (PBC) of the liver. We will use the first 312 cases in this dataset from the `survival` package since they participated in the randomised trial and contain largely complete data. The `status` at endpoint can be 0 = censored, 1 = transplant or 2 = dead.
 :::
 
 ```{r echo=TRUE}
@@ -1078,7 +1093,6 @@ knitr::kable(tableRegression(fit1, latex = FALSE, xtable = FALSE),
   kable_styling(latex_options = c("striped", "hold_position"), full_width = TRUE)
 ```
 
-
 A time-dependent analysis includes all measurements of the covariates. First, we need to prepare the data accordingly. The data preparation below is adopted from vignette `timedep.pdf` in package `survival`. It therefore also contains the variables `ascites`, `albumin` and `alk.phos` that are not used in the following analysis. 
 
 ```{r echo=TRUE}
@@ -1105,11 +1119,11 @@ knitr::kable(tableRegression(fit2, latex = FALSE, xtable = FALSE),
 
 The analysis reveals that -- after taking into account adjustments
 for time-varying covariates -- the effect of `trt` is weaker with a HR of
-`r round(exp(coef(fit2)[1]),2)` rather than `r round(exp(coef(fit1)[1]),2)` and a larger $p$-value. 
+`r round(exp(coef(fit2)[1]),2)` rather than `r round(exp(coef(fit1)[1]),2)` and a larger $P$-value. 
 
 
 :::{.example}
-Survival by tumor response revisited, see Section \@ref(sec:breslow). This example is about survival in patients with advanced lung cancer shown in Figure \@ref(fig:gglungcancerall).
+Survival by tumour response revisited, see Section \@ref(sec:breslow). This example is about survival in patients with advanced lung cancer shown in Figure \@ref(fig:gglungcancerall).
 :::
 
 
@@ -1150,7 +1164,7 @@ responseVec <- responseVec[sel,]
 responseVec <- responseVec[,-4]
 ```
 
-We now randomly generate tumor "responders" with a probability of $0.05$ to become a responder at every month within the first year.
+We now randomly generate tumour "responders" with a probability of $0.05$ to become a responder at every month within the first year.
 ```{r echo=TRUE}
 head(response, 3)
 
@@ -1182,7 +1196,7 @@ knitr::kable(tableRegression(badcoxfit, latex = FALSE, xtable = FALSE),
   kable_styling(latex_options = c("striped", "hold_position"), full_width = TRUE)
 ```
 
-There appears to be an effect of tumor response on survival, but it should not have an effect as responders were generated randomly. The analysis is flawed as it violates "Breslow's first rule" and is subject to *time-dependent bias*. More precisely, the bias is that the probability to be a responder increases with time.
+There appears to be an effect of tumour response on survival, but it should not have an effect as responders were generated randomly. The analysis is flawed as it violates "Breslow's first rule" and is subject to *time-dependent bias*. More precisely, the bias is that the probability to be a responder increases with time.
 
 At the beginning, we do not know who becomes a responder. We should therefore treat it as a time-dependent covariate. For the correct analysis with time-dependent covariate, we need to split the data by responder status. This augmented data set looks as follows:
 
@@ -1214,7 +1228,7 @@ knitr::kable(tableRegression(goodcoxfit, latex = FALSE, xtable = FALSE),
 ```
 
 
-In the correct analysis, there is no evidence for an effect of tumor response on survival, as it should be for randomly generated responders.
+In the correct analysis, there is no evidence for an effect of tumour response on survival, as it should be for randomly generated responders.
 
 
 

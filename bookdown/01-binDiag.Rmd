@@ -3,13 +3,13 @@
 
 ## Diagnostic accuracy studies
 
-A *binary diagnostic test* categorizes individuals
+A *binary diagnostic test* categorises individuals
 as either diseased or non-diseased. Examples of diagnostic 
 tests include mammography for the diagnosis of breast cancer, 
 pap smear screening for the diagnosis of cervical cancer, and 
 prostate-specific antigen (PSA) screening for the diagnosis of prostate cancer. 
 *Continuous diagnostic tests* (such as the actual PSA measurements) are often 
-dichotomized to binary tests using a suitable threshold, see 
+dichotomised to binary tests using a suitable threshold, see 
 Chapter \@ref(doc).
 
 ### Study designs{#sec:design}
@@ -123,19 +123,19 @@ must not know the test result.
 
 ::: {.example #mws}
 The *Million Women Study* (MW Study) is a cohort study of women’s health
-analyzing data from more than one million women aged 50 and over [@MWS].
+analysing data from more than one million women aged 50 and over [@MWS].
 `r format.bigmark(sum(c(tp, fp, fn, tn)))` women between 50 and
-64 years underwent a mammography and have been followed-up for a year to
+64 years underwent a mammography and were followed up for a year to
 determine whether or not they have been diagnosed with breast cancer,
-confirmed via histology (the gold standard). The results are summarized in Table \@ref(tab:MWS).
+confirmed via histology (the gold standard). The results are summarised in Table \@ref(tab:MWS).
 :::
 
 ```{r MWS, echo = FALSE, warning=FALSE}
 library(knitr)
 library(kableExtra)
 # Example data for mat
-rownames(mat) <- c("negative", "positive", "Total")
-colnames(mat) <- c("no", "yes", "Total")
+rownames(mat) <- c("negative", "positive", "total")
+colnames(mat) <- c("no", "yes", "total")
 
 # Function to format numbers with big marks
 format.bigmark <- function(x) format(x, big.mark = ",", scientific = FALSE)
@@ -150,9 +150,9 @@ table_data <- data.frame(
 
 
 # Use kable to create the table
-# kable(table_data, caption = "2 × 2 table for the Million Women Study.", col.names = c("Test result", "no", "yes", "Total"))
+# kable(table_data, caption = "2 × 2 table for the Million Women Study.", col.names = c("Test result", "no", "yes", "total"))
 
-kable(table_data, label = NA, caption = "2 × 2 table for the Million Women Study.", col.names = c("Mammography", "no", "yes", "Total")) %>%
+kable(table_data, label = NA, caption = "2 × 2 table for the Million Women Study.", col.names = c("Mammography", "no", "yes", "total")) %>%
   kable_styling() %>%
   add_header_above(c("Breast Cancer" = 4))
 ```
@@ -165,13 +165,13 @@ kable(table_data, label = NA, caption = "2 × 2 table for the Million Women Stud
 The following notation is used for binary diagnostic tests:
 
 \begin{eqnarray*}
-    D & = & \left\{ \begin{array}{ll} 1 & \mbox{diseased} \\ 0 &
-    		\mbox{non-diseased} \end{array} \right.
+    D & = & \left\{ \begin{array}{ll} 1, & \mbox{diseased,} \\ 0, &
+    		\mbox{non-diseased.} \end{array} \right.
 \end{eqnarray*}
 
 \begin{eqnarray*}
-  Y & = & \left\{ \begin{array}{ll} 1 & \mbox{test positive for disease} \\ 0 &
-    	\mbox{test negative for disease} \end{array} \right.
+  Y & = & \left\{ \begin{array}{ll} 1, & \mbox{test positive for disease,} \\ 0, &
+    	\mbox{test negative for disease,} \end{array} \right.
 \end{eqnarray*}
 
 Table \@ref(tab:notation) introduces our notation for the counts from a
@@ -241,13 +241,13 @@ from Table \@ref(tab:MWS):
 *Youden's index* is defined as
 
 \begin{equation}
-J = \mbox{Sens} + \mbox{Spec} - 1 . 
+J = \mbox{Sens} + \mbox{Spec} - 1. 
 (\#eq:Youden)
 \end{equation}
 
 :::
 
-A categorization of
+A categorisation of
 *test quality* based on Youden's index is shown in Table \@ref(tab:quality):
 
 ```{r quality, echo = FALSE}
@@ -260,15 +260,15 @@ table_data <- data.frame(
 # Create the table using kable
 kable(table_data, 
       col.names = c("Youden's Index", "Test quality"),
-      caption = "Categorization of test quality based on Youden's index.",
+      caption = "Categorisation of test quality based on Youden's index.",
       escape = FALSE)  # escape = FALSE to render LaTeX syntax
 
 ```
 
 
-A perfect test ($J=1$) must have both Sens $=$ 1 and Spec  $=$ 1.
-A useless test ($J=0$) has Sens  $=$ 1 $-$ Spec, 
-so the probability of a positive test is the same for  diseased and 
+A perfect test ($J=1$) must have both $\mbox{Sens} = 1$ and $\mbox{Spec} = 1$.
+A useless test ($J=0$) has $\mbox{Sens} = 1 - \mbox{Spec}$, 
+so the probability of a positive test is the same for diseased and 
 non-diseased individuals:
 \begin{eqnarray*}
 \mbox{Sens} & = & \Pr(Y=1 \given D=1) \\
@@ -289,8 +289,6 @@ Table \@ref(tab:quality).
 Figure \@ref(fig:J-dep) illustrates that the same Youden's index $J$ can be achieved by
 very different combinations of sensitivity and specificity. For example, a diagnostic test with sensitivity 0.9 and specificity 0.7 will have the same Youden's index $J=0.6$ as a test with sensitivity 0.7 and specificity 0.9. 
 
-
-
 ```{r J-dep, fig.cap = "Contour plot of Youden's index as a function of sensitivity and specificity.", echo = FALSE }
 sens <- spec <- seq(0.5, 0.99, 0.01) ## c(.5,.6,.7,.8,.9, .95)
 J <- matrix(NA, nrow=length(sens), ncol=length(spec))
@@ -305,7 +303,7 @@ for(i in 1:length(sens))
 ##    " \\multicolumn{1}{c}{Sensitivity} & \\multicolumn{6}{c}{Specificity}  \\\\ \\hline"
 ##     )))
 par(las=1, pty="s")
-contour(sens, spec, J, xlab="sensitivity", ylab="specificity")
+contour(sens, spec, J, xlab="Sensitivity", ylab="Specificity")
 lines(c(0, 0.7), rep(0.9, 2), col="grey", lty=2)
 lines(rep(0.7,2), c(0.5, 0.9), col="grey", lty=2)
 lines(c(0, 0.9), rep(0.7, 2), col="grey", lty=2)
@@ -369,7 +367,7 @@ Predictive values can also be calculated for other values of the prevalence with
 
 \begin{eqnarray*}
 \mbox{PPV} & = & \frac{\mbox{Sens} \cdot \mbox{Prev}}{\mbox{Sens} \cdot \mbox{Prev} + (1-\mbox{Spec}) \cdot (1-\mbox{Prev})} \mbox{ and} \\
-\mbox{NPV} & = & \frac{\mbox{Spec} \cdot (1-\mbox{Prev})}{\mbox{Spec} \cdot (1-\mbox{Prev}) + (1-\mbox{Sens}) \cdot \mbox{Prev}}
+\mbox{NPV} & = & \frac{\mbox{Spec} \cdot (1-\mbox{Prev})}{\mbox{Spec} \cdot (1-\mbox{Prev}) + (1-\mbox{Sens}) \cdot \mbox{Prev}}.
 \end{eqnarray*}
 
 as the transition from *pre-test probability* of disease (the prevalence) 
@@ -382,13 +380,11 @@ the PPV increases, while the NPV decreases.
 
 :::{.example #mws name="continued"}
 Cancer Research UK\footnote{(https://www.cancerresearchuk.org)}
-report a breast cancer prevalence of 4.5\% for 59-year old British women. 
+reports a breast cancer prevalence of 4.5\% for 59-year old British women. 
 The corresponding predictive values are shown in the third row of Table 
 \@ref(tab:MWS-predvalues): the positive predictive value is only 56\% whereas 
 the negative predictive value is 99\%.
 :::
-
-
 
 
 ```{r MWS-predvalues, echo = FALSE}
@@ -416,11 +412,9 @@ kable(table_data,
 
 
 
-
-
 ```{summary, label = PPV_sum}
      -  Predictive values depends on sensitivity, specificity and prevalence.
-    -  PPV can be low even if sensitivity and specificity are high.
+     -  PPV can be low even if sensitivity and specificity are high.
      -  Direct calculation of PPV and NPV from the $2 \times 2$ table
 assumes that the disease prevalence is representative.
 
@@ -433,11 +427,11 @@ Likelihood ratios are an alternative way for summarizing the accuracy of diagnos
 The *positive likelihood ratio* is defined as
 
 \begin{equation*}
-\mbox{LR}^+ = \frac{\mbox{Sens}}{1-\mbox{Spec}} \mbox{ and}
+\mbox{LR}^+ = \frac{\mbox{Sens}}{1-\mbox{Spec}} \mbox{,  and}
 
 \end{equation*}
 
-the *negative likelihood ratio* as
+the *negative likelihood ratio* is defined as
 
 \begin{equation*}
 \mbox{LR}^- = \frac{1-\mbox{Sens}}{\mbox{Spec}}.
@@ -469,16 +463,19 @@ In the MW study (Example \@ref(exm:mws)) we obtain:
 = {`r round(LRneg[[1]], digits = 2)`} \approx
 {1/`r round(1/LRneg[[1]], digits = 0)`}.  \end{align*}
 
+
+
+
 ### Bayesian updating with likelihood ratios
 
-LRs quantify the *change in disease odds* after having observed a
+$LR$s quantify the *change in disease odds* after having observed a
 positive or negative test result:
 
 \begin{eqnarray}
 (\#eq:PPVBayes)
 \frac{\mbox{PPV}}{1-\mbox{PPV}} & = & \mbox{LR}^+  \, \cdot \, \frac{\mbox{Prev}}{1-\mbox{Prev}} \mbox{ and} \\[.3cm]
 (\#eq:NPVBayes)
-\frac{1-\mbox{NPV}}{\mbox{NPV}} & = & \mbox{LR}^- \,  \cdot \, \frac{\mbox{Prev}}{1-\mbox{Prev}} \\[.3cm]
+\frac{1-\mbox{NPV}}{\mbox{NPV}} & = & \mbox{LR}^- \,  \cdot \, \frac{\mbox{Prev}}{1-\mbox{Prev}}, \\[.3cm]
 \mbox{ Posterior odds}  & = & \mbox{ Likelihood ratio} \, \cdot \, \mbox{Prior odds}. \nonumber
 \end{eqnarray}
 
@@ -623,7 +620,7 @@ for(i in 1:length(sens))
 ##    " \\multicolumn{1}{c}{Sensitivity} & \\multicolumn{6}{c}{Specificity}  \\\\ \\hline"
 ##     )))
 par(las=1, pty="s")
-contour(sens, spec, (DOR), xlab="sensitivity", ylab="specificity", levels=c(1, 3, 10, 30, 100, 300, 1000, 3000, 10000))
+contour(sens, spec, (DOR), xlab="Sensitivity", ylab="Specificity", levels=c(1, 3, 10, 30, 100, 300, 1000, 3000, 10000))
 lines(c(0, 0.7), rep(0.9, 2), col="grey", lty=2)
 lines(rep(0.7,2), c(0.5, 0.9), col="grey", lty=2)
 lines(c(0, 0.9), rep(0.7, 2), col="grey", lty=2)
@@ -762,7 +759,7 @@ Additionally, the Wilson confidence interval does not have overshoot issues:
 its limits are always within the unit interval, eliminating the need for truncation.
 
 
-```{r coverage, echo = FALSE, fig.cap = "Empirical coverage of Wald and Wilson confidence intervals with nominal confidence level $95\\%$ and sample size $n=50$ (grey line). The solid line is a local average of the coverage, computed as described in @held", warning = FALSE, message = FALSE}
+```{r coverage, echo = FALSE, fig.cap = "Empirical coverage of Wald and Wilson confidence intervals with nominal confidence level $95\\%$ and sample size $n=50$ (grey line). The solid line is a local average of the coverage, computed as described in @held.", warning = FALSE, message = FALSE}
  source("code/settings.R")
 
  par(mfrow=c(1,2), las=1, pty="s")
@@ -821,8 +818,7 @@ prop.test(x=629, n=726, correct=FALSE, conf.level = 0.95)$conf.int
 ```
 
 
-In Example \@ref(exm:diabetes) for the first study (Arenata 2010), 
-we obtain the following confidence interval for the specificity: 
+In Example \@ref(exm:diabetes), for the first study (see the first row, Arenata 2010, in Figure \@ref(fig:diabetes)) we obtain the following confidence interval for the specificity: 
 ```{r, echo = TRUE}
 wald(x = 763, n = 763 + 25, conf.level = 0.95)
 wilson(x = 763, n = 763 + 25, conf.level = 0.95)
@@ -848,10 +844,10 @@ of the Wald confidence interval is actually larger than 1 ("overshoot"):
 p + \mbox{ET}_{95} = `r res$p` + 1.96 \cdot \sqrt{(`r res$p` \cdot (1-`r res$p`) / 29} = `r round(res$p + 1.96*sqrt(res$p*(1-res$p)/29),3)`
 \]
 and in the output truncated to 1.
-The upper limit of Agresti's method is also 1. The other methods have an upper limit smaller than one. The method by Clopper-Pearson produces the widest confidence interval. It is often called "exact", but this is misleading, as it is known to be conservative with too large coverage, see Figure  \@ref(fig:coverage2). 
+The upper limit of Agresti's method is also 1. The other methods have an upper limit smaller than 1. The method by Clopper-Pearson produces the widest confidence interval. It is often called "exact", but this is misleading, as it is known to be conservative with too large coverage, see Figure \@ref(fig:coverage2). 
 
 
-```{r coverage2, echo = FALSE, fig.cap = "Empirical coverage of Clopper-Pearson confidence intervals with nominal confidence level $95\\%$ and sample size $n=50$ (grey line). The solid line is a local average of the coverage, computed as described in @held", echo = FALSE, message = FALSE }
+```{r coverage2, echo = FALSE, fig.cap = "Empirical coverage of Clopper-Pearson confidence intervals with nominal confidence level $95\\%$ and sample size $n=50$ (grey line). The solid line is a local average of the coverage, computed as described in @held.", echo = FALSE, message = FALSE }
  source("code/settings.R")
 
  par(mfrow=c(1,1), las=1, pty="s")
@@ -887,7 +883,7 @@ The upper limit of Agresti's method is also 1. The other methods have an upper l
   Wald confidence
   interval for the positive likelihood ratio ${\mbox{LR}}^+$ with limits
   \[
-    {\mbox{LR}}^+/\EF_{.95} \mbox{ and } {\mbox{LR}}^+ \cdot \EF_{.95}
+    {\mbox{LR}}^+/\EF_{.95} \mbox{ and } {\mbox{LR}}^+ \cdot \EF_{.95},
   \]
   where
   
@@ -908,14 +904,14 @@ The upper limit of Agresti's method is also 1. The other methods have an upper l
 
   1.  Calculate standard error on the log scale:
   \begin{eqnarray*}
-  \SE(\log {\mbox{LR}}^+) & = & \sqrt{\frac{1}{{fp}}-\frac{1}{n_0} +\frac{1}{{tp}}-\frac{1}{n_1}} \\
-  \SE(\log {\mbox{LR}}^-) & = & \sqrt{\frac{1}{{tn}}-\frac{1}{n_0} +\frac{1}{{fn}}-\frac{1}{n_1}} \\
+  \SE(\log {\mbox{LR}}^+) & = & \sqrt{\frac{1}{{fp}}-\frac{1}{n_0} +\frac{1}{{tp}}-\frac{1}{n_1}}, \\
+  \SE(\log {\mbox{LR}}^-) & = & \sqrt{\frac{1}{{tn}}-\frac{1}{n_0} +\frac{1}{{fn}}-\frac{1}{n_1}}; \\
   \end{eqnarray*}
   
-  2.  Compute 95\% *error factor* (EF)
+  2.  Compute 95\% *error factor* (EF);
   
   3.  The 95\% confidence interval for ${\mbox{LR}}^+$ then has limits
-  $${\mbox{LR}}^+/\EF_{.95} \mbox{ and } {\mbox{LR}}^+ \cdot \EF_{.95}$$
+  $${\mbox{LR}}^+/\EF_{.95} \mbox{ and } {\mbox{LR}}^+ \cdot \EF_{.95}.$$
 
 A 95\% confidence interval for ${\mbox{LR}}^-$ is computed accordingly using the standard error $\SE(\log {\mbox{LR}}^-)$ for a negative test result. 
 
@@ -946,14 +942,14 @@ A 95\% confidence interval for ${\mbox{LR}}^-$ is computed accordingly using the
   1. Calculate the standard error on the log scale:
 
   \begin{eqnarray*}
-  \SE(\log {\mbox{DOR}}) & = & \sqrt{\frac{1}{{tp}}+\frac{1}{fp}+\frac{1}{{tn}}+\frac{1}{fn}} \\
+  \SE(\log {\mbox{DOR}}) & = & \sqrt{\frac{1}{{tp}}+\frac{1}{fp}+\frac{1}{{tn}}+\frac{1}{fn}};
   \end{eqnarray*}
   
   2.  Compute the 95\% *error factor* (EF):
-  $$\EF_{.95} =\exp\left\{1.96 \cdot \SE(\log {\mbox{DOR}})\right\}$$
+  $$\EF_{.95} =\exp\left\{1.96 \cdot \SE(\log {\mbox{DOR}})\right\};$$
   
   3.  The 95\% confidence interval for ${\mbox{DOR}}$ then has limits
-  $${\mbox{DOR}}/\EF_{.95} \mbox{ and } {\mbox{DOR}} \cdot \EF_{.95}$$
+  $${\mbox{DOR}}/\EF_{.95} \mbox{ and } {\mbox{DOR}} \cdot \EF_{.95}.$$
 
 
 The function `biostatUZH::confIntDiagnostic()` computes the estimate and 
@@ -1013,11 +1009,11 @@ in accuracy between the two tests.
 
 :::{.definition}
   The *relative sensitivity* of test $A$ vs. test $B$ is
-  $$\mbox{rSens} = \mbox{Sens}_A / \mbox{Sens}_B$$
+  $$\mbox{rSens} = \mbox{Sens}_A / \mbox{Sens}_B,$$
   and the *relative specificity* is
   $$\mbox{rSpec} = \mbox{Spec}_A / \mbox{Spec}_B.$$
   The *relative positive likelihood ratio* of test $A$ vs. test $B$ is
-  $$\mbox{rLR}^+ = \mbox{LR}^+_A / \mbox{LR}^+_B$$
+  $$\mbox{rLR}^+ = \mbox{LR}^+_A / \mbox{LR}^+_B,$$
   and the *relative negative likelihood ratio* is
   $$\mbox{rLR}^- = \mbox{LR}^-_A / \mbox{LR}^-_B.$$
 :::
@@ -1028,7 +1024,7 @@ in the calculations.
  
 
 :::{.example #CVS}
-Data from a (hypothetical) randomized unpaired study of 
+Data from a (hypothetical) randomised unpaired study of 
  early amniocentesis (EA) versus chorionic 
 villus sampling (CVS) for the diagnosis 
 of fetal abnormality is shown in Table \@ref(tab:twotests).
@@ -1100,7 +1096,7 @@ CVS.
 ```
 
 The relative sensitivity, specificity, LR$^{+}$ and LR$^{-}$, together 
-with the corresponding confidence intervals, can be computer using the function 
+with the corresponding confidence intervals, can be computed using the function 
 `biostatUZH::confIntIndependentDiagnostic()`: 
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
@@ -1267,7 +1263,7 @@ print(confIntPairedDiagnostic(diseased=Dis, nonDiseased=nonDis,
 ```
 
 There is some evidence that T1 performs better than T2 in terms of 
-sensitivity and LR$^{-}$, 
+sensitivity and $LR^{-}$, 
 since the corresponding confidence intervals 
 do not include the reference value of 1.
 
@@ -1288,12 +1284,12 @@ To perform McNemar test, we use the `mcnemar.test` function on the matched data 
 print(CC)
 mcnemar.test(CC)
 ```
-In the paper, the authors report the uncorrected p-value from the test:
+In the paper, the authors report the uncorrected $P$-value from the test:
 ```{r, echo=TRUE}
 mcnemar.test(CC, correct=FALSE)
 ```
 
-A p-value of 0.01 suggests that the mt-sRNA test showed significant improvement in sensitivity for colorectal cancer compared with results of the FIT.
+A $P$-value of 0.01 suggests that the mt-sRNA test showed significant improvement in sensitivity for colorectal cancer compared with results of the FIT.
 
 ## Additional references
 

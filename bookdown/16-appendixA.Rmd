@@ -34,7 +34,7 @@ The most common construction of a CI for a parameter $\theta$ is a Wald CI, whic
 
 \begin{equation}
 (\#eq:wald)
-\widehat\theta - z_\gamma\cdot \SE(\widehat\theta)\;\;\; \text{to}\;\;\; \widehat\theta + z_\gamma\cdot \SE(\widehat\theta)
+\widehat\theta - z_\gamma\cdot \SE(\widehat\theta)\;\;\; \text{to}\;\;\; \widehat\theta + z_\gamma\cdot \SE(\widehat\theta).
 \end{equation}
 
 This construction relies on the normal approximation of the estimator in case of a large sample size. Any normal random variable $X\sim \Nor(\mu, \sigma^2)$ can be transformed into a standard normal random variable by $(X-\mu)/\sigma$. Since a standard normal random variable $Z$ is symmetric around $0$, there is a value $z_\gamma$ such that with a probability of $95$\%, $Z$ takes a value between $-z_\gamma$ and $z_\gamma$. This value $z_\gamma$ is the $(1+\gamma)/2$-quantile of the standard normal distribution. For $\gamma = 0.95$, we have $z_\gamma \approx 1.96$.
@@ -44,7 +44,7 @@ For small sample size $n$, an approximate $t$-distribution with $n-1$ degrees of
 
 \begin{equation}
 (\#eq:t)
-\widehat\theta - t_\gamma\cdot \SE(\widehat\theta)\;\;\; \text{to}\;\;\; \widehat\theta + t_\gamma\cdot \SE(\widehat\theta)
+\widehat\theta - t_\gamma\cdot \SE(\widehat\theta)\;\;\; \text{to}\;\;\; \widehat\theta + t_\gamma\cdot \SE(\widehat\theta).
 \end{equation}
 
 
@@ -79,7 +79,7 @@ $\widehat{\theta}_1 - \widehat{\theta}_2$ using these limits as follows:
 
 \begin{equation}
 (\#eq:diff2)
-\Delta - \sqrt{(\widehat{\theta}_1 - l_1)^2 + (u_2 - \widehat{\theta}_2)^2}\;\;\; \text{to}\;\;\; \Delta + \sqrt{(\widehat{\theta}_2 - l_2)^2 + (u_1 - \widehat{\theta}_1)^2}
+\Delta - \sqrt{(\widehat{\theta}_1 - l_1)^2 + (u_2 - \widehat{\theta}_2)^2}\;\;\; \text{to}\;\;\; \Delta + \sqrt{(\widehat{\theta}_2 - l_2)^2 + (u_1 - \widehat{\theta}_1)^2}.
 \end{equation}
 
 When the limits of Wald CIs for $\theta_1$ and $\theta_2$ are used, then the square-and-add method results in the Wald CI for the difference. This is how this method was originally discovered. However, it is recommended to use the limits of Wilson CIs instead to improve the properties of the CI (also called Newcombe's method described in 
@@ -154,13 +154,13 @@ group. Denote the observations in this group by $x_1,\ldots, x_n$. Suppose
 $s_D^2$ is the sample variance of $x_1,\ldots, x_n$. Then:
 
 
--  $\widehat{\mu}_D = \bar{x}$
--  $\SE(\widehat{\mu}_D) = \dfrac{s_D}{\sqrt{n}}$
+-  $\widehat{\mu}_D = \bar{x}$,
+-  $\SE(\widehat{\mu}_D) = \dfrac{s_D}{\sqrt{n}}$.
 
 
 We build a Wald CI for $\mu_D$ as in Equation \@ref(eq:wald):
 
-$$\widehat{\mu}_D - z_\gamma\cdot \SE(\widehat{\mu}_D)\;\;\; \text{to}\;\;\; \widehat{\mu}_D + z_\gamma\cdot \SE(\widehat{\mu}_D)$$
+$$\widehat{\mu}_D - z_\gamma\cdot \SE(\widehat{\mu}_D)\;\;\; \text{to}\;\;\; \widehat{\mu}_D + z_\gamma\cdot \SE(\widehat{\mu}_D).$$
 
 
 The Wald CI can be computed in R:
@@ -205,17 +205,16 @@ Wald and $t$-test CIs are very similar due to the large sample size $n=252$.
 We consider the same example as before (Example \@ref(exm:pima)).
 Denote the observations in the non-diabetic group by $y_1,\ldots, y_m$, the mean by $\mu_{\bar{D}}$ and the sample variance of $y_1,\ldots, y_m$ by $s_{\bar{D}}^2$. This group is independent of the diabetic group (unpaired). We are interested in the mean difference $\Delta=\mu_D-\mu_{\bar{D}}$. If the two groups have equal variances (hence equal standard deviations), then:
 
--  $\widehat{\Delta} = \bar{x}-\bar{y}$
--  $\SE(\widehat{\Delta}) = s \sqrt{\dfrac{1}{m} + \dfrac{1}{n}}$, where $s^2=\dfrac{(m-1)\cdot s_{\bar{D}}^2 + (n-1)\cdot s_D^2}{m+n-2}$
-
+-  $\widehat{\Delta} = \bar{x}-\bar{y}$,
+-  $\SE(\widehat{\Delta}) = s \sqrt{\dfrac{1}{m} + \dfrac{1}{n}}$, where $s^2=\dfrac{(m-1)\cdot s_{\bar{D}}^2 + (n-1)\cdot s_D^2}{m+n-2}$.
 
 
 We build a symmetric CI for $\Delta$ using the $t$-distribution with $m+n-2$ degrees of freedom:
 
-$$\widehat{\Delta} - t_\gamma\cdot \SE(\widehat{\Delta})\;\;\; \text{to}\;\;\; \widehat{\Delta} + t_\gamma\cdot \SE(\widehat{\Delta})$$
+$$\widehat{\Delta} - t_\gamma\cdot \SE(\widehat{\Delta})\;\;\; \text{to}\;\;\; \widehat{\Delta} + t_\gamma\cdot \SE(\widehat{\Delta}).$$
 
 
-In`R`,such a CI is reported in a two sample $t$-test where we need to specify the argument `var.equal = TRUE` (the default value is `FALSE`):
+In`R`, such a CI is reported in a two sample $t$-test where we need to specify the argument `var.equal = TRUE` (the default value is `FALSE`):
 
 ```{r echo=TRUE}
 ## Check ordering of groups
@@ -238,10 +237,7 @@ mean(res$conf.int)
 
 If the variances in the two groups are unequal, the standard error of the difference $\Delta$ is:
 
-
--  $\SE(\widehat{\Delta}) = \sqrt{\dfrac{s_{\bar{D}}^2}{m} + \dfrac{s_D^2}{n}}$
-
-
+-  $\SE(\widehat{\Delta}) = \sqrt{\dfrac{s_{\bar{D}}^2}{m} + \dfrac{s_D^2}{n}}$.
 
 A Welch-Satterthwaite test using the $t$-distribution with adjusted degrees of freedom should be used.
 
@@ -271,16 +267,14 @@ Examples in this section come from @altman (Section 6).
 :::{.example}
 Of $n=29$ female prisoners who did not inject drugs, $x=1$ was found to be positive on testing for HIV on discharge. We are interested in the probability $\pi$ with which such cases happen. Then:
 
--  $\widehat{\pi} = \dfrac{x}{n}$
--  $\SE(\widehat{\pi}) = \sqrt{\dfrac{\widehat{\pi}(1-\widehat{\pi})}{n}}$
-
-
+-  $\widehat{\pi} = \dfrac{x}{n}$,
+-  $\SE(\widehat{\pi}) = \sqrt{\dfrac{\widehat{\pi}(1-\widehat{\pi})}{n}}$.
 
 We can build a Wald CI for $\pi$ as in \@ref(eq:wald). However, for proportions there is a better CI called Wilson CI. Especially if $n$ is small or if $\widehat{\pi}$ is very small (close to $0$) or very large (close to $1$), the Wilson CI has better properties: better empirical coverage and no overshoot. It is of the form:
 
 \begin{equation}
 (\#eq:wilson)
-\dfrac{x + z_\gamma^2/2}{n + z_\gamma^2} \pm \dfrac{z_\gamma \sqrt{n}}{n + z_\gamma^2} \sqrt{\widehat{\pi}(1-\widehat{\pi}) + \dfrac{z_\gamma^2}{4n}}
+\dfrac{x + z_\gamma^2/2}{n + z_\gamma^2} \pm \dfrac{z_\gamma \sqrt{n}}{n + z_\gamma^2} \sqrt{\widehat{\pi}(1-\widehat{\pi}) + \dfrac{z_\gamma^2}{4n}}.
 \end{equation}
 
 
@@ -338,8 +332,8 @@ kable(m, format = "latex", escape = FALSE, align = c('l', 'r', 'r', 'r'))
 For the absolute risk reduction $\ARR = \pi_1 - \pi_2$, we have:
 
 
--  $\widehat{\ARR} = \dfrac{x_1}{n_1} - \dfrac{x_2}{n_2}$
--  $\SE(\widehat{\ARR}) = \sqrt{\dfrac{\widehat{\pi}_1(1-\widehat{\pi}_1)}{n_1} + \dfrac{\widehat{\pi}_2(1-\widehat{\pi}_2)}{n_2}}$
+-  $\widehat{\ARR} = \dfrac{x_1}{n_1} - \dfrac{x_2}{n_2}$,
+-  $\SE(\widehat{\ARR}) = \sqrt{\dfrac{\widehat{\pi}_1(1-\widehat{\pi}_1)}{n_1} + \dfrac{\widehat{\pi}_2(1-\widehat{\pi}_2)}{n_2}}$.
 
 
 
@@ -367,9 +361,9 @@ confIntRiskDiff(x = tabRespiratory[, 1],
 For the risk ratio $\RR=\pi_1/\pi_2$, we have:
 
 
--  $\widehat{\RR} = \dfrac{x_1/n_1}{x_2/n_2}$
--  $\log(\widehat{\RR}) = \log\Bigr(\dfrac{x_1/n_1}{x_2/n_2}\Bigr)$
--  $\SE\bigr(\log(\widehat{\RR})\bigr) = \sqrt{\dfrac{1}{x_1} - \dfrac{1}{n_1} + \dfrac{1}{x_2} - \dfrac{1}{n_2}}$
+-  $\widehat{\RR} = \dfrac{x_1/n_1}{x_2/n_2}$,
+-  $\log(\widehat{\RR}) = \log\Bigr(\dfrac{x_1/n_1}{x_2/n_2}\Bigr)$,
+-  $\SE\bigr(\log(\widehat{\RR})\bigr) = \sqrt{\dfrac{1}{x_1} - \dfrac{1}{n_1} + \dfrac{1}{x_2} - \dfrac{1}{n_2}}$.
 
 
 
@@ -377,46 +371,46 @@ The standard error is computed using equation \@ref(eq:diff1) for the
 difference of two log proportions. The standard error of a log proportion 
 can be computed using the standard error of a proportion and the delta method:
 
--  $\SE\bigr(\log(\widehat{\pi}_1)\bigr) = \sqrt{\dfrac{1}{x_1} - \dfrac{1}{n_1}}$
+-  $\SE\bigr(\log(\widehat{\pi}_1)\bigr) = \sqrt{\dfrac{1}{x_1} - \dfrac{1}{n_1}}$.
 
 
 We use the substitution method to compute a CI:
 
 CI for the $\log(\widehat{\RR})$:
-$$\log(\widehat{\RR}) - z_\gamma\cdot \SE\bigr(\log(\widehat{\RR})\bigr)\;\;\; \text{to}\;\;\; \log(\widehat{\RR}) + z_\gamma\cdot \SE\bigr(\log(\widehat{\RR})\bigr)$$
+$$\log(\widehat{\RR}) - z_\gamma\cdot \SE\bigr(\log(\widehat{\RR})\bigr)\;\;\; \text{to}\;\;\; \log(\widehat{\RR}) + z_\gamma\cdot \SE\bigr(\log(\widehat{\RR})\bigr).$$
 
 CI for the $\widehat{\RR}$:
-$$\exp\Bigr(\log(\widehat{\RR}) - z_\gamma\cdot \SE\bigr(\log(\widehat{\RR})\bigr)\Bigr)\;\;\; \text{to}\;\;\; \exp\Bigr(\log(\widehat{\RR}) + z_\gamma\cdot \SE\bigr(\log(\widehat{\RR})\bigr)\Bigr)$$
+$$\exp\Bigr(\log(\widehat{\RR}) - z_\gamma\cdot \SE\bigr(\log(\widehat{\RR})\bigr)\Bigr)\;\;\; \text{to}\;\;\; \exp\Bigr(\log(\widehat{\RR}) + z_\gamma\cdot \SE\bigr(\log(\widehat{\RR})\bigr)\Bigr),$$
 
 which is the same as
 
-$$\widehat{\RR}/\text{EF}_{.95}\;\;\; \text{to}\;\;\; \widehat{\RR}\cdot \text{EF}_{.95}$$
+$$\widehat{\RR}/\text{EF}_{.95}\;\;\; \text{to}\;\;\; \widehat{\RR}\cdot \text{EF}_{.95}.$$
 
 For the odds ratio $\OR=\dfrac{\pi_1/(1-\pi_1)}{\pi_2/(1-\pi_2)}$, we have:
 
 
--  $\widehat{\OR} = \dfrac{a\cdot d}{b\cdot c}$
--  $\log(\widehat{\OR}) = \log\Bigr(\dfrac{a\cdot d}{b\cdot c}\Bigr)$
--  $\SE\bigr(\log(\widehat{\OR})\bigr) = \sqrt{\dfrac{1}{a} + \dfrac{1}{b} + \dfrac{1}{c} + \dfrac{1}{d}}$
+-  $\widehat{\OR} = \dfrac{a\cdot d}{b\cdot c}$,
+-  $\log(\widehat{\OR}) = \log\Bigr(\dfrac{a\cdot d}{b\cdot c}\Bigr)$,
+-  $\SE\bigr(\log(\widehat{\OR})\bigr) = \sqrt{\dfrac{1}{a} + \dfrac{1}{b} + \dfrac{1}{c} + \dfrac{1}{d}}$.
 
 
 The standard error is computed using equation \@ref(eq:diff1) for the difference of two log odds. The standard error of the log odds can be computed from the standard error of a proportion and the delta method:
 
 
--  $\SE\bigr(\log(\widehat{\pi_1}(1-\widehat{\pi_1}))\bigr) = \sqrt{\dfrac{1}{a} + \dfrac{1}{b}}$
+-  $\SE\bigr(\log(\widehat{\pi_1}(1-\widehat{\pi_1}))\bigr) = \sqrt{\dfrac{1}{a} + \dfrac{1}{b}}$.
 
 
 We use the substitution method to compute a CI:
 
 CI for the $\log(\widehat{\OR})$:
-$$\log(\widehat{\OR}) - z_\gamma\cdot \SE\bigr(\log(\widehat{\OR})\bigr)\;\;\; \text{to}\;\;\; \log(\widehat{\OR}) + z_\gamma\cdot \SE\bigr(\log(\widehat{\OR})\bigr)$$
+$$\log(\widehat{\OR}) - z_\gamma\cdot \SE\bigr(\log(\widehat{\OR})\bigr)\;\;\; \text{to}\;\;\; \log(\widehat{\OR}) + z_\gamma\cdot \SE\bigr(\log(\widehat{\OR})\bigr);$$
 
 CI for the $\widehat{\OR}$:
-$$\exp\Bigr(\log(\widehat{\OR}) - z_\gamma\cdot \SE\bigr(\log(\widehat{\OR})\bigr)\Bigr)\;\;\; \text{to}\;\;\; \exp\Bigr(\log(\widehat{\OR}) + z_\gamma\cdot \SE\bigr(\log(\widehat{\OR})\bigr)\Bigr)$$
+$$\exp\Bigr(\log(\widehat{\OR}) - z_\gamma\cdot \SE\bigr(\log(\widehat{\OR})\bigr)\Bigr)\;\;\; \text{to}\;\;\; \exp\Bigr(\log(\widehat{\OR}) + z_\gamma\cdot \SE\bigr(\log(\widehat{\OR})\bigr)\Bigr),$$
 
 which is the same as
 
-$$\widehat{\OR}/\text{EF}_{.95}\;\;\; \text{to}\;\;\; \widehat{\OR}\cdot \text{EF}_{.95}$$
+$$\widehat{\OR}/\text{EF}_{.95}\;\;\; \text{to}\;\;\; \widehat{\OR}\cdot \text{EF}_{.95}.$$
 
 
 In`R`,Wald CIs for OR and RR and a Wilson CI for ARR can be computed using the function `twoby2()` from package `Epi`.
@@ -430,7 +424,7 @@ twoby2(tabRespiratory, alpha = 0.05)
 ### Two paired groups
 
 :::{.example #ischemia}
-In a reliability exercise carried out as part of the Multicenter Study of Silent Myocardial Ischemia, $41$ patients were randomly selected from those who had undergone a thallium-$201$ stress test. The $41$ sets of images were classified as normal or ischemic by the core thallium laboratory and, independently, by clinical investigators from different centers who had participated in training sessions to support standardization.
+In a reliability exercise carried out as part of the Multicenter Study of Silent Myocardial Ischemia, $41$ patients were randomly selected from those who had undergone a thallium-$201$ stress test. The $41$ sets of images were classified as normal or ischemic by the core thallium laboratory and, independently, by clinical investigators from different centers who had participated in training sessions to support standardisation.
 
 This is a paired design. The results for one of the participating clinical investigators compared to the core laboratory are presented in a contingency table showing the frequency distribution of these two variables:
 
@@ -520,6 +514,10 @@ within-subject standard deviation $s_w$ (Section \@ref(measErr))
 and the limits of agreements in a Bland-Altman plot (Section \@ref(CIloa)),
 for example. 
 
+
+
+
+
 # Statistical tests and $P$-values {#Pvalues}
 
 ## Concepts
@@ -535,7 +533,7 @@ assumption of the null hypothesis H$_0$, of obtaining a result equal
 to or more extreme than what was actually observed.
 
 ### Hypothesis testing
-The type I error rate $\alpha$ is the probability of rejecting $H_0$ 
+The Type-I error rate $\alpha$ is the probability of rejecting $H_0$ 
 although $H_0$ is true. Hypothesis testing wants to control the probability
 for this type of error by keeping it small, usually $\alpha = 0.05$. 
 In practice, the $P$-value is compared to the threshold $\alpha$ and 
@@ -555,7 +553,7 @@ of the Wald CI, we can compute the standard error:
 
 
 \begin{equation*}
-\SE(\widehat{\theta})=\dfrac{u-l}{2z_\gamma}
+\SE(\widehat{\theta})=\dfrac{u-l}{2z_\gamma}.
 \end{equation*}
 
 
@@ -563,7 +561,7 @@ From this, we can compute what was observed for the test statistic to compute
 the $P$-value:
 
 \begin{equation*}
-p = 2\bigr(1-\text{pnorm}(\widehat{\theta}/\SE(\widehat{\theta}))\bigr)
+p = 2\bigr(1-\text{pnorm}(\widehat{\theta}/\SE(\widehat{\theta}))\bigr).
 \end{equation*}
 
 The same can be done if we know the symmetric CI based on the $t$-distribution
@@ -645,8 +643,8 @@ The $t$-test assumes independent measurements in two groups that are normally
 distributed with equal variances:
 
 \begin{eqnarray*}
-\text{Treatment: }&Y_1, \ldots, Y_{m} &\sim \Nor(\mu_T, \sigma_T^2)\\
-\text{Control: }&X_1, \ldots, X_{n} &\sim \Nor(\mu_C, \sigma_C^2)
+\text{Treatment: }&Y_1, \ldots, Y_{m} &\sim \Nor(\mu_T, \sigma_T^2),\\
+\text{Control: }&X_1, \ldots, X_{n} &\sim \Nor(\mu_C, \sigma_C^2).
 \end{eqnarray*}
 
 The sample sizes are $m$ and $n$, respectively, and the equal variances
@@ -749,7 +747,7 @@ test statistic
 \[
   T = \sum_i \frac{\left((\abs{y_i - e_i} - 0.5)_+\right)^2}{e_i},
 \]
-here $x_+ = \max\{x, 0\}$. What we illustrated here for $2 \times 2$ tables can also be generalized to more categories.
+here $x_+ = \max\{x, 0\}$. What we illustrated here for $2 \times 2$ tables can also be generalised to more categories.
 
 
 
@@ -781,7 +779,7 @@ mcnemar.test(x = tabIschemia, correct = FALSE)
 Fisher's exact test is based on the probabilities of all possible tables 
 with the observed row and column totals under the null hypothesis of 
 no difference between the groups. It is a two-sided test, there are three 
-different versions and it can also be generalized to more categories.
+different versions and it can also be generalised to more categories.
 
 
 
@@ -791,6 +789,8 @@ groups. The log-rank test gives a $P$-value based on the expected number of
 events under the null hypothesis of no difference between the two groups. 
 An estimate of the hazard ratio with CI can be derived from the observed and 
 expected number of events in the two groups. 
+
+
 
 
 
@@ -806,7 +806,7 @@ continuous") result $Y$ from a diagnostic test and denote the true and
 false positive fraction for a given threshold $c$
 
 \begin{eqnarray*}
-\mbox{TPF}(c) & = & \Pr(Y \geq c \given D=1) \\
+\mbox{TPF}(c) & = & \Pr(Y \geq c \given D=1), \\
 \mbox{FPF}(c) & = & \Pr(Y \geq c \given D=0).
 \end{eqnarray*}
 
@@ -861,7 +861,7 @@ To prove this result, we first note that the derivative of a survivor function $
 a continuous test result $Y$ is
 closely related to the cumulative distribution function $F(y)$ of $Y$:
 \[
-S(y) = \Pr(Y \geq y) = 1 - \Pr(Y < y) = 1 - \Pr(Y \leq y) =  1 - F(y)
+S(y) = \Pr(Y \geq y) = 1 - \Pr(Y < y) = 1 - \Pr(Y \leq y) =  1 - F(y).
 \]
 Now
 \begin{eqnarray*}
@@ -899,9 +899,10 @@ This proofs equation \@ref(eq:eq2).
 
 
 
+
 # Some theory on equivalence trials {#equiv}
 
-## Type I error in equivalence trials 
+## Type-I error in equivalence trials 
 
 Assume we have a continuous outcome with variance $\sigma^2$ and two
 treatment groups of size $n_A$ and $n_B$, respectively. Now consider
@@ -934,8 +935,8 @@ With $z = z_{(1+\gamma)/2}$ we obtain the equivalent requirement
 \end{eqnarray}
 
 Now evaluate \@ref(eq:eq1App) at $\Delta = \delta$ to obtain 
-the  *Type I error rate* (more precisely an upper bound on the
-Type I error rate)
+the  *Type-I error rate* (more precisely an upper bound on the
+Type-I error rate)
 
 \begin{eqnarray}
 (\#eq:eq2App)
@@ -946,14 +947,14 @@ Likewise, the *power* $1 - \beta$ is derived from \@ref(eq:eq1App) with
 $\Delta = 0$:
 
 \[
-1 - \beta = 2 \Phi\left(\frac{\delta}{\lambda \, \sigma} - z_{(1+\gamma)/2}\right) - 1
+1 - \beta = 2 \Phi\left(\frac{\delta}{\lambda \, \sigma} - z_{(1+\gamma)/2}\right) - 1,
 \]
 so
 \[
 1 - \beta/2 = \Phi\left(\frac{\delta}{\lambda \, \sigma} - z_{(1+\gamma)/2}\right).
 \]
 
-Note that $1 - \beta/2 = \Phi(z_{1-\beta/2})$, and therefore
+Note that $1 - \beta/2 = \Phi(z_{1-\beta/2})$, therefore
 
 \begin{eqnarray}
 (\#eq:eq3App)
@@ -967,7 +968,7 @@ With \@ref(eq:eq2App) we obtain
 \alpha \approx \Phi(-z_{(1+\gamma)/2}) = 1-(1+\gamma)/2 = (1-\gamma)/2
 \end{eqnarray}
 
-for relatively small $\beta$ (say  $\beta \leq 30$ \%), since the second term 
+for relatively small $\beta$ (say  $\beta \leq 30$ \%). The second term 
 in \@ref(eq:eq2App) 
 
 \[
@@ -989,61 +990,61 @@ n &=& \frac{2 \sigma^2 (z_{(1+\gamma)/2} + z_{1-\beta/2})^2}{\delta^2} \\
 &=& \frac{2 \sigma^2 (z_{1-\alpha} + z_{1-\beta/2})^2}{\delta^2}
 \end{eqnarray*}
 
-as the required sample size in each group for Type I error rate $\alpha$
+as the required sample size in each group for Type-I error rate $\alpha$
 and power $1-\beta$.
 
 
 # Expectation, variance, covariance and correlation
-This section describes fundamental summaries of the distribution of random variables, namely their expectation and variance. For multivariate random variables, the association between the components is summarized by their covariance or correlation. Moreover, we list some useful inequalities.
+This section describes fundamental summaries of the distribution of random variables, namely their expectation and variance. For multivariate random variables, the association between the components is summarised by their covariance or correlation. Moreover, we list some useful inequalities.
 
 ## Expectation {#sec:expectation}
 
 For a continuous random variable $X$ with density function $\p(x)$, the **expectation** or **mean value** of $X$ is the real number
 
 \begin{equation}
-\E (X) = \int x \p(x) \, dx
+\E (X) = \int x \p(x) \, dx.
 (\#eq:expectation)
 \end{equation}
 
 The expectation of a function $h(X)$ of $X$ is
 
 $$
-\E \{h(X)\} = \int h(x) \p(x) \, dx
+\E \{h(X)\} = \int h(x) \p(x) \, dx.
 (\#eq:expectation2)
 $$
 
-Note that the expectation of a random variable not necessarily exists. If the integral exists, then $X$ has **finite expectation**; otherwise, we say $X$ has **infinite expectation**.
+Note that the expectation of a random variable does not necessarily exist. If the integral exists, then $X$ has **finite expectation**; otherwise, we say $X$ has **infinite expectation**.
 
 For a discrete random variable $X$ with probability mass function $\p(x)$, the integral in \@ref(eq:expectation) and \@ref(eq:expectation2) is replaced with a sum over the support of $X$.
 
 For any real numbers $a$ and $b$:
 
 $$
-\E(a \cdot X + b) = a \cdot \E(X) + b
+\E(a \cdot X + b) = a \cdot \E(X) + b.
 $$
 
 For any two random variables $X$ and $Y$:
 
 $$
-\E(X + Y) = \E(X) + \E(Y)
+\E(X + Y) = \E(X) + \E(Y).
 $$
 
 If $X$ and $Y$ are independent:
 
 $$
-\E(X \cdot Y) = \E(X) \cdot \E(Y)
+\E(X \cdot Y) = \E(X) \cdot \E(Y).
 $$
 
 The expectation of a $p$-dimensional random variable $\boldsymbol{X} = (X_1, \dotsc, X_p)^{\top}$ is:
 
 $$
-\E(\boldsymbol{X}) = (\E(X_1), \dotsc, \E(X_p))^{\top}
+\E(\boldsymbol{X}) = (\E(X_1), \dotsc, \E(X_p))^{\top}.
 $$
 
 The expectation of a real-valued function $h(\boldsymbol{X})$ of a $p$-dimensional random variable $\boldsymbol{X} = (X_1, \dotsc, X_p)^{\top}$ is
 
 $$
-\E \{h(\boldsymbol{X})\} = \int h(\boldsymbol{X}) \p(\boldsymbol{X}) \, d\boldsymbol{x}
+\E \{h(\boldsymbol{X})\} = \int h(\boldsymbol{X}) \p(\boldsymbol{X}) \, d\boldsymbol{x}.
 (\#eq:expectation3)
 $$
 
@@ -1052,19 +1053,19 @@ $$
 The **variance** of a random variable $X$ is
 
 $$
-\Var (X) = \E \{X - \E(X)\}^{2}
+\Var (X) = \E \{X - \E(X)\}^{2}.
 $$
 
 It can also be expressed as
 
 $$
-\Var (X) = \E (X^{2}) - \E(X)^{2}
+\Var (X) = \E (X^{2}) - \E(X)^{2}.
 $$
 
 and
 
 $$
-\Var (X) = \frac{1}{2}\E\left\{(X_1 - X_2)^2 \right\}
+\Var (X) = \frac{1}{2}\E\left\{(X_1 - X_2)^2 \right\}.
 $$
 
 where $X_1$ and $X_2$ are independent copies of $X$. The square root $\sqrt{\Var(X)}$ is called the **standard deviation**.
@@ -1072,7 +1073,7 @@ where $X_1$ and $X_2$ are independent copies of $X$. The square root $\sqrt{\Var
 For real numbers $a$ and $b$:
 
 $$
-\Var(a \cdot X + b) = a^2 \cdot \Var(X)
+\Var(a \cdot X + b) = a^2 \cdot \Var(X).
 $$
 
 ## Moments {#sec:moments}
@@ -1080,13 +1081,13 @@ $$
 Let $k$ be a positive integer. The **$k$-th moment** $m_k$ of a random variable $X$ is
 
 $$
-m_k = \E(X^k)
+m_k = \E(X^k).
 $$
 
 The **$k$-th central moment** is
 
 $$
-c_k = \E \{(X - m_1)^k\}
+c_k = \E \{(X - m_1)^k\}.
 $$
 
 The expectation is the first moment, and the variance is the second central moment.
@@ -1096,14 +1097,14 @@ The expectation is the first moment, and the variance is the second central mome
 For continuous random variables, the **conditional expectation** of $Y$ given $X = x$ is
 
 $$
-\E (Y\mid X = x) = \int y \p(y\mid x) \, dy
+\E (Y\mid X = x) = \int y \p(y\mid x) \, dy.
 (\#eq:conditionalexpectation)
 $$
 
 For discrete variables, the integral becomes a sum. The **conditional variance** of $Y$ given $X = x$ is
 
 $$
-\Var (Y\mid X = x) = \E \left[ \{Y - \E (Y\mid X = x)\}^{2}\mid X = x\right]
+\Var (Y\mid X = x) = \E \left[ \{Y - \E (Y\mid X = x)\}^{2}\mid X = x\right].
 (\#eq:conditionalVariance)
 $$
 
@@ -1114,14 +1115,14 @@ Two key results:
 **Law of total expectation**:
 
 $$
-\E (Y) = \E\{\E (Y\mid X)\}
+\E (Y) = \E\{\E (Y\mid X)\}.
 (\#eq:iterierterEwert)
 $$
 
 **Law of total variance**:
 
 $$
-\Var (Y) = \E\{\Var (Y\mid X)\} + \Var\{\E (Y\mid X)\}
+\Var (Y) = \E\{\Var (Y\mid X)\} + \Var\{\E (Y\mid X)\}.
 (\#eq:variancezerlegungssatz)
 $$
 
@@ -1132,7 +1133,7 @@ These are useful when conditional moments are known.
 Let $(X, Y)^{\top}$ be a bivariate random variable. The **covariance** is
 
 $$
-\Cov(X,Y) = \E\bigl[\{X-\E(X)\}\{Y-\E(Y)\}\bigr] = \E(XY)-\E(X)\E(Y)
+\Cov(X,Y) = \E\bigl[\{X-\E(X)\}\{Y-\E(Y)\}\bigr] = \E(XY)-\E(X)\E(Y).
 $$
 
 See \@ref(eq:expectation3). Note: $\Cov (X, X)= \Var (X)$ and $\Cov (X, Y)= 0$ if $X$ and $Y$ are independent.
@@ -1140,41 +1141,41 @@ See \@ref(eq:expectation3). Note: $\Cov (X, X)= \Var (X)$ and $\Cov (X, Y)= 0$ i
 For real $a$, $b$, $c$, $d$:
 
 $$
-\Cov(a X + b, c Y + d) = a c \Cov(X,Y)
+\Cov(a X + b, c Y + d) = a c \Cov(X,Y).
 $$
 
 For $\boldsymbol{X} = (X_1, \dotsc, X_p)^{\top}$:
 
 $$
-\Cov(\boldsymbol{X}) = \E\left[\{\boldsymbol{X}- \E(\boldsymbol{X})\}\{\boldsymbol{X}- \E(\boldsymbol{X})\}^{\top} \right]
+\Cov(\boldsymbol{X}) = \E\left[\{\boldsymbol{X}- \E(\boldsymbol{X})\}\{\boldsymbol{X}- \E(\boldsymbol{X})\}^{\top} \right].
 $$
 
 Also:
 
 $$
-\Cov(\boldsymbol{X}) = \E(\boldsymbol{X} \boldsymbol{X}^{\top}) - \E(\boldsymbol{X}) \E(\boldsymbol{X})^{\top}
+\Cov(\boldsymbol{X}) = \E(\boldsymbol{X} \boldsymbol{X}^{\top}) - \E(\boldsymbol{X}) \E(\boldsymbol{X})^{\top}.
 $$
 
 For a matrix $\boldsymbol{A}$:
 
 $$
-\Cov(\boldsymbol{A} \boldsymbol{X}) = \boldsymbol{A} \Cov(\boldsymbol{X}) \boldsymbol{A}^{\top}
+\Cov(\boldsymbol{A} \boldsymbol{X}) = \boldsymbol{A} \Cov(\boldsymbol{X}) \boldsymbol{A}^{\top}.
 $$
 
 In particular:
 
 $$
-\Var(X+Y) = \Var(X) + \Var(Y) + 2 \Cov(X,Y)
+\Var(X+Y) = \Var(X) + \Var(Y) + 2 \Cov(X,Y).
 $$
 
-If $X$ and $Y$ are independent:
+If $X$ and $Y$ are independent, we have:
 
 $$
-\Var(X+Y) = \Var(X) + \Var(Y)
+\Var(X+Y) = \Var(X) + \Var(Y).
 $$
-
+and 
 $$
-\Var(XY) = \E(X)^2 \Var(Y) + \E(Y)^2 \Var(X) + \Var(X) \Var(Y)
+\Var(XY) = \E(X)^2 \Var(Y) + \E(Y)^2 \Var(X) + \Var(X) \Var(Y).
 $$
 
 ## Correlation {#korrCauchySchwarz}
@@ -1182,7 +1183,7 @@ $$
 The **correlation** of $X$ and $Y$ is
 
 $$
-\Corr(X,Y) = \frac{\Cov(X,Y)}{\sqrt{\Var(X)\Var(Y)}}
+\Corr(X,Y) = \frac{\Cov(X,Y)}{\sqrt{\Var(X)\Var(Y)}},
 $$
 
 as long as variances are positive.
@@ -1190,14 +1191,14 @@ as long as variances are positive.
 An important inequality:
 
 $$
-\left|\Corr(X,Y)\right| \leq 1
+\left|\Corr(X,Y)\right| \leq 1.
 (\#eq:korrUngleichung)
 $$
 
 This follows from the **Cauchy--Schwarz inequality**:
 
 $$
-\E(XY)^2 \leq \E(X^2)\E(Y^2)
+\E(XY)^2 \leq \E(X^2)\E(Y^2).
 (\#eq:CauchySchwarz)
 $$
 
@@ -1208,7 +1209,7 @@ If $Y = aX + b$ with $a > 0$, then $\Corr(X, Y) = 1$; if $a < 0$, then $\Corr(X,
 Let $\boldsymbol{\Sigma}$ be the covariance matrix. The **correlation matrix** $\boldsymbol{R}$ is:
 
 $$
-\boldsymbol{R} = \boldsymbol{S}^{-1}\boldsymbol{\Sigma}\boldsymbol{S}^{-1}
+\boldsymbol{R} = \boldsymbol{S}^{-1}\boldsymbol{\Sigma}\boldsymbol{S}^{-1},
 $$
 
 where $\boldsymbol{S}$ is diagonal with entries $\sqrt{\Var(X_i)}$. The diagonal of $\boldsymbol{R}$ contains all ones.
@@ -1251,7 +1252,7 @@ The variance $\sigma^2$ can be estimated in a second step based on the sum of th
 \hat \sigma^2 =  \frac{1}{n-p} \boldsymbol{e}^\top \boldsymbol{e} = \frac{1}{n-p} \left(\boldsymbol{Y} - \boldsymbol{X}\widehat{\boldsymbol{\beta}}\right)^{\top}\left(\boldsymbol{Y} - \boldsymbol{X}\widehat{\boldsymbol{\beta}}\right).
 \]
 Plugging in $\hat \sigma^2$ into \@ref(eq:covBeta) can be used to obtain
-standard errors for the coefficients of $\widehat{\boldsymbol{\beta}}$ taking the square roots of the diagonal elements. 
+standard errors for the coefficients of $\widehat{\boldsymbol{\beta}}$, taking the square roots of the diagonal elements. 
 
 An example of a linear model is the ANCOVA model discussed in Chapter \@ref(contOut).
 
@@ -1259,10 +1260,10 @@ An example of a linear model is the ANCOVA model discussed in Chapter \@ref(cont
 This section introduces **GEE** and **GLS** for the analysis of longitudinal data, which account for correlations between measurements from the same individual.
 
 ### GEE's {#GEE}
-**Model formulation**
+**Model formulation:**
 \begin{equation} 
 (\#eq:model)
-\boldsymbol{Y} \sim \boldsymbol{\Nor}(\boldsymbol{X\beta}, \boldsymbol{\Sigma})
+\boldsymbol{Y} \sim \boldsymbol{\Nor}(\boldsymbol{X\beta}, \boldsymbol{\Sigma}),
 \end{equation}
 where $\boldsymbol{\Sigma}$ is block-diagonal with $n \times n$ entries $\boldsymbol{\Sigma_0}$. This means that 
 $$
@@ -1272,12 +1273,12 @@ $$
  & \boldsymbol{\Sigma}_0 & & \\
  & & \ddots & \\
  & & &\boldsymbol{\Sigma}_0 
-\end{pmatrix}
+\end{pmatrix},
 $$
 with zero entries elsewhere.
 
-$\widehat{\boldsymbol{\beta}}_{\boldsymbol{W}} = (\boldsymbol{X}^{\top}\boldsymbol{W}\boldsymbol{X})^{-1}\boldsymbol{X}^{\top}\boldsymbol{W}\boldsymbol{Y}$ 
-is the weighted least squares estimate of $\boldsymbol{\beta}$, which minimizes the weighted least squares criterion $(\boldsymbol{Y}-\boldsymbol{X} \boldsymbol{\beta})^\top \boldsymbol{W}(\boldsymbol{Y}-\boldsymbol{X} \boldsymbol{\beta})$. Given any weight matrix $\boldsymbol{W}$, $\widehat{\boldsymbol{\beta}}_{\boldsymbol{W}}$ is unbiased with $\E(\widehat {\boldsymbol{\beta}}_{\boldsymbol{W}}) = {\boldsymbol{\beta}}$. 
+It can be shown that $\widehat{\boldsymbol{\beta}}_{\boldsymbol{W}} = (\boldsymbol{X}^{\top}\boldsymbol{W}\boldsymbol{X})^{-1}\boldsymbol{X}^{\top}\boldsymbol{W}\boldsymbol{Y}$ 
+is the weighted least squares estimate of $\boldsymbol{\beta}$, which minimises the weighted least squares criterion $(\boldsymbol{Y}-\boldsymbol{X} \boldsymbol{\beta})^\top \boldsymbol{W}(\boldsymbol{Y}-\boldsymbol{X} \boldsymbol{\beta})$. Given any weight matrix $\boldsymbol{W}$, $\widehat{\boldsymbol{\beta}}_{\boldsymbol{W}}$ is unbiased with $\E(\widehat {\boldsymbol{\beta}}_{\boldsymbol{W}}) = {\boldsymbol{\beta}}$. 
 
 The weight matrix $\boldsymbol{W}$ is block-diagonal, with each block $\boldsymbol{W_0}$ of size $n \times n$ for $n$ time points. Its inverse, $\boldsymbol{W}^{-1}$, is often called **working covariance matrix** to distinguish it from the **true covariance matrix** $\boldsymbol{\Sigma}$. The term "working" refers to the fact that it is an approximation to the true covariance matrix of the outcomes. 
 
@@ -1297,48 +1298,49 @@ The associated covariance matrix is ("sandwich formula"):
 \Cov(\widehat{\boldsymbol{\beta}}_{\boldsymbol{W}}) 
 &= \boldsymbol{V} \, \boldsymbol{\Sigma} \, \boldsymbol{V}^{\top} \\
 \mbox{ where } \boldsymbol{V} 
-&= (\boldsymbol{X}^{\top}\boldsymbol{W}\boldsymbol{X})^{-1}\boldsymbol{X}^{\top}\boldsymbol{W}
+&= (\boldsymbol{X}^{\top}\boldsymbol{W}\boldsymbol{X})^{-1}\boldsymbol{X}^{\top}\boldsymbol{W},
 \end{align*}
 
 and requires knowledge of $\boldsymbol{\Sigma}$ (or an estimate $\widehat{\boldsymbol{\Sigma}}$). 
 
 If $\boldsymbol{W}^{-1} = \boldsymbol{\Sigma}$, then $\Cov(\widehat{\boldsymbol{\beta}}_{\boldsymbol{W}})$ can be simplified to
 \[
- \Cov(\widehat{\boldsymbol{\beta}}_{\boldsymbol{W}}) = (\boldsymbol{X}^{\top}\boldsymbol{W}\boldsymbol{X})^{-1}
+ \Cov(\widehat{\boldsymbol{\beta}}_{\boldsymbol{W}}) = (\boldsymbol{X}^{\top}\boldsymbol{W}\boldsymbol{X})^{-1}.
 \]
-If we set ${\boldsymbol{\Sigma}}$ to $\boldsymbol{W}^{-1}$ in the sandwich formula for 
+
+If we set ${\boldsymbol{\Sigma}}$ to $\boldsymbol{W}^{-1}$ in the "sandwich formula" for 
 $\Cov(\widehat{\boldsymbol{\beta}}_{\boldsymbol{W}})$, we assume that $\Cov (\boldsymbol{Y})= \boldsymbol{W}^{-1}$ (up to scale). This gives us the **naive standard errors** of $\widehat{\boldsymbol{\beta}}_{\boldsymbol{W}}$.
 
 The **sandwich estimate** $\widehat {\boldsymbol R}_{\boldsymbol{W}} = \boldsymbol{V} \, \widehat{\boldsymbol{\Sigma}} \, \boldsymbol{V}^{\top}$ is a consistent estimate of $\Cov(\widehat{\boldsymbol{\beta}}_{\boldsymbol{W}})$, where the estimate $\widehat{\boldsymbol{\Sigma}}_0$ is the **empirical covariance matrix** of the residuals $\boldsymbol{r}_i = {\boldsymbol Y}_i - \boldsymbol{X}_i\widehat {\boldsymbol \beta}_{\boldsymbol{W}}$, and $\widehat{\boldsymbol{\Sigma}}$ is block-diagonal with
-entries $\widehat{\boldsymbol{\Sigma}}_0$. The **robust standard errors** can be extracted from the diagonal: $\sqrt{\diag(\widehat {\boldsymbol R}_{\boldsymbol{W}})}$.
+entries $\widehat{\boldsymbol{\Sigma}}_0$. The **robust standard errors** can be extracted from the diagonal using $\sqrt{\diag(\widehat {\boldsymbol R}_{\boldsymbol{W}})}$.
 
 If the naive standard errors are close to the robust standard errors, then $\boldsymbol{W}^{-1}$ must be close to $\Cov (\boldsymbol{Y})$ (up to scale).
 
-In short, the generalized estimating equations work in the following way: 
+In short, the generalised estimating equations work in the following way: 
 
 1. assume some **working correlation matrix** $\boldsymbol{W}$
 2. estimate the coefficients with the **weighted least squares estimate** $\widehat{\boldsymbol{\beta}}_{\boldsymbol{W}}$
 3. estimate the correlation $\widehat{\boldsymbol{\Sigma}}$ of the residuals
 4. compute **robust standard errors** (taking residual correlation into account) from the covariance matrix
-$$\widehat {\boldsymbol{R}}_{\boldsymbol{W}} = \boldsymbol{V} \, \widehat{\boldsymbol{\Sigma}} \, \boldsymbol{V}^{\top}$$ based on the "sandwich" formula applied to the "naive" covariance matrix $\boldsymbol{V}$ of the weighted least-squares estimate $\widehat{\boldsymbol{\beta}}_{\boldsymbol{W}}$.
+$$\widehat {\boldsymbol{R}}_{\boldsymbol{W}} = \boldsymbol{V} \, \widehat{\boldsymbol{\Sigma}} \, \boldsymbol{V}^{\top}$$ based on the "sandwich formula" applied to the "naive" covariance matrix $\boldsymbol{V}$ of the weighted least squares estimate $\widehat{\boldsymbol{\beta}}_{\boldsymbol{W}}$.
 
 ### GLS's
-Generalized Least Squares (GLS) is a parametric method for estimating regression parameters when errors are correlated. Different from GEE, GLS uses Maximum Likelihood (\(\texttt{ML}\)) or Restricted Maximum Likelihood (\(\texttt{REML}\)). 
+Generalised Least Squares (GLS) is a parametric method for estimating regression parameters when errors are correlated. Different from GEE, GLS uses Maximum Likelihood (\(\texttt{ML}\)) or Restricted Maximum Likelihood (\(\texttt{REML}\)). 
 
-**Model formulation**
+**Model formulation:**
 \begin{equation} 
-\boldsymbol{Y} \sim \boldsymbol{\Nor}(\boldsymbol{X\beta}, \boldsymbol{\Sigma})
+\boldsymbol{Y} \sim \boldsymbol{\Nor}(\boldsymbol{X\beta}, \boldsymbol{\Sigma}),
 \end{equation}
 where $\Sigma=\sigma^2 \boldsymbol{V}$ is block-diagonal with $n \times n$ entries $\boldsymbol{\Sigma}_0=\sigma^2 \boldsymbol{V}_0$. Here, $\boldsymbol{V}_0$ is a **correlation matrix** with entries corresponding to correlations between observations from the same individual. This correlation matrix often only depends on a few parameters.
 
-Below are some commonly used **parametric correlation structures**. 
+Below are some commonly-used **parametric correlation structures**. 
 
-- **Uniform correlation model, compound symmetry**
+- **Uniform correlation model (compound symmetry)**
 \[
 \boldsymbol{V}_0 = (1 - \rho) \boldsymbol{I} + \rho \boldsymbol{J},
 \]
 where $\boldsymbol{I}$ is the identity matrix, $\boldsymbol{J}$ is a matrix of ones
-and $\rho \in [0,1)$ is an unknown correlation parameter. This is also the \(\texttt{exchangeable}\) correlation structure.
+and $\rho \in [0,1)$ is an unknown correlation parameter. This is also called the \(\texttt{exchangeable}\) correlation structure.
 
 - **Exponential correlation model**
 
@@ -1347,15 +1349,15 @@ and $\rho \in [0,1)$ is an unknown correlation parameter. This is also the \(\te
 \boldsymbol{V}_0  = \left\{\exp(- \phi d_{jk})\right\}_{j,k}.
 \]
 The parameter $\phi$ represents the exponential decay of the correlation. 
-The inverse $1/\phi$ is often called the **range parameter**: For a distance $d_{jk}>1/\phi$ we have "small" correlation $\rho_{jk} < \exp(-1)= 0.37$. 
+The inverse $1/\phi$ is often called the **range parameter**: For a distance $d_{jk}>1/\phi$ we have "small" correlation $\rho_{jk} < \exp(-1)= 0.37.$
 
 - **Continuous time AR-1 model**: 
-This is a reparameterization of the exponential correlation model, where $\rho_{jk} = \left\{\alpha^{d_{jk}}\right\}_{j,k}$ and $\alpha=\exp(-\phi)$. This is also the \(\texttt{AR-1}\) correlation structure mentioned earlier.
+This is a reparameterisation of the exponential correlation model, where $\rho_{jk} = \left\{\alpha^{d_{jk}}\right\}_{j,k}$ and $\alpha=\exp(-\phi)$. This is also the \(\texttt{AR-1}\) correlation structure mentioned earlier.
 
 To choose which correlation structure to use, we may use the **model choice criteria**
 $$
-\mbox{AIC} = - 2 l(\boldsymbol{\hat{\theta}_{\text{ML}}}) + 2\tilde p\\
-\mbox{BIC} = - 2 l(\boldsymbol{\hat{\theta}_{\text{ML}}}) + \tilde p\log(\tilde n)
+\mbox{AIC} = - 2 l(\boldsymbol{\hat{\theta}_{\text{ML}}}) + 2\tilde p, \\
+\mbox{BIC} = - 2 l(\boldsymbol{\hat{\theta}_{\text{ML}}}) + \tilde p\log(\tilde n),
 $$
 where $l(.)$ is the log likelihood, $\hat{\theta}_{\text{ML}}$ is the maximum likelihood estimate, $\tilde p$ is the number of **all** unknown parameters $\boldsymbol{\theta}$ (including the correlation parameters), and $\tilde n$ is the number of all observations. Smaller values of $\mbox{AIC}$ and $\mbox{BIC}$ are preferred.
 
@@ -1367,17 +1369,17 @@ For fixed $\boldsymbol{V}_0$ we obtain the ML estimate of $\boldsymbol{\beta}$:
 \begin{equation} 
 \widehat{\boldsymbol{\beta}} (\boldsymbol{V}_0)= (\boldsymbol{X}^{\top}\boldsymbol{V}^{-1}\boldsymbol{X})^{-1}\boldsymbol{X}^{\top}\boldsymbol{V}^{-1}\boldsymbol{y}, (\#eq:weighted)
 \end{equation}
-which can be identified as the weighted least-squares estimate with $\boldsymbol{W}=\boldsymbol{V}^{-1}$.
+which can be identified as the weighted least squares estimate with $\boldsymbol{W}=\boldsymbol{V}^{-1}$.
 
 We can also obtain the ML estimate of $\sigma^2$:
 \[
 \widehat{\sigma}^2 (\boldsymbol{V}_0)= \mbox{RSS}(\boldsymbol{V}_0)/(nm),
 \]
-
+where
 \[
- \text{ where } \text{RSS}(\boldsymbol{V}_0) = {(\boldsymbol{y}-\boldsymbol{X}\widehat{\boldsymbol{\beta}})^{\top}\boldsymbol{V}^{-1}(\boldsymbol{y}-\boldsymbol{X}\widehat{\boldsymbol{\beta}})}
+ \text{RSS}(\boldsymbol{V}_0) = {(\boldsymbol{y}-\boldsymbol{X}\widehat{\boldsymbol{\beta}})^{\top}\boldsymbol{V}^{-1}(\boldsymbol{y}-\boldsymbol{X}\widehat{\boldsymbol{\beta}})}
 \]
-are the (weighted) residual sum of squares, where $\widehat{\boldsymbol{\beta}} = \widehat{\boldsymbol{\beta}} (\boldsymbol{V}_0)$ is defined in \@ref(eq:weighted).
+are the (weighted) residual sum of squares, with $\widehat{\boldsymbol{\beta}} = \widehat{\boldsymbol{\beta}} (\boldsymbol{V}_0)$ as defined in \@ref(eq:weighted).
  
 However, ML estimates of $\sigma^2$ and $\boldsymbol{V}_0$ are typically biased and problematic if the dimension $p$ of $\boldsymbol{\beta}$ is large. For example, in the classical linear model ($\boldsymbol{V}_0=\boldsymbol{I}$) the ML estimate ${\sigma_{\text{ML}}}^2 = \mbox{RSS}/(nm)$ is biased, whereas ${\sigma_{\text{REML}}}^2 = \mbox{RSS}/(nm-p)$ is unbiased. The latter estimate is a **Restricted Maximum Likelihood** (REML) estimate, and is the default in function \(\texttt{gls()}\). Also notice that if the sample size $nm$ is large, then ML and REML estimates are very similar.
 
@@ -1385,16 +1387,17 @@ However, ML estimates of $\sigma^2$ and $\boldsymbol{V}_0$ are typically biased 
 ### General formulation
 Suppose there are $p$ covariates and we want to consider $q$ of them as random effects, we can include individual-specific random effects $\boldsymbol{U}_i$ into the model:
 \begin{equation}
-  Y_{ij} \given \boldsymbol{U}_i,{\epsilon}_{ij} = \boldsymbol{x}_{ij}^{\top}\boldsymbol{\beta} + \boldsymbol{d}_{ij}^{\top}\boldsymbol{U}_i + \epsilon_{ij}
+  Y_{ij} \given \boldsymbol{U}_i,{\epsilon}_{ij} = \boldsymbol{x}_{ij}^{\top}\boldsymbol{\beta} + \boldsymbol{d}_{ij}^{\top}\boldsymbol{U}_i + \epsilon_{ij},
 \end{equation}
 where $\boldsymbol{U}_i$'s are mutually independent and $\boldsymbol{U}_i\sim \Nor_q(\boldsymbol{0}, \boldsymbol{G})$ and $\epsilon_{ij} \sim \Nor(0, \tau^2)$. The vector $\boldsymbol{d}_{ij}$ ($q \times 1$) is known and in general a sub-vector of the covariates $\boldsymbol{x}_{ij}$ ($p \times 1$). Then we obtain a linear **mixed effects** model with **fixed effects** $\boldsymbol{\beta}$ and **random effects** $\boldsymbol{U}_i$.
 
 We might want to consider random effects when we want to capture **individual heterogeneity** in the mean response. Random effect model is useful as it induces **marginal correlation** between observations $Y_{ij}$ and $Y_{ik}$ from the same individual (see equation \@ref(eq:marg2)).
 
 **Parameter estimation**
+
 The marginal moments
 \begin{align*}
-  \E(\boldsymbol{Y}_i) & = \boldsymbol{X}_i \boldsymbol{\beta} (\#eq:marg1) \\
+  \E(\boldsymbol{Y}_i) & = \boldsymbol{X}_i \boldsymbol{\beta} (\#eq:marg1), \mbox{ and}\\
   \Cov(\boldsymbol{Y}_i) & = \boldsymbol{D}_i \boldsymbol{G}\boldsymbol{D}_i^{\top} + \tau^2 \boldsymbol{I}_{n_i} (\#eq:marg2)
 \end{align*}
 determine the (normal) likelihood to estimate $\boldsymbol{\beta}$, $\boldsymbol{G}$ and $\tau^2$ via (RE)ML. 
@@ -1403,7 +1406,7 @@ Here $\boldsymbol{D}_i = (\boldsymbol{d}_{i,1},\ldots,\boldsymbol{d}_{i,n_i})^{\
 It is also possible to estimate ("predict") the random effects $\boldsymbol{U}_i$ and to compute standard errors, and this is done with the **empirical Bayes (EB)** estimate (the **empirical BLUP** estimate).
 
 ### Random intercept model {#A:randInt}
-The random intercept model is a special case of a random effects model. In this case, $q=1$ and ${d}_{ij}=1$. 
+The random intercept model is a special case of a random effects model. In this case, $q=1$ and ${d}_{ij}=1.$
 
 With $\boldsymbol{x}_{ij}^{\top} = (1, \tilde{\boldsymbol{x}}_{ij}^{\top})$ we have
 $$
@@ -1417,16 +1420,16 @@ $$
 where ${\tilde U}_i \sim \Nor(\beta_0, \nu^2)$ represents the **random intercept**, varying between individuals with mean $\beta_0$ and variance $\nu^2$.
 
 ### Random slope model {#randSlope}
-Suppose observations $Y_{ij}$ are made at time points $t_{ij}$, which are included in the covariate vector $\boldsymbol{x}_{ij}=(1,t_{ij},\tilde{\boldsymbol{x}}_{ij}^{\top})^{\top}$.
+Suppose observations $Y_{ij}$'s are made at time points $t_{ij}$, which are included in the covariate vector $\boldsymbol{x}_{ij}=(1,t_{ij},\tilde{\boldsymbol{x}}_{ij}^{\top})^{\top}$.
 
 Suppose $q=2$ and $\boldsymbol{d}_{ij}=(1, t_{ij})^{\top}$, then the model becomes
 $$
   Y_{ij}\given \boldsymbol{U}_i,{\epsilon}_{ij} = (1, t_{ij},\tilde{\boldsymbol{x}}_{ij}^{\top}) \cdot \boldsymbol{\beta} + (1, t_{ij}) \cdot \boldsymbol{U}_i + \epsilon_{ij}
 $$
-where $\boldsymbol{U}_i$ is a 2-dimensional random effect with mean zero and $2 \times 2$ symmetric covariance matrix $\boldsymbol{G}$.
+where $\boldsymbol{U}_i$ is a 2-dimensional random effect with mean zero and a $2 \times 2$ symmetric covariance matrix $\boldsymbol{G}$.
 This is the **random slope** (strictly random intercept and slope) model.
 
-# Generalized linear model
+# Generalised linear model
 ## General formulation
 First we provide a brief review of the linear regression model
 $$
@@ -1435,19 +1438,19 @@ $$
 with explanatory variables $\boldsymbol{x}_i \in \mathbb{R}^p$ and regression coefficients $\boldsymbol{\beta} \in \mathbb{R}^p$, rewritten as $$Y_i \sim
 \Nor(\mu_i=\boldsymbol{ x}_i^{\top} \boldsymbol{ \beta}, \sigma^2)$$ with mean $\mu_i$ and variance $\sigma^2$.
 
-This can be generalized in two ways: firstly we can consider other distributions than the normal distribution for the response variable $Y_i$ (for example, Bernoulli, Binomial, Poisson, $\ldots$). Secondly, the mean $\E(Y_i)=\mu_i$ will be linked to the **linear predictor** $\eta_i = \boldsymbol{ x}_i^{\top} \boldsymbol{ \beta}$ using a (monotone) **link function** $g = h^{-1}$:
+This can be generalised in two ways: firstly we can consider other distributions than the normal distribution for the response variable $Y_i$ (for example, Bernoulli, Binomial, Poisson, $\ldots$). Secondly, the mean $\E(Y_i)=\mu_i$ will be linked to the **linear predictor** $\eta_i = \boldsymbol{ x}_i^{\top} \boldsymbol{ \beta}$ using a (monotone) **link function** $g = h^{-1}$:
 $$
  g(\mu_i) = \eta_i \, \mbox{ so } \, \mu_i = h(\eta_i).
 $$
-Notice how this is different from **general** linear models (Appendix \@ref(General)): **general** linear models assume a normal distribution of residuals, while **generalized** linear models relax this assumption and allow for other distributions from the exponential family. A linear model can be viewed as a  **generalized** linear model with normal errors and identity link.
+Notice how this is different from **general** linear models (Appendix \@ref(General)): **general** linear models assume a normal distribution of residuals, while **generalised** linear models relax this assumption and allow for other distributions from the exponential family. A linear model can be viewed as a  **generalised** linear model with normal errors and identity link.
 
 ### Logistic regression
-Instead of the normality assumption on $Y_i$ in linear models, other distributions of $Y_i$ are allowed for generalization. 
+Instead of the normality assumption on $Y_i$ in linear models, other distributions of $Y_i$ are allowed for generalisation. 
 
 For logistic regression, consider 
 \begin{align*}
-Y_i &\sim \Bin(1, \mu_i=\pi_i) \\
-\logit(\pi_i)  &=  \boldsymbol{x}_i^{\top} \boldsymbol{\beta}\\
+Y_i &\sim \Bin(1, \mu_i=\pi_i), \\
+\logit(\pi_i)  &=  \boldsymbol{x}_i^{\top} \boldsymbol{\beta}, \\
  \pi_i &= \text{expit}(\boldsymbol{ x}_i^{\top} \boldsymbol{ \beta}).
 \end{align*}
 So here the link function is 
@@ -1467,7 +1470,7 @@ In addition to binary data, we may consider count data, for which the random var
 
 Poisson regression assumes
 \begin{align*}
-Y_i &\sim \Po(\mu_i)\\
+Y_i &\sim \Po(\mu_i), \\
 \log(\mu_i) &= \boldsymbol{x}_i^{\top} \boldsymbol{\beta} ,\\
 \mu_i &= \exp( \boldsymbol{x}_i^{\top} \boldsymbol{\beta} ),\\
 \end{align*}
@@ -1478,17 +1481,17 @@ As a consequence, $\exp(\beta_k), (k=1,\ldots,p)$ can be interpreted as a multip
 If several observations share identical covariate values $\boldsymbol{x}_i$, then they can be combined into a single grouped Poisson response with outcome $Y_j = \sum_i Y_i$ and corresponding mean $\mu_j = \sum_i \mu_i$.
 
 
-## Generalized estimating equations {#GEEs}
+## Generalised estimating equations {#GEEs}
 ### Quasi-likelihood
 Quasi-likelihood is used to deal with overdispersion, which means that the variance of the outcome is greater than what is assumed by the model. For example, in a Poisson regression model we have the assumption $\Var(Y_i)=\E(Y_i)=\lambda_i$, but a more flexible quasi-likelihood model for the variance of $Y_i$ is  $\Var^*(Y_i)=\phi \cdot \lambda_i$. When $\phi>1$, there is overdispersion.
 
-The **score equation** in the ordinary generalized linear model is given by 
+The **score equation** in the ordinary generalised linear model is given by 
 \begin{equation}
 {S}(\boldsymbol{\beta}) = \sum_{i=1}^m \left(\frac{\partial {\mu}_i}{\partial
 \boldsymbol{\beta}}\right) \Var(Y_i)^{-1} (Y_i - \mu_i) = {0}. 
 (\#eq:ordscore)
 \end{equation}
-To increase flexibility, the quasi-likelihood approach considers the generalized estimating equation with some working variance function $\Var^*(Y_i)$.
+To increase flexibility, the quasi-likelihood approach considers the generalised estimating equation with some working variance function $\Var^*(Y_i)$.
 $$
 {S}^*(\boldsymbol{\beta}) = \sum_{i=1}^m \left(\frac{\partial {\mu}_i}{\partial
 \boldsymbol{\beta}}\right) {\Var}^*(Y_i)^{-1} (Y_i - \mu_i). 
@@ -1511,7 +1514,7 @@ We can estimate the dispersion parameter $\phi$ by $\hat{\phi}=W/(n-p),$ where $
 
 **Quasi-binomial**:
 
-In standard binomial regression with $n_i$ trials, the variance is $\Var(Y_i) = n_i \pi_i (1-\pi_i)$, where $\pi_i$ is the success probability. The quasi-binomial model generalizes this to
+In standard binomial regression with $n_i$ trials, the variance is $\Var(Y_i) = n_i \pi_i (1-\pi_i)$, where $\pi_i$ is the success probability. The quasi-binomial model generalises this to
 $$
 {\Var}^*(Y_i) = \phi \cdot n_i \pi_i (1-\pi_i),
 $$
@@ -1520,8 +1523,8 @@ again introducing a dispersion parameter $\phi$. This is particularly useful in 
 ### Multivariate quasi-likelihood
 For longitudinal data, a multivariate quasi-likelihood approach allows explicitly for correlation between observations made from the same individual.
 
-Recall in Appendix \@ref(GEE) Equation \@ref(eq:block) the weighted least-squares estimate is
-$$\widehat{\boldsymbol{\beta}}_{\boldsymbol{W}} = \left( \sum_{i=1}^m \boldsymbol{X}_i^{\top}\boldsymbol{W}_0 \boldsymbol{X}_i \right)^{-1} \sum_{i=1}^m \boldsymbol{X}_i^{\top}\boldsymbol{W}_0 \boldsymbol{Y}_i$$
+Recall in Appendix \@ref(GEE) Equation \@ref(eq:block) the weighted least squares estimate is
+$$\widehat{\boldsymbol{\beta}}_{\boldsymbol{W}} = \left( \sum_{i=1}^m \boldsymbol{X}_i^{\top}\boldsymbol{W}_0 \boldsymbol{X}_i \right)^{-1} \sum_{i=1}^m \boldsymbol{X}_i^{\top}\boldsymbol{W}_0 \boldsymbol{Y}_i,$$
 when the
 **working correlation matrix** $\boldsymbol{W}^{-1}$ is block-diagonal with entries $\boldsymbol{W}_0^{-1}$.
 
@@ -1532,9 +1535,9 @@ $\hat{\boldsymbol{\beta}}_{\boldsymbol{W}}$ can be seen as solution of the multi
 \end{equation}
 where $\boldsymbol{\mu}_i=\E(\boldsymbol{Y}_i)=\boldsymbol{X}_i \boldsymbol{\beta}$ and therefore $\left(\frac{\partial \boldsymbol{\mu}_i}{\partial\boldsymbol{\beta}}\right)=\boldsymbol{X}_i^{\top}$.
 
-The score function \@ref(eq:score) differs from the score equation in the ordinary generalized linear model (\@ref(eq:ordscore)) by replacing $\Var(Y_i)^{-1}$ with a weight $\boldsymbol{W}_0$.
+The score function \@ref(eq:score) differs from the score equation in the ordinary generalised linear model (\@ref(eq:ordscore)) by replacing $\Var(Y_i)^{-1}$ with a weight $\boldsymbol{W}_0$.
 
-The basic idea is to use the multivariate quasi-likelihood approach for non-normal data to take into account correlation between components of $Y_i$. Therefore, we have the **generalized estimating equation**
+The basic idea is to use the multivariate quasi-likelihood approach for non-normal data to take into account correlation between components of $Y_i$. Therefore, we have the **generalised estimating equation**
 \begin{equation}
 \boldsymbol{S}(\boldsymbol{\beta}) = \sum_{i=1}^m \left(\frac{\partial \boldsymbol{\mu}_i}{\partial
 \boldsymbol{\beta}}\right) \Cov(\boldsymbol{Y}_i)^{-1} (\boldsymbol{Y}_i - \boldsymbol{\mu}_i)=\boldsymbol{0}, 
@@ -1569,9 +1572,9 @@ p2 <- 0.9
 Therefore, correlation as a measure of association may not be optimal for binary variables. Alternatively, we can use the **marginal odds ratio**
 $$\OR(Y_1,Y_2) = \frac{\P(Y_1=1,Y_2=1)\P(Y_1=0,Y_2=0)}{\P(Y_1=1,Y_2=0)\P(Y_1=0,Y_2=1)}.$$
 
-## Generalized linear models with random effects {#GLMrand}
+## Generalised linear models with random effects {#GLMrand}
 
-Conditional on random effects $\boldsymbol{U}_i \sim \Nor_q(\boldsymbol{0}, \boldsymbol{G})$ , $Y_{ij}$ follows a generalized linear model with mean $$\mu_{ij} = \E(Y_{ij}) = h(\eta_{ij})$$ and linear predictor 
+Conditional on random effects $\boldsymbol{U}_i \sim \Nor_q(\boldsymbol{0}, \boldsymbol{G})$ , $Y_{ij}$ follows a generalised linear model with mean $$\mu_{ij} = \E(Y_{ij}) = h(\eta_{ij})$$ and linear predictor 
 $$ \eta_{ij}=\boldsymbol{x}_{ij}^T\boldsymbol{\beta}^* + \boldsymbol{d}_{ij}^T\boldsymbol{U}_i,$$
 where $\boldsymbol{\beta}^*$ are the conditional coefficients. In this conditional model, parameters estimation is based on the marginal distribution of $\boldsymbol{Y}_i$, which can be obtained through numerical integration.
 
@@ -1639,4 +1642,4 @@ title("Logit scale")
 
 ```
 
-Examples of a logistic regression with random effects can be found in \@ref(ch13logisticRand) and \@ref(ch14logisticRand).
+Examples of a logistic regression with random effects can be found in Sections \@ref(ch13logisticRand) and \@ref(ch14logisticRand).

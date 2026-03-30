@@ -5,7 +5,7 @@ We now consider diagnostic tests that report a continuous test result.
 ## Diagnostic accuracy measures
 
 ### ROC curve
-A threshold ("cut-off") $c$ can be used to dichotomize a continuous test result
+A threshold ("cut-off") $c$ can be used to dichotomise a continuous test result
 $Y$ into positive (if $Y \geq c$) or negative (if $Y < c$). 
 The sensitivity and specificity of continuous diagnostic tests
 depend on the threshold $c$: 
@@ -60,7 +60,7 @@ head(rocdata, 3)
 ```
 
 
-```{r genexpress, echo = FALSE, fig.cap = "Continuous diagnostic test for gene expression."}
+```{r genexpress, echo = FALSE, fig.cap = "Continuous diagnostic test for gene expression.",message=FALSE, warning=FALSE, fig.height=4}
 par(mfrow=c(1,2),pty="s")
 
 boxplot(controls, cases, names=rev(c("Cases", "Controls")), 
@@ -95,7 +95,7 @@ knitr::kable(selected_rows, digits = c(2, 1, 1, 1), label = NA,
 ```
 
 Figure \@ref(fig:ROC-col) then shows the standard ROC curve. 
-The right plot gives a colorized version that indicates the corresponding cut-off value as indicated in the color scale on the right. 
+The right plot gives a colorised version that indicates the corresponding cut-off value as indicated in the color scale on the right. 
 
 The following `R` code was used to produce Figure \@ref(fig:ROC-col):
 ```{r echo=TRUE, results='hide', fig.show='hide'}
@@ -114,7 +114,7 @@ abline(0, 1, lty = 2)
 ```
 
 
-```{r ROC-col, fig.cap = "Empirical ROC curve, uncolorized (left) and colorized (right).", echo = FALSE }
+```{r ROC-col, fig.cap = "Empirical ROC curve, uncolorised (left) and colorised (right).", echo = FALSE, fig.height=4}
 library(ROCR)
 pred <- prediction(predictions = rocdata$expr, 
                    labels = rocdata$case)
@@ -157,7 +157,7 @@ Most tests have values between 0.5 (useless test) and 1.0 (perfect test).
 
 
 
-The $\mbox{AUC}$ can be conveniently computed based on the normalized *Mann-Whitney U-Statistic*:
+The $\mbox{AUC}$ can be conveniently computed based on the normalised *Mann-Whitney U-Statistic*:
 
 
 ```{r echo=T, warning=FALSE}
@@ -230,14 +230,14 @@ the inverse $\logit$ function ("expit").
 A *bootstrap confidence interval* could also be used.
 The Wald and logit Wald confidence intervals 
 can be computed using the function `biostatUZH::confIntAUC()`
-and the boostrap confidence interval using `pROC::ci.auc()`.
+and the bootstrap confidence interval using `pROC::ci.auc()`.
 
 ```{r echo=T, include=FALSE}
 library(pROC)
 library(biostatUZH)
 ```
 
-```{r echo=T}
+```{r echo=T, warning=FALSE, message=FALSE}
 library(biostatUZH)
 (confIntAUC(cases=cases, controls=controls, conf.level = 0.95))
 
@@ -279,7 +279,7 @@ points(perf2@x.values[[1]], perf2@y.values[[1]], pch=19, cex=0.3)
 
 In this case, the Wald CI overshoots whereas logit Wald and bootstrap CIs do not:
 
-```{r echo=TRUE}
+```{r echo=TRUE, warning=FALSE, message=FALSE}
 # function in library(biostatUZH)
 (confIntAUC(cases=cases, controls=controls, conf.level = 0.95))
 
@@ -293,7 +293,7 @@ In this case, the Wald CI overshoots whereas logit Wald and bootstrap CIs do not
 ### Optimal cut-off
 
 A simple method to derive a cut-off for a continuous 
-diagnostic test is to maximize Youden's
+diagnostic test is to maximise Youden's
 index, see Equation \@ref(eq:Youden).  This cut-off
 corresponds to the point of the ROC
 curve that has maximal distance to the diagonal line.
@@ -301,7 +301,7 @@ curve that has maximal distance to the diagonal line.
 :::{.example #PSA}
 @Jen2020 conducted a study to assess the diagnostic performance of 
 prostate-specific antigen (PSA) corrected for sojourn time. 
-In order to maximize Youden's index, a cut-off value of 2.5 ng/ml
+In order to maximise Youden's index, a cut-off value of 2.5 ng/ml
 was chosen, for which the sensitivity was 75.3\% and 
 the specificity 85.2\%. 
 :::
@@ -313,7 +313,7 @@ of the optimal cut-off should account for the
 take into account the prevalence (Pre) of the disease. 
 
 :::{.definition}
-To minimize the overall cost, the *optimal cut-off* is where
+To minimise the overall cost, the *optimal cut-off* is where
 a straight line with slope 
 
 \begin{equation}
@@ -327,7 +327,7 @@ To find the optimal cut-off, a straight line with slope $b$
 is moved from the top left corner of the ROC curve, where sensitivity 
 and specificity are both equal to 1.
 The optimal cut-off is identified as the point where this line first
-intersects the ROC curve
+intersects the ROC curve.
 
 :::{.example #genexpr name="continued"}
 For example, if $\mbox{Pre}=10\%$ and $\mbox{Cost(fp)}/\mbox{Cost(fn)}=1/10$ 
@@ -377,7 +377,7 @@ For *paired samples*, a different formula based on
 differences of placement values should be used.
 The confidence interval for unpaired, respectively paired, samples
 can be calculated using `biostatUZH::confIntIndependentAUCDiff()`, 
-respectively `confIntIndependentAUCDiff()`.
+respectively `confIntPairedAUCDiff()`.
 
  
  
@@ -424,6 +424,6 @@ than Biomarker 2.
 ## Additional references
 @bland gives a gentle introduction to ROC curves in Chapter 20.6, see also 
 the Statistics Note by @SN_ROC. A comprehensive account of statistical aspects 
-of ROC curves can be found in @pepe (Chapter 4 and 5). 
+of ROC curves can be found in @pepe (Chapters 4 and 5). 
 The methods from this chapter are used in practice, for example, in the
 following studies: @turck, @cockayne, @brown, and @ikeda.

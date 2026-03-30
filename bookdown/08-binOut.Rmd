@@ -15,7 +15,7 @@ Throughout this section, we will work with the following example.
 The APSAC study is an RCT comparing a new thrombolytikum (APSAC) with the 
 standard treatment (Heparin) in patients with acute cardiac infarction [@meinertz].
 The outcome is mortality within 28 days of hospital stay. Table \@ref(tab:apsac) 
-summarizes the results of this study, including 95\% Wilson CIs for the 
+summarises the results of this study, including 95\% Wilson CIs for the 
 proportion of patients who died in the respective treatment groups.
 :::
 
@@ -44,8 +44,8 @@ data <- data.frame(
 )
 
 kable(data, caption = "Results of the APSAC study.", 
-      col.names = c("Therapy", "Dead", "Alive", "Total", "Percent Dead", 
-                    "Standard Error", "95% Wilson-CI"), label = NA) %>%
+      col.names = c("Therapy", "Dead", "Alive", "Total", "Percentage Dead", 
+                    "Standard Error", "95% Wilson CI"), label = NA) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),
                 full_width = F, position = "center")
 ```
@@ -109,20 +109,20 @@ points(p2*100, 1.3, col=2, pch=19)
 
 Commonly used tests to compare two proportions are the *$\chi^2$-test*
 and *Fisher's "exact" test* for small samples.  The null hypothesis in
-these tests is that there is no difference between groups.  Both
-methods give a $P$-value, but no effect measure. The $\chi^2$-test
+these tests is that "there is no difference between groups".  
+
+Both methods give a $P$-value, but no effect measure. The $\chi^2$-test
 computes the expected number of cases in each cell of the $2 \times 2$ table \@ref(tab:apsac) under the null hypothesis of no difference. The test statistic is
 $$    \chi^2 = \sum_{\text{all cells}} \frac{(\color{black}{\text{observed counts}} - {\color{black}{\text{expected counts}}})^2}{\color{black}{\text{expected counts}}}. $$
 The value of the test statistic is compared to a $\chi^2$-distribution with one degree of freedom to obtain a $P$-value.
 There is a second version of the $\chi^2$-test which uses a *continuity correction* to remove some bias in small samples:
 $$    \chi^2 = \sum_{\text{all cells}} \frac{(\abs{\color{black}{\text{observed counts}} - \color{black}{\text{expected counts}}} - \frac{1}{2})^2}{\color{black}{\text{expected counts}}}.$$
-It will give a slightly smaller value of $\chi^2$ and hence a slightly larger $P$-value.
+It will give a slightly smaller value of test statistic $\chi^2$ and hence a slightly larger $P$-value.
 There are also at least *three* different versions to calculate the *two-sided* $P$-value
 for Fisher's "exact" test (see the `R` package `exact2x2` for details).
 
 :::{.example #apsac name="continued"}
-The $\chi^2$-test and Fisher's exact test are applied to the APSAC study in the
- following `R` code:
+The $\chi^2$-test and Fisher's exact test are applied to the APSAC study using the following `R` code:
 :::
 
 ```{r echo=F}
@@ -136,15 +136,11 @@ APSAC.table <- matrix(c(9,153,19,132), ncol=2, byrow=T,
 print(APSAC.table)
 ## expected number of cases
 print(chisq.test(APSAC.table)$expected)
-
-## chi-squared test
+## Chi-squared test
 chisq.test(APSAC.table, correct=FALSE)
-
 ## Fisher's test
 fisher.test(APSAC.table)
 ```
-
-
 
 
 Note that the function `fisher.test()` also provides an estimate
@@ -170,7 +166,7 @@ print(SElogRR <- sqrt(sum(1/e)))
 printWaldCI(log(RR), SElogRR, FUN = exp)
 ```
 
-The formula for the standard error of the log relative risk given below in Section \@ref(sec:effectMeasures) is slightly more accurate and usually the preferred one.
+The formula for the standard error of the log relative risk given below in Section \@ref(sec:effectMeasures) is slightly more accurate and is usually the preferred one.
 
 
 ### Effect measures and confidence intervals{#sec:effectMeasures}
@@ -205,9 +201,9 @@ using Example \@ref(exm:apsac).
 #### Absolute Risk Reduction {-}
 
 The ARR is also called *risk difference* ($\RD$) or *probability difference*.
-The estimated ARR
+The estimated ARR is given by
 
-$$\widehat{\ARR} \ = \ 12.6\%-5.6\%=7\%$$
+$$\widehat{\ARR} \ = \ 12.6\%-5.6\%=7\%,$$
 
 with standard error
 
@@ -368,7 +364,7 @@ the absolute risk reduction scale, as illustrated in the following example.
 Figure \@ref(fig:NNTforest) shows a forest plot reproduced from @altman1998
 where an overall number needed to benefit is calculated from a
 meta-analysis of data from
-randomized trials comparing bypass surgery with coronary angioplasty in
+randomised trials comparing bypass surgery with coronary angioplasty in
 relation to angina in one year [@Pocock1995].
 For three studies (CABRI, RITA, EAST), the 95% confidence interval for NNT is a
 regular interval and includes only values that indicate a benefit of therapy.
@@ -379,7 +375,7 @@ trial is inconclusive regarding the direction of the treatment effect with
 large uncertainty regarding the actual value of NNT.
 :::
 
-```{r NNTforest, fig.cap="Forest plot for NNT (benefit = NNTB, harm = NNTH) in a meta-analysis. Figure reproduced from Figure 3 in @altman1998.", fig.align="center", fig.width = 9.5, echo = FALSE}
+```{r NNTforest, fig.cap="Forest plot for NNT (benefit = NNTB, harm = NNTH) in a meta-analysis, reproduced from Figure 3 in @altman1998.", fig.align="center", fig.width = 9.5, echo = FALSE}
 
 ## Reproducing figure from altman 1998
 
@@ -661,7 +657,7 @@ data <- data.frame(
 )
 
 # Create the table
-kable(data, escape = FALSE, booktabs = TRUE, col.names = c("", "Yes", "No", "Total", "Yes", "No", "Total"), caption = "Stratified contingency table", label = NA) %>%
+kable(data, escape = FALSE, booktabs = TRUE, col.names = c("", "Yes", "No", "Total", "Yes", "No", "Total"), caption = "Stratified contingency table.", label = NA) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"), full_width = F, position = "center") %>%
   add_header_above(c("", "Stratum 1" = 3, "Stratum 2" = 3)) %>%
   column_spec(2:7, border_left = TRUE)
@@ -681,7 +677,7 @@ data <- data.frame(
 )
 
 # Create the table
-kable(data, escape = FALSE, booktabs = TRUE, col.names = c("", "Yes", "No", "Total"), caption = "Collapsed contingency table",
+kable(data, escape = FALSE, booktabs = TRUE, col.names = c("", "Yes", "No", "Total"), caption = "Collapsed contingency table.",
       label = NA) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"), full_width = F, position = "center")
 ```
@@ -823,7 +819,7 @@ We cannot transform absolute to relative effect measures (and vice versa) withou
 ## Adjusting for baseline observations
 
 For binary outcomes, adjusting for baseline variables is usually done using *logistic regression* and will produce *adjusted odds ratios*. Alternatively, the *Mantel-Haenszel method* (MH) can be used, which
-gives a *weighted average* of strata-specific odds ratios. The MH method can also be applied to strata-specific risk ratios. However, adjustment for continuous variables using MH is only possible after suitable categorization.
+gives a *weighted average* of strata-specific odds ratios. The MH method can also be applied to strata-specific risk ratios. However, adjustment for continuous variables using MH is only possible after suitable categorisation.
 
 
 ### Logistic regression {#ch821}
@@ -855,29 +851,47 @@ print(puva)
 ```
 
 The unadjusted analysis can be performed as follows:
-```{r echo=T, results="asis"}
+```{r echo=T}
 m1 <- glm(cbind(cleared, total-cleared) ~ treatment,
           data=puva, family=binomial)
-## tableRegression gives profile confidence intervals
-knitr::kable(tableRegression(m1, latex = FALSE, xtable = FALSE))
 ```
 
+```{r echo=FALSE, results="asis"}
+## tableRegression gives profile confidence intervals
+knitr::kable(tableRegression(m1, latex = FALSE, xtable = FALSE),
+             caption = "Unadjusted analysis (model `m1`).")
+```
 
-The strata-specific estimates are obtained using:
-```{r echo=T, results="asis"}
+The strata-specific estimates for small and large plaque sizes are obtained using:
+```{r echo=TRUE}
 m2Small <- glm(cbind(cleared, total-cleared) ~ treatment,
           subset=(plaqueSize=="Small"), data=puva, family=binomial)
-knitr::kable(tableRegression(m2Small, latex = FALSE, xtable = FALSE))
-m2Large <- glm(cbind(cleared, total-cleared) ~ treatment,
-          subset=(plaqueSize=="Large"), data=puva, family=binomial)
-knitr::kable(tableRegression(m2Large, latex = FALSE, xtable = FALSE))
 ```
 
-Finally,  the adjusted analysis with logistic regression is:
-```{r echo=T, results="asis"}
+```{r echo=FALSE, results="asis"}
+knitr::kable(tableRegression(m2Small, latex = FALSE, xtable = FALSE),
+             caption = "Stratified analysis on small plaque size (`m2Small`).")
+```
+
+```{r echo=TRUE}
+m2Large <- glm(cbind(cleared, total-cleared) ~ treatment,
+          subset=(plaqueSize=="Large"), data=puva, family=binomial)
+```
+
+```{r echo=FALSE, results="asis"}
+knitr::kable(tableRegression(m2Large, latex = FALSE, xtable = FALSE),
+             caption = "Stratified analysis on large plaque size (`m2Large`).")
+```
+
+Finally, the adjusted analysis with logistic regression is:
+```{r echo=T}
 m3 <- glm(cbind(cleared, total-cleared) ~ treatment + plaqueSize,
           data=puva, family=binomial)
-knitr::kable(tableRegression(m3, latex = FALSE, xtable = FALSE))
+```
+
+```{r echo=F, results="asis"}
+knitr::kable(tableRegression(m3, latex = FALSE, xtable = FALSE),
+             caption = "Logistic regression analysis (`m3`).")
 ```
 
 
@@ -917,13 +931,13 @@ Sample size methods are available in the `R` function
 A clinical trial has been conducted to compare the drug auranofin with
 placebo for the treatment of rheumatoid arthritis [@Bombardier1986; @Lipsitz1994].
 Patients were
-randomized to one of the two treatments for the entire study.
+randomised to one of the two treatments for the entire study.
 The ordered response is the self-assessment of arthritis classified as
-(1) poor, (2) fair, or (3) good. Of the 303 randomized patients,
+(1) poor, (2) fair, or (3) good. Among the 303 randomised patients,
 299 were observed at both baseline and follow-up.
 :::
 
-Here is what the data at baseline and at follow-up looks like:
+Here is how the data at baseline and at follow-up looks like:
 
 ```{r, echo = FALSE}
 
@@ -979,11 +993,10 @@ and so, the proportional odds assumption is questionable.
 
 A proportional odds logistic regression yields:
 
-```{r, echo = TRUE}
+```{r, echo = TRUE, message=FALSE, warning=FALSE}
 library(MASS)
 ## polr: proportional odds logistic regression
 polr1 <- polr(followup ~ treatment, data=arthritis)
-
 print(s1 <- summary(polr1))
 ## odds ratio is exp of coefficient
 CoefTable <-  s1$coefficients
@@ -992,11 +1005,10 @@ printWaldCI(theta=CoefTable[1,"Value"], se=CoefTable[1,"Std. Error"], FUN=exp)
 
 Adjusting for baseline gives:
 
-```{r, echo = TRUE}
+```{r, echo = TRUE, message=FALSE}
 library(MASS)
 ## polr: proportional odds logistic regression
 polr2 <- polr(followup ~ treatment + baseline, data=arthritis)
-
 print(s2 <- summary(polr2))
 ## odds ratio is exp of coefficient
 CoefTable <-  s2$coefficients
@@ -1056,7 +1068,8 @@ Chi1 <- sum((observed-expected1)^2/expected1)
 output <- cbind(observed, round(expected, 1))[,c(1,4,2,5,3,6)]
 
 # Generate the table with specified rounding and alignment
-kable(output, digits = c(0, 1, 0, 1, 0, 1), align = "r", booktabs = TRUE) %>%
+kable(output, digits = c(0, 1, 0, 1, 0, 1), align = "r", booktabs = TRUE,
+      caption = "Comparison of observed and fitted counts for different covariate combination.") %>%
   add_header_above(c(" " = 1, "Poor follow-up" = 2, "Fair follow-up" = 2, "Good follow-up" = 2))
 
 Observed <- observed

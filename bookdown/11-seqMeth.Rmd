@@ -3,14 +3,14 @@
 
 ## Monitoring accumulating data
 
-Adequate evidence to settle which treatment is superior may have accumulated
+Adequate evidence to settle the question of which treatment is superior may have accumulated
 long before a clinical trial runs to its planned conclusion. 
 In this case, an ethical issue emerges: patients may 
 be receiving a treatment that could have been known to be inferior at the time
 of treatment. A solution is the application of *repeated significance tests*
 (RST) at several *interim analyses*, where a decision will be made whether 
 or not to stop the trial. For this, the Neyman-Pearson hypothesis test is 
-suitable. However, statistical issues emerge to ensure that the Type I error
+suitable. However, statistical issues emerge to ensure that the Type-I error
 rate $\alpha$ is maintained.
 
 ### Data monitoring committees
@@ -73,17 +73,17 @@ TypeIerror2 <- mean(sig2)
 
 "Group sequential" means that the data analysis is conducted in interim analyses after every successive group of $2n$ patients, for example $2n=20$ or $2n=30$. 
 Fixing a maximum number of $N$ groups, a trial is stopped at interim if the (two-sided) $P$-value is smaller than a pre-specified *nominal significance level* $\tilde \alpha$, or if $N$ groups of patients have been recruited.
-The nominal significance level $\tilde \alpha$ depends on the Type I error rate $\alpha$
+The nominal significance level $\tilde \alpha$ depends on the Type-I error rate $\alpha$
 and the number of groups $N$. Standard adjustments for multiple testing 
 are too conservative, since tests are based on accumulating data with 
 a specific dependence structure. 
 
 
-#### Pockock stopping rule {-}
+#### Pocock stopping rule {-}
 
 Using the same nominal significance level $\tilde \alpha$ for each test 
 is known as *Pocock stopping rule*. 
-The nominal significance level $\tilde \alpha$ depends on the Type I error 
+The nominal significance level $\tilde \alpha$ depends on the Type-I error 
 rate $\alpha$ and the number of groups $N$. Figure \@ref(fig:pocock) shows 
 how the nominal significance level decreases for increasing number of groups, 
 starting with an $\tilde \alpha$ of $5$\% for one group. For example, for 10 interim 
@@ -100,12 +100,11 @@ maxy <- 20
 :::{.example #stoppingbiaspocock}
  Remember the example on stopping bias (Figure \@ref(fig:stoppingbias)) where we 
  had accumulating data generated without a treatment effect.
-The data is now analyzed in `r n` groups of `r 2*m` patients. 
+The data are now analyzed in `r n` groups of `r 2*m` patients. 
  Figure \@ref(fig:fprate) shows `r maxy` selected profiles of the test statistic values based on the accumulating data and the false positive rate based on all 
  `r format(nsim, scientific=FALSE)` simulations. With the standard significance threshold (top plot), the false positive rate is 
-`r round(100*TypeIerror)`\%. The false positive rate is `r round(100*TypeIerror2)`\% with an adjusted significance threshold (bottom plot) using Pockock rule.
+`r round(100*TypeIerror)`\%. The false positive rate is `r round(100*TypeIerror2)`\% with an adjusted significance threshold (bottom plot) using Pocock rule.
 :::
-
 
 
 ```{r echo=FALSE}
@@ -145,7 +144,7 @@ jj <- jj+1
 par(las=1)
 mycol2 <- ifelse(myind==TRUE, 2, 1)
 mycol2o <- order(mycol2)
-matplot(time*m*2, myy[,mycol2o], ylim=c(-3.75, 3.75), type="b", lty=1, ylab="test statistic", xlab="Number of patients", xlim=c(0, 2*n*m), cex=0.75, pch=19, axes=FALSE, col=mycol[mycol2o])
+matplot(time*m*2, myy[,mycol2o], ylim=c(-3.75, 3.75), type="b", lty=1, ylab="Test statistic", xlab="Number of patients", xlim=c(0, 2*n*m), cex=0.75, pch=19, axes=FALSE, col=mycol[mycol2o])
 box()
 axis(2)
 val <- seq(0, 300, 60)
@@ -160,7 +159,7 @@ text(240, -3, paste(as.character(round(100*TypeIerror)), "% false positive"), co
 myindB <- (apply(abs(myy), 2, max)>threshold)
 mycolB <- ifelse(myindB==TRUE, "black", "grey")
 par(las=1)
-matplot(time*m*2, myy, ylim=c(-3.75, 3.75), type="b", lty=1, ylab="test statistic", xlab="Number of patients", xlim=c(0, 2*n*m), cex=0.75, pch=19, axes=FALSE, col=mycolB)
+matplot(time*m*2, myy, ylim=c(-3.75, 3.75), type="b", lty=1, ylab="Test statistic", xlab="Number of patients", xlim=c(0, 2*n*m), cex=0.75, pch=19, axes=FALSE, col=mycolB)
 box()
 axis(2)
 val <- seq(0, 300, 60)
@@ -177,7 +176,7 @@ text(240, -3, paste(as.character(round(100*TypeIerror2)), "% false positive"), c
 ```
 
 
-```{r echo=FALSE}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 ## numbers from Table 8.2 in Matthews
 N <- c(1,2,3,4,5,10,15,20)
 m <- c(3.242, 2.404, 2.007, 1.763, 1.592, 1.156, 0.956, 0.835)
@@ -194,7 +193,7 @@ colnames(resSel) <- c("$N$", "$\\tilde\\alpha$", "$n$", "$T$")
 ``` 
 
 
-```{r pocock, fig.cap = "Pocock stopping rule and Bonferroni correction as a function of the number of groups.", cache=TRUE, echo = FALSE}
+```{r pocock, fig.cap = "Pocock stopping rule and Bonferroni correction as a function of the number of groups.", cache=TRUE, echo = FALSE, message=FALSE, warning=FALSE}
 par(las=1)
 N <- c(1:20)
 res <- resZ <- numeric()
@@ -210,7 +209,7 @@ for(i in 2:length(N)){
 
 par(mfrow=c(1,2), 
     mar = c(5.1, 6, 4.2, 2.1))
-matplot(N, res, type="b", pch=19, lwd=2, ylim=c(0,.05), ylab="nominal significance level (two-sided)", xlab="number of groups", axes=FALSE)
+matplot(N, res, type="b", pch=19, lwd=2, ylim=c(0,.05), ylab="Nominal significance level (two-sided)", xlab="Number of groups", axes=FALSE)
 ## lines(N, 5/N, col=2, type="b", pch=19)
 lines(N, 0.05/N, col=4, type="b", pch=19)
 
@@ -228,7 +227,7 @@ box()
 ##lines(rep(10,2), c(1, res[10]), lty=2, col="black")
 points(10, res[10], col="red", pch=19)
 
-matplot(N, resZ, type="b", pch=19, lwd=2, ylim=c(1.9,3.2), ylab="threshold for z-value", xlab="number of groups", axes=FALSE, col=c(1,3))
+matplot(N, resZ, type="b", pch=19, lwd=2, ylim=c(1.9,3.2), ylab="Threshold for z-value", xlab="Number of groups", axes=FALSE, col=c(1,3))
 lines(c(1,10), rep(resZ[10], 2), lty=2, col="red")
 lines(rep(10,2), c(1, resZ[10]), lty=2, col="red")
 points(10, resZ[10], col="red", pch=19)
@@ -278,7 +277,7 @@ the significance threshold at the $j$-th interim analysis with $a_1$ very
 small and $a_j$ gradually increasing to $a_N$ close to $\alpha$. Three such
 stopping rules are shown in Table \@ref(tab:stoppingrulestbl) and Figure
 \@ref(fig:stoppingrules). 
-They all control the overall Type I error rate $\alpha=5\%$ with $N=5$ maximal 
+They all control the overall Type-I error rate $\alpha=5\%$ with $N=5$ maximal 
 interim analyses, except for the Haybittle-Peto approach which controls it only 
 approximately.
 
@@ -314,7 +313,7 @@ OBF <- c(5e-6 , 0.0013 , 0.0085 , 0.0228 , 0.0417)
 Fl <- c(0.0038, 0.0048, 0.0053, 0.0064, 0.0432)
 group <- c(1:5)
 
-matplot(group, 100*cbind(HP, Po, OBF, Fl), type="b", ylab="significance threshold (in %)", xlab="interim analysis", lty=1, pch=19, ylim=c(0,5))
+matplot(group, 100*cbind(HP, Po, OBF, Fl), type="b", ylab="Significance threshold (in %)", xlab="Interim analysis", lty=1, pch=19, ylim=c(0,5))
 abline(h=5, col=1, lty=3)
 legend("topleft", lty=1, col=c(1:4), legend=c("Haybittle-Peto", "Pocock", "O'Brien-Fleming", "Fleming"), lwd=1.5, pch=19, bg="white")
 ``` 
@@ -328,7 +327,7 @@ Here we only use `gsDesign`for relatively simple designs,
 but many more things are possible. An alternative is the `R` package 
 `rpact`. 
 
-```{r echo=TRUE}
+```{r echo=TRUE, warning=FALSE, message=FALSE}
 library(gsDesign)
 
 ## Pocock stopping rule
@@ -425,8 +424,8 @@ for(j in 1:nsim){
 
 par(las=1)
 what <- apply(thetahat, 2, mean, na.rm=TRUE)
-matplot(seq(1,10,1), cbind(what, bound), ylim=c(0.1, 1.2), ylab="effect size", pch=c(19, 17), xlim=c(0, n+1), col=c(1, "magenta"), 
-     xlab="interim analysis", axes=FALSE, type="p")
+matplot(seq(1,10,1), cbind(what, bound), ylim=c(0.1, 1.2), ylab="Effect size", pch=c(19, 17), xlim=c(0, n+1), col=c(1, "magenta"), 
+     xlab="Interim analysis", axes=FALSE, type="p")
 axis(1, at=seq(1, 10, 1))
 axis(2)
 box()
@@ -510,7 +509,7 @@ they were allocated to treatment.
 
 
 The ITT principle states: "Compare the groups as if they were formed by 
-randomization, regardless of what has happened subsequently to the patients" 
+randomisation, regardless of what has happened subsequently to the patients" 
 [@matthews, Section 10.3].
 Any other way of grouping the patients cannot guarantee balance at the start 
 of the treatment. Per-protocol or as-treated analyses are subject to possible

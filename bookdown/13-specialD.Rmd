@@ -1,24 +1,24 @@
 
 # Some special designs {#specialDesign}
 
-This chapter gives an introduction to some special randomized
-controlled trial designs. Cluster-randomized trials no longer
-randomize on individual (patient) level.  Equivalence and non-inferiority trials
+This chapter gives an introduction to some special randomised
+controlled trial designs. Cluster-randomised trials no longer
+randomise on individual (patient) level.  Equivalence and non-inferiority trials
 differ from superiority trials in the sense that the objective of the
 trial is no longer to show that the intervention is better than
 control, but to show that two treatments are equivalent or
 one is non-inferior to the other one, respectively.
 
-## Cluster-randomized trials
+## Cluster-randomised trials
 
-Up to now, we have seen randomization of patients. *Cluster-randomized trials* allocate groups of patients *en bloc* to the same treatment. 
+Up to now, we have seen randomisation of patients. *Cluster-randomised trials* allocate groups of patients *en bloc* to the same treatment. 
 
 :::{.example #gps}
 @kinmonth1998
 conducted an intervention study in primary care about whether additional training of 
 nurses and general practitioners (GPs) in a general practice improves the 
-care of patients with newly diagnosed type II diabetes mellitus. 
-In this study, $41$ practices were randomized to the *status quo* or to 
+care of patients with newly diagnosed Type-II diabetes mellitus. 
+In this study, $41$ practices were randomised to the *status quo* or to 
 receive additional training for their staff. 
 :::
 
@@ -29,17 +29,17 @@ The intraclass correlation coefficient, i.e.
 the correlation between outcomes within a cluster, needs to be taken into account.
 In the following, we discuss two methods of analysis. First, we consider a simple
 approach, which consists of constructing a
-*summary measure* for each cluster and then analyze these summary values.
+*summary measure* for each cluster and then analyse these summary values.
 Then, to analyse data on patient level, a *mixed model* formulation, 
 a regression model with cluster-specific random effects, is needed. 
-An alternative approach are so-called generalized estimating equations (GEEs). 
+An alternative approach are so-called generalised estimating equations (GEEs). 
 These methods will be applied to the following example:
 
 :::{.example #radiology}
 @oakeshott_etal1994, see also @SN_clusterAnalysis, report 
 on the effect of guidelines for radiological referral on the referral 
 practice of GPs where $17$ practices in the intervention group received
-guidelines and 17 control practices were not sent anything. Outcome 
+guidelines and 17 control practices were not sent anything. The outcome 
 measure was the percentage of x-ray examinations requested that conformed 
 to the guidelines. The data from the first 5 practices with and 
 without intervention are shown below:
@@ -84,10 +84,17 @@ the different cluster sizes (number of patients included per practice).
 ```{r echo=TRUE, results="asis"}
 result <- lm(Percentage ~ Group, data = CRT) 
 result.w <- lm(Percentage ~ Group, data = CRT, weight = Total)
-knitr::kable(tableRegression(result, xtable = FALSE))
-knitr::kable(tableRegression(result.w, xtable = FALSE))
 ``` 
 
+```{r echo=FALSE}
+knitr::kable(tableRegression(result, xtable = FALSE),
+             caption = "Unweighted linear regression analysis.")
+```
+
+```{r echo=FALSE}
+knitr::kable(tableRegression(result.w, xtable = FALSE),
+             caption = "Weighted linear regression analysis accounting for varying cluster sizes.")
+```
 
 
 #### Logistic regression with random effects {#ch13logisticRand}
@@ -188,8 +195,24 @@ The total number of patients receiving each treatment should then be
 n = \underbrace{\frac{ 2 \sigma^2 (u+v)^2}{ \Delta^2}}_{\scriptsize \mbox{standard RCT sample size}} \times \quad \underbrace{(1+ \rho(\bar n_c-1))}_{\scriptsize \mbox{design effect $D_{\mbox{eff}}$}}.
 \end{equation*}
 
-For example, suppose $\bar n_c=7$ and $\rho=0.5$, then $D_{\mbox{eff}} = 4$, 
-so 4-times as many patients are needed than for a standard RCT on patient-level. 
+
+
+
+This is an approximate formula, which assumes fairly large samle sizes and a negligible variation of the cluster size $\bar n_c$.
+An improved formula for the design effect is [@Julious] 
+\[
+D_{\mbox{eff}} = 1+ \rho((1 + {({\CV}_c})^2) \bar n_c-1)
+\]
+which also takes into account the coefficient of variation ${\CV}_c$ of the cluster sizes, defined as the standard deviation divided by the mean. 
+```{r echo=FALSE}
+rho <- 0.5
+CV <- 0.5
+nc <- 7
+Deff <- 1+rho*(nc-1)
+Deff2 <-  round(1+rho*((1+CV^2)*nc-1), 2)
+``` 
+
+For example, suppose $\bar n_c=`r nc`$ and $\rho=`r rho`$, then $D_{\mbox{eff}} = `r Deff`$, so 4-times as many patients are needed than for a standard RCT on patient-level. 
 
 If the number of patients
 
@@ -265,10 +288,8 @@ knitr::include_graphics("figures/tikz.png")
 
 ### Equivalence trials
 
-To assess equivalence, we compute a confidence interval at level $\gamma$ for the difference in the treatment means. The treatments are considered equivalent if both ends of the confidence interval lie within the pre-specified interval of equivalence $I=(-\delta, \delta)$. If this does not occur, then equivalence has not been established. The Type I error rate of this procedure is 
-
+To assess equivalence, we compute a confidence interval at level $\gamma$ for the difference in the treatment means. The treatments are considered equivalent if both ends of the confidence interval lie within the pre-specified interval of equivalence $I=(-\delta, \delta)$. If this does not occur, then equivalence has not been established. The Type-I error rate of this procedure is 
 $$\alpha \approx (1-\gamma)/2,$$
-
 as shown in Appendix \@ref(equiv).
 
 For $\gamma=90\%$, we have $\alpha\approx 0.05$ and for $\gamma=95\%$, we have  $\alpha\approx 0.025$.
@@ -288,8 +309,7 @@ level $\alpha$.
 :::{.example #fake}
 Remember Example \@ref(exm:sleep) about a  soporific drugs in terms of increase 
 in hours of sleep compared to control. While this trial was not planned as an 
-equivalence trial, let us suppose here the goal is to show equivalence at 
-margin of $\delta=0.5$ h. To make this scenario more reasonable, we simulate 
+equivalence trial, let us suppose that the goal is to show equivalence at a margin of $\delta=0.5$ hours. To make this scenario more reasonable, we simulate 
 new (fake) data. Independent of the group (drug administered), we simulate all 
 data from the same normal distribution with mean and variance estimated from
 the original data. You can see that there is less difference between the 
@@ -320,7 +340,7 @@ sleep$extra <- rnorm(n, mean=mymu, sd=mysd)
 
 library(beeswarm)
 par(mar = c(4,4,4,4), mfrow = c(1,1))
-beeswarm(extra ~ group, data = sleep, method = "center", ylab="increase in hours of sleep", xlab="", pch=16, cex=.75, xlim = c(0.5, 2.5), xaxt = "n", las = 1, lwd = lwds, main = "", col="red")
+beeswarm(extra ~ group, data = sleep, method = "center", ylab="Increase in hours of sleep", xlab="", pch=16, cex=.75, xlim = c(0.5, 2.5), xaxt = "n", las = 1, lwd = lwds, main = "", col="red")
 
 sleep$ID <- as.numeric(sleep$ID)
 
@@ -454,7 +474,7 @@ text(0,-2,"confidence interval for difference in means",cex=1.5,font=2,pos=1)
 
 
 Consider the hypotheses $H_0: \abs{\Delta} > \delta$ versus
-$H_1: \abs{\Delta} \leq \delta$. The Type I error rate is calculated for $\Delta = \delta$. 
+$H_1: \abs{\Delta} \leq \delta$. The Type-I error rate is calculated for $\Delta = \delta$. 
 The power $1-\beta$ is computed at the center $\Delta=0$ of $H_1$.
 Appendix \@ref(equiv) shows that the required sample size in each group then is:
 
@@ -470,7 +490,7 @@ Table \@ref(tab:3designstab) (third column) compares the sample sizes of the dif
 
 
 :::{.example #holland}
-@holland2017 conducted a randomized, controlled equivalence trial to 
+@holland2017 conducted a randomised, controlled equivalence trial to 
 assess whether home-based pulmonary rehabilitation was equivalent to center-based
 pulmonary rehabilitation. The primary outcome was the change in the 6 min walk distance test (6MWD). 
 The paper states: "Sample size calculations indicated that 144 participants were required to be 80% sure that the 95% CI excluded a difference in the change in 
@@ -506,7 +526,7 @@ To assess non-inferiority, just perform one of the two TOST tests, say
 
 $$H_0: \Delta < - \delta \mbox{ vs. } H_1: \Delta \geq  - \delta.$$
 
-A one-sided superiority trial corresponds to $\delta=0$. The alternative procedure based on confidence intervals computes a confidence interval at level $\gamma$ and rejects $H_0$ of inferiority if the upper bound is smaller than $\delta$. The Type I error rate is $\alpha = (1-\gamma)/2$.  
+A one-sided superiority trial corresponds to $\delta=0$. The alternative procedure based on confidence intervals computes a confidence interval at level $\gamma$ and rejects $H_0$ of inferiority if the upper bound is smaller than $\delta$. The Type-I error rate is $\alpha = (1-\gamma)/2$.  
 
 
 The sample size (per group) is now
@@ -577,11 +597,11 @@ treated with antibiotics in primary care practice, despite mainly viral
 etiology. Procalcitonin (PCT) is a biomarker to diagnose bacterial infections.
 The PARTI trial [@briel2008] compares PCT-guided antibiotics use (decision depends on the value of the measured biomarker) versus standard of care. The hypothesis is that PCT-guided antibiotics are non-inferior to standard of care (non-inferiority trial).
 
-The study cohort consists of 458 patients with ARTI. The primary endpoint was the number of days with restrictions due to ARTI. Patients were interviewed 14 days after randomization and the non-inferiority margin is $\delta = 1$ day. Results
+The study cohort consists of 458 patients with ARTI. The primary endpoint was the number of days with restrictions due to ARTI. Patients were interviewed 14 days after randomisation and the non-inferiority margin is $\delta = 1$ day. Results
 showed that the mean increase in days with restriction with PCT-guided therapy was
-0.14 , with 95% CI (from - 0.53 to 0.81 days) entirely below the margin $\delta = 1$.
+0.14, with 95% CI (from - 0.53 to 0.81 days) entirely below the margin $\delta = 1$.
 
-The main secondary endpoint was the proportion of antibiotics prescriptions where the PCT arm is hypothesized to be superior. The results were that 58/232 (`r (100*58/232)`\%) patients with PCT-guided therapy and 219/226 (`r round(100*219/226, 0)`\%) patients with standard therapy received antibiotics. This is a substantial reduction of antibiotics use with PCT-guided therapy of `r round(100*(219/226 - 58/232), 0)`\% (95\% CI: 66\% to 78\%).
+The main secondary endpoint was the proportion of antibiotics prescriptions where the PCT arm is hypothesised to be superior. The results were that 58/232 (`r (100*58/232)`\%) patients with PCT-guided therapy and 219/226 (`r round(100*219/226, 0)`\%) patients with standard therapy received antibiotics. This is a substantial reduction of antibiotics use with PCT-guided therapy of `r round(100*(219/226 - 58/232), 0)`\% (95\% CI: 66\% to 78\%).
 :::
 
 
@@ -592,11 +612,11 @@ A more recent example of a non-inferiority trial is the study by
 
 ## Additional references
 
-Cluster-randomization is discussed in @bland (Sections 2.12, 10.13 and 18.8),
-equivalence and cluster-randomized trials in @matthews (Sections 11.5--11.6). 
+Cluster-randomisation is discussed in @bland (Sections 2.12, 10.13 and 18.8),
+equivalence and cluster-randomised trials in @matthews (Sections 11.5--11.6). 
 The Statistics Notes 
 @SN_clusterRCTs, @SN_clusterAnalysis, @SN_clusterICC, @SN_clusterSS discuss 
-different aspects of cluster-randomized trials.
+different aspects of cluster-randomised trials.
 Studies where the special designs from this chapter are used in practice are for 
 example @butler2013, @burgess2005, @lovell2006. 
 

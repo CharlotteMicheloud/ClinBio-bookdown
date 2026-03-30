@@ -1,7 +1,7 @@
 # Meta-analysis 
 Results from a single study are not sufficient to detect or exclude a
 relevant effect of a new therapy. Meta-analysis describes statistical
-techniques to summarize the effect estimates obtained from several
+techniques to summarise the effect estimates obtained from several
 independent studies on the same research question [@Schmid_etal2021].
 The studies
 included in a meta-analysis are usually the result of a systematic
@@ -16,20 +16,20 @@ literature review.  This is usually done with a literature search with
 pre-defined search terms in a database such as *MEDLINE*. Results from
 unpublished studies may also be included, if they are available from platforms
 such as *clinicaltrials.gov*. The goal of a subsequent
-meta-analysis is to summarize the results from a number of clinical
+meta-analysis is to summarise the results from a number of clinical
 studies on the same research question. A
 systematic review with subsequent meta-analysis proceeds as follows:
 
 1. Systematically review the available evidence.
 2. Provide quantitative summaries of the results from each study.
 3. Combine these results across studies, if appropriate (meta-analysis).
-4. Provide summary effect estimate. 
+4. Provide a summary effect estimate. 
 
 This is the basis of evidence-based medicine (EBM).
 The studies included in a systematic review should be sufficiently
 homogeneous regarding in- and exclusion criteria and should use the
 same effect measure. A typical effect measure for continuous
-outcomes is the (standardized)
+outcomes is the (standardised)
 difference in means $\theta$ between treatment groups.
 For binary/time to event outcomes, relative treatment
 effects are preferred, such as relative risk $\RR$, odds ratio $\OR$
@@ -152,7 +152,7 @@ randomEffectsCiPlot <- with (ciData,
                                       panel = panel.ci,
                                       lx = low, ux = up,
                                       pch = 19, col = farbe,
-                                      xlim = c (-3, 3), xlab = "Log Odds Ratio",
+                                      xlim = c (-3, 3), xlab = "Log odds ratio",
                                       scales = list (cex = 1)
                                       )
                              )
@@ -217,7 +217,7 @@ forest(meta1, comb.fixed = TRUE, comb.random = TRUE)
 ``` 
 
 
-```{r preeclampsiaMA, fig.cap = "Results with forest plot from package meta for a fixed effect analysis in Example \\@ref(exm:preeclampsia)", echo = FALSE, fig.height=7.5, fig.width=9.75}
+```{r preeclampsiaMA, fig.cap = "Results with forest plot from package `meta` for a fixed effect analysis in Example \\@ref(exm:preeclampsia). ", echo = FALSE, fig.height=4.5, fig.width=9.75}
 library(meta)
 meta1 <- metabin(event.e = treatedPre, n.e = treatedTot, 
                  event.c = controlPre, n.c = controlTot, 
@@ -244,7 +244,7 @@ ci.random <- c(or.lower, or.upper)
 Under the homogeneity assumption, we have
 
 \begin{equation*}
-Q = \sum w_i (\hat \theta_i - \hat \theta)^2 \sima \chi^2_{n-1}
+Q = \sum w_i (\hat \theta_i - \hat \theta)^2 \sima \chi^2_{n-1}.
 \end{equation*}
 
 This can be used to calculate the $P$-value of 
@@ -351,7 +351,7 @@ against tuberculosis.
 The meta-analysis can be performed with the function 
 `meta::metabin()`: 
 
-```{r, fig.height=7.5, fig.width=11, echo = TRUE}
+```{r, fig.height=4.5, fig.width=11, echo = TRUE, fig.cap="Forest plot for meta-analysis."}
 meta1 <- metabin(event.e = tpos, n.e = tpos + tneg,
 event.c = cpos, n.c = cpos + cneg, data=dat.bcg, sm = "RR",
 method = "Inverse", studlab = paste(author, year))
@@ -361,14 +361,14 @@ forest(meta1)
 The cumulative meta-analysis can be performed with the function 
 `meta::metacum()`: 
 
-```{r, fig.height=7.5, fig.width=11, echo = TRUE}
+```{r, fig.height=4.5, fig.width=11, echo = TRUE, fig.cap="Forest plot for cumulative meta-analysis."}
 forest(metacum(meta1, pooled="random"))
 ```
 
 
 ### Meta-regression
 A meta-regression tries to explain heterogeneity with study-specific 
-covariates. The visualization can be done with bubble plots. 
+covariates. The visualisation can be done with bubble plots. 
 
 :::{.example #bcg name="continued"}
 In the `dat.bcg` dataset, the covariable `ablat` gives the absolute 
@@ -384,10 +384,10 @@ print(mr1 <- metareg(x=meta1, formula="ablat"))
 
 The function `meta::bubble()` produces the bubble plot. 
 
-```{r, echo = TRUE}
+```{r, echo = TRUE, fig.cap="Bubble plot for meta-regression."}
 par(las=1)
 bubble(mr1, lwd = 2, col.line = "blue", studlab=TRUE, xlim=c(-5, 60),
-       cex.studlab=0.7, ylim=c(0.15, 1.8))
+       cex.studlab=0.7, ylim=c(0.15, 1.8), ylab = "Risk ratio")
 ```
 
 
@@ -409,11 +409,10 @@ Funnel plots and tools for meta-analysis in `R` are provided by the packages `me
 
 
 
-```{r preeclampsiaFunnel, fig.cap = "Funnel plot for preeclampsia data from Example \\@ref(exm:preeclampsia)", echo=FALSE}
+```{r preeclampsiaFunnel, fig.cap = "Funnel plot for preeclampsia data from Example \\@ref(exm:preeclampsia).", echo=FALSE}
 par(las = 1)
-funnel(meta1)
+funnel(meta1, xlab = "Risk ratio", ylab = "Standard error")
 ``` 
-
 
 
 :::{.example #tobacco}
@@ -421,13 +420,11 @@ funnel(meta1)
 :::
 
 
-
-
 ```{r smokingFunnel, fig.cap = "Funnel plot of results in the meta-analysis about risk of lung cancer from passive smoking by @hackshaw1998.", echo=FALSE}
 ps <- read.table("data/passive_smoking.txt", header=TRUE)
 mymeta <- metagen(TE=lnRR, seTE=selnRR, data=ps)
 par(las=1)
-funnel(mymeta, xlab="log odds ratio")
+funnel(mymeta, xlab="Log odds ratio", ylab = "Standard error")
 ``` 
 
 Smaller studies tend to show greater effects, so there is some asymmetry. However, only visual inspection is not enough to decide if it is real bias or due to chance.
@@ -451,7 +448,7 @@ Figure \@ref(fig:trimfillStroke) illustrates the trim-and-fill method for 11 stu
 
 
 ```{r trimfillStroke, echo=FALSE, fig.cap="Trim-and-fill method in Example \\@ref(exm:stroke). The black circles represent the 11 observed studies whereas the red studies on the left are imputed, based on symmetrically mirroring the trimmed studies on the right.", out.width='\\textwidth'}
-knitr::include_graphics("figures/fig-trimfill05.pdf")
+knitr::include_graphics("figures/fig-trimfill05.png")
 ```
 
 ```{r ch8, echo=FALSE, results='hide'}
@@ -520,7 +517,7 @@ library(gplots)
 par(mar=c(6,7,1,1), mgp=c(5,1.5,0), cex.axis=2, cex.lab=2.5, las=1)
 d <- as.matrix(read.table("data/data2_hackshaw.txt", header = TRUE))
 funnel(d[,1],d[,2], xlim=c(-1.5,1.5), pch=19, 
-       xlab="log odds ratio", ylab="Standard error", 
+       xlab="Log odds ratio", ylab="Standard error", 
        cex=2, level=0.95, yaxis="sei")
 ```
 
@@ -532,7 +529,7 @@ sum_trim_d <- summary(trim_d)
 layout(matrix(c(1,2),2,1), heights=c(3,1))
 par(mar=c(6,7,1,1), mgp=c(5,1.5,0), cex.axis=2, cex.lab=2.5, las=1)
 funnel(trim_d, pch=ifelse(trim_d$trimfill, 16, 16), cex=2,col=ifelse(trim_d$trimfill, 2, 1),
-            level=0.95, comb.fixed=FALSE, xlab="log odds ratio", ylab="Standard error", yaxis="se")
+            level=0.95, comb.fixed=FALSE, xlab="Log odds ratio", ylab="Standard error", yaxis="se")
 plotCI(sum_meta_d$random$TE, 0, ui=sum_meta_d$random$upper, li=sum_meta_d$random$lower, cex=2, bty="n", xlim=c(-3,3), 
      xlab="Effect size", err="x", pch=23, lwd=2, yaxt="n", ylim=c(-1,1), 
     ylab="", sfrac=0.03, gap=0.8, pt.bg=1)
@@ -551,7 +548,7 @@ Results from the trim-and-fill method are shown in Figure \@ref(fig:trimfillSmok
 library(meta)
 ps <- read.table("data/passive_smoking.txt", header = TRUE) 
 funnel(ps$lnRR,ps$selnRR,level=0.95, comb.fixed=TRUE, pch=19, 
-       xlab="log relative risk", ylab="standard error")
+       xlab="Log relative risk", ylab="Standard error")
 ```
 
 
@@ -581,7 +578,7 @@ kable(
 
 
 ```{r trimfillSmoking, echo=FALSE, fig.cap="Trim-and-fill method in the passive smoking Example \\@ref(exm:tobacco).", fig.align='center', out.width='\\textwidth'}
-knitr::include_graphics("figures/fig-trimfill07.pdf")
+knitr::include_graphics("figures/fig-trimfill07.png")
 ```
 
 
@@ -593,7 +590,7 @@ performed.
 Popular methods are Begg's rank correlation method or Egger's test (weighted regression).
 
 #### Begg's rank correlation test {-}
-Begg's rank correlation test computes standardized treatment estimates
+Begg's rank correlation test computes standardised treatment estimates
 
 \begin{equation*}
 \theta_i^*=\frac{\theta_i-\hat{\theta}}{\sqrt{v_i^*}},
@@ -639,13 +636,13 @@ library(biostatUZH)
 knitr::kable(tableRegression(egger1, latex = FALSE, xtable = FALSE))
 ``` 
 
-Figure \@ref(fig:smokingEgger) shows a visualization of Egger's weighted regression in the passive smoking example.
+Figure \@ref(fig:smokingEgger) shows a visualisation of Egger's weighted regression in the passive smoking example.
   
 
-```{r smokingEgger, fig.cap = "Visualization of Egger's weighted regression in the passive smoking example.", echo=FALSE}
+```{r smokingEgger, fig.cap = "Visualisation of Egger's weighted regression in the passive smoking example.", echo=FALSE}
 theta.hat <- mean(theta, weight=w)
 par(las=1)
-plot(s, theta, ylim=c(-0.3,1.25), pch=16, xlab="standard error", ylab="log relative risk")
+plot(s, theta, ylim=c(-0.3,1.25), pch=16, xlab="Standard error", ylab="Log relative risk")
 abline(egger1, col=2)
 lines(s,predict(egger1, interval="confidence")[,2], col=2, lty=2)
 lines(s,predict(egger1, interval="confidence")[,3], col=2, lty=2)

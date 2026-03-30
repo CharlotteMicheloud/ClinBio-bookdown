@@ -7,7 +7,7 @@ subgroup of patients. Multiplicity issues arise if there are more than
 one subgroup-defining variable.
 
 In addition, multiplicity issues also arise if more than one outcome
-are considered in a randomized trial. 
+are considered in a randomised trial. 
 Here we describe methods that adjust the
 outcome-specific $P$-values and multivariate methods
 which combine the different outcomes in a single analysis. 
@@ -75,7 +75,7 @@ data <- data.frame(
 kable(data, booktabs = TRUE, 
       col.names = c("", "Supplement", "Placebo", "Supplement", "Placebo"),
       align = 'c', label = NA, 
-      caption = "Summary-level data for the Neonatal Hypocalcemia Trial [@Cockburn1980]") %>%
+      caption = "Summary-level data for the Neonatal Hypocalcemia trial [@Cockburn1980].") %>%
   add_header_above(c(" " = 1, "Breast-fed" = 2, "Bottle-fed" = 2)) %>%
   kable_styling(latex_options = c("hold_position"))
 ```
@@ -88,8 +88,6 @@ mean <- c(2.445, 2.408, 2.300, 2.195)
 var <- c(0.0853, 0.0987, 0.0752, 0.1018)
 se <- sqrt(var/n)
 ```
-
-
 
 
 #### Test for interaction {-}
@@ -148,8 +146,8 @@ based on an informal comparison of the $P$-values in each subgroup. As
 shown in Figure \@ref(fig:hypocalcemiafig), for breast-fed and bottle-fed
 babies we obtain $p=0.44$ and $p=0.0002$, respectively, so one may
 argue that the two $P$-values are very different and conclude that
-there is a subgroup difference. However, this constitutes an erroneous
-and flawed reasoning.  This becomes obvious in the following example:
+there is a subgroup difference. However, this constitutes of an erroneous
+and flawed reasoning. This becomes obvious in the following example:
 Suppose the effect estimates in the two groups are identical but the
 sample sizes are different such that one of the subgroups has a
 significant treatment effect whereas the treatment effect is
@@ -190,7 +188,7 @@ ui <- upper
 
 par(mar = c(4, 6, 4, 1), las = 1)
 plotCI(x=myx, y=c(1,2), ui=ui, li=li, col="blue", barcol="blue", lwd=1, err='x', axes=F, xlab="Treatment effect", ylab="", ylim=c(0.5,2.5), pch=19, xlim=c(-.07, 0.23))
-axis(2, at=c(1,2), label=c("breast-fed", "bottle-fed"))
+axis(2, at=c(1,2), label=c("Breast-fed", "Bottle-fed"))
 axis(1)
 lines(rep(0,2), c(0,3), lty=2)
 myn <- c(n[1]+n[2], n[3]+n[4])
@@ -318,8 +316,7 @@ kable(df, booktabs = TRUE, escape = FALSE,
 
 
 
-
-```{r tamoxifen, fig.cap = "Treatment effects with confidence intervals for each subgroup in the National Surgical Adjuvant Breast and Bowel Project Trial.", echo=F, warning=FALSE, fig.height=3, fig.width=5.5}
+```{r tamoxifen, fig.cap = "Treatment effects with confidence intervals for each subgroup in the National Surgical Adjuvant Breast and Bowel Project Trial.", echo=F, warning=FALSE, fig.height=3, fig.width=5.5, message=FALSE}
 library(gplots) 
 
 eff <- rd
@@ -343,7 +340,7 @@ lines(rep(0,2), c(0,5), lty=2)
 ```
 
 
-```{r echo=FALSE}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 ## data
 rd <- c(0.163, -0.114, -0.047, -0.151)
 rd.se <- c(0.0788, 0.0689, 0.0614, 0.0547)
@@ -397,13 +394,13 @@ secondary outcomes, but this is not always required [@ich1999statistical].
 
 
 :::{.example #didgeridoo2}
-Additionally to the primary endpoint (Epworth scale), the Didgeridoo Study 
+In addition to the primary endpoint (Epworth scale), the Didgeridoo Study 
 (see Example \@ref(exm:didgeridoo)) had also secondary endpoints:
 :::
 
--  Pittsburgh quality of sleep index (range 0-21)
--  Partner-rating of sleep disturbance (range 0-10)
--  Apnoea-hypopnoea index (range 0-36)
+-  Pittsburgh quality of sleep index (range 0-21),
+-  Partner-rating of sleep disturbance (range 0-10),
+-  Apnoea-hypopnoea index (range 0-36).
 
 
 Figure \@ref(fig:didgeridooBaselineFU) shows the baseline and follow-up (4 months) measurements for the primary and secondary outcomes, compared between the treatment and control group. Change score analyses (using two-sample $t$-tests) have been performed for each of these outcomes, see Table \@ref(tab:didgeridooeffects) or also the published results
@@ -420,7 +417,7 @@ alphorn$treatment <- abs(alphorn$group-1)
 ```
 
 
-```{r didgeridooBaselineFU, fig.cap = "Baseline and follow-up measurements for primary and secondary outcomes in the Didgeridoo Study.", echo=F, warning=FALSE}
+```{r didgeridooBaselineFU, fig.cap = "Baseline and follow-up measurements for primary and secondary outcomes in the Didgeridoo study.", echo=F, warning=FALSE}
 attach(alphorn, warn.conflicts = FALSE)
 x1<-alphorn[group==0,17:18]
 y1<-alphorn[group==1,17:18]
@@ -431,7 +428,7 @@ y3<-alphorn[group==1,20:21]
 x4<-alphorn[group==0,26:27]
 y4<-alphorn[group==1,26:27]
 
-names<-c("didgeridoo","control")
+names<-c("Didgeridoo","Control")
 ylab<-c("Epworth scale","Pittsburgh index",
 "Partner rating","Apnoea index")
 
@@ -584,13 +581,13 @@ myoutput4 <- data.frame(
   Estimate = round(D, 1),
   SE = round(SE * SD, 1),
   `t-value` = round(t, 1),
-  `p-value` = as.character(formatPval(p, digits = 2)), 
+  `P-value` = as.character(formatPval(p, digits = 2)), 
   check.names = FALSE
 )
 
 # Print table using kable and kableExtra
 kable(myoutput4, digits = c(1, 1, 1, 1, 2),
-      caption = "Treatment effects for primary and secondary endpoints in the Didgeridoo Study using change score analyses.",
+      caption = "Treatment effects for primary and secondary endpoints in the Didgeridoo study using change score analyses.",
       booktabs = TRUE, escape = FALSE, caption.placement = "top", 
       label = NA) %>%
   kable_styling(latex_options = "striped", full_width = FALSE)
@@ -598,20 +595,17 @@ kable(myoutput4, digits = c(1, 1, 1, 1, 2),
 
 ``` 
 
-
 The next subsections explain two different approaches to prevent multiplicity problems: $P$-value adjustments and multivariate methods. 
-
 
 
 ### Adjusting for multiplicity
 
-The problem with multiple outcomes is that the chance that at least one of them 
-will provide a false significant result will be larger than the nominal 
+The problem with multiple outcomes is that the probability that at least one will provide a false significant result is greater than the nominal 
 $\alpha$ level. Several adjustments for this are described in the following. 
 
 :::{.definition}
 The *family-wise error rate* (FWER) is the probability of at least one false significant result.
-If $k>1$ outcomes are considered, the FWER will be larger than the Type I error rate $\alpha$. Under independence, we have
+If $k>1$ outcomes are considered, the FWER will be larger than the Type-I error rate $\alpha$. Under independence, we have
 :::
 
 \begin{equation*}
@@ -620,17 +614,18 @@ If $k>1$ outcomes are considered, the FWER will be larger than the Type I error 
 
 For small $k$, the FWER under independence is close to the *Bonferroni bound* $k \cdot \alpha$, which is an upper bound on the FWER obtained by applying the Bonferroni inequality, as shown in Figure \@ref(fig:FWER). 
 
-```{r FWER, fig.cap = "Family-wise error rate (FWER) under independence of the outcomes for a type I error rate $\\alpha = 0.05$ (black line) compared to the Bonferroni bound (green dotted line) as functions of the number of outcomes $k$.", echo=F, fig.height=4}
+```{r FWER, fig.cap = "Family-wise error rate (FWER) under independence of the outcomes for a Type-I error rate $\\alpha = 0.05$ (black line) compared to the Bonferroni bound (green dotted line) as functions of the number of outcomes $k$.", echo=F, fig.height=4}
+library(latex2exp)
 k=c(1:50)
 alpha <- 0.05
 FWER <- 1-(1-alpha)^k
 par(las=1)
-plot(k, FWER, type="l", ylim=c(0,1), xlab="number of outcomes k", axes=FALSE, lwd=1.5)
+plot(k, FWER, type="l", ylim=c(0,1), xlab=TeX(r"(Number of outcomes $k$)"), axes=FALSE, lwd=1.5)
 axis(2)
 box()
 val <- c(1, 10, 20, 30, 40, 50)
 axis(1, at=val, as.character(val))
-text(45, 0.1, "alpha = 0.05")
+text(45, 0.1, TeX(r"($\alpha$ = 0.05)"))
 abline(h=0.05, lty=2)
 points(4, FWER[4], col=2, pch=19)
 text(15, 0.2, paste("k=4, FWER=0.19"), col=2)
@@ -647,7 +642,7 @@ The *Bonferroni method* compares the $P$-values $p_1, \ldots, p_k$, obtained fro
 
 
 :::{.example #didgeridoo2 name="continued"}
-In the Didgeridoo Study, there is still evidence for a treatment effect after Bonferroni adjustments:
+In the Didgeridoo study, there is still evidence for a treatment effect after Bonferroni adjustments:
 :::
 
 ```{r echo=FALSE}
@@ -708,7 +703,10 @@ k \cdot p_{(1)} \leq \alpha, \mbox{ or }  k/2 \cdot p_{(2)} \leq \alpha ,  \ldot
 p_{(k)} \leq \alpha.
 \]
 
-Variations of it are the @Hochberg1988 and @Hommel1988 method.
+If the $p$-values are independent, then the procedure has overall Type-I error rate of $\alpha$. 
+In the general case, this procedure is not necessarily conservative, but has Type-I error rate close to $\alpha$ for a wide variation of correlation patterns, in contrast to Bonferroni's method [@matthews]. 
+Variations of Simes' method are the @Hochberg1988 and @Hommel1988 method.
+
 
 
 :::{.example #didgeridoo2 name="continued"}
@@ -736,7 +734,7 @@ bonferroni <- rep(k, k)
 holm <- seq(k, 1, -1)
 simes <- k/seq(1:k)
 par(las=1)
-matplot(rank, cbind(bonferroni, holm, simes), type="b", lty=1, lwd=2, xlab="rank of p-value", ylab="multiplicative factor", axes=FALSE, ylim=c(1,k), pch=19)
+matplot(rank, cbind(bonferroni, holm, simes), type="b", lty=1, lwd=2, xlab="Rank of p-value", ylab="Multiplicative factor", axes=FALSE, ylim=c(1,k), pch=19)
 # title(paste("Multiplicative factors for ", as.character(k), " p-values", sep=""))
 myseq <- seq(1, k, 2)
 axis(1, at=myseq, as.character(myseq))
@@ -769,7 +767,6 @@ To obtain multiplicity-adjusted $P$-values, the ordinary $P$-values are multipli
   only knowledge of the number of $P$-values.
 
 
-
 ### Multivariate methods
 
 Multiplicity issues can also be avoided by considering the whole $k$-dimensional 
@@ -777,7 +774,7 @@ outcome vector simultaneously rather than separately.
 
 #### Hotelling's $T$-test {-}
 
-If all outcomes are continuous, then *Hotelling's $T$-test*, a generalization 
+If all outcomes are continuous, then *Hotelling's $T$-test*, a generalisation 
 of the $t$-Test, could be used.
 But this test accepts deviations from the null hypothesis in any direction, 
 so typically lacks power.
@@ -787,8 +784,7 @@ Hotelling's $T$-test for the Didgeridoo study:
 :::
 
 
-
-```{r echo=TRUE}
+```{r echo=TRUE, message=FALSE, warning=FALSE}
 library(Hotelling)
 print(hot.test <- hotelling.test(ep + pi + pa + ap ~ group, 
                                  data=alphorn))
@@ -799,7 +795,7 @@ print(hot.test <- hotelling.test(ep + pi + pa + ap ~ group,
 
 Under the assumption that all outcomes are continuous and are orientated in the same direction, the following procedure can be used to combine multiple outcomes into one summary score:
 
-1.  Standardize endpoints separately to a common scale:
+1.  Standardise endpoints separately to a common scale:
 \[
 \mbox{$z$-score} = {(\mbox{Observation} - \mbox{M})}/{\mbox{SD}},
 \]
@@ -869,7 +865,7 @@ $P$-value from the summary score analysis ($p=`r formatPval(summary.test$p.value
 
 
 
-```{r didgeridooranks, fig.cap = "Ranks of the observations of the primary outcome in the Didgeridoo Study (left plot) and sum of the ranks of all outcomes (primary plus 3 secondary).", echo=FALSE, fig.height=4, fig.width=6}
+```{r didgeridooranks, fig.cap = "Ranks of the observations of the primary outcome in the Didgeridoo study (left plot) and sum of the ranks of all outcomes (primary plus 3 secondary).", echo=FALSE, fig.height=4, fig.width=6}
 library(beeswarm)
 par(mfrow=c(1,2))
 
@@ -885,7 +881,7 @@ axis(1, c(1, 2), (c("Didgeridoo", "Control")), padj = 0.5)
 
 ## Additional references
 
-The topics of this chapter are discussed in 
+The topics of this Chapter are discussed in 
 @bland (Ch. 9.10 Multiple Significance Tests) and @matthews (Ch. 9 Subgroups and Multiple Outcomes). Interactions are discussed in the Statistics Notes @SN_interaction and @SN_interactionrev.
 
 More details on subgroup analyses in RCTs are given in @rothwell2005subgroup. Studies where the methods from this chapter are used in practice are for example @pinkney, @bennewith and @olivarius.

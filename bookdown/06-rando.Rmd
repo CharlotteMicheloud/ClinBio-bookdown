@@ -1,4 +1,4 @@
-# Randomization and allocation, blinding and placebos
+# Randomisation and allocation, blinding and placebos
 
 In this chapter we discuss important techniques to allocate patients to two or more arms 
 of an RCT. We also discuss blinding and placebos and close with
@@ -9,8 +9,8 @@ the CONSORT reporting guidelines in Section \@ref(sec:consort).
 There exist several methods to allocate patients to the different 
 treatment groups in a clinical trial. 
 
-### Simple randomization
-Using *simple randomization* for allocation of $2n$ patients to 
+### Simple randomisation
+Using *simple randomisation* for allocation of $2n$ patients to 
 two treatment groups, A and B, the number of patients $N_A$ in group A
 has a binomial distribution: 
 $$
@@ -35,8 +35,6 @@ derived as
 :::{.proof}
 Given a specific $N_A$, $N_{\max}$ takes the following value:
 
-
-
 ```{r, results='asis', echo=FALSE}
 library(knitr)
 library(kableExtra)
@@ -56,7 +54,7 @@ df <- as.data.frame(data, stringsAsFactors = FALSE)
 colnames(df) <- NULL
 
 # Print the table using kable
-kable(df, format = "html", escape = FALSE,row.names = FALSE) %>%
+kable(df, format = "html", escape = FALSE,row.names = FALSE, caption = "Values of $N_A$ and corresponding $N_{\\max}$.") %>%
   kable_styling(full_width = FALSE, position = "center")
 ```
 
@@ -87,8 +85,7 @@ Unequal group sizes lead to a *loss in power*.
 For example, for Cohen's $d=1$, total sample size $n_A+n_B=30$ and $\alpha=0.05$, 
 the loss in power is illustrated in Figure \@ref(fig:powerloss).
 
-
-```{r simple, fig.cap = "Probability for unequal group sizes with simple randomization and a total sample size of $30$.", echo=F}
+```{r simple, fig.cap = "Probability for unequal group sizes with simple randomisation and a total sample size of $30$.", echo=F}
 P.NMax <- function(n, r) 2^(1-2*n)*choose(2*n, r)
 n <- 15
 support <- c(n:(2*n))
@@ -106,7 +103,7 @@ text(24, 0.06, "Pr = 0.10", col=2)
 
 
 
-```{r powerloss, fig.cap = "Loss in power for unequal group sizes in a scenario with $d=1$, $n_A+n_B = 30$ and $\\alpha = 0.05$.", echo=F}
+```{r powerloss, fig.cap = "Loss in power for unequal group sizes in scenario $d=1$, $n_A+n_B=30$ and $\\alpha = 0.05$.", echo=F}
 n <- 30
 n1 <- c(1:(n-1))
 n2 <- n-n1
@@ -122,9 +119,9 @@ text(26.5, 73, labels=paste("max power = ", as.character(round(max(power*100))),
 ``` 
 
 
-### Block randomization
+### Block randomisation
 
-The problem of unbalanced group sizes can be solved by using a form of restricted randomization with so-called *random permuted blocks* (RPBs). For example, with blocks of length 4, there are the following six different sequences of length 4 that comprise two As and two Bs:
+The problem of unbalanced group sizes can be solved by using a form of restricted randomisation with so-called *random permuted blocks* (RPBs). For example, with blocks of length 4, there are the following six different sequences of length 4 that comprise two As and two Bs:
 
 ```{r, results='asis', echo=FALSE}
 
@@ -137,12 +134,12 @@ data <- data.frame(
   col3 = c("B", "B", "A", "A", "A", "B"),
   col4 = c("B", "A", "B", "A", "B", "A"))
 
-kable(data, format = "html", escape = FALSE, col.names = NULL) %>%
-  kable_styling(full_width = FALSE, position = "center") %>%
+kable(data, format = "html", escape = FALSE, col.names = NULL, caption = "Sequences of random permuted blocks with a block length of 4 and 2 groups.") %>%
+  kable_styling(full_width = TRUE, position = "center") %>%
   column_spec(1, border_right = TRUE)
 ```
 
-In this case, the randomization selects randomly a block for every group of four patients. Block randomization using RPBs of length 4 ensures that group sizes never differ by more than 2. After every fourth patient, the two treatment groups must have the same size.
+In this case, the randomisation selects randomly a block for every group of four patients. Block randomisation using RPBs of length 4 ensures that group sizes never differ by more than 2. After every fourth patient, the two treatment groups must have the same size.
 
 RPBs can also be used with other block lengths or for more than two groups, e.g. for a block length of 6 and three groups, there are 90 different sequences:
 ```{r, echo = FALSE, message = FALSE}
@@ -161,8 +158,8 @@ df <- data.frame(
 )
 
 # Print the table using kable
-kable(df, format = "html", escape = FALSE, col.names = NULL) %>%
-  kable_styling(full_width = FALSE, position = "center") %>%
+kable(df, format = "html", escape = FALSE, col.names = NULL, caption = "Sequences of random permuted blocks with a block length 6 and 3 groups.") %>%
+  kable_styling(full_width = TRUE, position = "center") %>%
   column_spec(1, border_right = TRUE)
 ```
 
@@ -170,7 +167,7 @@ kable(df, format = "html", escape = FALSE, col.names = NULL) %>%
 The following `R` code computes the different sequences for RPBs of length 4:
 
 
-```{r echo=TRUE, message = FALSE}
+```{r echo=TRUE, message = FALSE, warning=FALSE}
 library(randomizeR)
 ## bc: length of block
 ## K: number of treatment groups 
@@ -181,8 +178,8 @@ getAllSeq(obj4)
 :::{.example #ulcers}
 An RCT was conducted to examine the use of cold atmospheric plasma 
 as a method to treat diabetic foot ulcers [@Mirpour2020].
-The Methods section states that the patients were randomly assigned to 
-the two treatment groups using block randomization with mixing block sizes 
+The "Methods" section states that the patients were randomly assigned to 
+the two treatment groups using block randomisation with mixing block sizes 
 of $4$. 
 :::
 
@@ -191,22 +188,22 @@ allows the next treatment to be predicted. This may cause *selection bias*.
 RPBs with *random block length* have been suggested to avoid the potential for
 selection bias.
 
-The following `R` code creates the randomization list for RBPs with random 
+The following `R` code creates the randomisation list for RBPs with random 
 block length of 2 and 4: 
 
 ```{r echo=TRUE}
 obj24 <- rpbrPar(N=100, K = 2, rb=c(2,4))
 (seq24 <- genSeq(obj24))
 
-# Randomization list
+# Randomisation list
 as.character(getRandList(seq24))
 ``` 
 
 
 
-### Unequal randomization
+### Unequal randomisation
 
-Unequal randomization can provide greater experience of a new treatment and may 
+Unequal randomisation can provide greater experience of a new treatment and may 
 even encourage recruitment in certain trials. If the imbalance is no
 greater than 2:1, the loss in power is small (e.g. from 90\% to 86\% for 
 $\alpha=5\%$).
@@ -225,10 +222,10 @@ genSeq(obj, r=3, seed=123)
 ``` 
 
 ### Stratification
-*Stratification* is useful when there is imbalance with respect to prognostic factors. 
+*Stratification* is useful when there is an imbalance with respect to prognostic factors. 
 Suppose we wish to compare a new treatment $T$ with placebo $P$ to see if it 
 improves a certain continuous outcome. An RCT is conducted with $n$ patients 
-in each group, all younger than 16 years of age. 
+in each group, all younger than 16 years old. 
 However, there is an important binary *prognostic factor* 
 (e.g. age) which has level $A$ (child, < 12 years) in a proportion 
 of the eligible patients, otherwise it has level $B$ 
@@ -259,18 +256,18 @@ $n_T \approx n_P$.
 Stratification aims to control the imbalance between groups not with respect to
 their size, but with respect to their *composition*. 
 The idea is to use different
-RPBs for different strata defined by relevant prognostic factors. For example,
+RPBs for different "strata" defined by relevant prognostic factors. For example,
 if age is an important prognostic factor, one may use an RPB design for 
 children and another one for adults. The number of children (and of adults)
 receiving each treatment will then be very similar.
 
-### Minimization
+### Minimisation
 
 If there are many prognostic factors, using a separate RPB for each possible 
 combination of these factors becomes impractical. For example, if there are 
 5 binary prognostic factors, there will be already $2^5=32$ strata. 
-*Minimization* aims to balance the groups with respect to each factor,
-but not for each combination of the factors. The minimization algorithm is:
+*Minimisation* aims to balance the groups with respect to each factor,
+but not for each combination of the factors. The minimisation algorithm is:
 
 1.  Suppose a new patient enters the trial with certain values 
 $x_1, \ldots, x_J$ of relevant prognostic factors.
@@ -288,7 +285,7 @@ follows (with some $p>1/2$):
 \left\{ \begin{array}{c} 0.5 \\ p \\ 1-p \end{array} \right\}.
 \]
 
-The minimization is deterministic if $p = 1$ and $D \neq 0$.
+The minimisation is deterministic if $p = 1$ and $D \neq 0$.
 
 ## Blinding
 
@@ -297,19 +294,20 @@ Blinding is used to avoid assessment bias. We distinguish between
 is unaware of the treatment being given, while in a 
 double-blind trial, neither the doctor nor the patient knows what treatment 
 is being given.
+
 In some trials, the statistical analysis is also carried out 
 blinded because of subjective elements in any statistical analysis. 
-For example, decisions like whether to transform the outcome variable, 
+For example, decisions such as whether to transform the outcome variable, 
 whether to compute risk differences, risk ratios or odds ratios for binary 
 outcomes, or whether to include a covariate in the analysis all 
 involve a degree of subjectivity.
-A precise statistical analysis plan helps in any case.
 
+A precise statistical analysis plan helps in any case.
 
 :::{.example #ulcers name="continued"}
 In the RCT from @Mirpour2020, the patients were blinded, and 
 the data were collected by a trained physician 
-and nurse who were blinded to the randomization method and the treatment 
+and nurse who were blinded to the randomisation method and the treatment 
 assignment. Moreover, the data were analyzed by a blinded investigator 
 to the study groups. 
 :::
@@ -346,17 +344,17 @@ red placebo and vice versa in the other group. For example, this method
 is useful to blind a comparison of a treatment given as a tablet with an 
 intravenous treatment.
 
-## ICH E10 guideline for control group
-One major purpose of control groups is to discriminate the outcomes caused by treatment from the outcomes caused by other factors. The ICH E10 guideline describes in detail various types of control groups commonly employed to demonstrate efficacy, and for each considers the ability to minimize bias, ethical and practical issues associated with its use, usefulness and the quality of inference in particular situations, modifications of study design or combinations with other
+## ICH E10 guideline for control groups
+One major purpose of control groups is to discriminate the outcomes caused by treatment from the outcomes caused by other factors. The ICH E10 guideline describes in detail various types of control groups commonly employed to demonstrate efficacy, and for each considers the ability to minimise bias, ethical and practical issues associated with its use, usefulness and the quality of inference in particular situations, modifications of study design or combinations with other
 controls that can resolve ethical, practical, or inferential concerns, and overall advantages and disadvantages (see @ICH2000E10).
 
 Here we provide a high-level summary of E10 for control groups. We will show three types of most common control group. 
 
-The **Placebo Control** (P) helps us to analyse the treatment effect from ‘Response on standard-of-care (SoC) + Treatment’ vs ‘Response on SoC + Placebo’. This allows for blinding and randomization by requiring identical appearance or administration of treatment and placebo, but can have the risk of unblinding due to pharmacology. This approach is applicable in many situations, despite a lack of real-world applications, as it is very uncommon and not ethical to give placebo to patients in clinical practice.
+The **Placebo Control** (P) helps us to analyse the treatment effect from ‘Response on standard-of-care (SoC) + Treatment’ vs ‘Response on SoC + Placebo’. This allows for blinding and randomisation by requiring identical appearance or administration of treatment and placebo, but can have the risk of unblinding due to pharmacology. This approach is applicable in many situations, despite a lack of real-world applications, as it is very uncommon and not ethical to give placebo to patients in clinical practice.
 
-The **Active Control** (A) is another possible control that also allows for blinding and randomization. It has ethical and practical advantages compared to Placebo Control. There are different possible trial objectives, for example showing superiority (new treatment is more effective than active control) or non-inferiority (new treatment is not less effective than active control), and more information can be found in Chapter \@ref(specialDesign). There are limitations, however, such as having more treatment exposure than control due to large sample sizes, and regional differences in SoC. 
+The **Active Control** (A) is another possible control that also allows for blinding and randomisation. It has ethical and practical advantages compared to Placebo Control. There are different possible trial objectives, for example showing superiority (new treatment is more effective than active control) or non-inferiority (new treatment is not less effective than active control), and more information can be found in Chapter \@ref(specialDesign). There are limitations, however, such as having more treatment exposure than control due to large sample sizes, and regional differences in SoC. 
 
-The **External Control** (E) uses data from patients in a previous trial as control, and a single arm trial is given. This is used in some particular settings, for example for serious diseases with high mortality, for rare diseases, for pediatric drug development, or when no other effective treatments are available. It has many challenges, including the loss of randomization and blinding, and the difficulty to ensure that current patients are comparable to earlier patients. Hybrid designs augment a concurrent control (P or A) arm with E data, to strengthen the overall control arm. 
+The **External Control** (E) uses data from patients in a previous trial as control, and a single arm trial is given. This is used in some particular settings, for example for serious diseases with high mortality, for rare diseases, for pediatric drug development, or when no other effective treatments are available. It has many challenges, including the loss of randomisation and blinding, and the difficulty to ensure that current patients are comparable to earlier patients. Hybrid designs augment a concurrent control (P or A) arm with E data, to strengthen the overall control arm. 
 
 
 ## Reporting guidelines for clinical trials
@@ -421,7 +419,7 @@ e.g. $p=0.0004$.
 $P$-values should not be reported 
 as $p<0.1$ or $p<0.05$ etc., as important information about the actual
 $P$-value is lost. 
-Only very small $P$-values should be reported with the "<" symbol, e.g.
+Only very small $P$-values should be reported with the "$<$" symbol, for example,
 "$p < 0.0001$".
 
 

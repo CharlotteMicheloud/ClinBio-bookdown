@@ -35,6 +35,7 @@ csl: data-science-journal.csl
 \newcommand{\Ind}{\mathsf{I}} % Indikatorfunktion -->
 
 % Operatoren
+\DeclareMathOperator{\CV}{CV} % Coefficient of Variation
 \renewcommand{\P}{\operatorname{\mathsf{Pr}}} % probability (P was already def.)
 \DeclareMathOperator{\Cor}{Cor} % correlation
 
@@ -241,9 +242,11 @@ csl: data-science-journal.csl
 }
 
 % Abl. von #2 nach Skalar #3 mit optionalem Parameter #1 für wievielte Ableitung (default 1)
-\newcommand{\partials}[3][1]{%
-\ifthenelse{#1 = 1}{\frac{d #2}{d #3}}{\frac{d^{#1} #2}{d #3^{#1}}}
-}
+%\newcommand{\partials}[3][1]{%
+%\ifthenelse{#1 = 1}{\frac{d #2}{d #3}}{\frac{d^{#1} #2}{d #3^{#1}}}
+%}
+
+\newcommand{\partials}[3][]{\frac{d^{#1} #2}{d #3^{#1}}}
 
 % partielle Abl. mit separatem Bruch für "nach einem Skalar" mit optionalem Parameter #1 für
 % wievielte Ableitung (default 1)

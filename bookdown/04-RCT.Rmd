@@ -1,9 +1,9 @@
-# Randomized controlled trials
+# Randomised controlled trials
 
 
 ## Study design
 
-A *randomized controlled trial* (RCT)
+A *randomised controlled trial* (RCT)
 is an experiment performed on human
 subjects (usually patients) in order to assess the efficacy of a 
 *treatment* (or *intervention*) for some condition.
@@ -11,8 +11,8 @@ It has two key features. First, the new treatment is given to a group of
 patients, the *treatment group*, and another treatment 
 (standard of care or placebo treatment) is given to
 another group of patients, the *control group*, at the same time.
-Second, patients are allocated to one group or another by *randomization*.
-A more accurate name for RCT is randomized *concurrently* controlled
+Second, patients are allocated to one group or another by *randomisation*.
+A more accurate name for an RCT is a randomised *concurrently* controlled
 *clinical* trial, because patients in the intervention and in the control group
 receive treatment at the same time. 
 
@@ -27,8 +27,8 @@ important ethical aspects when conducting an RCT.
 ### Historical context
 
 Ronald Aylmer Fisher (1890-1962) and Austin 
-Bradford Hill (1897–1991) were pioneers of randomization.
-In the 1920s, R.A. Fisher presented randomization as a crucial 
+Bradford Hill (1897–1991) were pioneers of randomisation.
+In the 1920s, R.A. Fisher presented randomisation as a crucial 
 element of the design and analysis of experiment [@Fisher1925].
 He also said about the importance of design:
 
@@ -38,11 +38,11 @@ experiment died of."
 
 (Presidential Address to the First Indian Statistical Congress, 1938).
 
-A.B. Hill also advocated for randomization [@Hill1937] and was the
+A.B. Hill also advocated for randomisation [@Hill1937] and was the
 trial statistician in one of the very first RCTs among humans: the MRC
-Strepromycin trial. However, this trial is not the first study using randomization and double blinding.  In 1835, more than 100 years before the MRC Streptomycin Trial,
-the `Nuremberg salt test' was performed, using randomization and double blinding
-to evaluate the efficacy of homeopathy. @Stolberg2006 summarized and
+Strepromycin trial. However, this trial is not the first study using randomisation and double-blinding. In 1835, more than 100 years before the MRC Streptomycin Trial,
+the `Nuremberg salt test' was performed, using randomisation and double blinding
+to evaluate the efficacy of homeopathy. @Stolberg2006 summarised and
 commented on 
 the study.
 
@@ -56,7 +56,7 @@ the U.K. in 1946-1947 and the results were published in 1948 [@Strepto1948].
 Patients with pulmonary tuberculosis were randomly assigned to receive
 Streptomycin (a bactericidal antibiotic drug) 
 and bed-rest, or bed-rest alone (the standard of care). 
-The randomization series were not known to the 
+The randomisation series were not known to the 
 investigator and the patient did not know whether they were in the 
 treatment or control group. 
 Results showed efficacy of Streptomycin 
@@ -80,9 +80,9 @@ Pittsburgh.
 Approximately 750'000 children were selected to participate in the study, 
 about 340'000 declined to participate and another 8500 dropped out in the 
 middle of the experiment [@Francis1955].
-The remaining children were randomized into a 
+The remaining children were randomised into a 
 treatment and a control group with approximately 200'000 children in each 
-group, as summarized in Table \@ref(tab:polio).
+group, as summarised in Table \@ref(tab:polio).
 
 
 ```{r polio, echo=FALSE, message=FALSE}
@@ -136,7 +136,7 @@ RCTs have five key characteristics:
 1.  A *population* of *eligible patients*
 2.  A *group of patients* recruited from this population
 3.   Existence of (at least) *two treatment groups*
-4.  Allocation to treatment by *randomization*
+4.  Allocation to treatment by *randomisation*
 5.  Outcome measures in the treatment groups are 
     compared *at the end* of the trial. 
     
@@ -149,15 +149,15 @@ Covid-19. A pivotal trial is designed to provide the critical evidence needed to
 
 
 ### Eligibility criteria
-A strict set of *eligibility criteria* allows to generalize the
+A strict set of *eligibility criteria* allows to generalise the
 results of the trial to the population of *eligible patients*.
 We can distinguish inclusion and exclusion criteria.
 
 Specification of eligibility criteria is particularly important for 
 trials with *long enrollment period* (months, years) and
-*multicenter* trials.
+*multicentre* trials.
 Otherwise, the type of patient recruited may change over the duration of the
-trial or may vary from center to center.
+trial or may vary from centre to centre.
 
 :::{.example #covidVacc name="continued"}
 The inclusion criteria in @Polack2020 were: adults 16 years of age 
@@ -210,7 +210,7 @@ include_graphics(c("figures/sign509-fig-0002-m.jpg", "figures/sign509-fig-0003-m
 #### Historical controls {-}
 
 Historical controls are an alternative to concurrent controls 
-in situations where randomizing patients to a control treatment 
+in situations where randomising patients to a control treatment 
 or placebo is not feasible, for practical or ethical reasons.
 
 
@@ -241,7 +241,7 @@ was chosen.
 
 
 
-### The importance of randomization
+### The importance of randomisation
 
 *Allocation at random* aims to ensure that all *prognostic factors* 
 (both known and unknown) are similarly represented in the two groups. 
@@ -249,7 +249,7 @@ That means that there is *no systematic difference* between the groups,
 which may have caused treatment difference.
 
 :::{.example}
-Table \@ref(tab:kidney) summarizes the results of an observational study
+Table \@ref(tab:kidney) summarises the results of an observational study
 comparing two different treatments for renal calculi [@charig].
 The overall odds ratio (comparing treatment A to treatment B) is
 
@@ -280,7 +280,7 @@ kable(data,
   add_header_above(c(" " = 1, "Success" = 2, " " = 1)) %>%
   kable_styling(position = "center", full_width = FALSE)
 ```
-However, this study is non-randomized, and the distribution of the 
+However, this study is non-randomised, and the distribution of the 
 two therapies differs among patients with small resp. large kidney stones, 
 see Table \@ref(tab:subgroup). 
 
@@ -297,9 +297,9 @@ table_data <- data.frame(
 
 # Use kable to create the table in bookdown format
 kable(table_data, 
-      col.names = c("", "yes", "no", "total", "yes", "no", "total"),
+      col.names = c("", "Yes", "No", "Total", "Yes", "No", "Total"),
       align = "c",
-      caption = "Success of therapies for small and large kidney stones", 
+      caption = "Success of therapies for small and large kidney stones.", 
       label = NA) %>%
   kable_styling(full_width = F) %>%
     add_header_above(c(" " = 1, "Success" = 2, " " = 1, "Success" = 2, " " = 1)) %>%
@@ -349,13 +349,13 @@ This type of sampling is prone to selection bias.
   
 ### Allocation bias {#sec:allocationbias}
 
-Randomization ensures - in principle - that the 
+Randomisation ensures - in principle - that the 
 groups to be compared are balanced with respect to
 all relevant prognostic factors. 
 *Allocation bias* occurs if there is a systematic
 difference between participants in how they were allocated to
-treatment groups. We do not expect this to happen if randomization is properly
-done. However, it is sometimes forgotten that proper randomization rests on 
+treatment groups. We do not expect this to happen if randomisation is properly
+done. However, it is sometimes forgotten that proper randomisation rests on 
 adequate *allocation concealment*.
 Allocation concealment means that the allocation sequence is not known 
 to those selecting the participants and assigning them to the intervention 
@@ -384,7 +384,7 @@ This problem can be addressed by *blinded outcome assessment*.
 
 It is tempting to assess the outcomes of a trial repeatedly and to
 stop the trial once a promising result has been obtained. This can be
-done as part of a prespecified method for assessing the data,
+done as part of a pre-specified method for assessing the data,
 so-called *group sequential methods* (see 
 Section \@ref(sec:groupsequential)). However, naive repeated
 checking of "significance" will introduce *stopping bias*. 
@@ -444,7 +444,7 @@ for(i in 1:n){
   statistic[i] <- res$statistic
 }
 par(las=1)
-plot(time*m*2, statistic, ylim=c(-3, 3), type="b", ylab="test statistic", xlab="Number of patients", col=c(rep(1, 6), 2, rep("darkgrey", 43)), pch=19, cex=0.8)
+plot(time*m*2, statistic, ylim=c(-3, 3), type="b", ylab="Test statistic", xlab="Number of patients", col=c(rep(1, 6), 2, rep("darkgrey", 43)), pch=19, cex=0.8)
 abline(1.96, 0, lty=2, col=2)
 abline(-1.96, 0, lty=2, col=2)
 #legend("topright", col=2, lty=2, legend="standard significance levels", cex=0.8, bty="n")
@@ -472,7 +472,7 @@ has finished.
 
 ## Target trials
 
-Randomized controlled trials are the gold standard for assessing the 
+Randomised controlled trials are the gold standard for assessing the 
 effectiveness and safety of new drugs or interventions.
 However, they might be restricted to a specific study population, and 
 are not always feasible due to ethical or financial 
@@ -488,22 +488,20 @@ high-quality medicines are developed. It brings together regulatory authorities 
 pharmaceuticals. 
 
 The presence of bias may seriously compromise the ability to
-draw valid conclusions from clinical trials. Many of the principles outlined in **ICH E9** from 1998 focus on **minimizing bias**, see @ICH1998E9.
+draw valid conclusions from clinical trials. Many of the principles outlined in **ICH E9** from 1998 focus on **minimising bias**, see @ICH1998E9.
 
 According to ICH E9, the **sources of bias** discussed earlier in this chapter are referred to as "statistical" bias. The bias introduced through deviations in conduct is referred to as "operational" bias. Some sources of bias arise from the trial design. For example, an assignment of treatments such that patients at lower risk are systematically assigned to one treatment. Other sources of bias arise during the conduct and analysis of a trial. For example, exclusion of patients from analysis based upon knowledge of patient outcomes may affect the accurate assessment of the treatment effect. Therefore, it is important to identify potential sources of bias as completely as possible so that attempts to limit such bias may be made.
 
 At the early stage, we could use **principles of trial design and conduct** to reduce bias.
 For example, we could pre-specify objectives, endpoints, and analysis
 methods to prevent data-driven choices. We could also ensure blinding by keeping patients, doctors, and sponsors unaware of treatment assignment to avoid conscious or unconscious
-influence. Randomization can also help, by assigning patients to treatments by chance to
-balance known and unknown confounding factors. What's more, adding control for comparison is helpful for discriminating outcomes
-caused by the treatment from outcomes caused by other
-factors, such as the natural progression of the disease or
-patient expectations.
+influence. Randomisation can also help, by assigning patients to treatments by chance to
+balance known and unknown confounding factors. Furthermore, adding control for comparison is helpful for discriminating outcomes caused by the treatment from outcomes caused by other
+factors, such as the natural progression of the disease or patient expectations.
 
 There are also something we can do after the trial is closed. We can follow the **principles of trial analysis** to reduce bias. For example, we can control the Type I error probability at a pre-specified threshold, and limit false positive findings to reduce stopping bias. Reliable treatment estimates are important to facilitate regulatory decisions and inform patients and doctors. Intention-to-treat (ITT) can also help to reduce bias, by evaluating the treatment effect on the basis of the intention to treat a patient rather than the actual treatment given. ITT will be discussed more in Chapter \@ref(Ch11).
 
 ## Additional references
 
-An introduction to randomized controlled clinical trials is given in @matthews. The design of experiments is discussed in Chapter 2 in @bland. Regression to the mean is discussed in the Statistics Notes @SN_regrtothemean, @SN_exregrtothemean. A practical example for allocation concealment is @adamsen, and @hijazi for convenience sampling.
+An introduction to randomised controlled clinical trials is given in @matthews. The design of experiments is discussed in Chapter 2 in @bland. Regression to the mean is discussed in the Statistics Notes @SN_regrtothemean, @SN_exregrtothemean. A practical example for allocation concealment is @adamsen, and @hijazi for convenience sampling.
 

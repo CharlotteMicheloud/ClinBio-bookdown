@@ -17,7 +17,7 @@ which are all the digits after the decimal point.
 The difference between the two concepts
 is illustrated in Table \@ref(tab:signfigures). 
 Observations should be rounded to a few significant figures
-only for  *reporting*, after all the calculations 
+for *reporting* only, after all the calculations 
 have been done. 
 
 ```{r signfigures, echo = FALSE}
@@ -47,13 +47,12 @@ measured more than once. The *within-subject standard deviation*,
 $s_w$, can then be calculated using one-way *analysis of variance* (ANOVA).
 
 :::{.example #pefr}
-A peak flow meter is a device to measure the maximal expiration speed of a 
+A peak flow meter is a device used to measure the maximal expiration speed of a 
 person (faster = "better").
 The Peak Expiratory Flow Rate (PEFR) data from @bland (Chapter 20.2) 
 contains 17 pairs of readings made by the same observer with a Wright Peak Flow 
 Meter (in litres/min) on 17 healthy volunteers, see Figure \@ref(fig:PEFR). 
 :::
-
 
 
 
@@ -95,14 +94,14 @@ cc <- confIntCorrelation(First, Second, method = "pearson", type = "z")
 
 
 :::{.example #sodium}
-The TONE study is a randomized controlled trial aimed at determining 
+The TONE study is a randomised controlled trial aimed at determining 
 whether a reduction in sodium intake can effectively control blood pressure
 [@Appel1995]. @Nab2021 simulated a dataset based on the TONE study, 
 containing for each participant: the sodium intake in mg measured by a 24h recall, 
 a binary variable indicating whether the participant was assigned to a usual 
 or sodium-lowering diet, and two measurements of sodium intake in mg
 measured in urine. 
-We focus here on the participants for which the two urinary measurements 
+Here, we focus on the participants for which the two urinary measurements 
 are available. The two sodium intake measurements are displayed in Figure 
 \@ref(fig:sodium).
 :::
@@ -400,7 +399,9 @@ a real change in the subject's true value.
 
 ### Reliability and the intraclass correlation coefficient
 
-*Reliability* of a measurement is characterized by the correlation coefficient between pairs of readings. 
+:::{.definition}
+*Reliability* represents the extent to which measurements can be replicated. Reliability of a measurement is characterised by the correlation coefficient between pairs of readings. 
+:::
 
 Pearson correlation coefficient between the
 first and second measurement depends on the ordering of pairs, and is therefore not appropriate to assess the reliability 
@@ -487,7 +488,7 @@ be used only when we have a *representative sample* of the subjects of interest
 [@bland].
 
 :::{.example #pefr name="continued"}
-For illustration we modify the PERF
+For illustration, we modify the PERF
 data to have less variation between subjects, but the same within-subject
 standard deviation, see Figure \@ref(fig:sb). 
 :::
@@ -502,7 +503,7 @@ ShrunkenMeasurement <- c(ShrunkenFirst, ShrunkenSecond)
 ``` 
 
 
-```{r sb, fig.cap = "Less between-subject variation.", echo = F}
+```{r sb, fig.cap = "Modified PERF data with less between-subject variation.", echo = F}
 par(mfrow = c(1, 2), pty = "s", las = 1)
 
 my.range <- range(c(First,Second))
@@ -510,13 +511,13 @@ plot(First, Second, xlab = "First", ylab = "Second", pty = "s", pch = 19, col = 
 segments(100, 100, 700, 700, lty = 2, col = 4)
 
 cc <- confIntCorrelation(First, Second, method = "pearson", type = "z")
-title("original data")
+title("Original data")
 
 plot(ShrunkenFirst, ShrunkenSecond, xlab = "Shrunken First", ylab = "Shrunken Second", pty = "s", pch = 19, col = 2, ylim=my.range, xlim=my.range, cex=0.7)
 segments(100, 100, 700, 700, lty = 2, col = 4)
 
 cc <- confIntCorrelation(First, Second, method = "pearson", type = "z")
-title("less variation")
+title("Less variation")
 ``` 
 
 
@@ -612,8 +613,7 @@ For example the regression slope  for *10 +* Cobas6000 vs. Hitachi912
 measurements remains around 1: 
 
 ```{r echo=T, results="asis"}
-knitr::kable(biostatUZH::tableRegression(lm(10 + co ~ hi),
-                                         xtable = F))
+knitr::kable(biostatUZH::tableRegression(lm(10 + co ~ hi), xtable = F))
 ```
 
 
@@ -692,7 +692,7 @@ $\LOAup$ = `r format(ba1$upper.agreement.limit, nsmall=2, digits=2)` mmol/L with
 par(mfrow = c(1, 2), mar = c(4, 4, 1, 1), cex = 1.3, las = 1, pch = 19)
 
 plot(ba1$average, ba1$difference, pch = 19, col = 2, xlim = c(0, 37), 
-     ylim = c(-5, 5), xlab=ba1$xlab, ylab=ba1$ylab)
+     ylim = c(-5, 5), xlab="Average of measurements", ylab="Difference of measurements")
 
 abline(h = ba1$upper.agreement.limit, lty = "dotted", col = "blue", lwd = 4)
 abline(h = ba1$difference.mean, col = "blue", lwd = 4)
@@ -704,7 +704,8 @@ abline(h = 0, lty = 2)
 
 ba1 <- BlandAltman(hi, co, group = NA, maintit = "", limy = NA, plot = TRUE)
 plot(ba1$average, ba1$difference, pch = 19, col = 2, xlim = c(0, 37), 
-     ylim = c(-5, 5), xlab=ba1$xlab, ylab=ba1$ylab)
+     ylim = c(-5, 5), xlab="Average of measurements", ylab="Difference of measurements")
+     #xlab=ba1$xlab, ylab=ba1$ylab)
 
 abline(h = ba1$upper.agreement.limit, lty = "dotted", col = "blue", lwd = 4)
 abline(h = ba1$difference.mean, col = "blue", lwd = 4)
@@ -728,11 +729,11 @@ If the limits of agreement (lower = `r format(ba1$lower.agreement.limit, nsmall=
 <!-- :::{.example #kirkwood} -->
 <!-- 179 patients completed a *Symptom Interpretation Questionnaire*  -->
 <!-- on two occasions three years apart. Each time, they were were classified -->
-<!-- into "normalizer" and "non-normalizer", related to how they were  -->
+<!-- into "normaliser" and "non-normaliser", related to how they were  -->
 <!-- able to cope with symptoms [@KirkwoodSterne, p. 434, Ex.36.3]. -->
 <!-- ::: -->
 :::{.example #Hazir}
-In a study of chest radiography in children in Pakistan (see @Hazir2006), children aged 2 to 59 months with non-severe pneumonia were invited to participate. In total 2000 children were enrolled, for whom 1848 chest radiographs were available for assessment. Two consultant radiologists used standardized criteria to evaluate the chest radiographs, with no clinical information available to them. The primary outcome was diagnosis of pneumonia (absent or
+In a study of chest radiography in children in Pakistan (see @Hazir2006), children aged 2 to 59 months with non-severe pneumonia were invited to participate. In total 2000 children were enrolled, for whom 1848 chest radiographs were available for assessment. Two consultant radiologists used standardised criteria to evaluate the chest radiographs, with no clinical information available to them. The primary outcome was diagnosis of pneumonia (absent or
 present) from chest radiographs. 
 :::
 
@@ -750,8 +751,8 @@ present) from chest radiographs.
 ## mat <- rbind(mat, apply(mat, 2, sum))
 ## mat <- data.frame(cbind(mat, apply(mat, 1, sum)))
 ## mat <- cbind(rep(NA, 3), mat)
-## mat <- rbind(c("First classification", "normalizer", "non-normalizer", "Total"), mat)
-## mat[2:4, 1] <- c("normalizer", "non-normalizer", "Total")
+## mat <- rbind(c("First classification", "normaliser", "non-normaliser", "Total"), mat)
+## mat[2:4, 1] <- c("normaliser", "non-normaliser", "Total")
 ## dimnames(mat)[[2]] <- c("", "Second classification", "", "")
 ## xtab2 <- xtable(mat, align = "cc|cc|c", caption = "", label = "tab: kappa1")
 radiologists <- rbind(
@@ -851,7 +852,7 @@ data <- data.frame(
 
 # Print the table using kable
 kable(data, format = "html", row.names = FALSE, booktabs = TRUE, 
-      caption = "Table of expected frequencies of agreement by chance, given row- and column totals.") %>%   
+      caption = "Table of expected frequencies of agreement by chance, given row- and column-totals") %>%   
   kable_styling(full_width = FALSE) %>%
   add_header_above(c(" " = 1, "Radiologist B" = 2, " " = 1))
 
@@ -873,15 +874,15 @@ The expected proportion of *agreement by chance* then is
 
 :::{.definition}
   Cohen's Kappa is the proportion of agreement beyond chance $\pobs - \pexp$, 
-  standardized with the maximal possible value $1-\pexp$:
+  standardised with the maximal possible value $1-\pexp$:
 :::
   
 \begin{eqnarray*}
-    \kappa &=& \frac{\pobs - \pexp}{1 - \pexp} 
+    \kappa &=& \frac{\pobs - \pexp}{1 - \pexp}.
 \end{eqnarray*} 
 
-It has the following properties: $\kappa \leq \pobs$, $\kappa = 1$ means 
-that there is perfect agreement ($\pobs=1$), $\kappa = 0$ means that the agreement not larger than expected by chance ($\pobs=\pexp$), and the smallest possible value of $\kappa$ is $-\pexp/(1-\pexp)$. A negative $\kappa$ means that the agreement is worse than by chance. 
+Note that $\kappa \leq \pobs$ is always true. When $\kappa = 1$, 
+there is perfect agreement ($\pobs=1$). When $\kappa = 0$, the agreement is not larger than expected by chance ($\pobs=\pexp$). The smallest possible value of $\kappa$ is $-\pexp/(1-\pexp)$. A negative $\kappa$ means that the agreement is worse than by chance. 
 
 In Example \@ref(exm:Hazir) we obtain
 
@@ -901,7 +902,7 @@ kappa_table <- data.frame(
 )
 
 # Render the table using kableExtra
-kable(kappa_table, format = "html", caption = "Classification of Cohen's Kappa [@altman1991, @bland].")
+kable(kappa_table, format = "html", caption = "Classification of Cohen's Kappa [@altman1991 and @bland].")
 ```
 
 However, there is a caveat with the interpretation shown in Table \@ref(tab:kappaClass):
@@ -935,7 +936,7 @@ kappa <- matrix(NA, nrow=length(p1), ncol=length(q))
 for(i in 1:length(q)) 
     kappa[,i] <- k(p1, q[i])
 par(las=1)
-matplot(p1, kappa, type="l", ylim=c(0,1), xlab="True proportion of 'Yes'", ylab="Expected Kappa", lty=1, lwd=2)
+matplot(p1, kappa, type="l", xlim=c(0,1.5),ylim=c(0,1), xlab="True proportion of 'Yes'", ylab="Expected Kappa", lty=1, lwd=2)
 
 l <- seq(0.2,1.0,0.2)
 t <- c("Poor", "Fair", "Moderate", "Good", "Very Good")        
@@ -944,7 +945,7 @@ for(i in 1:length(l)){
     text(0.5, l[i]-.1, t[i], cex=1.5)
         }
 
-legend("topleft", lty=1, col=rev(1:6), legend=paste(as.character(rev(q*100)), "% correct", seq=""), bg="white", cex=1, lwd=2)
+legend("right", lty=1, col=rev(1:6), legend=paste(as.character(rev(q*100)), "% correct", seq=""), bg="white", cex=1, lwd=2)
 ``` 
 
 
@@ -976,15 +977,15 @@ colnames(mat) <- c("", "Rater 2", "", "")
 
 # Print the table using kable
 knitr::kable(mat, format = "html",
-      caption = "Extreme example for interpretation of Kappa.", 
+      caption = "An extreme example for Kappa interpretation.", 
       row.names = FALSE, 
       escape = FALSE) %>%   
   kable_styling(full_width = FALSE)
 ```
 
-This case shows that $\kappa$ can be small even you have good agreement.
+This case shows that $\kappa$ can be small even when you have a good agreement.
 
-### Confidence Interval for Cohen's Kappa
+### Confidence interval for Cohen's Kappa
 
 The standard error of $\kappa$ is
 
@@ -1006,7 +1007,7 @@ respect to $\pexp$.
 ```{r echo=F}
 
 ## symptoms <- matrix(c(76,39,17,47), byrow=F, ncol=2, nrow=2)
-## names <- c("normalizer", "non-normalizer")
+## names <- c("normaliser", "non-normaliser")
 ## colnames(symptoms) <- names
 ## rownames(symptoms) <- names
 ## symptoms <- as.table(symptoms, dnn=c("First classification","Second classification"))
@@ -1022,7 +1023,7 @@ respect to $\pexp$.
 ## colnames(symptoms.ind) <- c("First", "Second")
 ## rownames(symptoms.ind) <- NULL
 ## symptoms <- matrix(c(76,39,17,47), byrow=F, ncol=2, nrow=2)
-## names <- c("normalizer", "non-normalizer")
+## names <- c("normaliser", "non-normaliser")
 ## colnames(symptoms) <- names
 ## rownames(symptoms) <- names
 ## symptoms <- as.table(symptoms, dnn=c("First classification","Second classification"))
@@ -1080,7 +1081,7 @@ round((pobsCI-pexp)/(1-pexp), 2)
 A 95\% bootstrap CI for Cohen's Kappa is obtained using
 `biostatUZH::confIntKappa()`:
 
-```{r }
+```{r message=FALSE, warning=FALSE}
 set.seed(211213)
 ```
 
