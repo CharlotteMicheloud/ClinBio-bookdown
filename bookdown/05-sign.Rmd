@@ -497,8 +497,8 @@ Confidence intervals can be used to carry out a hypothesis
 test: If (and only if) the 95% CI does not contain the reference
 value, then the corresponding test is significant
 (two-sided p < 0.05).
-Furthermore, it is possible to transform a $P$-value to a confidence interval. 
-Provided that the effect estimate is known, the exact $P$-value is reported
+Furthermore, it is possible to transform a $P$-value to a confidence interval, 
+provided that the effect estimate is known, the exact $P$-value is reported
 and is based on a normal test statistic [@altman2]. 
 Conversely, a confidence interval can be transformed to a $P$-value 
 provided that the CI is of Wald-type [@altman1]. 
